@@ -6,23 +6,25 @@
 </head>
 <body>
 <header th:fragment="header">
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <nav class="navbar navbar-expand-lg fs-5 fw-bold">
         <div class="container">
-            <a class="navbar-brand" href="/">홈</a>
+            <a class="navbar-brand" href="/">
+                <img src="/img/icon.jpg" alt="홈" class="w-25 h-25">
+            </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
+            <div class="collapse navbar-collapse d-flex align-items-center justify-content-center" id="navbarNav">
                 <ul class="navbar-nav">
-                    <li class="nav-item"><a class="nav-link" href="/info">조황정보</a></li>
-                    <li class="nav-item"><a class="nav-link" href="/community">커뮤니티</a></li>
-                    <li class="nav-item"><a class="nav-link" href="/reserve">실시간 예약</a></li>
-                    <li class="nav-item"><a class="nav-link" href="/posting">게시글</a></li>
-                    <li class="nav-item"><a class="nav-link" href="/represent">공지사항</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/home">홈</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/center">조황센터</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/partner">파트너스</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/notice">공지사항</a></li>
                 </ul>
             </div>
 
-            <button class="btn btn-primary">로그인 버튼 테스트</button>
+            <button class="btn btn-light me-3">로그인 버튼</button>
+            <button class="btn btn-light">마이페이지</button>
 
         </div>
     </nav>
