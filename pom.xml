@@ -31,13 +31,20 @@
     </properties>
     <dependencies>
 
+
+<!--html, css 새로고침 바로적용-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-devtools</artifactId>
+            <optional>true</optional>
+        </dependency>
+
         <dependency>
             <groupId>com.mysql</groupId>
             <artifactId>mysql-connector-j</artifactId>
             <version>8.2.0</version>  <!-- 최신 버전으로 변경 -->
             <scope>runtime</scope>
         </dependency>
-
 
         <dependency>
             <groupId>org.springframework.boot</groupId>

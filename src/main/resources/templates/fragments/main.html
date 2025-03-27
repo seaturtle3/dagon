@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>main</title>
+
+    <style>
+        .pb-30 { padding-bottom: 500px !important; }
+    </style>
+
+</head>
+
+<body>
+<main th:fragment="main">
+
+    <div class="container mt-3">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card shadow-sm ">
+                    <div class="card-header bg-light text-dark">
+                        <h4>예약</h4>
+                    </div>
+                    <div class="card-body pb-5">
+                        <p>예약 시스템 UI 자리</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-light text-dark">
+                        <h4>공지사항</h4>
+                    </div>
+                    <div class="card-body pb-5">
+                        <p>공지사항 내용 자리</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 추천 조황 (카드 형태) -->
+    <div class="container mt-3">
+        <div class="card shadow-sm">
+            <div class="card-header bg-light text-dark text-center">
+                <h4>추천 조황</h4>
+            </div>
+            <div class="card-body text-center pb-30">
+                <p>추천 조황 정보 표시</p>
+            </div>
+        </div>
+    </div>
+
+</main>
+</body>
+</html>
