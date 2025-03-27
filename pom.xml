@@ -32,12 +32,26 @@
     <dependencies>
 
 
+<<<<<<< HEAD
 <!--html, css 새로고침 바로적용-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-devtools</artifactId>
             <optional>true</optional>
         </dependency>
+=======
+
+
+
+
+
+
+
+
+
+
+
+>>>>>>> main
 
         <dependency>
             <groupId>com.mysql</groupId>
