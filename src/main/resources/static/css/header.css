@@ -1,0 +1,13 @@
+.dropdown .dropdown-menu {
+    display: none;
+}
+
+.dropdown-item:hover {
+    background-color: lightsalmon;
+    color: #fff;
+}
+.dropdown:hover > .dropdown-menu {
+    display: block;
+    margin-left: 0.125em;
+}
+
