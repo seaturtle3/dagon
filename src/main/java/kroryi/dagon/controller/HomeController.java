@@ -12,27 +12,27 @@ public class HomeController {
 
     @GetMapping("/menu1")
     public String menu1() {
-        return "menu/menu1";
+        return "fishing_report";
     }
 
     @GetMapping("/menu2")
     public String menu2() {
-        return "menu/menu2";
+        return "sea_fishing";
     }
 
     @GetMapping("/menu3")
     public String menu3() {
-        return "menu/menu3";
+        return "freshwater_fishing";
     }
 
     @GetMapping("/menu4")
     public String menu4() {
-        return "menu/menu4";
+        return "community";
     }
 
     @GetMapping("/menu5")
     public String menu5() {
-        return "menu/menu5";
+        return "cs_center";
     }
 
     @GetMapping("/my_page")

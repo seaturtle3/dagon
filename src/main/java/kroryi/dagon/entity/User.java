@@ -16,7 +16,6 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long uno;
-
     private String uid;
     private String upw;
     private String uname;
