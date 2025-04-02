@@ -23,10 +23,14 @@ public class registerController {
 
     @PostMapping("/register")
     public String registerUser(@ModelAttribute UsersDTO usersDTO) {
-        try{
+        try {
+            String fullPhone = usersDTO.getFullPhone();
+            usersDTO.setFullPhone(fullPhone);
+
+
             registerService.register(usersDTO);
-                    return "/login";
-        }catch (Exception e) {
+            return "/login";
+        } catch (Exception e) {
             return "회원가입 중 오류가 발생했습니다: " + e.getMessage();
         }
     }
