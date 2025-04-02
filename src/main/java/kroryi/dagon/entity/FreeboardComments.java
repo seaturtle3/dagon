@@ -14,16 +14,17 @@ public class FreeboardComments {
     @Column(name = "comment_id", nullable = false)
     private Long comment_id;
 
-    @Column(name = "fbid", nullable = false)
-    private Long fbid;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "fbid")
+    private FishingReport fishingReport;
 
     @Column(name = "uid", nullable = false)
     private Long uid;
 
-    @Column(name = "unickname", nullable = false, length = 50)
+    @Column(name = "unickname", length = 50)
     private String unickname;
 
-    @Column(name = "ulevel", nullable = false)
+    @Column(name = "ulevel")
     private Integer ulevel;
 
     @Column(name = "coment_contentt")

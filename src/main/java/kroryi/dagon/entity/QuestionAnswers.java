@@ -1,28 +1,30 @@
 package kroryi.dagon.entity;
 
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 @Entity
 @Data
+@Table(name = "question_answers", schema = "dagon")
 public class QuestionAnswers {
     @Id
     @Column(name = "qaid", nullable = false)
-    private Long qaid;
+    private Long id;
 
-    @ManyToOne
-    @JoinColumn
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "qid")
     private Question qid;
 
     @Column(name = "qacontent", nullable = false)
     private String qacontent;
 
-    @Column(name = "answer_id")
-    private Long answer_id;
+    @Column(name = "answer_id", nullable = false)
+    private Long answerId;
 
     @Column(name = "created_at")
-    private LocalDateTime created_at;
+    private Instant createdAt;
 
-}
+
