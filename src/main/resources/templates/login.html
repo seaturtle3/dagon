@@ -2,14 +2,23 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>로그인</title>
 </head>
 <body>
-<form action="login" method="post" >
+
+<form action="/login" method="post">
     <div>로그인</div>
-    <input type="text" name="login">
-    <button type="button">로그인</button>
+    <input type="text" name="uid" placeholder="ID" required>
+    <input type="password" name="upw" placeholder="PW" required>
+    <br>
+    <br>
+    <input type="checkbox" name="remember_id">
+    <button type="button">회원 가입</button>
+    <button type="submit">로그인</button>
 </form>
+
+
+
 
 </body>
 </html>
