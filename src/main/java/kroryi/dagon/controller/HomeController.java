@@ -35,4 +35,8 @@ public class HomeController {
         return "menu/menu5";
     }
 
+    @GetMapping("/my_page")
+    public String myPage() {
+        return "my_page";
+    }
 }
