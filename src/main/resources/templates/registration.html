@@ -41,9 +41,12 @@
         <input type="email" id="uemail" name="email" required>
 
         <!-- Phone Number -->
-        <label for="uphone">전화번호</label>
-        <input type="text" id="uphone" name="phone" required>
-
+        <label for="uphone1">전화번호</label>
+        <div style="display: flex; gap: 5px;">
+            <input type="text" id="uphone1" name="phone1" maxlength="3" required>
+            <input type="text" id="uphone2" name="phone2" maxlength="4"  required>
+            <input type="text" id="uphone3" name="phone3" maxlength="4" required>
+        </div>
 
         </select>
 
@@ -65,12 +68,18 @@
         const uemail = document.getElementById('uemail').value;
 
 
+
+
+
+
         // 아이디 7자 이상 이어야함 넘어가게 만듬
         if(uid.length < 7) {
             event.preventDefault();  // 이게 없으면 바로 넘어감
             errorMessage.textContent = '아이디가 7자 이상이어야 합니다.';
 
         }
+
+
 
 
         // 비밀번호랑 재확인이 같아야 넘가게 만듬
@@ -82,9 +91,6 @@
             event.preventDefault();
             errorMessage.textContent = '비밀번호가 일치하지 않습니다.';
         }
-
-
-
 
     });
 </script>

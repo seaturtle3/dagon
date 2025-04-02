@@ -38,7 +38,7 @@ public class registerService {
         user.setUpw(usersDTO.getPw());
         user.setUname(usersDTO.getName());
         user.setUemail(usersDTO.getEmail());
-        user.setUphone(usersDTO.getPhone());
+        user.setUphone(usersDTO.getFullPhone());
         user.setUcreated_at(LocalDateTime.now());
         user.setUlevel(Level.Silver);
         user.setUrole(Role.Normal_user);
