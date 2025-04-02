@@ -16,7 +16,7 @@ import java.time.Instant;
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-public class frimg {
+public class Frimg {
     @Id
     @Column(name = "frimg_id", nullable = false)
     private Integer id;

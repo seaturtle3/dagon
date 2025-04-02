@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @Data
-public class question {
+public class Question {
     @Id
     @Column(name = "qid", nullable = false)
     private Long qid;
