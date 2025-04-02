@@ -1,6 +1,7 @@
 package kroryi.dagon.service;
 
 import kroryi.dagon.DTO.UsersDTO;
+import kroryi.dagon.entity.Level;
 import kroryi.dagon.entity.Role;
 import kroryi.dagon.entity.User;
 import kroryi.dagon.repository.UserRepository;
@@ -39,6 +40,7 @@ public class registerService {
         user.setUemail(usersDTO.getEmail());
         user.setUphone(usersDTO.getPhone());
         user.setUcreated_at(LocalDateTime.now());
+        user.setUlevel(Level.Silver);
         user.setUrole(Role.Normal_user);
 
         log.info("저장할 사용자: {}", user);

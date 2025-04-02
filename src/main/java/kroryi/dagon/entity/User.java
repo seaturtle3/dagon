@@ -16,7 +16,7 @@ import java.util.Date;
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long uno;
+    private int uno;
     private String uid;
     private String upw;
     private String uname;
@@ -24,7 +24,8 @@ public class User {
     private String uemail;
     private String uprofile_img;
     private int upoints;
-    private int ulevel;
+    @Enumerated(EnumType.STRING)
+    private Level ulevel;
     private LocalDateTime ucreated_at;
     private String uphone;
     @Enumerated(EnumType.STRING)
