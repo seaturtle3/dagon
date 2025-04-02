@@ -1,5 +1,6 @@
 package kroryi.dagon.entity;
 
+
 import jakarta.persistence.*;
 import lombok.*;
 
