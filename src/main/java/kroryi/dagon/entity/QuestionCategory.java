@@ -2,6 +2,7 @@ package kroryi.dagon.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
 import lombok.Data;
 
@@ -15,7 +16,12 @@ public class QuestionCategory {
     @Column(name = "qcname", nullable = false)
     private String qcname;
 
-    @Column(name = "category_type", nullable = false)
-    private Enum category_type;
+    @Enumerated
+    @Column(name = "category_type")
+    private Category_type category_type;
+
+    public enum Category_type {
+        admin, partner, normal_user
+    }
 
 }

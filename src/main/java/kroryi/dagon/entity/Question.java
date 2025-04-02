@@ -4,10 +4,12 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 @Entity
 @Data
-public class question {
+public class Question {
     @Id
     @Column(name = "qid", nullable = false)
     private Long qid;
@@ -19,8 +21,21 @@ public class question {
     @JoinColumn(name = "qcid")
     private QuestionCategory questionCategory;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "qtype", nullable = false)
-    private Enum qtype;
+    private Qtype qtype;
+
+    public enum Qtype {
+        reservation, cancellation
+    }
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "usertype", nullable = false)
+    private Usertype usertype;
+
+    public enum Usertype {
+        user, partner, admin;
+    }
 
     @Column(name = "qtitle", nullable = false)
     private String qtitle;
@@ -33,5 +48,6 @@ public class question {
 
     @Column(name = "updated_at")
     private LocalDateTime updated_at;
+
 
 }
