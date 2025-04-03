@@ -15,25 +15,23 @@ import java.time.LocalDateTime;
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int uno;
+    private Long uno;
+
     private String uid;
     private String upw;
     private String uname;
     private String unickname;
     private String uemail;
-    private String uprofileImg;
+    private String uprofile_img;
     private int upoints;
-    @Enumerated(EnumType.STRING)
-    private Level ulevel;
-    public enum Level {
-        Silver,Gold,Platinum,Diamond
-    }
-    private LocalDateTime ucreatedAt;
+    private int ulevel;
+    private LocalDateTime ucreated_at;
     private String uphone;
     @Enumerated(EnumType.STRING)
     private Role urole;
     public enum Role {
-        admin, partner, normal_user
+        Admin, Partner, Normal_user
     }
+
 
 }
