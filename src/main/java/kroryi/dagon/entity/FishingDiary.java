@@ -6,12 +6,13 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Getter
 @Setter
 @NoArgsConstructor
-@Table(name = "fishingDiary")
+@Table(name = "fishing_diary")
 public class FishingDiary {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -37,11 +38,15 @@ public class FishingDiary {
     private String fdcontent;
 
     @Column(name = "create_at", nullable = false, columnDefinition = "DATETIME DEFAULT CURRENT_TIMESTAMP")
-    private LocalDateTime create_at;
+    private LocalDateTime createdAt;
 
     @Column(name = "modify_at", columnDefinition = "DATETIME DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP")
-    private LocalDateTime modifyAt;
+    private LocalDateTime modifiedAt;
 
     @Column(name = "views", nullable = false, columnDefinition = "INT DEFAULT 0")
     private Integer views;
+
+    @OneToMany(mappedBy = "fishingDiary", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<FishingDiaryImage> images;
+
 }
