@@ -22,12 +22,21 @@ public class Product {
 
     @Enumerated(EnumType.STRING)
     private ProdRegion prodRegion;  // 지역 (ENUM)
+    public enum ProdRegion {
+        NORTH, SOUTH, EAST, WEST, OTHER;  // 예시로 지역을 나누었습니다. 실제 데이터에 맞게 수정해야 합니다.
+    }
 
     @Enumerated(EnumType.STRING)
     private MainType mainType;  // 메인분류 (ENUM)
+    public enum MainType {
+        SEA, FRESHWATER, OTHER;  // 바다, 민물, 기타
+    }
 
     @Enumerated(EnumType.STRING)
     private SubType subType;  // 서브분류 (ENUM)
+    public enum SubType {
+        SUBTYPE1, SUBTYPE2, SUBTYPE3;  // 예시로 서브분류를 추가했습니다. 실제 데이터에 맞게 수정해야 합니다.
+    }
 
     private String pname;  // 파트너업체명
 
