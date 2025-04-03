@@ -22,11 +22,19 @@ public class User {
     private String uname;
     private String unickname;
     private String uemail;
-    private String uprofile_img;
+    private String uprofileImg;
     private int upoints;
-    private int ulevel;
-    private LocalDateTime ucreated_at;
+
+    @Enumerated
+    @Column(name = "ulevel", nullable = false)
+    private ulevel ulevel;
+    public enum ulevel {
+        Diamond, Gold, Platinum, Silver
+    }
+
+    private LocalDateTime ucreatedAt;
     private String uphone;
+
     @Enumerated(EnumType.STRING)
     private Role urole;
     public enum Role {
