@@ -47,6 +47,6 @@ public class FishingDiary {
     private Integer views;
 
     @OneToMany(mappedBy = "fishingDiary", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<FishingDiaryImage> images;
+    private List<FishingDiaryImg> images;
 
 }
