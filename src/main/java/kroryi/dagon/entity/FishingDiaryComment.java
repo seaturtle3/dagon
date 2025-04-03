@@ -25,7 +25,7 @@ public class FishingDiaryComment {
     private User user;
 
     @Column(name = "comment_content", columnDefinition = "TEXT", nullable = false)
-    private String content;
+    private String commentContent;
 
     @Column(name = "create_at", nullable = false, updatable = false, columnDefinition = "DATETIME DEFAULT CURRENT_TIMESTAMP")
     private LocalDateTime createdAt;
