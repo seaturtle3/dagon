@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 public class FreeboardComments {
     @Id
     @Column(name = "comment_id", nullable = false)
-    private Long comment_id;
+    private Long commentId;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "fbid")
@@ -28,9 +28,9 @@ public class FreeboardComments {
     private Integer ulevel;
 
     @Column(name = "coment_contentt")
-    private String coment_contentt;
+    private String comentContentt;
 
     @Column(name = "modify_at")
-    private LocalDateTime modify_at;
+    private LocalDateTime modifiedAt;
 
 }

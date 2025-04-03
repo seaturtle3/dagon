@@ -15,7 +15,7 @@ public class Notice {
     private String nid;
 
     @Column(name = "admin_id", nullable = false, length = 50)
-    private String admin_id;
+    private String adminId;
 
     @Column(name = "nnickname", nullable = false, length = 50)
     private String nnickname;
@@ -27,10 +27,10 @@ public class Notice {
     private String ncontent;
 
     @Column(name = "created_at")
-    private LocalDateTime created_at;
+    private LocalDateTime createdAt;
 
     @Column(name = "modify_at")
-    private LocalDateTime modify_at;
+    private LocalDateTime modifiedAt;
 
     @Column(name = "views")
     private Integer views;

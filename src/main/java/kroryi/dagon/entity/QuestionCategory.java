@@ -18,7 +18,7 @@ public class QuestionCategory {
 
     @Enumerated
     @Column(name = "category_type")
-    private Category_type category_type;
+    private Category_type categoryType;
 
     public enum Category_type {
         admin, partner, normal_user

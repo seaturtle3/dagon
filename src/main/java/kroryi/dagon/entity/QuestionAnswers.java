@@ -21,10 +21,10 @@ public class QuestionAnswers {
     private String qacontent;
 
     @Column(name = "answer_id", nullable = false)
-    private Long answer_id;
+    private Long answerId;
 
     @Column(name = "created_at")
-    private LocalDateTime created_at;
+    private LocalDateTime createdAt;
 
 }
 

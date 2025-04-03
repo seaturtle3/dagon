@@ -1,9 +1,7 @@
 package kroryi.dagon.controller;
 
 import kroryi.dagon.DTO.UsersDTO;
-import kroryi.dagon.service.UserService;
 import kroryi.dagon.service.registerService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;

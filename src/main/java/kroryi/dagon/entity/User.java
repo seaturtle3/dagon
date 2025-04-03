@@ -21,14 +21,14 @@ public class User {
     private String uname;
     private String unickname;
     private String uemail;
-    private String uprofile_img;
+    private String uprofileImg;
     private int upoints;
     @Enumerated(EnumType.STRING)
     private Level ulevel;
     public enum Level {
         Silver,Gold,Platinum,Diamond
     }
-    private LocalDateTime ucreated_at;
+    private LocalDateTime ucreatedAt;
     private String uphone;
     @Enumerated(EnumType.STRING)
     private Role urole;

@@ -24,9 +24,9 @@ public class FAQ {
     private String answer;
 
     @Column(name = "created_at")
-    private LocalDateTime created_at;
+    private LocalDateTime createdAt;
 
     @Column(name = "modify_at")
-    private LocalDateTime modify_at;
+    private LocalDateTime modifiedAt;
 
 }
