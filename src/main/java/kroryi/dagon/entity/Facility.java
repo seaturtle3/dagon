@@ -1,28 +1,23 @@
 package kroryi.dagon.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 @Entity
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
-@Table(name = "facility", schema = "dagon")
+@Table(name = "facility")
 public class Facility {
-
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "faid", nullable = false)
-    private Long faid;
+    private Long id;
 
-    @Column(name = "faname", nullable = false)
+    @Column(name = "faname")
     private String faname;
 
     @Column(name = "faicon_url", length = 500)
-    private String faicon_url;
+    private String faiconUrl;
 
 }

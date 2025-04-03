@@ -10,36 +10,30 @@ import java.time.Instant;
 @Getter
 @Setter
 @Entity
-@Table(name = "fishing_report")
-public class FishingReport {
+@Table(name = "fishing_diary_comment")
+public class FishingDiaryComment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false)
+    @Column(name = "comment_id", nullable = false)
     private Long id;
 
     @Lob
-    @Column(name = "frcontent", nullable = false)
-    private String frcontent;
+    @Column(name = "comment_content", nullable = false)
+    private String commentContent;
 
     @ColumnDefault("CURRENT_TIMESTAMP")
     @Column(name = "create_at", nullable = false)
     private Instant createAt;
 
-    @Column(name = "fishing_at", nullable = false)
-    private Instant fishingAt;
-
     @Column(name = "modify_at")
     private Instant modifyAt;
 
-    @Column(name = "frtitle", nullable = false)
-    private String frtitle;
-
-    @ColumnDefault("0")
-    @Column(name = "views", nullable = false)
-    private Integer views;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "fdid", nullable = false)
+    private FishingDiary fdid;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "pid", nullable = false)
-    private kroryi.dagon.entity.User pid;
+    @JoinColumn(name = "uid", nullable = false)
+    private kroryi.dagon.entity.User uid;
 
 }

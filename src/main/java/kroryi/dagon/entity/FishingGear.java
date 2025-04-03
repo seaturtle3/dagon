@@ -1,28 +1,23 @@
 package kroryi.dagon.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 @Entity
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
-@Table(name = "fishing_gear", schema = "dagon")
+@Table(name = "fishing_gear")
 public class FishingGear {
-
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "gid", nullable = false)
-    private Long gid;
+    private Long id;
+
+    @Column(name = "gicon_url", length = 500)
+    private String giconUrl;
 
     @Column(name = "gname", nullable = false)
     private String gname;
-
-    @Column(name = "gicon_url", length = 500)
-    private String gicon_url;
 
 }
