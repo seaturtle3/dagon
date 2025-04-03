@@ -1,21 +1,21 @@
 package kroryi.dagon.controller;
 
 import kroryi.dagon.DTO.UsersDTO;
-import kroryi.dagon.service.registerService;
+import kroryi.dagon.service.RegisterService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 @Controller
 @RequestMapping("/api/users")
-public class registerController {
+public class RegisterController {
 
     @Autowired
-    private registerService registerService;
+    private RegisterService registerService;
 
     @GetMapping("/register")
     public String registrationPage() {
-        return "registration";  // registration.html 파일을 반환
+        return "user/registration";  // registration.html 파일을 반환
     }
 
 
@@ -25,9 +25,8 @@ public class registerController {
             String fullPhone = usersDTO.getFullPhone();
             usersDTO.setFullPhone(fullPhone);
 
-
             registerService.register(usersDTO);
-            return "/login";
+            return "user/login";
         } catch (Exception e) {
             return "회원가입 중 오류가 발생했습니다: " + e.getMessage();
         }
