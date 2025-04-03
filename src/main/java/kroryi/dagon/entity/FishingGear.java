@@ -23,6 +23,6 @@ public class FishingGear {
     private String gname;
 
     @Column(name = "gicon_url", length = 500)
-    private String gicon_url;
+    private String giconUrl;
 
 }
