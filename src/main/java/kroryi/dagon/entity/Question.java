@@ -24,7 +24,6 @@ public class Question {
     @Enumerated(EnumType.STRING)
     @Column(name = "qtype", nullable = false)
     private Qtype qtype;
-
     public enum Qtype {
         reservation, cancellation
     }
@@ -32,7 +31,6 @@ public class Question {
     @Enumerated(EnumType.STRING)
     @Column(name = "usertype", nullable = false)
     private Usertype usertype;
-
     public enum Usertype {
         user, partner, admin;
     }
