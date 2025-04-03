@@ -12,7 +12,7 @@ public class UserController {
 
     @GetMapping("/login")
     public String loginFrom() {
-        return "login";
+        return "user/login";
     }
 
     @PostMapping("/login")
@@ -27,7 +27,7 @@ public class UserController {
             return "index";
         } else {
             System.out.println("Login Failed");
-            return "login";
+            return "user/login";
         }
 
     }

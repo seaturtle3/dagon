@@ -1,0 +1,99 @@
+<!-- registration.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>회원가입</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f4f4f4; margin: 0; padding: 20px; }
+        .container { max-width: 400px; margin: auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        input, button { width: 100%; padding: 10px; margin: 8px 0; border-radius: 4px; border: 1px solid #ddd; }
+        button { background-color: #5cb85c; color: white; border: none; cursor: pointer; }
+        button:hover { background-color: #4cae4c; }
+        label { margin: 5px 0; display: block; }
+        .error { color: red; font-size: 0.9em; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2>회원가입</h2>
+    <form action="/api/users/register" method="POST" id="registrationForm" enctype="multipart/form-data">
+        <!-- User ID -->
+        <label for="uid">아이디</label>
+        <input type="text" id="uid" name="id" required>
+
+        <!-- Password -->
+        <label for="upw">비밀번호</label>
+        <input type="password" id="upw" name="pw" required>
+
+        <!-- Password Confirmation -->
+        <label for="confirmPw">비밀번호 확인</label>
+        <input type="password" id="confirmPw" required>
+
+        <!-- Name -->
+        <label for="uname">이름</label>
+        <input type="text" id="uname" name="name" required>
+
+
+        <!-- Email -->
+        <label for="uemail">이메일</label>
+        <input type="email" id="uemail" name="email" required>
+
+        <!-- Phone Number -->
+        <label for="uphone1">전화번호</label>
+        <div style="display: flex; gap: 5px;">
+            <input type="text" id="uphone1" name="phone1" maxlength="3" required>
+            <input type="text" id="uphone2" name="phone2" maxlength="4"  required>
+            <input type="text" id="uphone3" name="phone3" maxlength="4" required>
+        </div>
+
+        </select>
+
+        <!-- Submit Button -->
+        <button type="submit">회원가입</button>
+        <p id="errorMessage" class="error"></p>
+    </form>
+</div>
+
+<script>
+
+    // 회원가입 제약 넣어주는 스크립트
+    const form = document.getElementById('registrationForm');
+    form.addEventListener('submit', function(event) {
+        const password = document.getElementById('upw').value;
+        const confirmPw = document.getElementById('confirmPw').value;
+        const errorMessage = document.getElementById('errorMessage');
+        const uid = document.getElementById('uid').value;
+        const uemail = document.getElementById('uemail').value;
+
+
+
+
+
+
+        // 아이디 7자 이상 이어야함 넘어가게 만듬
+        if(uid.length < 7) {
+            event.preventDefault();  // 이게 없으면 바로 넘어감
+            errorMessage.textContent = '아이디가 7자 이상이어야 합니다.';
+
+        }
+
+
+
+
+        // 비밀번호랑 재확인이 같아야 넘가게 만듬
+        if(password.length < 8) {
+            event.preventDefault();  // 이게 없으면 바로 넘어감
+            errorMessage.textContent = '비밀번호가 8자 이상이어야 합니다.';
+
+        }else if(password !== confirmPw) {
+            event.preventDefault();
+            errorMessage.textContent = '비밀번호가 일치하지 않습니다.';
+        }
+
+    });
+</script>
+</body>
+</html>
+

@@ -25,11 +25,10 @@ public class User {
     private String uprofileImg;
     private int upoints;
 
-    @Enumerated
-    @Column(name = "ulevel", nullable = false)
-    private ulevel ulevel;
-    public enum ulevel {
-        Diamond, Gold, Platinum, Silver
+    @Enumerated(EnumType.STRING)
+    private Level ulevel;
+    public enum Level {
+        Silver,Gold,Platinum,Diamond
     }
 
     private LocalDateTime ucreatedAt;
@@ -40,6 +39,5 @@ public class User {
     public enum Role {
         Admin, Partner, Normal_user
     }
-
 
 }

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<head th:insert="fragments/common_head :: head">
+    <meta charset="UTF-8">
+    <title>로그인</title>
+</head>
+<body>
+<div th:replace="fragments/header :: header"></div>
+
+<!-- 로그인 폼 -->
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-4">
+            <div class="card shadow-lg p-4">
+                <h2 class="text-center mb-4">로그인</h2>
+                <form action="@{/login}" method="post">
+                    <div class="mb-3">
+                        <label for="uid" class="form-label">아이디</label>
+                        <input type="text" id="uid" name="uid" class="form-control" placeholder="ID" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="upw" class="form-label">비밀번호</label>
+                        <input type="password" id="upw" name="upw" class="form-control" placeholder="PW" required>
+                    </div>
+                    <div class="form-check mb-3">
+                        <input type="checkbox" id="remember_id" name="remember_id" class="form-check-input">
+                        <label for="remember_id" class="form-check-label">아이디 기억하기</label>
+                    </div>
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary">로그인</button>
+                        <a th:href="@{/api/users/register}" class="btn btn-outline-secondary">회원 가입</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+</body>
+</html>
