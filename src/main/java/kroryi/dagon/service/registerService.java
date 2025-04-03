@@ -39,7 +39,7 @@ public class registerService {
         user.setUphone(usersDTO.getFullPhone());
         user.setUcreatedAt(LocalDateTime.now());
         user.setUlevel(User.Level.Silver);
-        user.setUrole(User.Role.normal_user);
+        user.setUrole(User.Role.Normal_user);
 
         log.info("저장할 사용자: {}", user);
 

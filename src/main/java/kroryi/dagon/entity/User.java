@@ -23,17 +23,20 @@ public class User {
     private String uemail;
     private String uprofileImg;
     private int upoints;
+
     @Enumerated(EnumType.STRING)
     private Level ulevel;
     public enum Level {
         Silver,Gold,Platinum,Diamond
     }
+
     private LocalDateTime ucreatedAt;
     private String uphone;
+
     @Enumerated(EnumType.STRING)
     private Role urole;
     public enum Role {
-        admin, partner, normal_user
+        Admin, Partner, Normal_user
     }
 
 }
