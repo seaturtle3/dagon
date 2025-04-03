@@ -29,5 +29,9 @@ public class User {
     private String uphone;
     @Enumerated(EnumType.STRING)
     private Role urole;
+    public enum Role {
+        Admin, Partner, Normal_user
+    }
+
 
 }

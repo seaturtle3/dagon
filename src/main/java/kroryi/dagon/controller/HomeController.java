@@ -10,29 +10,29 @@ public class HomeController {
         return "index";
     }
 
-    @GetMapping("/menu1")
+    @GetMapping("/fishing_report")
     public String menu1() {
-        return "menu/menu1";
+        return "/menu/fishing_report";
     }
 
-    @GetMapping("/menu2")
+    @GetMapping("/sea_fishing")
     public String menu2() {
-        return "menu/menu2";
+        return "/menu/sea_fishing";
     }
 
-    @GetMapping("/menu3")
+    @GetMapping("/freshwater_fishing")
     public String menu3() {
-        return "menu/menu3";
+        return "/menu/freshwater_fishing";
     }
 
-    @GetMapping("/menu4")
+    @GetMapping("/community")
     public String menu4() {
-        return "menu/menu4";
+        return "/menu/community";
     }
 
-    @GetMapping("/menu5")
+    @GetMapping("/cs_center")
     public String menu5() {
-        return "menu/menu5";
+        return "/menu/cs_center";
     }
 
     @GetMapping("/my_page")
