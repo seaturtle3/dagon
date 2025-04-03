@@ -1,6 +1,5 @@
 package kroryi.dagon.entity;
 
-
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -23,16 +22,19 @@ public class User {
     private String uname;
     private String unickname;
     private String uemail;
-    private String uprofile_img;
+    private String uprofileImg;
     private int upoints;
-    private int ulevel;
-    private LocalDateTime ucreated_at;
+    @Enumerated(EnumType.STRING)
+    private Level ulevel;
+    public enum Level {
+        Silver,Gold,Platinum,Diamond
+    }
+    private LocalDateTime ucreatedAt;
     private String uphone;
     @Enumerated(EnumType.STRING)
     private Role urole;
     public enum Role {
-        Admin, Partner, Normal_user
+        admin, partner, normal_user
     }
-
 
 }
