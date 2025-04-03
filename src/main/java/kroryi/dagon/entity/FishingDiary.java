@@ -19,10 +19,10 @@ public class FishingDiary {
     @Column(name = "fdid", nullable = false)
     private Long fdid;
 
-    // 테이블 연결 필요 상품아이디(상품), 작성자아이디(유저), 낚시일자(예약)
-//    @ManyToOne
-//    @JoinColumn(name = "prod_id", nullable = false)
-//    private Product product;
+//     테이블 연결 필요 상품아이디(상품), 작성자아이디(유저), 낚시일자(예약)
+    @ManyToOne
+    @JoinColumn(name = "prod_id", nullable = false)
+    private Product product;
 
     @ManyToOne
     @JoinColumn(name = "uid", nullable = false)

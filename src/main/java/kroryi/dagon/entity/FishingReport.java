@@ -15,9 +15,9 @@ public class FishingReport {
     @Column(name = "frid", nullable = false)
     private Long frid;
 
-//    @ManyToOne
-//    @JoinColumn(name = "prod_id", nullable = false)
-//    private Product product;
+    @ManyToOne
+    @JoinColumn(name = "prod_id", nullable = false)
+    private Product product;
 
     @ManyToOne
     @JoinColumn(name = "pid", nullable = false)
