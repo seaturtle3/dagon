@@ -18,7 +18,7 @@ public class User {
     @Column(name = "uno", nullable = false)
     private Long id;
 
-    @Column(name = "uid")
+    @Column(name = "uid", unique = true, nullable = false)
     private String uid;
 
     @Column(name = "upw", nullable = false)
@@ -57,11 +57,11 @@ public class User {
     private LocalDateTime ucreateAt;
 
     public enum Level {
-        Bronze, Silver, Gold, Platinum
+        BRONZE, SILVER, GOLD, PLATINUM
     }
 
     public enum Role {
-        normal_user, admin
+        NORMAL_USER, ADMIN
     }
 
 }

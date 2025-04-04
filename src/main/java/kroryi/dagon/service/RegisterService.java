@@ -36,8 +36,8 @@ public class RegisterService {
         user.setUemail(usersDTO.getEmail());
         user.setUphone(usersDTO.getFullPhone());
         user.setUcreatedAt(LocalDateTime.now());
-        user.setUlevel(User.ulevel.Silver);
-        user.setUrole(User.Role.Normal_user);
+        user.setUlevel(User.Level.SILVER);
+        user.setUrole(User.Role.NORMAL_USER);
 
         log.info("저장할 사용자: {}", user);
 
