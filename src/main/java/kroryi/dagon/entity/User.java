@@ -18,7 +18,7 @@ public class User {
     @Column(name = "uno", nullable = false)
     private Long id;
 
-    @Column(name = "uid")
+    @Column(name = "uid", unique = true, nullable = false)
     private String uid;
 
     @Column(name = "upw", nullable = false)
@@ -61,7 +61,7 @@ public class User {
     }
 
     public enum Role {
-        ADMIN, PARTNER, NORMAL_USER
+        NORMAL_USER, ADMIN
     }
 
 }

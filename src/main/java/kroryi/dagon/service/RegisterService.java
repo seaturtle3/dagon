@@ -18,24 +18,22 @@ public class RegisterService {
     private UserRepository userRepository;
 
 
-
     public void register(UsersDTO usersDTO) throws Exception {
         log.info("회원가입 요청: {}", usersDTO);
 
 
-
-        if(userRepository.existsByUid(usersDTO.getId())){
+        if (userRepository.existsByUid(usersDTO.getUid())) {
             throw new Exception("이미 사용 중인 아아디입니다.");
         }
-        if (userRepository.existsByUemail(usersDTO.getEmail())){
+        if (userRepository.existsByUemail(usersDTO.getUemail())) {
             throw new Exception("이미 사용 중인 이메일입니다.");
         }
 
         User user = new User();
-        user.setUid(usersDTO.getId());
-        user.setUpw(usersDTO.getPw());
-        user.setUname(usersDTO.getName());
-        user.setUemail(usersDTO.getEmail());
+        user.setUid(usersDTO.getUid());
+        user.setUpw(usersDTO.getUpw());
+        user.setUname(usersDTO.getUname());
+        user.setUemail(usersDTO.getUemail());
         user.setUphone(usersDTO.getFullPhone());
         user.setUcreatedAt(LocalDateTime.now());
         user.setUlevel(User.Level.SILVER);

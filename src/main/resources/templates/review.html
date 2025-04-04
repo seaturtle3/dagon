@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>파트너 심사</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f4f4f4; margin: 0; padding: 20px; }
+        .container { max-width: 400px; margin: auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        input, button { width: 100%; padding: 10px; margin: 8px 0; border-radius: 4px; border: 1px solid #ddd; }
+        button { background-color: #5cb85c; color: white; border: none; cursor: pointer; }
+        button:hover { background-color: #4cae4c; }
+        label { margin: 5px 0; display: block; }
+        .error { color: red; font-size: 0.9em; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2>파트너 심사 신청</h2>
+    <form id="partnerForm">
+        <label for="pname">업체명</label>
+        <input type="text" id="pname" name="pname" required>
+
+        <label for="paddress">업장 주소</label>
+        <input type="text" id="paddress" name="paddress" required>
+
+        <label for="pceo">대표자 이름</label>
+        <input type="text" id="pceo" name="pceo" required>
+
+        <label for="plicense">사업자 등록 번호</label>
+        <input type="text" id="plicense" name="plicense" required>
+
+        <label for="pinfo">파트너 설명</label>
+        <input type="text" id="pinfo" name="pinfo" required>
+
+        <button type="submit">신청하기</button>
+        <p id="errorMessage" class="error"></p>
+    </form>
+</div>
+
+<script>
+    document.getElementById("partnerForm").addEventListener("submit", function(event) {
+        event.preventDefault();
+        const pname = document.getElementById("pname").value;
+        const paddress = document.getElementById("paddress").value;
+        const pceo = document.getElementById("pceo").value;
+        const plicense = document.getElementById("plicense").value;
+        const pinfo = document.getElementById("pinfo").value;
+        const errorMessage = document.getElementById("errorMessage");
+
+        if (!pname || !paddress || !pceo || !plicense || !pinfo) {
+            errorMessage.textContent = "모든 필드를 입력해주세요.";
+            return;
+        }
+
+        const partnerData = {
+            pname: pname,
+            paddress: paddress,
+            pceo: pceo,
+            plicense: plicense,
+            pinfo: pinfo
+        };
+
+        fetch("http://localhost:9090/api/partners/review", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(partnerData)
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("서버 오류");
+                }
+                return response.text();
+            })
+            .then(result => {
+                alert("신청이 완료되었습니다: " + result);
+            })
+            .catch(error => {
+                errorMessage.textContent = "신청 중 오류가 발생했습니다.";
+                console.error("Error:", error);
+            });
+    });
+</script>
+</body>
+</html>
