@@ -15,14 +15,14 @@ public class FreeBoard {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "fbid", nullable = false)
-    private Long id;
+    private Long fbid;
 
-    @Column(name = "fbtitle", nullable = false, length = 50)
-    private String fbtitle;
+    @Column(name = "fb_title", nullable = false, length = 50)
+    private String fbTitle;
 
     @Lob
-    @Column(name = "fbcontent", nullable = false)
-    private String fbcontent;
+    @Column(name = "fb_content", nullable = false)
+    private String fbContent;
 
     @ColumnDefault("CURRENT_TIMESTAMP")
     @Column(name = "created_at")

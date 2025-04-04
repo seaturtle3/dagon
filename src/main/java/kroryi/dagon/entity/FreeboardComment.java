@@ -14,16 +14,16 @@ public class FreeboardComment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "comment_id", nullable = false)
-    private Long commentid;
+    private Long commentId;
 
     @Column(name = "uid", nullable = false)
     private Long uid;
 
     @Column(name = "level", nullable = false)
-    private Integer ulevel;
+    private Integer level;
 
-    @Column(name = "unickname", nullable = false, length = 50)
-    private String unickname;
+    @Column(name = "user_nickname", nullable = false, length = 50)
+    private String userNickname;
 
     @Column(name = "coment_contentt")
     private String comentContentt;
