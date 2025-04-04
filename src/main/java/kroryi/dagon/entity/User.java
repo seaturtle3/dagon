@@ -57,11 +57,11 @@ public class User {
     private LocalDateTime ucreateAt;
 
     public enum Level {
-        Bronze, Silver, Gold, Platinum
+        BRONZE, SILVER, GOLD, PLATINUM
     }
 
     public enum Role {
-        normal_user, admin
+        ADMIN, PARTNER, NORMAL_USER
     }
 
 }
