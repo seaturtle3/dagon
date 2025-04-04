@@ -14,10 +14,10 @@ import java.time.Instant;
 public class FishingDiaryImg {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "fdimg_id", nullable = false)
+    @Column(name = "fd_img_id", nullable = false)
     private Long id;
 
-    @Column(name = "fdimg_url", nullable = false, length = 512)
+    @Column(name = "fd_img_url", nullable = false, length = 512)
     private String fdimgUrl;
 
     @ColumnDefault("CURRENT_TIMESTAMP")

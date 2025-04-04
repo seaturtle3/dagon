@@ -15,25 +15,27 @@ public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "prod_id", nullable = false)
-    private Long id;
+    private Long prodId;
 
+    @Column(name = "prod_name", nullable = false)
+    private ProdRegion prodName;  // 지역 (ENUM)
 
     @Enumerated(EnumType.STRING)
     @Column(name = "prod_region", nullable = false)
     private ProdRegion prodRegion;  // 지역 (ENUM)
 
     public enum ProdRegion {
-        seoul("서울"),
-        busan("부산"),
-        daegu("대구"),
-        incheon("인천"),
-        gwangju("광주"),
-        daejeon("대전"),
-        ulsan("울산"),
-        sejong("세종"),
-        gyeonggi("경기도"),
-        gangwon("강원도"),
-        chungcheongbuk("충청북도"),
+        SEOUL("서울"),
+        BUSAN("부산"),
+        DEAGU("대구"),
+        INCHEON("인천"),
+        GWWANGJU("광주"),
+        DEAGEON("대전"),
+        ULSSAN("울산"),
+        SEJONG("세종"),
+        GYEONGGI("경기도"),
+        GANGWON("강원도"),
+        CHUNGBUK("충청북도"),
         chungcheongnam("충청남도"),
         jeollabuk("전라북도"),
         jeollanam("전라남도"),
@@ -121,8 +123,13 @@ public class Product {
 
 
 
-
     //
+
+    @Column(name = "pname")
+    private Integer pname;
+
+    @Column(name = "user_phone")
+    private String uPhone;
 
     @Column(name = "max_person")
     private Integer maxPerson;
@@ -136,17 +143,8 @@ public class Product {
     @Column(name = "created_at")
     private Instant createdAt;
 
-    @Column(name = "pname")
-    private String pname;
-
     @Column(name = "prod_address")
     private String prodAddress;
-
-    @Column(name = "prod_name")
-    private String prodName;
-
-    @Column(name = "uphone")
-    private String uphone;
 
     @Lob
     @Column(name = "prod_description")
@@ -162,7 +160,20 @@ public class Product {
 
 
     public enum Level {
-        Bronze, Silver, Gold, Platinum
-    }
+        SILVER("실버"),
+        GOLD("골드"),
+        PLATINUM("플래티넘"),
+        DIAMOND("다이아몬드");
 
+        private final String korean;
+
+        Level(String koreanName) {
+            this.korean = koreanName;
+        }
+
+        public String getKorean() {
+            return korean;
+        }
+
+    }
 }

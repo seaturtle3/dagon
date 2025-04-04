@@ -14,7 +14,7 @@ public class QuestionAnswer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "qaid", nullable = false)
-    private Long id;
+    private Long qaid;
 
     @Column(name = "answer_id")
     private Long answerId;
@@ -24,10 +24,6 @@ public class QuestionAnswer {
 
     @Column(name = "qacontent", nullable = false)
     private String qacontent;
-
-    @Column(name = "qid_qid")
-    private Long qidQid;
-
 
 
     @ManyToOne(fetch = FetchType.LAZY)

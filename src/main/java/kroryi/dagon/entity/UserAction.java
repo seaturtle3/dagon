@@ -13,7 +13,7 @@ public class UserAction {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "uaid", nullable = false)
-    private Long id;
+    private Long uaid;
 
 
 
@@ -36,6 +36,6 @@ public class UserAction {
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "board_id", nullable = false, referencedColumnName = "uid")
-    private FishingDiary board;
+    private FishingDiary boardId;
 
 }

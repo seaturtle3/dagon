@@ -19,20 +19,20 @@ public class PartnerApplication {
     private Long id;
 
     @Column(name = "pname", nullable = false, length = 50)
-    private String pname;
+    private String pName;
 
-    @Column(name = "p_address", nullable = false)
-    private String paddress;
+    @Column(name = "paddress", nullable = false)
+    private String pAddress;
 
     @Column(name = "pceo", length = 50)
-    private String pceo;
+    private String pCeo;
 
     @Lob
     @Column(name = "pinfo")
-    private String pinfo;
+    private String pInfo;
 
     @Column(name = "plicense", length = 30)
-    private String plicense;
+    private String pLicense;
 
     @Column(columnDefinition = "TINYTEXT", nullable = false)
     private String paStatus;

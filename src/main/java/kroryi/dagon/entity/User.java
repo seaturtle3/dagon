@@ -16,7 +16,7 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "uno", nullable = false)
-    private Long id;
+    private Long uno;
 
     @Column(name = "uid")
     private String uid;
@@ -27,41 +27,63 @@ public class User {
     @Column(name = "uname")
     private String uname;
 
-    @Column(name = "unickname")
-    private String unickname;
+    @Column(name = "user_nickname")
+    private String userNickname;
 
-    @Column(name = "uemail", nullable = false)
-    private String uemail;
+    @Column(name = "user_email", nullable = false)
+    private String userEmail;
 
-    @Column(name = "uprofile_img")
-    private String uprofileImg;
+    @Column(name = "user_profile_img")
+    private String userProfileImg;
 
-    @Column(name = "upoints", nullable = false)
-    private Integer upoints;
+    @Column(name = "user_points", nullable = false)
+    private Integer userPoints;
 
     @Enumerated(EnumType.STRING) // Enum을 문자열로 저장
-    private Level ulevel;
+    private Level level;
 
     @Enumerated(EnumType.STRING)
-    private Role urole;
+    private Role role;
+
 
     @ColumnDefault("CURRENT_TIMESTAMP")
-    @Column(name = "ucreated_at", nullable = false)
-    private LocalDateTime ucreatedAt;
+    @Column(name = "user_created_at", nullable = false)
+    private LocalDateTime userCreatedAt;
 
-    @Column(name = "uphone", nullable = false)
-    private String uphone;
-
-
-    @Column(name = "ucreate_at")
-    private LocalDateTime ucreateAt;
+    @Column(name = "user_phone", nullable = false)
+    private String userPhone;
 
     public enum Level {
-        Bronze, Silver, Gold, Platinum
+        SILVER("실버"),
+        GOLD("골드"),
+        PLATINUM("플래티넘"),
+        DIAMOND("다이아몬드");
+
+        private final String korean;
+
+        Level(String koreanName) {
+            this.korean = koreanName;
+        }
+
+        public String getKorean() {
+            return korean;
+        }
     }
 
     public enum Role {
-        normal_user, admin
+        USER("사용자"),
+        PARTNER("파트너"),
+        ADMIN("관리자");
+
+        private final String korean;
+
+        Role(String koreanName) {
+            this.korean = koreanName;
+        }
+
+        public String getKorean() {
+            return korean;
+        }
     }
 
 }

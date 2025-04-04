@@ -15,9 +15,9 @@ public class Admin {
     private Long uid;
 
     @Column(name = "admin_id", nullable = false, length = 50)
-    private String adminId;
+    private String aid;
 
     @Column(name = "admin_pw", nullable = false)
-    private String adminPw;
+    private String apw;
 
 }

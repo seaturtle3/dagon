@@ -14,7 +14,10 @@ import lombok.Setter;
 public class ProductImg {
     @Id
     @Column(name = "prod_img_id", nullable = false)
-    private Long id;
+    private Long prodImgId;
+
+    @Column(name = "prod_id", nullable = false)
+    private Integer prodId;
 
     @Column(name = "prod_img_order", nullable = false)
     private Integer prodImgOrder;

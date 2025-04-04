@@ -14,7 +14,7 @@ public class Question {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "qid", nullable = false)
-    private Long id;
+    private Long qid;
 
 
     @Column(name = "qtype", nullable = false)
@@ -35,9 +35,12 @@ public class Question {
     @Column(name = "updated_at")
     private Instant updatedAt;
 
-    @Lob
-    @Column(name = "usertype", nullable = false)
-    private String usertype;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "user_type", nullable = false)
+    private Usertype userType;
+    public enum Usertype {
+        USERE, PARTNER, ADMIN;
+    }
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "qcid", nullable = false)

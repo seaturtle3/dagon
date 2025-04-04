@@ -14,18 +14,17 @@ import java.time.Instant;
 public class FreeBoardImage {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "fdimg_id", nullable = false)
-    private Long id;
+    @Column(name = "fb_img_id", nullable = false)
+    private Long fbImgId;
 
-
-    @Column(name = "fdimg_url", nullable = false, length = 512)
-    private String fdimgUrl;
+    @Column(name = "fb_img_url", nullable = false, length = 512)
+    private String fbImgUrl;
 
     @ColumnDefault("CURRENT_TIMESTAMP")
     @Column(name = "uploaded_at", nullable = false)
     private Instant uploadedAt;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "fdid", nullable = false)
-    private kroryi.dagon.entity.Product fdid;
+    @JoinColumn(name = "fbid", nullable = false)
+    private kroryi.dagon.entity.Product fbid;
 }
