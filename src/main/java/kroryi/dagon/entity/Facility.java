@@ -12,12 +12,12 @@ public class Facility {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "faid", nullable = false)
-    private Long id;
+    private Long faid;
 
     @Column(name = "faname")
     private String faname;
 
-    @Column(name = "faicon_url", length = 500)
-    private String faiconUrl;
+    @Column(name = "fa_icon_url", length = 500)
+    private String faIconUrl;
 
 }

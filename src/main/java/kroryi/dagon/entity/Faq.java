@@ -13,8 +13,8 @@ import java.time.Instant;
 public class Faq {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "faquid", nullable = false)
-    private Long id;
+    @Column(name = "faq_uid", nullable = false)
+    private Long faqUid;
 
     @Column(name = "aid", nullable = false)
     private Long aid;
