@@ -14,19 +14,28 @@ public class UserService {
 
     private final UserRepository userRepository;
 
-    public boolean login(String uid, String upw) {
+    public UsersDTO login(String uid, String upw) {
         System.out.println("로그인 시도: " + uid);
 
         Optional<User> optionalUser = userRepository.findByUid(uid);
 
         if (optionalUser.isEmpty()) {
             System.out.println("사용자를 찾을 수 없습니다");
-            return false;
+            return null;
         }
+
         User user = optionalUser.get();
-        return user.getUpw().equals(upw);
+
+        // 비밀번호 검증
+        if (user.getUpw().equals(upw)) {
+            Long uno = user.getId();    // 유저 번호 가져오기
+            String uname = user.getUname();  // 유저 이름 가져오기
+            System.out.println("로그인 성공: " + uname + " (유저 번호: " + uno + ")");
+            // 로그인 성공 시 DTO로 변환하여 반환
+            return new UsersDTO(user);
+        }
+
+        System.out.println("비밀번호가 일치하지 않습니다");
+        return null;
     }
-
-
-
 }
