@@ -15,10 +15,10 @@ public class FishingDiaryImg {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "fd_img_id", nullable = false)
-    private Long id;
+    private Long fdImgId;
 
     @Column(name = "fd_img_url", nullable = false, length = 512)
-    private String fdimgUrl;
+    private String fdImgUrl;
 
     @ColumnDefault("CURRENT_TIMESTAMP")
     @Column(name = "uploaded_at", nullable = false)

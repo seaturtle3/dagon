@@ -33,7 +33,7 @@ public class QuestionCategory {
         }
     }
 
-    @Column(name = "qcname", nullable = false)
-    private String qcname;
+    @Column(name = "qc_name", nullable = false)
+    private String qcName;
 
 }

@@ -11,13 +11,13 @@ import lombok.Setter;
 public class Fishspecy {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "fiid", nullable = false)
-    private Long id;
+    @Column(name = "fsid", nullable = false)
+    private Long fsid;
 
-    @Column(name = "finame")
-    private String finame;
+    @Column(name = "fsname")
+    private String fsname;
 
-    @Column(name = "fiicon_url", length = 500)
-    private String fiiconUrl;
+    @Column(name = "fs_icon_url", length = 500)
+    private String fsIconUrl;
 
 }

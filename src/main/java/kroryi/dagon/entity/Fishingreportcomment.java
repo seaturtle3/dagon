@@ -14,18 +14,18 @@ import java.time.Instant;
 public class Fishingreportcomment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "comment_id", nullable = false)
-    private Long id;
+    @Column(name = "fr_comment_id", nullable = false)
+    private Long frCommentId;
 
 
 
     @Lob
-    @Column(name = "coment_content", nullable = false)
-    private String comentContent;
+    @Column(name = "fr_comment_content", nullable = false)
+    private String frCommentContent;
 
     @ColumnDefault("CURRENT_TIMESTAMP")
-    @Column(name = "create_at", nullable = false)
-    private Instant createAt;
+    @Column(name = "created_at", nullable = false)
+    private Instant createdAt;
 
     @Column(name = "modify_at")
     private Instant modifyAt;

@@ -22,8 +22,8 @@ public class QuestionAnswer {
     @Column(name = "created_at")
     private Instant createdAt;
 
-    @Column(name = "qacontent", nullable = false)
-    private String qacontent;
+    @Column(name = "qa_content", nullable = false)
+    private String qaContent;
 
 
     @ManyToOne(fetch = FetchType.LAZY)

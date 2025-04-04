@@ -26,11 +26,11 @@ public class Question {
     @Column(name = "created_at")
     private Instant createdAt;
 
-    @Column(name = "qcontent", nullable = false)
-    private String qcontent;
+    @Column(name = "q_content", nullable = false)
+    private String qContent;
 
-    @Column(name = "qtitle", nullable = false)
-    private String qtitle;
+    @Column(name = "q_title", nullable = false)
+    private String qTitle;
 
     @Column(name = "updated_at")
     private Instant updatedAt;

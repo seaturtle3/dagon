@@ -11,13 +11,13 @@ import lombok.Setter;
 public class FishingGear {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "gid", nullable = false)
-    private Long id;
+    @Column(name = "fgid", nullable = false)
+    private Long fgid;
 
-    @Column(name = "gicon_url", length = 500)
-    private String giconUrl;
+    @Column(name = "fg_icon_url", length = 500)
+    private String fgIconUrl;
 
-    @Column(name = "gname", nullable = false)
-    private String gname;
+    @Column(name = "fgname", nullable = false)
+    private String fgname;
 
 }

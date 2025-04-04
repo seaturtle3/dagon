@@ -14,16 +14,16 @@ import java.time.Instant;
 public class FishingReport {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false)
-    private Long id;
+    @Column(name = "frid", nullable = false)
+    private Long frid;
 
     @Lob
-    @Column(name = "frcontent", nullable = false)
-    private String frcontent;
+    @Column(name = "fr_content", nullable = false)
+    private String frContent;
 
     @ColumnDefault("CURRENT_TIMESTAMP")
-    @Column(name = "create_at", nullable = false)
-    private Instant createAt;
+    @Column(name = "created_at", nullable = false)
+    private Instant createdAt;
 
     @Column(name = "fishing_at", nullable = false)
     private Instant fishingAt;
@@ -31,8 +31,8 @@ public class FishingReport {
     @Column(name = "modify_at")
     private Instant modifyAt;
 
-    @Column(name = "frtitle", nullable = false)
-    private String frtitle;
+    @Column(name = "fr_title", nullable = false)
+    private String frTitle;
 
     @ColumnDefault("0")
     @Column(name = "views", nullable = false)

@@ -15,18 +15,18 @@ public class FishingDiary {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "fdid", nullable = false)
-    private Long id;
+    private Long fdid;
 
     @ColumnDefault("CURRENT_TIMESTAMP")
     @Column(name = "create_at", nullable = false)
     private Instant createAt;
 
     @Lob
-    @Column(name = "fdcontent", nullable = false)
-    private String fdcontent;
+    @Column(name = "fd_content", nullable = false)
+    private String fdContent;
 
-    @Column(name = "fdtitle", nullable = false, length = 50)
-    private String fdtitle;
+    @Column(name = "fd_title", nullable = false, length = 50)
+    private String fdTitle;
 
     @Column(name = "fishing_at", nullable = false)
     private Instant fishingAt;

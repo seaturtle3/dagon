@@ -15,17 +15,17 @@ import java.time.LocalDateTime;
 public class FishingReportImg {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "frimg_id", nullable = false)
-    private Long id;
+    @Column(name = "fr_img_id", nullable = false)
+    private Long frImgId;
 
 //    @ManyToOne(fetch = FetchType.LAZY)
 //    @JoinColumn(name = "frid")
 //    private User frid;
 
-    @Column(name = "frimg_url", nullable = false, length = 512)
-    private String frimgUrl;
+    @Column(name = "fr_img_url", nullable = false, length = 512)
+    private String frImgUrl;
 
-    @Column(nullable = false, updatable = false)
+    @Column(name = "uploaded_at", nullable = false, updatable = false)
     private LocalDateTime uploadedAt;
 
 }
