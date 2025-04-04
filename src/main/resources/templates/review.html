@@ -33,7 +33,12 @@
         <label for="pinfo">파트너 설명</label>
         <input type="text" id="pinfo" name="pinfo" required>
 
+        <input type="hidden" id="uno" name="uno" value="${user.uno}">
+        <input type="hidden" id="uname" name="uname" value="${user.uname}">
+
         <button type="submit">신청하기</button>
+
+
         <p id="errorMessage" class="error"></p>
     </form>
 </div>
@@ -41,6 +46,7 @@
 <script>
     document.getElementById("partnerForm").addEventListener("submit", function(event) {
         event.preventDefault();
+
         const pname = document.getElementById("pname").value;
         const paddress = document.getElementById("paddress").value;
         const pceo = document.getElementById("pceo").value;
@@ -48,6 +54,7 @@
         const pinfo = document.getElementById("pinfo").value;
         const errorMessage = document.getElementById("errorMessage");
 
+        // 입력 유효성 검사
         if (!pname || !paddress || !pceo || !plicense || !pinfo) {
             errorMessage.textContent = "모든 필드를 입력해주세요.";
             return;
@@ -69,19 +76,22 @@
             body: JSON.stringify(partnerData)
         })
             .then(response => {
+                console.log("응답 상태 코드:", response.status);
                 if (!response.ok) {
-                    throw new Error("서버 오류");
+                    throw new Error("서버 오류: " + response.status);
                 }
                 return response.text();
             })
             .then(result => {
-                alert("신청이 완료되었습니다: " + result);
+                alert(result); // 예: "신청이 완료되었습니다."
+                window.location.href = "/login"; // 메인 페이지로 이동
             })
             .catch(error => {
                 errorMessage.textContent = "신청 중 오류가 발생했습니다.";
                 console.error("Error:", error);
             });
     });
+
 </script>
 </body>
 </html>

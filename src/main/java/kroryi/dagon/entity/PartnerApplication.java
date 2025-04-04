@@ -3,14 +3,16 @@ package kroryi.dagon.entity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.CreationTimestamp;
 
-import java.time.Instant;
 import java.time.LocalDateTime;
 
 @Getter
 @Setter
 @Entity
+@ToString
 @Table(name = "partner_applications")
 public class PartnerApplication {
     @Id
@@ -21,7 +23,7 @@ public class PartnerApplication {
     @Column(name = "pname", nullable = false, length = 50)
     private String pname;
 
-    @Column(name = "p_address", nullable = false)
+    @Column(name = "paddress", nullable = false)
     private String paddress;
 
     @Column(name = "pceo", length = 50)
@@ -37,8 +39,8 @@ public class PartnerApplication {
     @Column(columnDefinition = "TINYTEXT", nullable = false)
     private String paStatus;
 
-    @ColumnDefault("CURRENT_TIMESTAMP")
-    @Column(name = "pa_created_at", nullable = false)
+    @CreationTimestamp
+    @Column(nullable = false, updatable = false)
     private LocalDateTime paCreatedAt;
 
     @Column(name = "pa_reviewed_at")
@@ -55,8 +57,11 @@ public class PartnerApplication {
         }
     }
 
+
+
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "uno", nullable = false)
     private kroryi.dagon.entity.User uno;
+
 
 }
