@@ -39,4 +39,15 @@ public class HomeController {
     public String myPage() {
         return "user/my_page";
     }
+
+    @GetMapping("/notice")
+    public String notice() {
+        return "sub_menu/notice";
+    }
+
+    @GetMapping("/reservation")
+    public String reservation() {
+        return "sub_menu/reservation";
+    }
+
 }

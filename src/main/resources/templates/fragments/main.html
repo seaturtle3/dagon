@@ -15,11 +15,18 @@
             <div class="col-md-6">
                 <div class="card shadow-sm ">
                     <div class="card-header bg-light text-dark">
-                        <h4>예약</h4>
+                        <h4>실시간 선상낚시 예약</h4>
                     </div>
-                    <div class="card-body d-flex justify-content-center align-items-center"
+                    <div class="card-body d-flex flex-column justify-content-center align-items-start gap-2"
                          style="height: 40vh;">
-                        <p>예약 시스템 UI</p>
+                        <div class="d-flex flex-column gap-2 ms-5">
+                            <div>날짜 : </div>
+                            <div>인원 : </div>
+                            <div>지역 : </div>
+                            <div>어종 : </div>
+                        </div>
+                        <div class="align-self-center btn btn-light">세부항목 변경</div>
+                        <div class="align-self-center btn btn-primary">검색하기</div>
                     </div>
                 </div>
             </div>
@@ -28,9 +35,10 @@
                     <div class="card-header bg-light text-dark">
                         <h4>공지사항</h4>
                     </div>
-                    <div class="card-body d-flex justify-content-center align-items-center"
+                    <div class="card-body d-flex flex-column justify-content-center align-items-center"
                          style="height: 40vh;">
-                        <p>공지사항 내용</p>
+                        <p>공지사항</p>
+                        <a th:href="@{/notice}"><div>공지사항 내용</div></a>
                     </div>
                 </div>
             </div>
