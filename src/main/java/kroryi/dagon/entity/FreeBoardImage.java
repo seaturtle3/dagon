@@ -10,12 +10,13 @@ import java.time.Instant;
 @Getter
 @Setter
 @Entity
-@Table(name = "fishing_diary_img")
-public class FishingDiaryImg {
+@Table(name = "free_board_image")
+public class FreeBoardImage {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "fdimg_id", nullable = false)
     private Long id;
+
 
     @Column(name = "fdimg_url", nullable = false, length = 512)
     private String fdimgUrl;
@@ -24,8 +25,7 @@ public class FishingDiaryImg {
     @Column(name = "uploaded_at", nullable = false)
     private Instant uploadedAt;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "fdid")
-    private FishingDiary fdid;
-
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "fdid", nullable = false)
+    private kroryi.dagon.entity.Product fdid;
 }

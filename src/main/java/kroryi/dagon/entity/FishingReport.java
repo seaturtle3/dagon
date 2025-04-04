@@ -3,7 +3,9 @@ package kroryi.dagon.entity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import java.time.LocalDateTime;
+import org.hibernate.annotations.ColumnDefault;
+
+import java.time.Instant;
 
 @Getter
 @Setter
@@ -12,32 +14,32 @@ import java.time.LocalDateTime;
 public class FishingReport {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "frid", nullable = false)
-    private Long frid;
+    @Column(name = "id", nullable = false)
+    private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "prod_id", nullable = false)
-    private Product product;
+    @Lob
+    @Column(name = "frcontent", nullable = false)
+    private String frcontent;
 
-    @ManyToOne
-    @JoinColumn(name = "pid", nullable = false)
-    private User user;
-
-    @Column(name = "frtitle", length = 255, nullable = false)
-    private String title;
-
-    @Column(name = "frcontent", columnDefinition = "TEXT", nullable = false)
-    private String content;
+    @ColumnDefault("CURRENT_TIMESTAMP")
+    @Column(name = "create_at", nullable = false)
+    private Instant createAt;
 
     @Column(name = "fishing_at", nullable = false)
-    private LocalDateTime fishingAt;
+    private Instant fishingAt;
 
-    @Column(name = "create_at", nullable = false, updatable = false, columnDefinition = "DATETIME DEFAULT CURRENT_TIMESTAMP")
-    private LocalDateTime createdAt;
+    @Column(name = "modify_at")
+    private Instant modifyAt;
 
-    @Column(name = "modify_at", columnDefinition = "DATETIME DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP")
-    private LocalDateTime modifiedAt;
+    @Column(name = "frtitle", nullable = false)
+    private String frtitle;
 
-    @Column(name = "views", nullable = false, columnDefinition = "INT DEFAULT 0")
-    private int views;
+    @ColumnDefault("0")
+    @Column(name = "views", nullable = false)
+    private Integer views;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "pid", nullable = false)
+    private kroryi.dagon.entity.User pid;
+
 }

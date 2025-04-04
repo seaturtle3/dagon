@@ -10,16 +10,18 @@ import java.time.Instant;
 @Getter
 @Setter
 @Entity
-@Table(name = "fishing_diary_comment")
-public class FishingDiaryComment {
+@Table(name = "fishingreportcomments")
+public class Fishingreportcomment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "comment_id", nullable = false)
     private Long id;
 
+
+
     @Lob
-    @Column(name = "comment_content", nullable = false)
-    private String commentContent;
+    @Column(name = "coment_content", nullable = false)
+    private String comentContent;
 
     @ColumnDefault("CURRENT_TIMESTAMP")
     @Column(name = "create_at", nullable = false)
@@ -29,8 +31,8 @@ public class FishingDiaryComment {
     private Instant modifyAt;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "fdid", nullable = false)
-    private FishingDiary fdid;
+    @JoinColumn(name = "frid", nullable = false)
+    private FishingReport frid;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "uid", nullable = false)

@@ -2,51 +2,44 @@ package kroryi.dagon.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.ColumnDefault;
 
-import java.time.LocalDateTime;
-import java.util.List;
+import java.time.Instant;
 
-@Entity
 @Getter
 @Setter
-@NoArgsConstructor
+@Entity
 @Table(name = "fishing_diary")
 public class FishingDiary {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "fdid", nullable = false)
-    private Long fdid;
+    private Long id;
 
-//     테이블 연결 필요 상품아이디(상품), 작성자아이디(유저), 낚시일자(예약)
-    @ManyToOne
-    @JoinColumn(name = "prod_id", nullable = false)
-    private Product product;
+    @ColumnDefault("CURRENT_TIMESTAMP")
+    @Column(name = "create_at", nullable = false)
+    private Instant createAt;
 
-    @ManyToOne
-    @JoinColumn(name = "uid", nullable = false)
-    private User uid;
-
-    @Column(name = "fishing_at", nullable = false)
-    private LocalDateTime fishingAt;
+    @Lob
+    @Column(name = "fdcontent", nullable = false)
+    private String fdcontent;
 
     @Column(name = "fdtitle", nullable = false, length = 50)
     private String fdtitle;
 
-    @Column(name = "fdcontent", nullable = false, columnDefinition = "TEXT")
-    private String fdcontent;
+    @Column(name = "fishing_at", nullable = false)
+    private Instant fishingAt;
 
-    @Column(name = "create_at", nullable = false, columnDefinition = "DATETIME DEFAULT CURRENT_TIMESTAMP")
-    private LocalDateTime createdAt;
+    @Column(name = "modify_at")
+    private Instant modifyAt;
 
-    @Column(name = "modify_at", columnDefinition = "DATETIME DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP")
-    private LocalDateTime modifiedAt;
-
-    @Column(name = "views", nullable = false, columnDefinition = "INT DEFAULT 0")
+    @ColumnDefault("0")
+    @Column(name = "views", nullable = false)
     private Integer views;
 
-    @OneToMany(mappedBy = "fishingDiary", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<FishingDiaryImg> images;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "uid", nullable = false)
+    private kroryi.dagon.entity.User uid;
 
 }
