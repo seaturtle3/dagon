@@ -1,53 +1,45 @@
 package kroryi.dagon.entity;
 
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
-import java.time.LocalDateTime;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.time.Instant;
 
+@Getter
+@Setter
 @Entity
-@Data
+@Table(name = "question")
 public class Question {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "qid", nullable = false)
-    private Long qid;
+    private Long id;
+
+
+    @Column(name = "qtype", nullable = false)
+    private String qtype;
 
     @Column(name = "uid", nullable = false)
     private Long uid;
 
-    @ManyToOne
-    @JoinColumn(name = "qcid")
-    private QuestionCategory questionCategory;
-
-    @Enumerated(EnumType.STRING)
-    @Column(name = "qtype", nullable = false)
-    private Qtype qtype;
-
-    public enum Qtype {
-        reservation, cancellation
-    }
-
-    @Enumerated(EnumType.STRING)
-    @Column(name = "usertype", nullable = false)
-    private Usertype usertype;
-
-    public enum Usertype {
-        user, partner, admin;
-    }
-
-    @Column(name = "qtitle", nullable = false)
-    private String qtitle;
+    @Column(name = "created_at")
+    private Instant createdAt;
 
     @Column(name = "qcontent", nullable = false)
     private String qcontent;
 
-    @Column(name = "created_at")
-    private LocalDateTime createdAt;
+    @Column(name = "qtitle", nullable = false)
+    private String qtitle;
 
     @Column(name = "updated_at")
-    private LocalDateTime updatedAt;
+    private Instant updatedAt;
 
+    @Lob
+    @Column(name = "usertype", nullable = false)
+    private String usertype;
 
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "qcid", nullable = false)
+    private kroryi.dagon.entity.QuestionCategory qcid;
 }

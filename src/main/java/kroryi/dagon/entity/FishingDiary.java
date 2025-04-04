@@ -10,20 +10,23 @@ import java.time.Instant;
 @Getter
 @Setter
 @Entity
-@Table(name = "fishing_report")
-public class FishingReport {
+@Table(name = "fishing_diary")
+public class FishingDiary {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false)
+    @Column(name = "fdid", nullable = false)
     private Long id;
-
-    @Lob
-    @Column(name = "frcontent", nullable = false)
-    private String frcontent;
 
     @ColumnDefault("CURRENT_TIMESTAMP")
     @Column(name = "create_at", nullable = false)
     private Instant createAt;
+
+    @Lob
+    @Column(name = "fdcontent", nullable = false)
+    private String fdcontent;
+
+    @Column(name = "fdtitle", nullable = false, length = 50)
+    private String fdtitle;
 
     @Column(name = "fishing_at", nullable = false)
     private Instant fishingAt;
@@ -31,15 +34,12 @@ public class FishingReport {
     @Column(name = "modify_at")
     private Instant modifyAt;
 
-    @Column(name = "frtitle", nullable = false)
-    private String frtitle;
-
     @ColumnDefault("0")
     @Column(name = "views", nullable = false)
     private Integer views;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "pid", nullable = false)
-    private kroryi.dagon.entity.User pid;
+    @JoinColumn(name = "uid", nullable = false)
+    private kroryi.dagon.entity.User uid;
 
 }

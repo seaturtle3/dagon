@@ -1,36 +1,38 @@
 package kroryi.dagon.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import lombok.Data;
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 
+@Getter
+@Setter
 @Entity
-@Data
+@Table(name = "notice")
 public class Notice {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "nid", nullable = false, length = 50)
     private String nid;
 
     @Column(name = "admin_id", nullable = false, length = 50)
     private String adminId;
 
+    @Column(name = "created_at")
+    private Instant createdAt;
+
+    @Column(name = "modify_at")
+    private Instant modifyAt;
+
+    @Column(name = "ncontent")
+    private String ncontent;
+
     @Column(name = "nnickname", nullable = false, length = 50)
     private String nnickname;
 
     @Column(name = "ntitle", nullable = false)
     private String ntitle;
-
-    @Column(name = "ncontent")
-    private String ncontent;
-
-    @Column(name = "created_at")
-    private LocalDateTime createdAt;
-
-    @Column(name = "modify_at")
-    private LocalDateTime modifiedAt;
 
     @Column(name = "views")
     private Integer views;
