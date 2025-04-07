@@ -21,7 +21,7 @@ public class Reservation {
     private Long reservationId;
 
     @Column(name = "uid", nullable = false)
-    private String uid;
+    private Long uid;
 
 
     @Column(name = "prod_id", nullable = false)
