@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @Setter
 @Entity
 @Table(name = "partners")
-public class Partner {
+public class Partner extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -38,13 +38,8 @@ public class Partner {
     @Column(name = "license_img")
     private String licenseImg;
 
-    @ColumnDefault("CURRENT_TIMESTAMP")
-    @Column(name = "p_created_at", nullable = false)
-    private LocalDateTime pCreatedAt;
-
-
     @MapsId
     @OneToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "uno", nullable = false)
-    private User users;
+    private User user;
 }

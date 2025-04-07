@@ -5,14 +5,13 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
 
-import java.time.Instant;
 import java.time.LocalDateTime;
 
 @Getter
 @Setter
 @Entity
 @Table(name = "users")
-public class User {
+public class User extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -37,22 +36,21 @@ public class User {
     @Column(name = "profile_img")
     private String profileImg;
 
+    @ColumnDefault("0")
     @Column(name = "points", nullable = false)
     private Integer points;
 
     @Enumerated(EnumType.STRING) // Enum을 문자열로 저장
+    @Column(length = 10)
     private Level level;
 
     @Enumerated(EnumType.STRING)
     private Role role;
 
-
-    @ColumnDefault("CURRENT_TIMESTAMP")
-    @Column(name = "created_at", nullable = false)
-    private LocalDateTime createdAt;
-
     @Column(name = "phone", nullable = false)
     private String phone;
+
+
 
     public enum Level {
         SILVER("실버"),

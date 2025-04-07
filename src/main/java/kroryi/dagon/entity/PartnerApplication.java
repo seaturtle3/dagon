@@ -12,12 +12,12 @@ import java.time.LocalDateTime;
 @Setter
 @Entity
 @Table(name = "partner_applications")
-public class PartnerApplication {
+public class PartnerApplication extends BaseTimeEntity{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "paid", nullable = false)
-    private Long paid;
+    @Column(name = "pid", nullable = false)
+    private Long pid;
 
     @Column(name = "pname", nullable = false, length = 50)
     private String pname;
@@ -25,39 +25,53 @@ public class PartnerApplication {
     @Column(name = "p_address", nullable = false)
     private String pAddress;
 
-    @Column(name = "p_ceo", length = 50)
-    private String pCeo;
+    @Column(name = "ceo_name", length = 50)
+    private String ceoName;
 
     @Lob
     @Column(name = "p_info")
     private String pInfo;
 
-    @Column(name = "p_license", length = 30)
-    private String pLicense;
+    @Column(name = "license", length = 30)
+    private String license;
 
-    @Column(columnDefinition = "pa_status", nullable = false)
-    private String paStatus;
+    @Column(name = "status", nullable = false)
+    private String status;
 
-    @ColumnDefault("CURRENT_TIMESTAMP")
-    @Column(name = "pa_created_at", nullable = false)
-    private LocalDateTime paCreatedAt;
-
-    @Column(name = "pa_reviewed_at")
-    private LocalDateTime paReviewedAt;
+    // 심사처리 시각
+    @Column(name = "reviewed_at")
+    private LocalDateTime reviewedAt;
 
     @Lob
-    @Column(name = "pa_rejection_reason")
-    private String paRejectionReason;
+    @Column(name = "rejection_reason")
+    private String rejectionReason;
 
     @PrePersist
     protected void onCreate() {
-        if (this.paStatus == null) {
-            this.paStatus = "심사중";
+        if (this.status == null) {
+            this.status = ApplicationStatus.PENDING;
         }
     }
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "uno", nullable = false)
-    private User uno;
+    private User user;
+
+
+    public enum ApplicationStatus {
+        PENDING("심사중"),
+        APPROVED("승인됨"),
+        REJECTED("반려됨");
+
+        private final String label;
+
+        ApplicationStatus(String label) {
+            this.label = label;
+        }
+
+        public String getLabel() {
+            return label;
+        }
+    }
 
 }
