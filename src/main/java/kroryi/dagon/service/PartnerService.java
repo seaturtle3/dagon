@@ -23,6 +23,8 @@ public class PartnerService {
     private final PartnerRepository partnerApplicationRepository;
     private final UserRepository userRepository;
 
+
+    // 파트너 신청 적용
     public void partner(PartnerApplicationDTO dto) throws Exception {
         PartnerApplication application = new PartnerApplication();
 
@@ -31,13 +33,11 @@ public class PartnerService {
         application.setPceo(dto.getPceo());
         application.setPlicense(dto.getPlicense());
         application.setPinfo(dto.getPinfo());
-       application.setPaCreatedAt(LocalDateTime.now());
+        application.setPaCreatedAt(LocalDateTime.now());
 
-
-        // User 객체 설정 (ManyToOne)
         User user = userRepository.findById(dto.getUno())
                 .orElseThrow(() -> new Exception("사용자 정보를 찾을 수 없습니다."));
-        application.setUno(user);
+        application.setUser(user);
 
         partnerApplicationRepository.save(application);
     }

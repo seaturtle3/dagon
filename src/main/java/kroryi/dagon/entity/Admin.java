@@ -10,14 +10,13 @@ import lombok.Setter;
 @Table(name = "admin")
 public class Admin {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "uid", nullable = false)
-    private Long uid;
+    @Column(name = "aid", nullable = false, length = 50)
+    private String aid;
 
-    @Column(name = "admin_id", nullable = false, length = 50)
-    private String adminId;
+    @Column(name = "apw", nullable = false)
+    private String apw;
 
-    @Column(name = "admin_pw", nullable = false)
-    private String adminPw;
+    @Column(name = "aname")
+    private String aname;
 
 }

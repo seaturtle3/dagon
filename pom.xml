@@ -41,7 +41,6 @@
             <version>3.1.0</version>
         </dependency>
 
-
         <!-- 롬복 -->
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -63,6 +62,7 @@
             <version>8.2.0</version>
             <scope>runtime</scope>
         </dependency>
+
 
         <dependency>
             <groupId>org.springframework.boot</groupId>

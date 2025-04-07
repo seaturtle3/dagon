@@ -25,7 +25,7 @@ public class RegisterService {
         if (userRepository.existsByUid(usersDTO.getUid())) {
             throw new Exception("이미 사용 중인 아아디입니다.");
         }
-        if (userRepository.existsByUemail(usersDTO.getUemail())) {
+        if (userRepository.existsByemail(usersDTO.getEmail())) {
             throw new Exception("이미 사용 중인 이메일입니다.");
         }
 
@@ -33,11 +33,10 @@ public class RegisterService {
         user.setUid(usersDTO.getUid());
         user.setUpw(usersDTO.getUpw());
         user.setUname(usersDTO.getUname());
-        user.setUemail(usersDTO.getUemail());
-        user.setUphone(usersDTO.getFullPhone());
-        user.setUcreatedAt(LocalDateTime.now());
-        user.setUlevel(User.Level.SILVER);
-        user.setUrole(User.Role.NORMAL_USER);
+        user.setEmail(usersDTO.getEmail());
+        user.setPhone(usersDTO.getFullPhone());
+        user.setLevel(User.Level.SILVER);
+        user.setRole(User.Role.USER);
 
         log.info("저장할 사용자: {}", user);
 

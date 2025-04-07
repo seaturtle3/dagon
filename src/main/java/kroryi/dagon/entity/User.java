@@ -5,18 +5,18 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
 
-import java.time.Instant;
 import java.time.LocalDateTime;
 
 @Getter
 @Setter
 @Entity
 @Table(name = "users")
-public class User {
+public class User extends BaseTimeEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "uno", nullable = false)
-    private Long id;
+    private Long uno;
 
     @Column(name = "uid", unique = true, nullable = false)
     private String uid;
@@ -27,41 +27,50 @@ public class User {
     @Column(name = "uname")
     private String uname;
 
-    @Column(name = "unickname")
-    private String unickname;
+    @Column(name = "nickname")
+    private String nickname;
 
-    @Column(name = "uemail", nullable = false)
-    private String uemail;
+    @Column(name = "email", nullable = false)
+    private String email;
 
-    @Column(name = "uprofile_img")
-    private String uprofileImg;
+    @Column(name = "profile_img")
+    private String profileImg;
 
-    @Column(name = "upoints", nullable = false)
-    private Integer upoints;
+    @ColumnDefault("0")
+    @Column(name = "points", nullable = false)
+    private Integer points;
 
     @Enumerated(EnumType.STRING) // Enum을 문자열로 저장
-    private Level ulevel;
+    @Column(length = 10)
+    private Level level;
 
     @Enumerated(EnumType.STRING)
-    private Role urole;
+    private Role role;
 
-    @ColumnDefault("CURRENT_TIMESTAMP")
-    @Column(name = "ucreated_at", nullable = false)
-    private LocalDateTime ucreatedAt;
-
-    @Column(name = "uphone", nullable = false)
-    private String uphone;
+    @Column(name = "phone", nullable = false)
+    private String phone;
 
 
-    @Column(name = "ucreate_at")
-    private LocalDateTime ucreateAt;
 
     public enum Level {
-        BRONZE, SILVER, GOLD, PLATINUM
+        SILVER("실버"),
+        GOLD("골드"),
+        PLATINUM("플래티넘"),
+        DIAMOND("다이아몬드");
+
+       private final String korean;
+
+        Level(String koreanName) {
+            this.korean = koreanName;
+        }
+
+        public String getKorean() {
+            return korean;
+        }
     }
 
     public enum Role {
-        NORMAL_USER, ADMIN
+        USER, PARTNER
     }
 
 }

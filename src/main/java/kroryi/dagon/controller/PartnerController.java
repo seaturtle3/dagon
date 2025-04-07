@@ -40,7 +40,7 @@ public class PartnerController {
 
         partnerService.partner(partnerApplicationDTO);
 
-        return ResponseEntity.ok("신청이 완료되었습니다.");
+        return ResponseEntity.ok("신청이 완료되었습니다!.");
 
     }
 

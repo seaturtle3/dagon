@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
@@ -18,7 +17,7 @@ public class PartnerApplication {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "paid", nullable = false)
-    private Long id;
+    private Long paid;
 
     @Column(name = "pname", nullable = false, length = 50)
     private String pname;
@@ -36,8 +35,10 @@ public class PartnerApplication {
     @Column(name = "plicense", length = 30)
     private String plicense;
 
-    @Column(columnDefinition = "TINYTEXT", nullable = false)
-    private String paStatus;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "pa_status", nullable = false)
+    private ApplicationStatus paStatus;
+
 
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
@@ -50,18 +51,19 @@ public class PartnerApplication {
     @Column(name = "pa_rejection_reason")
     private String paRejectionReason;
 
+    public enum ApplicationStatus {
+        심사중, 심사완료, 반려
+    }
+
     @PrePersist
     protected void onCreate() {
         if (this.paStatus == null) {
-            this.paStatus = "심사중";
+            this.paStatus = ApplicationStatus.심사중;
         }
     }
 
 
-
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "uno", nullable = false)
-    private kroryi.dagon.entity.User uno;
-
-
+    private User user; // ✅ uno → user 변경
 }

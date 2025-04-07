@@ -10,12 +10,11 @@ import java.time.Instant;
  */
 @Value
 public class PartnerDTO implements Serializable {
-    Long id;
+    Long uno;
     String pname;
-    String paddress;
-    String pceo;
-    String pinfo;
-    String plicense;
-    String plicenseImg;
-    Instant pcreatedAt;
+    String pAddress;
+    String ceoName;
+    String pInfo;
+    String license;
+    String licenseImg;
 }

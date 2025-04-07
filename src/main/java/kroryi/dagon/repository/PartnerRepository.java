@@ -8,7 +8,5 @@ import org.springframework.stereotype.Repository;
 public interface PartnerRepository extends JpaRepository<PartnerApplication, Long> {
 
 
-    // 사업자 등록 번호로 조회 (숫자만 허용)
-    boolean existsByPlicense(String plicense);
 
 }
