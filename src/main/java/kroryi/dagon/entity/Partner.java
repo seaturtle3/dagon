@@ -39,8 +39,8 @@ public class Partner {
     private String licenseImg;
 
     @ColumnDefault("CURRENT_TIMESTAMP")
-    @Column(name = "p_created_at", nullable = false)
-    private LocalDateTime pCreatedAt;
+    @Column(name = "created_at", nullable = false)
+    private LocalDateTime createdAt;
 
 
     @MapsId
