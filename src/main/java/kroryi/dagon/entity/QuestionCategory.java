@@ -9,6 +9,7 @@ import lombok.Setter;
 @Entity
 @Table(name = "question_category")
 public class QuestionCategory {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "qcid", nullable = false)
@@ -33,7 +34,7 @@ public class QuestionCategory {
         }
     }
 
-    @Column(name = "qc_name", nullable = false)
-    private String qcName;
+    @Column(name = "qcname", nullable = false)
+    private String qcname;
 
 }

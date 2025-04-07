@@ -1,12 +1,13 @@
 package kroryi.dagon.DTO;
 
+import kroryi.dagon.entity.FishingReportComment;
 import lombok.Value;
 
 import java.io.Serializable;
 import java.time.Instant;
 
 /**
- * DTO for {@link kroryi.dagon.entity.Fishingreportcomment}
+ * DTO for {@link FishingReportComment}
  */
 @Value
 public class FishingreportcommentDTO implements Serializable {

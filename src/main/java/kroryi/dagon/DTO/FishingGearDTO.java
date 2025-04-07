@@ -1,11 +1,12 @@
 package kroryi.dagon.DTO;
 
+import kroryi.dagon.entity.ProductFishingGear;
 import lombok.Value;
 
 import java.io.Serializable;
 
 /**
- * DTO for {@link kroryi.dagon.entity.FishingGear}
+ * DTO for {@link ProductFishingGear}
  */
 @Value
 public class FishingGearDTO implements Serializable {

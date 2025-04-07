@@ -10,8 +10,9 @@ import java.time.Instant;
 @Getter
 @Setter
 @Entity
-@Table(name = "free_board_image")
-public class FreeBoardImage {
+@Table(name = "free_board_imag")
+public class FreeBoardImg {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "fb_img_id", nullable = false)
@@ -21,8 +22,8 @@ public class FreeBoardImage {
     private String fbImgUrl;
 
     @ColumnDefault("CURRENT_TIMESTAMP")
-    @Column(name = "uploaded_at", nullable = false)
-    private Instant uploadedAt;
+    @Column(name = "fb_uploaded_at", nullable = false)
+    private Instant fbUploadedAt;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "fbid", nullable = false)

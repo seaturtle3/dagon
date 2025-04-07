@@ -11,13 +11,13 @@ import lombok.Setter;
 public class Admin {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "uid", nullable = false)
-    private Long uid;
-
-    @Column(name = "admin_id", nullable = false, length = 50)
+    @Column(name = "aid", nullable = false, length = 50)
     private String aid;
 
-    @Column(name = "admin_pw", nullable = false)
+    @Column(name = "apw", nullable = false)
     private String apw;
+
+    @Column(name = "aname")
+    private String aname;
 
 }

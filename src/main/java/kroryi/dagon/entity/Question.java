@@ -11,20 +11,21 @@ import java.time.Instant;
 @Entity
 @Table(name = "question")
 public class Question {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "qid", nullable = false)
     private Long qid;
 
 
-    @Column(name = "qtype", nullable = false)
-    private String qtype;
+    @Column(name = "q_type", nullable = false)
+    private String qType;
 
     @Column(name = "uid", nullable = false)
     private Long uid;
 
-    @Column(name = "created_at")
-    private Instant createdAt;
+    @Column(name = "q_created_at")
+    private Instant qCreatedAt;
 
     @Column(name = "q_content", nullable = false)
     private String qContent;
@@ -32,12 +33,12 @@ public class Question {
     @Column(name = "q_title", nullable = false)
     private String qTitle;
 
-    @Column(name = "updated_at")
-    private Instant updatedAt;
+    @Column(name = "q_updated_at")
+    private Instant qUpdatedAt;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "user_type", nullable = false)
-    private Usertype userType;
+    @Column(name = "u_type", nullable = false)
+    private Usertype uType;
     public enum Usertype {
         USERE, PARTNER, ADMIN;
     }

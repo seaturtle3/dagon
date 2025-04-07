@@ -1,12 +1,12 @@
 package kroryi.dagon.DTO;
 
-import kroryi.dagon.entity.Facility;
+import kroryi.dagon.entity.ProductFacility;
 import lombok.Value;
 
 import java.io.Serializable;
 
 /**
- * DTO for {@link Facility}
+ * DTO for {@link ProductFacility}
  */
 @Value
 public class FacilityDTO implements Serializable {

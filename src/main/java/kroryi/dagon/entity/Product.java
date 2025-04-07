@@ -12,13 +12,21 @@ import java.time.Instant;
 @Entity
 @Table(name = "product")
 public class Product {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "prod_id", nullable = false)
-    private Long prodId;
+    @Column(name = "prodid", nullable = false)
+    private Long prodid;
 
-    @Column(name = "prod_name", nullable = false)
-    private ProdRegion prodName;  // 지역 (ENUM)
+    @Column(name = "prodname", nullable = false)
+    private String prodname;
+
+    //
+
+
+
+
+    //
 
     @Enumerated(EnumType.STRING)
     @Column(name = "prod_region", nullable = false)
@@ -118,18 +126,17 @@ public class Product {
         }
     }
 
-
+    //
 
 
 
 
     //
-
     @Column(name = "pname")
     private Integer pname;
 
-    @Column(name = "user_phone")
-    private String uPhone;
+    @Column(name = "phone")
+    private String phone;
 
     @Column(name = "max_person")
     private Integer maxPerson;
@@ -137,7 +144,7 @@ public class Product {
     @Column(name = "min_person")
     private Integer minPerson;
 
-    @Column(name = "weight", precision = 38, scale = 2)
+    @Column(name = "weight", precision = 10, scale = 2)
     private BigDecimal weight;
 
     @Column(name = "created_at")

@@ -8,7 +8,7 @@ import lombok.Setter;
 @Setter
 @Entity
 @Table(name = "fishing_gear")
-public class FishingGear {
+public class ProductFishingGear {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "fgid", nullable = false)

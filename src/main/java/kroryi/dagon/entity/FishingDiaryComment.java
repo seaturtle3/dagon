@@ -15,7 +15,7 @@ public class FishingDiaryComment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "fd_comment_id", nullable = false)
-    private Long fdCommentId;
+    private Long fdCommentID;
 
     @Lob
     @Column(name = "fd_comment_content", nullable = false)
@@ -30,7 +30,7 @@ public class FishingDiaryComment {
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "fdid", nullable = false)
-    private FishingDiary fdid;
+    private FishingDiary fdId;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "uid", nullable = false)

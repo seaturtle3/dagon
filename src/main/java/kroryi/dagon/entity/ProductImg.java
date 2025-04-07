@@ -12,12 +12,13 @@ import lombok.Setter;
 @Entity
 @Table(name = "prod_img")
 public class ProductImg {
+
     @Id
     @Column(name = "prod_img_id", nullable = false)
     private Long prodImgId;
 
-    @Column(name = "prod_id", nullable = false)
-    private Integer prodId;
+    @Column(name = "prodid", nullable = false)
+    private Integer prodid;
 
     @Column(name = "prod_img_order", nullable = false)
     private Integer prodImgOrder;

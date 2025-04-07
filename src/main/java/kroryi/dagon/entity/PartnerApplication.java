@@ -13,28 +13,29 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "partner_applications")
 public class PartnerApplication {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "paid", nullable = false)
-    private Long id;
+    private Long paid;
 
     @Column(name = "pname", nullable = false, length = 50)
-    private String pName;
+    private String pname;
 
-    @Column(name = "paddress", nullable = false)
+    @Column(name = "p_address", nullable = false)
     private String pAddress;
 
-    @Column(name = "pceo", length = 50)
+    @Column(name = "p_ceo", length = 50)
     private String pCeo;
 
     @Lob
-    @Column(name = "pinfo")
+    @Column(name = "p_info")
     private String pInfo;
 
-    @Column(name = "plicense", length = 30)
+    @Column(name = "p_license", length = 30)
     private String pLicense;
 
-    @Column(columnDefinition = "TINYTEXT", nullable = false)
+    @Column(columnDefinition = "pa_status", nullable = false)
     private String paStatus;
 
     @ColumnDefault("CURRENT_TIMESTAMP")

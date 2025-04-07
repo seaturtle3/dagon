@@ -18,14 +18,16 @@ public class FishingReportImg {
     @Column(name = "fr_img_id", nullable = false)
     private Long frImgId;
 
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "frid")
-//    private User frid;
 
     @Column(name = "fr_img_url", nullable = false, length = 512)
     private String frImgUrl;
 
-    @Column(name = "uploaded_at", nullable = false, updatable = false)
-    private LocalDateTime uploadedAt;
+    @Column(name = "fr_uploaded_at", nullable = false, updatable = false)
+    private LocalDateTime frUploadedAt;
+
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "frid")
+    private FishingReport frId;
 
 }

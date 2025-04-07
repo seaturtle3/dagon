@@ -7,8 +7,8 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "fishspecies")
-public class Fishspecy {
+@Table(name = "fish_species")
+public class ProductFishSpecies {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "fsid", nullable = false)

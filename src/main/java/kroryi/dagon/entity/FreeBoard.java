@@ -12,6 +12,7 @@ import java.time.Instant;
 @Entity
 @Table(name = "free_board")
 public class FreeBoard {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "fbid", nullable = false)
@@ -25,11 +26,11 @@ public class FreeBoard {
     private String fbContent;
 
     @ColumnDefault("CURRENT_TIMESTAMP")
-    @Column(name = "created_at")
-    private Instant createdAt;
+    @Column(name = "fb_created_at")
+    private Instant fbCreatedAt;
 
-    @Column(name = "modify", nullable = false)
-    private Instant modify;
+    @Column(name = "fb_modify", nullable = false)
+    private Instant fbModify;
 
     @Column(name = "views")
     private Integer views;

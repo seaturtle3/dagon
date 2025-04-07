@@ -11,6 +11,7 @@ import java.time.Instant;
 @Entity
 @Table(name = "question_answers")
 public class QuestionAnswer {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "qaid", nullable = false)
@@ -19,8 +20,8 @@ public class QuestionAnswer {
     @Column(name = "answer_id")
     private Long answerId;
 
-    @Column(name = "created_at")
-    private Instant createdAt;
+    @Column(name = "qa_created_at")
+    private Instant qaCreatedAt;
 
     @Column(name = "qa_content", nullable = false)
     private String qaContent;

@@ -6,12 +6,13 @@ import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
 
 import java.time.Instant;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
 @Entity
 @Table(name = "fishingreportcomments")
-public class Fishingreportcomment {
+public class FishingReportComment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "fr_comment_id", nullable = false)
@@ -25,14 +26,14 @@ public class Fishingreportcomment {
 
     @ColumnDefault("CURRENT_TIMESTAMP")
     @Column(name = "created_at", nullable = false)
-    private Instant createdAt;
+    private LocalDateTime createdAt;
 
     @Column(name = "modify_at")
-    private Instant modifyAt;
+    private LocalDateTime modifyAt;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "frid", nullable = false)
-    private FishingReport frid;
+    private FishingReport frId;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "uid", nullable = false)

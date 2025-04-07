@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "users")
 public class User {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "uno", nullable = false)
@@ -27,17 +28,17 @@ public class User {
     @Column(name = "uname")
     private String uname;
 
-    @Column(name = "user_nickname")
-    private String userNickname;
+    @Column(name = "nickname")
+    private String nickname;
 
-    @Column(name = "user_email", nullable = false)
-    private String userEmail;
+    @Column(name = "email", nullable = false)
+    private String email;
 
-    @Column(name = "user_profile_img")
-    private String userProfileImg;
+    @Column(name = "profile_img")
+    private String profileImg;
 
-    @Column(name = "user_points", nullable = false)
-    private Integer userPoints;
+    @Column(name = "points", nullable = false)
+    private Integer points;
 
     @Enumerated(EnumType.STRING) // Enum을 문자열로 저장
     private Level level;
@@ -47,11 +48,11 @@ public class User {
 
 
     @ColumnDefault("CURRENT_TIMESTAMP")
-    @Column(name = "user_created_at", nullable = false)
-    private LocalDateTime userCreatedAt;
+    @Column(name = "created_at", nullable = false)
+    private LocalDateTime createdAt;
 
-    @Column(name = "user_phone", nullable = false)
-    private String userPhone;
+    @Column(name = "phone", nullable = false)
+    private String phone;
 
     public enum Level {
         SILVER("실버"),
@@ -71,7 +72,7 @@ public class User {
     }
 
     public enum Role {
-        normal_user, admin
+        USER, PARTNER
     }
 
 }
