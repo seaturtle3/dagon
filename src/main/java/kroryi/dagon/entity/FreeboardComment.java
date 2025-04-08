@@ -24,8 +24,8 @@ public class FreeboardComment {
     @Column(name = "level", nullable = false)
     private Integer level;
 
-    @Column(name = "u_nickname", nullable = false, length = 50)
-    private String uNickname;
+    @Column(name = "nickname", nullable = false, length = 50)
+    private String nickname;
 
     @Column(name = "comment_content")
     private String commentContent;

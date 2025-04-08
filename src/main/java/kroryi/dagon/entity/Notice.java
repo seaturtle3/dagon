@@ -15,22 +15,22 @@ public class Notice {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "nid", nullable = false, length = 50)
-    private String nid;
+    private Long nid;
 
     @Column(name = "aid", nullable = false, length = 50)
-    private String aid;
+    private Long aid;
 
-    @Column(name = "notice_created_at")
-    private LocalDateTime noticeCreatedAt;
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
 
-    @Column(name = "notice_modify_at")
-    private LocalDateTime noticeModifyAt;
+    @Column(name = "modify_at")
+    private LocalDateTime modifyAt;
 
     @Column(name = "notice_content")
     private String noticeContent;
 
-    @Column(name = "notice_nickname", nullable = false, length = 50)
-    private String noticeNickname;
+    @Column(name = "nickname", nullable = false, length = 50)
+    private String nickname;
 
     @Column(name = "notice_title", nullable = false)
     private String noticeTitle;
