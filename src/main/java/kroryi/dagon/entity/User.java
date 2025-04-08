@@ -1,18 +1,21 @@
 package kroryi.dagon.entity;
 
 import jakarta.persistence.*;
+import kroryi.dagon.enums.UserLevel;
+import kroryi.dagon.enums.UserRole;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 import org.hibernate.annotations.ColumnDefault;
 
-import java.time.Instant;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
 @Entity
 @Table(name = "users")
-public class User {
+public class User extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -37,42 +40,33 @@ public class User {
     @Column(name = "profile_img")
     private String profileImg;
 
-    @Column(name = "points", nullable = false)
-    private Integer points;
-
-    @Enumerated(EnumType.STRING) // Enum을 문자열로 저장
-    private Level level;
-
-    @Enumerated(EnumType.STRING)
-    private Role role;
-
-
-    @ColumnDefault("CURRENT_TIMESTAMP")
-    @Column(name = "created_at", nullable = false)
-    private LocalDateTime createdAt;
-
     @Column(name = "phone", nullable = false)
     private String phone;
 
-    public enum Level {
-        SILVER("실버"),
-        GOLD("골드"),
-        PLATINUM("플래티넘"),
-        DIAMOND("다이아몬드");
+    @ColumnDefault("0")
+    @Column(name = "points", nullable = false)
+    private Integer points = 0;
 
-        private final String korean;
+    @Enumerated(EnumType.STRING)
+    @Column(length = 10)
+    private UserLevel level = UserLevel.SILVER;
 
-        Level(String koreanName) {
-            this.korean = koreanName;
-        }
+    @ColumnDefault("0")
+    @Column(name = "level_point", nullable = false)
+    private Integer levelPoint = 0;
 
-        public String getKorean() {
-            return korean;
-        }
-    }
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private UserRole role = UserRole.USER;
 
-    public enum Role {
-        USER, PARTNER
-    }
+    // 파트너신청
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @ToString.Exclude
+    private List<PartnerApplication> partnerApplications;
+
+    // 승인 파트너
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    @ToString.Exclude
+    private Partner partner;
 
 }

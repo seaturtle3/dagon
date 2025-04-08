@@ -7,15 +7,16 @@ import org.hibernate.annotations.ColumnDefault;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
 @Entity
 @Table(name = "partners")
-public class Partner {
+public class Partner extends BaseTimeEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "uno", nullable = false)
     private Long uno;
 
@@ -38,13 +39,12 @@ public class Partner {
     @Column(name = "license_img")
     private String licenseImg;
 
-    @ColumnDefault("CURRENT_TIMESTAMP")
-    @Column(name = "created_at", nullable = false)
-    private LocalDateTime createdAt;
 
-
-    @MapsId
     @OneToOne(fetch = FetchType.LAZY, optional = false)
+    @MapsId // uno공유키
     @JoinColumn(name = "uno", nullable = false)
-    private kroryi.dagon.entity.User users;
+    private User user;
+
+    @OneToMany(mappedBy = "partner", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Product> products = new ArrayList<>();
 }

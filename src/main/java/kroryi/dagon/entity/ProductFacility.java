@@ -12,11 +12,11 @@ public class ProductFacility {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "faid", nullable = false)
-    private Long faid;
+    @Column(name = "fa_id", nullable = false)
+    private Long faId;
 
-    @Column(name = "faname")
-    private String faname;
+    @Column(name = "fa_name")
+    private String faName;
 
     @Column(name = "fa_icon_url", length = 500)
     private String faIconUrl;
