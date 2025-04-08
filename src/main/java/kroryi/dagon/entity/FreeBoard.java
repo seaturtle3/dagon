@@ -7,37 +7,42 @@ import org.hibernate.annotations.ColumnDefault;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
 @Entity
 @Table(name = "free_board")
-public class FreeBoard {
+public class FreeBoard extends BaseTimeEntity{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "fbid", nullable = false)
-    private Long fbid;
+    @Column(name = "fb_id", nullable = false)
+    private Long fbId;
 
-    @Column(name = "fb_title", nullable = false, length = 50)
-    private String fbTitle;
+    @Column(name = "title", nullable = false)
+    private String title;
 
     @Lob
-    @Column(name = "fb_content", nullable = false)
-    private String fbContent;
+    @Column(name = "content", nullable = false)
+    private String content;
 
-    @ColumnDefault("CURRENT_TIMESTAMP")
-    @Column(name = "created_at")
-    private LocalDateTime createdAt;
+    @Column(length = 512)
+    private String thumbnailUrl;
 
-    @Column(name = "modify_at", nullable = false)
+    @Column(name = "modify_at")
     private LocalDateTime modifyAt;
 
-    @Column(name = "views")
-    private Integer views;
+    @Column(nullable = false)
+    @ColumnDefault("0")
+    private Integer views = 0;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "uid", nullable = false)
-    private User uid;
+    private User user;
+
+    @OneToMany(mappedBy = "freeBoard", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<FreeBoardComment> comments = new ArrayList<>();
 
 }

@@ -1,12 +1,13 @@
 package kroryi.dagon.DTO;
 
+import kroryi.dagon.entity.FreeBoardComment;
 import lombok.Value;
 
 import java.io.Serializable;
 import java.time.Instant;
 
 /**
- * DTO for {@link kroryi.dagon.entity.FreeboardComment}
+ * DTO for {@link FreeBoardComment}
  */
 @Value
 public class FreeboardCommentDTO implements Serializable {

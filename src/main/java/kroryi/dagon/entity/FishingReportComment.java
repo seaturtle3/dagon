@@ -20,8 +20,8 @@ public class FishingReportComment extends BaseTimeEntity {
     private Long frCommentId;
 
     @Lob
-    @Column(name = "fr_comment_content", nullable = false)
-    private String frCommentContent;
+    @Column(name = "comment_content", nullable = false)
+    private String commentContent;
 
     @Column(name = "modify_at")
     private LocalDateTime modifyAt;
