@@ -1,12 +1,13 @@
 package kroryi.dagon.DTO;
 
+import kroryi.dagon.entity.FAQ;
 import lombok.Value;
 
 import java.io.Serializable;
 import java.time.Instant;
 
 /**
- * DTO for {@link kroryi.dagon.entity.Faq}
+ * DTO for {@link FAQ}
  */
 @Value
 public class FaqDTO implements Serializable {
