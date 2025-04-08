@@ -47,13 +47,13 @@ public class User extends BaseTimeEntity {
     @Column(name = "points", nullable = false)
     private Integer points = 0;
 
-    @Enumerated(EnumType.STRING)
-    @Column(length = 10)
-    private UserLevel level = UserLevel.SILVER;
-
     @ColumnDefault("0")
     @Column(name = "level_point", nullable = false)
     private Integer levelPoint = 0;
+
+    @Enumerated(EnumType.STRING)
+    @Column(length = 10)
+    private UserLevel level = UserLevel.SILVER;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)

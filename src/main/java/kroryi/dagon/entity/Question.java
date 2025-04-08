@@ -1,6 +1,8 @@
 package kroryi.dagon.entity;
 
 import jakarta.persistence.*;
+import kroryi.dagon.enums.QuestionType;
+import kroryi.dagon.enums.WriteType;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -35,31 +37,11 @@ public class Question {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "question_type", nullable = false)
-    private Questiontype questionType;
-    public enum Questiontype {
-        PRODUCT("상품문의"),
-        RESERVATION("예약문의"),
-        CANCLATION("예약취소문의"),
-        SYSTEM("시스템문의"),
-        BUSINESS("제휴문의");
-
-        private final String korean;
-
-        Questiontype(String koreanName) {
-            this.korean = koreanName;
-        }
-
-        public String getKorean() {
-            return korean;
-        }
-    }
+    private QuestionType questionType;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "u_type", nullable = false)
-    private Usertype uType;
-    public enum Usertype {
-        USERE, PARTNER, ADMIN;
-    }
+    @Column(name = "write_type", nullable = false)
+    private WriteType writeType;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "qcid", nullable = false)
