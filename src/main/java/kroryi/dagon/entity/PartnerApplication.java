@@ -25,8 +25,8 @@ public class PartnerApplication {
     @Column(name = "p_address", nullable = false)
     private String pAddress;
 
-    @Column(name = "ceo", length = 50)
-    private String ceo;
+    @Column(name = "ceo_name", length = 50)
+    private String ceoName;
 
     @Lob
     @Column(name = "p_info")
@@ -43,8 +43,8 @@ public class PartnerApplication {
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
-    @Column(name = "pa_reviewed_at")
-    private LocalDateTime paReviewedAt;
+    @Column(name = "reviewed_at")
+    private LocalDateTime reviewedAt;
 
     @Lob
     @Column(name = "pa_rejection_reason")
