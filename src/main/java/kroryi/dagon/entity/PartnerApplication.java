@@ -25,15 +25,15 @@ public class PartnerApplication {
     @Column(name = "p_address", nullable = false)
     private String pAddress;
 
-    @Column(name = "ceo_name", length = 50)
-    private String ceoName;
+    @Column(name = "ceo", length = 50)
+    private String ceo;
 
     @Lob
     @Column(name = "p_info")
     private String pInfo;
 
-    @Column(name = "license", length = 30)
-    private String license;
+    @Column(name = "p_license", length = 30)
+    private String pLicense;
 
     @Column(columnDefinition = "TINYTEXT", nullable = false)
     private String paStatus;
