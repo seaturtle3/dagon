@@ -84,4 +84,8 @@ public class User extends BaseTimeEntity {
     // 자유게시판
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<FreeBoard> freeBoards = new ArrayList<>();
+
+    // 찜, 좋아요
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<UserAction> userActions = new ArrayList<>();
 }
