@@ -30,10 +30,10 @@ public class FishingDiary {
     private String fdTitle;
 
     @Column(name = "fishing_at", nullable = false)
-    private Instant fishingAt;
+    private LocalDateTime fishingAt;
 
     @Column(name = "modify_at")
-    private Instant modifyAt;
+    private LocalDateTime modifyAt;
 
     @ColumnDefault("0")
     @Column(name = "views", nullable = false)
