@@ -4,7 +4,6 @@ package kroryi.dagon.entity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.annotations.ColumnDefault;
 
 import java.time.LocalDateTime;
 
@@ -29,6 +28,6 @@ public class FishingReportImg {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "frid")
-    private FishingReport frId; //fr_report_img와 join
+    private FishingReport frId;
 
 }

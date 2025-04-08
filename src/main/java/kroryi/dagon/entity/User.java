@@ -9,6 +9,7 @@ import lombok.ToString;
 import org.hibernate.annotations.ColumnDefault;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -59,6 +60,9 @@ public class User extends BaseTimeEntity {
     @Column(nullable = false)
     private UserRole role = UserRole.USER;
 
+
+    // 매핑
+
     // 파트너신청
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     @ToString.Exclude
@@ -68,5 +72,9 @@ public class User extends BaseTimeEntity {
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
     @ToString.Exclude
     private Partner partner;
+
+    // 조황정보
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<FishingReport> fishingReports = new ArrayList<>();
 
 }

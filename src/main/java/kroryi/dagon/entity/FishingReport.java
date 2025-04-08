@@ -1,31 +1,35 @@
 package kroryi.dagon.entity;
 
 import jakarta.persistence.*;
+import kroryi.dagon.service.UserService;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
 
-import java.time.Instant;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
 @Entity
 @Table(name = "fishing_report")
-public class FishingReport {
+public class FishingReport extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "frid", nullable = false)
-    private Long frid;
+    @Column(name = "fr_id", nullable = false)
+    private Long frId;
+
+    @Column(name = "title", nullable = false)
+    private String title;
 
     @Lob
-    @Column(name = "fr_content", nullable = false)
-    private String frContent;
+    @Column(nullable = false)
+    private String content;
 
-    @ColumnDefault("CURRENT_TIMESTAMP")
-    @Column(name = "created_at", nullable = false)
-    private LocalDateTime createdAt;
+    @Column(length = 512)
+    private String thumbnailUrl;
 
     @Column(name = "fishing_at", nullable = false)
     private LocalDateTime fishingAt;
@@ -33,15 +37,23 @@ public class FishingReport {
     @Column(name = "modify_at")
     private LocalDateTime modifyAt;
 
-    @Column(name = "fr_title", nullable = false)
-    private String frTitle;
-
+    @Column(nullable = false)
     @ColumnDefault("0")
-    @Column(name = "views", nullable = false)
-    private Integer views;
+    private Integer views = 0;
 
+
+    // 회원
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "pid", nullable = false)
-    private kroryi.dagon.entity.User pid;
+    @JoinColumn(name = "uid", nullable = false)
+    private User user;
+
+    // 상품
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "prod_id", nullable = false)
+    private Product product;
+
+    // 조황정보 댓글
+    @OneToMany(mappedBy = "fishingReport", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<FishingReportComment> comments = new ArrayList<>();
 
 }

@@ -67,7 +67,6 @@ public class Product extends BaseTimeEntity {
     private Partner partner;
 
 
-
     // 매핑
 
     // 상품 이미지
@@ -90,5 +89,8 @@ public class Product extends BaseTimeEntity {
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ProductOption> options = new ArrayList<>();
 
+    // 조황정보
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<FishingReport> fishingReports = new ArrayList<>();
 
 }
