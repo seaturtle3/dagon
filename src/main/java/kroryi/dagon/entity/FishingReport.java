@@ -41,7 +41,6 @@ public class FishingReport extends BaseTimeEntity {
     @ColumnDefault("0")
     private Integer views = 0;
 
-
     // 회원
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "uid", nullable = false)

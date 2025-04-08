@@ -26,10 +26,12 @@ public class FishingReportComment extends BaseTimeEntity {
     @Column(name = "modify_at")
     private LocalDateTime modifyAt;
 
+    // 조황정보
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "fr_id", nullable = false)
     private FishingReport fishingReport;
 
+    // 회원
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "uid", nullable = false)
     private User user;
