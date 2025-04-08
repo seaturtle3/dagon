@@ -19,8 +19,6 @@ public class FishingReportComment {
     @Column(name = "fr_comment_id", nullable = false)
     private Long frCommentId;
 
-
-
     @Lob
     @Column(name = "fr_comment_content", nullable = false)
     private String frCommentContent;

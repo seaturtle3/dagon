@@ -14,6 +14,7 @@ import java.time.LocalDateTime;
 @ToString
 @Table(name = "partner_applications")
 public class PartnerApplication {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "paid", nullable = false)
