@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "fishingreportcomments")
 public class FishingReportComment {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "fr_comment_id", nullable = false)

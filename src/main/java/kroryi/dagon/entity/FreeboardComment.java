@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.Instant;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -29,8 +30,8 @@ public class FreeboardComment {
     @Column(name = "comment_content")
     private String commentContent;
 
-    @Column(name = "comment_modify_at")
-    private Instant commentModifyAt;
+    @Column(name = "modify_at")
+    private LocalDateTime modifyAt;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "fbid", nullable = false)

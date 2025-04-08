@@ -6,6 +6,7 @@ import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
 
 import java.time.Instant;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -26,11 +27,11 @@ public class FreeBoard {
     private String fbContent;
 
     @ColumnDefault("CURRENT_TIMESTAMP")
-    @Column(name = "fb_created_at")
-    private Instant fbCreatedAt;
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
 
-    @Column(name = "fb_modify", nullable = false)
-    private Instant fbModify;
+    @Column(name = "modify_at", nullable = false)
+    private LocalDateTime modifyAt;
 
     @Column(name = "views")
     private Integer views;

@@ -6,6 +6,7 @@ import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
 
 import java.time.Instant;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -22,8 +23,8 @@ public class FreeBoardImg {
     private String fbImgUrl;
 
     @ColumnDefault("CURRENT_TIMESTAMP")
-    @Column(name = "fb_uploaded_at", nullable = false)
-    private Instant fbUploadedAt;
+    @Column(name = "uploaded_at", nullable = false)
+    private LocalDateTime uploadedAt;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "fbid", nullable = false)
