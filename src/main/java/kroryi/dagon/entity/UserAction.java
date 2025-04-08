@@ -32,7 +32,7 @@ public class UserAction {
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "uid", nullable = false)
-    private User uid;
+    private kroryi.dagon.entity.User uid;
 
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)

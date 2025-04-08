@@ -11,23 +11,22 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @Entity
-@Table(name = "fishing_diary_img")
-public class FishingDiaryImg {
+@Table(name = "free_board_imag")
+public class FreeBoardImg {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "fd_img_id", nullable = false)
-    private Long fdImgId;
+    @Column(name = "fb_img_id", nullable = false)
+    private Long fbImgId;
 
-    @Column(name = "fd_img_url", nullable = false, length = 512)
-    private String fdImgUrl;
+    @Column(name = "fb_img_url", nullable = false, length = 512)
+    private String fbImgUrl;
 
     @ColumnDefault("CURRENT_TIMESTAMP")
     @Column(name = "uploaded_at", nullable = false)
     private LocalDateTime uploadedAt;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "fdid")
-    private FishingDiary fdid;
-
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "fbid", nullable = false)
+    private kroryi.dagon.entity.Product fbid;
 }

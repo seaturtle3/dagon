@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "fishingreportcomments")
 public class FishingReportComment {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "fr_comment_id", nullable = false)
@@ -37,6 +38,6 @@ public class FishingReportComment {
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "uid", nullable = false)
-    private User uid;
+    private kroryi.dagon.entity.User uid;
 
 }

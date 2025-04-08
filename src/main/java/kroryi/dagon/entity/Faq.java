@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.Instant;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -13,8 +14,8 @@ import java.time.Instant;
 public class Faq {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "faq_uid", nullable = false)
-    private Long faqUid;
+    @Column(name = "faqid", nullable = false)
+    private Long faqId;
 
     @Column(name = "aid", nullable = false)
     private Long aid;
@@ -23,10 +24,10 @@ public class Faq {
     private String answer;
 
     @Column(name = "created_at")
-    private Instant createdAt;
+    private LocalDateTime createdAt;
 
     @Column(name = "modify_at")
-    private Instant modifyAt;
+    private LocalDateTime modifyAt;
 
     @Column(name = "question", nullable = false)
     private String question;

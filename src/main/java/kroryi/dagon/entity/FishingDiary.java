@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "fishing_diary")
 public class FishingDiary {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "fdid", nullable = false)
@@ -30,10 +31,10 @@ public class FishingDiary {
     private String fdTitle;
 
     @Column(name = "fishing_at", nullable = false)
-    private Instant fishingAt;
+    private LocalDateTime fishingAt;
 
     @Column(name = "modify_at")
-    private Instant modifyAt;
+    private LocalDateTime modifyAt;
 
     @ColumnDefault("0")
     @Column(name = "views", nullable = false)
@@ -41,6 +42,6 @@ public class FishingDiary {
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "uid", nullable = false)
-    private User uid;
+    private kroryi.dagon.entity.User uid;
 
 }

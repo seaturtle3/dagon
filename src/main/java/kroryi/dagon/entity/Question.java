@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.Instant;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -17,24 +18,41 @@ public class Question {
     @Column(name = "qid", nullable = false)
     private Long qid;
 
-
-    @Column(name = "q_type", nullable = false)
-    private String qType;
-
     @Column(name = "uid", nullable = false)
     private Long uid;
 
-    @Column(name = "q_created_at")
-    private Instant qCreatedAt;
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
 
-    @Column(name = "q_content", nullable = false)
-    private String qContent;
+    @Column(name = "question_content", nullable = false)
+    private String questionContent;
 
-    @Column(name = "q_title", nullable = false)
-    private String qTitle;
+    @Column(name = "question_title", nullable = false)
+    private String questionTitle;
 
-    @Column(name = "q_updated_at")
-    private Instant qUpdatedAt;
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "question_type", nullable = false)
+    private Questiontype questionType;
+    public enum Questiontype {
+        PRODUCT("상품문의"),
+        RESERVATION("예약문의"),
+        CANCLATION("예약취소문의"),
+        SYSTEM("시스템문의"),
+        BUSINESS("제휴문의");
+
+        private final String korean;
+
+        Questiontype(String koreanName) {
+            this.korean = koreanName;
+        }
+
+        public String getKorean() {
+            return korean;
+        }
+    }
 
     @Enumerated(EnumType.STRING)
     @Column(name = "u_type", nullable = false)
@@ -45,5 +63,5 @@ public class Question {
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "qcid", nullable = false)
-    private QuestionCategory qcid;
+    private kroryi.dagon.entity.QuestionCategory qcid;
 }
