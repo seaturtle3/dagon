@@ -9,7 +9,7 @@ import java.io.Serializable;
  * DTO for {@link ProductFacility}
  */
 @Value
-public class ProductFacilityDTO implements Serializable {
+public class FacilityDTO implements Serializable {
     Long id;
     String faname;
     String faiconUrl;
