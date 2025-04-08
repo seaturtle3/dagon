@@ -1,67 +1,48 @@
 package kroryi.dagon.entity;
 
 import jakarta.persistence.*;
+import kroryi.dagon.enums.PartnerApplicationStatus;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.ToString;
-import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 
 @Getter
 @Setter
 @Entity
-@ToString
 @Table(name = "partner_applications")
-public class PartnerApplication {
+public class PartnerApplication extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "paid", nullable = false)
-    private Long paid;
+    @Column(name = "pid", nullable = false)
+    private Long pid;
 
     @Column(name = "pname", nullable = false, length = 50)
     private String pname;
 
-    @Column(name = "paddress", nullable = false)
-    private String paddress;
+    @Column(name = "ceo_name", length = 50)
+    private String ceoName;
 
-    @Column(name = "pceo", length = 50)
-    private String pceo;
+    @Column(name = "p_address", nullable = false)
+    private String pAddress;
 
     @Lob
-    @Column(name = "pinfo")
-    private String pinfo;
+    @Column(name = "p_info")
+    private String pInfo;
 
-    @Column(name = "plicense", length = 30)
-    private String plicense;
+    @Column(name = "license", length = 30)
+    private String license;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "pa_status", nullable = false)
-    private ApplicationStatus paStatus;
+    @Column(name = "p_status", nullable = false)
+    private PartnerApplicationStatus pStatus = PartnerApplicationStatus.PENDING;
 
-
-    @CreationTimestamp
-    @Column(nullable = false, updatable = false)
-    private LocalDateTime paCreatedAt;
-
-    @Column(name = "pa_reviewed_at")
-    private LocalDateTime paReviewedAt;
+    @Column(name = "p_reviewed_at")
+    private LocalDateTime pReviewedAt;
 
     @Lob
-    @Column(name = "pa_rejection_reason")
-    private String paRejectionReason;
-
-    public enum ApplicationStatus {
-        심사중, 심사완료, 반려
-    }
-
-    @PrePersist
-    protected void onCreate() {
-        if (this.paStatus == null) {
-            this.paStatus = ApplicationStatus.심사중;
-        }
-    }
-
+    @Column(name = "p_rejection_reason")
+    private String pRejectionReason;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "uno", nullable = false)

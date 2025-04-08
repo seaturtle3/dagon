@@ -1,11 +1,16 @@
 package kroryi.dagon.entity;
 
 import jakarta.persistence.*;
+import kroryi.dagon.enums.UserLevel;
+import kroryi.dagon.enums.UserRole;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 import org.hibernate.annotations.ColumnDefault;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
@@ -36,41 +41,34 @@ public class User extends BaseTimeEntity {
     @Column(name = "profile_img")
     private String profileImg;
 
-    @ColumnDefault("0")
-    @Column(name = "points", nullable = false)
-    private Integer points;
-
-    @Enumerated(EnumType.STRING) // Enum을 문자열로 저장
-    @Column(length = 10)
-    private Level level;
-
-    @Enumerated(EnumType.STRING)
-    private Role role;
-
     @Column(name = "phone", nullable = false)
     private String phone;
 
+    @ColumnDefault("0")
+    @Column(name = "points", nullable = false)
+    private Integer points = 0;
+
+    @Enumerated(EnumType.STRING)
+    @Column(length = 10)
+    private UserLevel level = UserLevel.SILVER;
+
+    @ColumnDefault("0")
+    @Column(name = "level_point", nullable = false)
+    private Integer levelPoint = 0;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private UserRole role = UserRole.USER;
 
 
-    public enum Level {
-        SILVER("실버"),
-        GOLD("골드"),
-        PLATINUM("플래티넘"),
-        DIAMOND("다이아몬드");
+    // 파트너신청
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @ToString.Exclude
+    private List<PartnerApplication> partnerApplications;
 
-       private final String korean;
-
-        Level(String koreanName) {
-            this.korean = koreanName;
-        }
-
-        public String getKorean() {
-            return korean;
-        }
-    }
-
-    public enum Role {
-        USER, PARTNER
-    }
+    // 승인 파트너
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    @ToString.Exclude
+    private Partner partner;
 
 }

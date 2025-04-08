@@ -38,7 +38,7 @@ public class Partner extends BaseTimeEntity {
     @Column(name = "license_img")
     private String licenseImg;
 
-    @MapsId
+
     @OneToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "uno", nullable = false)
     private User user;

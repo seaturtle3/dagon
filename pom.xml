@@ -41,6 +41,7 @@
             <version>3.1.0</version>
         </dependency>
 
+
         <!-- 롬복 -->
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -93,6 +94,10 @@
             <scope>test</scope>
         </dependency>
 
+        <dependency>
+            <groupId>org.springframework.session</groupId>
+            <artifactId>spring-session-core</artifactId>
+        </dependency>
 
 
 
