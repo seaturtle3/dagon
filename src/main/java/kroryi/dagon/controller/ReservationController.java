@@ -45,12 +45,6 @@ public class ReservationController {
         return "sub_menu/reservation";
     }
 
-//    @PostMapping("/reservation")
-//    public String reservation(@RequestParam String reservation) {
-//
-//        log.info("--------------------  결과 : {}", results);
-//        return "sub_menu/reservation";
-//    }
 
 
 }

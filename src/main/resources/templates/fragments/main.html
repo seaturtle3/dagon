@@ -19,15 +19,18 @@
                     </div>
                     <div class="card-body d-flex flex-column justify-content-center align-items-start gap-2"
                          style="height: 40vh; overflow: auto">
-                        <div class="d-flex flex-column gap-2 ms-5 fs-4">
+                        <div class="d-flex flex-column gap-3 ms-5 fs-5">
                             <div>날짜 : <span id="selected-date"></span></div>
                             <div>인원 : <span id="selected-people"></span></div>
                             <div>지역 : <span id="selected-region"></span></div>
                             <div>어종 : <span id="selected-fish"></span></div>
                         </div>
-                        <div class="align-self-center btn btn-light"
-                             data-bs-toggle="modal" data-bs-target="#searchModal">세부항목 변경</div>
-                        <a th:href="@{/reservation}" class="align-self-center btn btn-primary">검색하기</a>
+                        <div class="align-self-center btn btn-light w-100 mt-3 fs-5"
+                             data-bs-toggle="modal" data-bs-target="#searchModal">
+                            세부항목 변경</div>
+                        <a th:href="@{/reservation}"
+                           class="align-self-center btn btn-primary w-100 fs-5">
+                            검색하기</a>
                     </div>
                 </div>
             </div>
@@ -214,7 +217,7 @@
 
                 <form action="/reservation/search" method="get" onsubmit="updateSpan();">
                     <div class="modal-header">
-                        <h5 class="modal-title">검색 조건 설정</h5>
+                        <h5 class="modal-title">세부항목 변경</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                     </div>
 

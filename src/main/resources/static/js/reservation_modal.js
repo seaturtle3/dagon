@@ -11,3 +11,7 @@ function updateSpan() {
     document.getElementById("selected-region").textContent = region || "전체";
     document.getElementById("selected-fish").textContent = fish || "전체";
 }
+
+window.addEventListener("DOMContentLoaded", () => {
+    updateSpan();
+});
