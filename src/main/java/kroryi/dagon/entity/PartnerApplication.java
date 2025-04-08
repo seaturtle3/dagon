@@ -3,21 +3,21 @@ package kroryi.dagon.entity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.annotations.ColumnDefault;
+import lombok.ToString;
+import org.hibernate.annotations.CreationTimestamp;
 
-import java.time.Instant;
 import java.time.LocalDateTime;
 
 @Getter
 @Setter
 @Entity
+@ToString
 @Table(name = "partner_applications")
 public class PartnerApplication {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "paid", nullable = false)
-    private Long paid;
+    private Long uno;
 
     @Column(name = "pname", nullable = false, length = 50)
     private String pname;
@@ -25,8 +25,8 @@ public class PartnerApplication {
     @Column(name = "p_address", nullable = false)
     private String pAddress;
 
-    @Column(name = "p_ceo", length = 50)
-    private String pCeo;
+    @Column(name = "ceo", length = 50)
+    private String ceo;
 
     @Lob
     @Column(name = "p_info")
@@ -35,12 +35,13 @@ public class PartnerApplication {
     @Column(name = "p_license", length = 30)
     private String pLicense;
 
-    @Column(columnDefinition = "pa_status", nullable = false)
+    @Column(columnDefinition = "TINYTEXT", nullable = false)
     private String paStatus;
 
-    @ColumnDefault("CURRENT_TIMESTAMP")
-    @Column(name = "pa_created_at", nullable = false)
-    private LocalDateTime paCreatedAt;
+
+    @CreationTimestamp
+    @Column(nullable = false, updatable = false)
+    private LocalDateTime createdAt;
 
     @Column(name = "pa_reviewed_at")
     private LocalDateTime paReviewedAt;
@@ -56,8 +57,8 @@ public class PartnerApplication {
         }
     }
 
+
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "uno", nullable = false)
-    private kroryi.dagon.entity.User uno;
-
+    private User user; // ✅ uno → user 변경
 }

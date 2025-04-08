@@ -28,6 +28,6 @@ public class FishingReportImg {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "frid")
-    private FishingReport frId;
+    private FishingReport frId; //fr_report_img와 join
 
 }
