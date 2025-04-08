@@ -7,6 +7,8 @@ import org.hibernate.annotations.ColumnDefault;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
@@ -15,7 +17,6 @@ import java.time.LocalDateTime;
 public class Partner extends BaseTimeEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "uno", nullable = false)
     private Long uno;
 
@@ -40,6 +41,10 @@ public class Partner extends BaseTimeEntity {
 
 
     @OneToOne(fetch = FetchType.LAZY, optional = false)
+    @MapsId // uno공유키
     @JoinColumn(name = "uno", nullable = false)
     private User user;
+
+    @OneToMany(mappedBy = "partner", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Product> products = new ArrayList<>();
 }
