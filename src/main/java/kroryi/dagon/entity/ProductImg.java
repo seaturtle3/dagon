@@ -18,7 +18,7 @@ public class ProductImg {
     private Long prodImgId;
 
     @Column(name = "prodid", nullable = false)
-    private Integer prodid;
+    private Long prodid;
 
     @Column(name = "prod_img_order", nullable = false)
     private Integer prodImgOrder;

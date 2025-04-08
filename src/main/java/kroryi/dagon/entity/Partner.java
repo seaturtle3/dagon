@@ -38,6 +38,11 @@ public class Partner extends BaseTimeEntity {
     @Column(name = "license_img")
     private String licenseImg;
 
+    @ColumnDefault("CURRENT_TIMESTAMP")
+    @Column(name = "p_created_at", nullable = false)
+    private LocalDateTime pCreatedAt;
+
+
     @MapsId
     @OneToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "uno", nullable = false)

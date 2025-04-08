@@ -6,6 +6,7 @@ import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
 
 import java.time.Instant;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -19,7 +20,7 @@ public class FishingDiary {
 
     @ColumnDefault("CURRENT_TIMESTAMP")
     @Column(name = "create_at", nullable = false)
-    private Instant createAt;
+    private LocalDateTime createAt;
 
     @Lob
     @Column(name = "fd_content", nullable = false)

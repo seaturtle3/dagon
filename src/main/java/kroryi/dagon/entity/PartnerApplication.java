@@ -3,21 +3,21 @@ package kroryi.dagon.entity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.annotations.ColumnDefault;
+import lombok.ToString;
+import org.hibernate.annotations.CreationTimestamp;
 
-import java.time.Instant;
 import java.time.LocalDateTime;
 
 @Getter
 @Setter
 @Entity
+@ToString
 @Table(name = "partner_applications")
-public class PartnerApplication extends BaseTimeEntity{
-
+public class PartnerApplication {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "pid", nullable = false)
-    private Long pid;
+    @Column(name = "paid", nullable = false)
+    private Long uno;
 
     @Column(name = "pname", nullable = false, length = 50)
     private String pname;
@@ -35,40 +35,30 @@ public class PartnerApplication extends BaseTimeEntity{
     @Column(name = "license", length = 30)
     private String license;
 
-    @Column(name = "status", nullable = false)
-    private String status;
+    @Column(columnDefinition = "TINYTEXT", nullable = false)
+    private String paStatus;
 
-    // 심사처리 시각
-    @Column(name = "reviewed_at")
-    private LocalDateTime reviewedAt;
+
+    @CreationTimestamp
+    @Column(nullable = false, updatable = false)
+    private LocalDateTime createdAt;
+
+    @Column(name = "pa_reviewed_at")
+    private LocalDateTime paReviewedAt;
 
     @Lob
-    @Column(name = "rejection_reason")
-    private String rejectionReason;
+    @Column(name = "pa_rejection_reason")
+    private String paRejectionReason;
 
-    public PartnerApplication() {
-        this.status = ApplicationStatus.PENDING.name();
+    @PrePersist
+    protected void onCreate() {
+        if (this.paStatus == null) {
+            this.paStatus = "심사중";
+        }
     }
+
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "uno", nullable = false)
-    private User user;
-
-
-    public enum ApplicationStatus {
-        PENDING("심사중"),
-        APPROVED("승인됨"),
-        REJECTED("반려됨");
-
-        private final String label;
-
-        ApplicationStatus(String label) {
-            this.label = label;
-        }
-
-        public String getLabel() {
-            return label;
-        }
-    }
-
+    private User user; // ✅ uno → user 변경
 }
