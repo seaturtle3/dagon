@@ -46,11 +46,8 @@ public class PartnerApplication extends BaseTimeEntity{
     @Column(name = "rejection_reason")
     private String rejectionReason;
 
-    @PrePersist
-    protected void onCreate() {
-        if (this.status == null) {
-            this.status = ApplicationStatus.PENDING;
-        }
+    public PartnerApplication() {
+        this.status = ApplicationStatus.PENDING.name();
     }
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
