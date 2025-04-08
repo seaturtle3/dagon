@@ -9,7 +9,7 @@ import java.io.Serializable;
  */
 @Value
 public class AdminDTO implements Serializable {
-    Long uid;
-    String adminId;
-    String adminPw;
+    Long aid;
+    String apw;
+    String aname;
 }

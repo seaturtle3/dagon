@@ -11,7 +11,7 @@ import lombok.Setter;
 public class Admin {
     @Id
     @Column(name = "aid", nullable = false, length = 50)
-    private String aid;
+    private Long aid;
 
     @Column(name = "apw", nullable = false)
     private String apw;
