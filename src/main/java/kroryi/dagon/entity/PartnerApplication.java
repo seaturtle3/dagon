@@ -1,7 +1,7 @@
 package kroryi.dagon.entity;
 
 import jakarta.persistence.*;
-import kroryi.dagon.enums.PartnerApplicationStatus;
+import kroryi.dagon.enums.ApplicationStatus;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -35,7 +35,7 @@ public class PartnerApplication extends BaseTimeEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "p_status", nullable = false)
-    private PartnerApplicationStatus pStatus = PartnerApplicationStatus.PENDING;
+    private ApplicationStatus pStatus = ApplicationStatus.PENDING;
 
     @Column(name = "p_reviewed_at")
     private LocalDateTime pReviewedAt;

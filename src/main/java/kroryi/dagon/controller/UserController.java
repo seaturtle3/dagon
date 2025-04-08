@@ -17,7 +17,7 @@ public class UserController {
 
     @GetMapping("/login")
     public String loginForm() {
-        return "login";
+        return "user/login";
     }
 
     @PostMapping("/login")
@@ -47,7 +47,7 @@ public class UserController {
         } else {
             System.out.println("Login Failed");
 
-            return "login";
+            return "user/login";
 
         }
     }
@@ -55,7 +55,7 @@ public class UserController {
     @GetMapping("/logout")
     public String logout(HttpSession session) {
         session.invalidate();  // 세션 무효화
-        return "login";
+        return "user/login";
     }
 }
 

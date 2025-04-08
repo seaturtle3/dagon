@@ -12,15 +12,14 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor// ✅ 기본 생성자 자동 생성
 public class PartnerApplicationDTO {
-    private Long id;
+    private Long pid;
     private Long uno;
     private String pname;
     private String paddress;
-    private String pceo;
+    private String ceoName;
     private String pinfo;
-    private String plicense;
-    private String paStatus;
-    private LocalDateTime paCreatedAt;
+    private String license;
+    private String pstatus;
     private LocalDateTime paReviewedAt;
     private String paRejectionReason;
     private String uname;  // 신청자 이름

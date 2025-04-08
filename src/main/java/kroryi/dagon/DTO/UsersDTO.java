@@ -5,11 +5,12 @@ import lombok.*;
 import org.w3c.dom.Text;
 import java.util.Date;
 
-@Getter
-@Setter
-@RequiredArgsConstructor
-@ToString
+
+
+
 @Data
+@NoArgsConstructor
+@AllArgsConstructor// ✅ 기본 생성자 자동 생성
 public class UsersDTO {
     private Long uno;
     private String uid;
@@ -17,7 +18,7 @@ public class UsersDTO {
     private String uname;
     private String nickname;
     private String email;
-    private Text profile_image;
+    private String profile_image;
     private int points;
     private int level;
     private String phone1;

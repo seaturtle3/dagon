@@ -74,11 +74,11 @@
 
                 data.content.forEach(item => {
                     body.append(`
-                        <tr onclick="goToDetail(${item.id})" style="cursor:pointer;">
-                            <td>${item.id}</td>
+                        <tr onclick="goToDetail(${item.pid})" style="cursor:pointer;">
+                            <td>${item.pid}</td>
                             <td>${item.pname}</td>
                             <td>${item.uname}</td>
-                            <td>${item.paStatus}</td>
+                            <td>${item.pstatus}</td>
                         </tr>
                     `);
                 });
