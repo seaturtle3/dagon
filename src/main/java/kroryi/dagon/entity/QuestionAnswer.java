@@ -20,8 +20,8 @@ public class QuestionAnswer {
     @Column(name = "answer_id")
     private Long answerId;
 
-    @Column(name = "qa_created_at")
-    private Instant qaCreatedAt;
+    @Column(name = "created_at")
+    private Instant createdAt;
 
     @Column(name = "qa_content", nullable = false)
     private String qaContent;
