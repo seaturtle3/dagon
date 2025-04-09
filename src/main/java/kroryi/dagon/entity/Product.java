@@ -69,9 +69,9 @@ public class Product extends BaseTimeEntity {
 
     // 매핑
 
-    // 상품 이미지
-    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ProductImg> images = new ArrayList<>();
+//    // 상품 이미지
+//    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+//    private List<ProductImg> images = new ArrayList<>();
 
     // 편의시설
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
