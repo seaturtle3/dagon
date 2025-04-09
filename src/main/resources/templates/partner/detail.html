@@ -1,0 +1,17 @@
+<body>
+<h2>파트너 상세 정보</h2>
+<div>
+    <p><strong>ID:</strong> <span th:text="${app.pid}"></span></p>
+    <p><strong>상호명:</strong> <span th:text="${app.pname}"></span></p>
+    <p><strong>대표자명:</strong> <span th:text="${app.ceoName}"></span></p>
+    <p><strong>주소:</strong> <span th:text="${app.paddress}"></span></p>
+    <p><strong>사업자 번호:</strong> <span th:text="${app.license}"></span></p>
+    <p><strong>정보:</strong> <span th:text="${app.pinfo}"></span></p>
+    <p><strong>상태:</strong> <span th:text="${app.pstatus}"></span></p>
+    <p><strong>신청자:</strong> <span th:text="${app.uname}"></span></p>
+    <p><strong>심사일:</strong> <span th:text="${app.paReviewedAt}"></span></p>
+    <p><strong>반려 사유:</strong> <span th:text="${app.paRejectionReason}"></span></p>
+</div>
+
+<a href="/partners/list">목록으로</a>
+</body>

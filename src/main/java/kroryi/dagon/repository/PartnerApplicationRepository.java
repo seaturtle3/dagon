@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface PartnerApplicationRepository extends JpaRepository<PartnerApplication, Long> {
 
@@ -33,4 +34,7 @@ public interface PartnerApplicationRepository extends JpaRepository<PartnerAppli
             @Param("status") ApplicationStatus status,
             Pageable pageable
     );
+
+    @Query("SELECT p FROM PartnerApplication p JOIN FETCH p.user WHERE p.pid = :id")
+    Optional<PartnerApplication> findByIdWithUser(@Param("id") Long id);
 }

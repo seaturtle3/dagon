@@ -1,5 +1,6 @@
 package kroryi.dagon.service;
 
+import jakarta.persistence.EntityNotFoundException;
 import kroryi.dagon.DTO.PartnerApplicationDTO;
 import kroryi.dagon.entity.PartnerApplication;
 import kroryi.dagon.enums.ApplicationStatus;
@@ -67,6 +68,27 @@ public class PartnerApplicationService {
                         entity.getPRejectionReason(),
                         entity.getUser().getUname()
                 ));
+    }
+
+
+
+    public PartnerApplicationDTO findById(Long id) {
+        PartnerApplication entity = partnerApplicationRepository.findByIdWithUser(id)
+                .orElseThrow(() -> new EntityNotFoundException("신청서가 존재하지 않습니다."));
+
+        return new PartnerApplicationDTO(
+                entity.getPid(),
+                entity.getUser().getUno(),
+                entity.getPname(),
+                entity.getPAddress(),
+                entity.getCeoName(),
+                entity.getPInfo(),
+                entity.getLicense(),
+                entity.getPStatus().getKorean(), // ApplicationStatus -> 한글 문자열 변환
+                entity.getPReviewedAt(),
+                entity.getPRejectionReason(),
+                entity.getUser().getUname()
+        );
     }
 }
 

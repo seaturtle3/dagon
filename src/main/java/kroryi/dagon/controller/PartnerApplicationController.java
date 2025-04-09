@@ -8,6 +8,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -30,5 +31,12 @@ public class PartnerApplicationController {
         Page<PartnerApplicationDTO> applicationPage = partnerApplicationService.getAllApplications(PageRequest.of(page, size));
         model.addAttribute("applicationPage", applicationPage);
         return "partner/list"; // => templates/partner/list.html
+    }
+
+    @GetMapping("/detail/{id}")
+    public String partnerDetail(@PathVariable Long id, Model model) {
+        PartnerApplicationDTO app = partnerApplicationService.findById(id); // 서비스에 따로 구현
+        model.addAttribute("app", app);
+        return "partner/detail"; // => templates/partner/detail.html
     }
 }
