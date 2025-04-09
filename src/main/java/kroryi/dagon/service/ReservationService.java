@@ -23,7 +23,7 @@ public class ReservationService {
         List<Reservation> result = new ArrayList<>();
 
         for (Reservation r : all) {
-            if (date != null && !r.getReservationAt().equals(date)) continue;
+            if (date != null && !r.getRe().equals(date)) continue;
             if (people != null && r.getNumPerson() < people) continue;
             if (region != null && !r.getReservationAt().equals(region)) continue;
             if (fishType != null && !r.getFishType().equals(fishType)) continue;

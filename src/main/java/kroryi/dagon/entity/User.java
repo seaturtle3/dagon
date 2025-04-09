@@ -1,15 +1,21 @@
 package kroryi.dagon.entity;
 
 import jakarta.persistence.*;
+import kroryi.dagon.enums.UserLevel;
+import kroryi.dagon.enums.UserRole;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 import org.hibernate.annotations.ColumnDefault;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
 @Entity
 @Table(name = "users")
-public class User {
+public class User extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,41 +40,51 @@ public class User {
     @Column(name = "profile_img")
     private String profileImg;
 
-    @ColumnDefault("0")
-    @Column(name = "points", nullable = false)
-    private Integer points;
-
-    @Enumerated(EnumType.STRING) // Enum을 문자열로 저장
-    @Column(length = 10)
-    private Level level;
-
-    @Enumerated(EnumType.STRING)
-    private Role role;
-
     @Column(name = "phone", nullable = false)
     private String phone;
 
+    @ColumnDefault("0")
+    @Column(name = "points", nullable = false)
+    private Integer points = 0;
+
+    @Enumerated(EnumType.STRING)
+    @Column(length = 10)
+    private UserLevel level = UserLevel.SILVER;
+
+    @ColumnDefault("0")
+    @Column(name = "level_point", nullable = false)
+    private Integer levelPoint = 0;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private UserRole role = UserRole.USER;
 
 
-    public enum Level {
-        SILVER("실버"),
-        GOLD("골드"),
-        PLATINUM("플래티넘"),
-        DIAMOND("다이아몬드");
+    // 매핑
 
-        private final String korean;
+    // 파트너신청
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @ToString.Exclude
+    private List<PartnerApplication> partnerApplications;
 
-        Level(String koreanName) {
-            this.korean = koreanName;
-        }
+    // 승인 파트너
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    @ToString.Exclude
+    private Partner partner;
 
-        public String getKorean() {
-            return korean;
-        }
-    }
+    // 조황정보
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<FishingReport> fishingReports = new ArrayList<>();
 
-    public enum Role {
-        USER, PARTNER
-    }
+    // 조행기
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<FishingDiary> fishingDiaries = new ArrayList<>();
 
+    // 자유게시판
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<FreeBoard> freeBoards = new ArrayList<>();
+
+    // 찜, 좋아요
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<UserAction> userActions = new ArrayList<>();
 }

@@ -4,14 +4,16 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Getter
 @Setter
 @Entity
 @Table(name = "partners")
-public class Partner {
+public class Partner extends BaseTimeEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "uno", nullable = false)
     private Long uno;
 
@@ -34,8 +36,12 @@ public class Partner {
     @Column(name = "license_img")
     private String licenseImg;
 
-    @MapsId
+
     @OneToOne(fetch = FetchType.LAZY, optional = false)
+    @MapsId // uno공유키
     @JoinColumn(name = "uno", nullable = false)
     private User user;
+
+    @OneToMany(mappedBy = "partner", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Product> products = new ArrayList<>();
 }
