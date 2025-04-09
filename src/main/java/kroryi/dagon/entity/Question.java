@@ -1,6 +1,8 @@
 package kroryi.dagon.entity;
 
 import jakarta.persistence.*;
+import kroryi.dagon.enums.QuestionType;
+import kroryi.dagon.enums.UserType;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -11,57 +13,34 @@ import java.time.LocalDateTime;
 @Setter
 @Entity
 @Table(name = "question")
-public class Question {
+public class Question extends BaseTimeEntity{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "qid", nullable = false)
-    private Long qid;
-
-    @Column(name = "uid", nullable = false)
-    private Long uid;
-
-    @Column(name = "created_at")
-    private LocalDateTime createdAt;
-
-    @Column(name = "question_content", nullable = false)
-    private String questionContent;
+    @Column(name = "question_id", nullable = false)
+    private Long questionId;
 
     @Column(name = "question_title", nullable = false)
     private String questionTitle;
 
+    @Column(name = "question_content", nullable = false)
+    private String questionContent;
+
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
+
     @Enumerated(EnumType.STRING)
     @Column(name = "question_type", nullable = false)
-    private Questiontype questionType;
-    public enum Questiontype {
-        PRODUCT("상품문의"),
-        RESERVATION("예약문의"),
-        CANCLATION("예약취소문의"),
-        SYSTEM("시스템문의"),
-        BUSINESS("제휴문의");
+    private QuestionType questionType;
 
-        private final String korean;
-
-        Questiontype(String koreanName) {
-            this.korean = koreanName;
-        }
-
-        public String getKorean() {
-            return korean;
-        }
-    }
 
     @Enumerated(EnumType.STRING)
     @Column(name = "u_type", nullable = false)
-    private Usertype uType;
-    public enum Usertype {
-        USERE, PARTNER, ADMIN;
-    }
+    private UserType uType;
+
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "qcid", nullable = false)
-    private kroryi.dagon.entity.QuestionCategory qcid;
+    @JoinColumn(name = "qc_id", nullable = false)
+    private QuestionCategory questionCategory;
 }
