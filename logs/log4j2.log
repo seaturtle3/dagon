@@ -1,0 +1,8 @@
+[2025-04-09 12:39:17.529]  INFO 17176 --- [   File Watcher] rtingClassPathChangeChangedEventListener : Restarting due to 11 class path changes (1 addition, 5 deletions, 5 modifications)
+[2025-04-09 12:39:17.540]  INFO 17176 --- [       Thread-5] o.s.b.w.e.t.GracefulShutdown             : Commencing graceful shutdown. Waiting for active requests to complete
+[2025-04-09 12:39:17.542]  INFO 17176 --- [tomcat-shutdown] o.a.c.h.Http11NioProtocol                : Pausing ProtocolHandler ["http-nio-9090"]
+[2025-04-09 12:39:17.546]  INFO 17176 --- [tomcat-shutdown] o.s.b.w.e.t.GracefulShutdown             : Graceful shutdown complete
+[2025-04-09 12:39:17.547]  INFO 17176 --- [       Thread-5] o.a.c.h.Http11NioProtocol                : Stopping ProtocolHandler ["http-nio-9090"]
+[2025-04-09 12:39:17.553]  INFO 17176 --- [       Thread-5] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+[2025-04-09 12:39:17.559]  INFO 17176 --- [       Thread-5] c.z.h.HikariDataSource                   : HikariPool-1 - Shutdown initiated...
+[2025-04-09 12:39:17.563]  INFO 17176 --- [       Thread-5] c.z.h.HikariDataSource                   : HikariPool-1 - Shutdown completed.
