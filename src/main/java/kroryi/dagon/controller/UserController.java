@@ -17,7 +17,7 @@ public class UserController {
 
     @GetMapping("/login")
     public String loginForm() {
-        return "login";
+        return "user/login";
     }
 
     @PostMapping("/login")
@@ -37,6 +37,8 @@ public class UserController {
             session.setAttribute("uname", user.getUname());
             session.setAttribute("uid", user.getUid());
             session.setAttribute("upw", user.getUpw());
+            session.setAttribute("loginUser", user);
+
 
 
             System.out.println("세션 확인: " + session.getAttribute("uname"));
@@ -45,7 +47,7 @@ public class UserController {
         } else {
             System.out.println("Login Failed");
 
-            return "login";
+            return "user/login";
 
         }
     }
@@ -53,7 +55,7 @@ public class UserController {
     @GetMapping("/logout")
     public String logout(HttpSession session) {
         session.invalidate();  // 세션 무효화
-        return "login";
+        return "user/login";
     }
 }
 

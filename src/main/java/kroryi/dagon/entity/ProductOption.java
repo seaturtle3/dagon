@@ -17,6 +17,7 @@ public class ProductOption {
     @Column(name = "opt_id", nullable = false)
     private Long optId;
 
+
     @Column(name = "opt_name", nullable = false)
     private String optName;
 

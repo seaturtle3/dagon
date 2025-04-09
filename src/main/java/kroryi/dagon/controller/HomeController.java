@@ -45,6 +45,9 @@ public class HomeController {
         return "sub_menu/notice";
     }
 
-
+    @GetMapping("/reservation")
+    public String reservation() {
+        return "sub_menu/reservation";
+    }
 
 }
