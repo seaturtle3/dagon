@@ -11,6 +11,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+
+// 파트너 신청 리스트 컨트롤
+
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/partners") // ⚠️ URL 깔끔하게 정리

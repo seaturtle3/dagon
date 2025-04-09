@@ -17,6 +17,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 
+//            파트너 등록 컨트롤
+
 @RequiredArgsConstructor
 @Controller
 @RequestMapping("/api/partners")

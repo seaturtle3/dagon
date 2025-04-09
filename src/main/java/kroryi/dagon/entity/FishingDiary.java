@@ -7,40 +7,52 @@ import org.hibernate.annotations.ColumnDefault;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
 @Entity
 @Table(name = "fishing_diary")
-public class FishingDiary {
+public class FishingDiary extends BaseTimeEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "fdid", nullable = false)
-    private Long fdid;
+    @Column(name = "fd_id", nullable = false)
+    private Long fdId;
 
-    @ColumnDefault("CURRENT_TIMESTAMP")
-    @Column(name = "create_at", nullable = false)
-    private LocalDateTime createAt;
+    @Column(name = "title", nullable = false)
+    private String title;
 
     @Lob
-    @Column(name = "fd_content", nullable = false)
-    private String fdContent;
+    @Column(nullable = false)
+    private String content;
 
-    @Column(name = "fd_title", nullable = false, length = 50)
-    private String fdTitle;
+    @Column(length = 512)
+    private String thumbnailUrl;
 
     @Column(name = "fishing_at", nullable = false)
-    private Instant fishingAt;
+    private LocalDateTime fishingAt;
 
     @Column(name = "modify_at")
-    private Instant modifyAt;
+    private LocalDateTime modifyAt;
 
+    @Column(nullable = false)
     @ColumnDefault("0")
-    @Column(name = "views", nullable = false)
-    private Integer views;
+    private Integer views = 0;
 
+    // 회원
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "uid", nullable = false)
-    private User uid;
+    private User user;
+
+    // 상품
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "prod_id", nullable = false)
+    private Product product;
+
+    // 조행기 댓글
+    @OneToMany(mappedBy = "fishingDiary", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<FishingDiaryComment> comments = new ArrayList<>();
 
 }

@@ -12,7 +12,7 @@ public abstract class BaseTimeEntity {
     // 생성 시점에 직접 값 할당
     // 시간관련만
 
-    @Column(name = "created_at")
+    @Column(name = "created_at", nullable = false)
     protected LocalDateTime createdAt;
 
     @PrePersist

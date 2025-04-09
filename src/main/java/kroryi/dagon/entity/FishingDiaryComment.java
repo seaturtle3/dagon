@@ -6,34 +6,34 @@ import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
 
 import java.time.Instant;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
 @Entity
 @Table(name = "fishing_diary_comment")
-public class FishingDiaryComment {
+public class FishingDiaryComment extends BaseTimeEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "fd_comment_id", nullable = false)
-    private Long fdCommentID;
+    private Long fdCommentId;
 
     @Lob
-    @Column(name = "fd_comment_content", nullable = false)
-    private String fdCommentContent;
+    @Column(name = "comment_content", nullable = false)
+    private String commentContent;
 
-    @ColumnDefault("CURRENT_TIMESTAMP")
-    @Column(name = "created_at", nullable = false)
-    private Instant createdAt;
+    @Column(name = "modify_at")
+    private LocalDateTime modifyAt;
 
-    @Column(name = "cmodify_at")
-    private Instant modifyAt;
-
+    // 조행기
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "fdid", nullable = false)
-    private FishingDiary fdId;
+    @JoinColumn(name = "fd_id", nullable = false)
+    private FishingDiary fishingDiary;
 
+    // 회원
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "uid", nullable = false)
-    private User uid;
+    private User user;
 
 }

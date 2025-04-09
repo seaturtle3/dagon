@@ -8,8 +8,8 @@ import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.annotations.ColumnDefault;
 
-import java.time.Instant;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -61,6 +61,8 @@ public class User extends BaseTimeEntity {
     private UserRole role = UserRole.USER;
 
 
+    // 매핑
+
     // 파트너신청
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     @ToString.Exclude
@@ -71,4 +73,19 @@ public class User extends BaseTimeEntity {
     @ToString.Exclude
     private Partner partner;
 
+    // 조황정보
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<FishingReport> fishingReports = new ArrayList<>();
+
+    // 조행기
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<FishingDiary> fishingDiaries = new ArrayList<>();
+
+    // 자유게시판
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<FreeBoard> freeBoards = new ArrayList<>();
+
+    // 찜, 좋아요
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<UserAction> userActions = new ArrayList<>();
 }

@@ -3,33 +3,31 @@ package kroryi.dagon.entity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.annotations.ColumnDefault;
 
-import java.time.Instant;
 import java.time.LocalDateTime;
 
 @Getter
 @Setter
 @Entity
-@Table(name = "fishing_report_comments")
-public class FishingReportComment extends BaseTimeEntity {
+@Table(name = "freeboard_comments")
+public class FreeBoardComment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "fr_comment_id", nullable = false)
-    private Long frCommentId;
+    @Column(name = "fb_comment_id", nullable = false)
+    private Long fbCommentId;
 
-    @Lob
-    @Column(name = "comment_content", nullable = false)
+    @Column(name = "comment_content")
     private String commentContent;
 
     @Column(name = "modify_at")
     private LocalDateTime modifyAt;
 
-    // 조황정보
+
+    // 자유게시판
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "fr_id", nullable = false)
-    private FishingReport fishingReport;
+    @JoinColumn(name = "fb_id", nullable = false)
+    private FreeBoard freeBoard;
 
     // 회원
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
