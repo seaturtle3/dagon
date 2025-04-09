@@ -4,6 +4,7 @@ package kroryi.dagon.service;
 import kroryi.dagon.DTO.PartnerApplicationDTO;;
 import kroryi.dagon.entity.PartnerApplication;
 import kroryi.dagon.entity.User;
+import kroryi.dagon.repository.PartnerApplicationRepository;
 import kroryi.dagon.repository.PartnerRepository;
 import kroryi.dagon.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +19,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class PartnerService {
 
-    private final PartnerRepository partnerApplicationRepository;
+    private final PartnerApplicationRepository partnerApplicationRepository;
     private final UserRepository userRepository;
 
 

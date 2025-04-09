@@ -1,15 +1,20 @@
 package kroryi.dagon.service;
 
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import kroryi.dagon.DTO.PartnerApplicationDTO;
+import kroryi.dagon.entity.Partner;
 import kroryi.dagon.entity.PartnerApplication;
 import kroryi.dagon.enums.ApplicationStatus;
 import kroryi.dagon.repository.PartnerApplicationRepository;
+import kroryi.dagon.repository.PartnerRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import kroryi.dagon.entity.User;
+
+import java.time.LocalDateTime;
 
 
 @Service
@@ -17,6 +22,8 @@ import kroryi.dagon.entity.User;
 public class PartnerApplicationService {
 
     private final PartnerApplicationRepository partnerApplicationRepository;
+
+    private final PartnerRepository partnerRepository;
 
     public Page<PartnerApplicationDTO> getAllApplications(Pageable pageable) {
         return partnerApplicationRepository.findAllWithUser(pageable)
@@ -31,7 +38,8 @@ public class PartnerApplicationService {
                         entity.getPStatus().toString(),
                         entity.getPReviewedAt(),
                         entity.getPRejectionReason(),
-                        entity.getUser().getUname()
+                        entity.getUser().getUname(),
+                        entity.getUser().getDisplayName()
                 ));
     }
 
@@ -66,7 +74,8 @@ public class PartnerApplicationService {
                         entity.getPStatus().getKorean(), // 한글로 출력
                         entity.getPReviewedAt(),
                         entity.getPRejectionReason(),
-                        entity.getUser().getUname()
+                        entity.getUser().getUname(),
+                        entity.getUser().getDisplayName()
                 ));
     }
 
@@ -87,8 +96,47 @@ public class PartnerApplicationService {
                 entity.getPStatus().getKorean(), // ApplicationStatus -> 한글 문자열 변환
                 entity.getPReviewedAt(),
                 entity.getPRejectionReason(),
-                entity.getUser().getUname()
+                entity.getUser().getUname(),
+                entity.getUser().getDisplayName()
         );
+    }
+
+    @Transactional
+    public void approve(Long id) {
+        PartnerApplication app = partnerApplicationRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("신청 정보 없음"));
+
+        app.setPStatus(ApplicationStatus.APPROVED);
+        app.setPReviewedAt(LocalDateTime.now());
+
+        Long uno = app.getUser().getUno();
+
+        Partner partner = partnerRepository.findById(uno).orElse(null);
+
+        if (partner == null) {
+            partner = new Partner();
+            partner.setUno(uno);
+            partner.setUser(app.getUser());
+        }
+
+        // 업데이트 또는 신규 저장에 공통으로 적용
+        partner.setPname(app.getPname());
+        partner.setPAddress(app.getPAddress());
+        partner.setCeoName(app.getCeoName());
+        partner.setPInfo(app.getPInfo());
+        partner.setLicense(app.getLicense());
+
+        partnerRepository.save(partner);
+    }
+
+    @Transactional
+    public void reject(Long id, String reason) {
+        PartnerApplication app = partnerApplicationRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("신청 정보 없음"));
+
+        app.setPStatus(ApplicationStatus.REJECTED);
+        app.setPReviewedAt(LocalDateTime.now());
+        app.setPRejectionReason(reason);
     }
 }
 
