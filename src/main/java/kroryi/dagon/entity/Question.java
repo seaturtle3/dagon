@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @Setter
 @Entity
 @Table(name = "question")
-public class Question extends BaseTimeEntity{
+public class Question extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,7 +28,6 @@ public class Question extends BaseTimeEntity{
 
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
-
 
     @Enumerated(EnumType.STRING)
     @Column(name = "question_type", nullable = false)
