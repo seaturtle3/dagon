@@ -40,4 +40,3 @@ public class PartnerService {
         partnerApplicationRepository.save(application);
     }
 }
-

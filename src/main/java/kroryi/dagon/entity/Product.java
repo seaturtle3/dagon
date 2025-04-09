@@ -67,6 +67,19 @@ public class Product extends BaseTimeEntity {
     private Partner partner;
 
 
+    // 매핑
+
+    // 편의시설
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ProductFacilityMapping> facilityMappings = new ArrayList<>();
+
+    // 낚시도구
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ProductFishingGearMapping> fishingGearMappings = new ArrayList<>();
+
+    // 어종
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ProductFishSpeciesMapping> fishSpeciesMappings = new ArrayList<>();
 
     // 옵션
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)

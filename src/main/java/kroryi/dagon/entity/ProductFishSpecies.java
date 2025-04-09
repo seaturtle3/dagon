@@ -26,4 +26,7 @@ public class ProductFishSpecies {
 //    @OneToMany(mappedBy = "fishSpecies", cascade = CascadeType.ALL, orphanRemoval = true)
 //    private List<ProductFishSpeciesMapping> fishSpeciesMappings = new ArrayList<>();
 
+    @OneToMany(mappedBy = "fishSpecies", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ProductFishSpeciesMapping> fishSpeciesMappings = new ArrayList<>();
+
 }
