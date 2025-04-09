@@ -9,6 +9,7 @@ import lombok.ToString;
 import org.hibernate.annotations.ColumnDefault;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -47,17 +48,23 @@ public class User extends BaseTimeEntity {
     @Column(name = "points", nullable = false)
     private Integer points = 0;
 
+    @Enumerated(EnumType.STRING)
+    @Column(length = 10)
+    private UserLevel level = UserLevel.SILVER;
+
     @ColumnDefault("0")
     @Column(name = "level_point", nullable = false)
     private Integer levelPoint = 0;
 
     @Enumerated(EnumType.STRING)
-    @Column(length = 10)
-    private UserLevel level = UserLevel.SILVER;
-
-    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private UserRole role = UserRole.USER;
+
+
+    public String getDisplayName() {
+        return (nickname != null && !nickname.isBlank()) ? nickname : uname;
+    }
+
 
     // 파트너신청
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -69,4 +76,20 @@ public class User extends BaseTimeEntity {
     @ToString.Exclude
     private Partner partner;
 
+    // 조황정보
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<FishingReport> fishingReports = new ArrayList<>();
+
+    // 조행기
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<FishingDiary> fishingDiaries = new ArrayList<>();
+
+    // 자유게시판
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<FreeBoard> freeBoards = new ArrayList<>();
+
+    // 찜, 좋아요
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<UserAction> userActions = new ArrayList<>();
 }
+

@@ -1,23 +1,27 @@
 package kroryi.dagon.DTO;
 
-import lombok.Value;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.ToString;
+import lombok.NoArgsConstructor;
 
-import java.io.Serializable;
 import java.time.LocalDateTime;
 
-/**
- * DTO for {@link kroryi.dagon.entity.PartnerApplication}
- */
-@Value
-public class PartnerApplicationDTO implements Serializable {
-    Long id;
-    String pname;
-    String paddress;
-    String pceo;
-    String pinfo;
-    String plicense;
-    String paStatus;
-    LocalDateTime paCreatedAt;
-    LocalDateTime paReviewedAt;
-    String paRejectionReason;
+@ToString
+@Data
+@NoArgsConstructor
+@AllArgsConstructor// ✅ 기본 생성자 자동 생성
+public class PartnerApplicationDTO {
+    private Long pid;
+    private Long uno;
+    private String pname;
+    private String paddress;
+    private String ceoName;
+    private String pinfo;
+    private String license;
+    private String pstatus;
+    private LocalDateTime paReviewedAt;
+    private String paRejectionReason;
+    private String uname;  // 신청자 이름
+    private String displayName;
 }

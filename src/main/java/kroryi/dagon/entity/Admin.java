@@ -4,6 +4,9 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Getter
 @Setter
 @Entity
@@ -11,7 +14,7 @@ import lombok.Setter;
 public class Admin {
     @Id
     @Column(name = "aid", nullable = false, length = 50)
-    private Long aid;
+    private String aid;
 
     @Column(name = "apw", nullable = false)
     private String apw;
@@ -19,4 +22,11 @@ public class Admin {
     @Column(name = "aname")
     private String aname;
 
+    // 공지사항
+    @OneToMany(mappedBy = "admin", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Notice> notices = new ArrayList<>();
+
+    // 신고
+    @OneToMany(mappedBy = "handledBy")
+    private List<ContentReport> handledReports = new ArrayList<>();
 }

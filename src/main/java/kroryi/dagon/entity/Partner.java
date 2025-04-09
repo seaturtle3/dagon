@@ -20,6 +20,9 @@ public class Partner extends BaseTimeEntity {
     @Column(name = "uno", nullable = false)
     private Long uno;
 
+    @Version
+    private Integer version;
+
     @Column(name = "pname", nullable = false, length = 50)
     private String pname;
 

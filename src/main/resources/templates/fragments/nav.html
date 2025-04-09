@@ -9,7 +9,7 @@
 
 <body>
 
-<nav th:fragment="Nav">
+<nav th:fragment="nav">
     <!-- 플로팅 사이드바 -->
     <div class="floating-sidebar">
         <div>바다 바로 예약</div>
@@ -18,9 +18,9 @@
         <div>민물 바로 예약</div>
 
     </div>
-    <div class="floating-sidebar3">
-        <p th:text="'유저 번호: ' + ${session.uno}"></p>
-        <p th:text="'닉네임: ' + ${session.uname}"></p>
+    <div class="floating-sidebar3 d-flex flex-column">
+        <div th:text="'유저 번호: ' + ${session.uno}"></div><br>
+        <div th:text="'닉네임: ' + ${session.displayName}"></div>
     </div>
 
 
