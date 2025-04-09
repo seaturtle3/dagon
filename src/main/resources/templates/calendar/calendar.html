@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>예약 캘린더</title>
+    <style>
+        body { font-family: sans-serif; padding: 20px; }
+        .month-nav, .date-nav { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 15px; }
+        .month-btn, .date-btn {
+            padding: 8px 12px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            background: #eee;
+        }
+        .month-btn.disabled, .date-btn.disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        .selected { background: #007BFF; color: white; }
+
+        .slider {
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 20px;
+            background: #f9f9f9;
+        }
+
+        .reservation {
+            border-bottom: 1px solid #ccc;
+            padding: 10px 0;
+        }
+
+        .reservation:last-child {
+            border-bottom: none;
+        }
+
+        .btn-reserve {
+            background: #28a745;
+            color: white;
+            padding: 5px 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            float: right;
+        }
+
+        .nav-control {
+            margin: 10px 0;
+        }
+    </style>
+</head><body>
+<h2>예약 캘린더</h2>
+
+<div class="nav-control">
+    <button id="prev-month">이전</button>
+    <button id="next-month">다음</button>
+</div>
+
+<div class="month-nav" id="month-nav"></div>
+<div class="date-nav" id="date-nav"></div>
+
+<div class="slider" id="slider">
+    <div>날짜를 선택하세요.</div>
+</div>
+
+<script>
+
+
+    const today = new Date();
+    let currentYear = today.getFullYear();
+    let currentMonth = today.getMonth(); // 0 ~ 11
+    let selectedDate = null;
+    let loading = false;
+
+    const monthNav = document.getElementById('month-nav');
+    const dateNav = document.getElementById('date-nav');
+    const slider = document.getElementById('slider');
+
+    function renderMonths() {
+        monthNav.innerHTML = '';
+        for (let i = 0; i < 12; i++) {
+            const btn = document.createElement('button');
+            btn.textContent = `${i + 1}월`;
+            btn.className = 'month-btn';
+            if (i < today.getMonth()) {
+                btn.classList.add('disabled');
+            } else if (i === currentMonth) {
+                btn.classList.add('selected');
+            }
+            if (i >= today.getMonth()) {
+                btn.onclick = () => {
+                    currentMonth = i;
+                    renderMonths();
+                    renderDates();
+                };
+            }
+            monthNav.appendChild(btn);
+        }
+    }
+
+    function renderDates() {
+        dateNav.innerHTML = '';
+        const firstDay = new Date(currentYear, currentMonth, 1);
+        const lastDay = new Date(currentYear, currentMonth + 1, 0);
+        for (let d = 1; d <= lastDay.getDate(); d++) {
+            const date = new Date(currentYear, currentMonth, d);
+            const btn = document.createElement('button');
+            btn.textContent = `${d}`;
+            btn.className = 'date-btn';
+
+            if (date < new Date(today.setHours(0, 0, 0, 0))) {
+                btn.classList.add('disabled'); // 지난 날짜 비활성화
+            } else {
+                btn.onclick = () => {
+                    selectedDate = date;
+                    loadReservations(date); // 날짜 클릭 시 예약 데이터 로드
+                };
+            }
+
+            dateNav.appendChild(btn);
+        }
+    }
+
+    async function loadReservations(dateObj, reset = true) {
+        if (loading) return;
+        loading = true;
+
+        const dateStr = dateObj.toISOString().split('T')[0];
+        const res = await fetch(`/api/reservations?date=${dateStr}`); // ← API 호출
+        const data = await res.json(); // JSON 응답 받음
+
+        if (reset) {
+            slider.innerHTML = `<h4>${dateStr} 예약자 (${data.length}명)</h4>`;
+
+        } else {
+            slider.innerHTML += `<h4>${dateStr} 추가 예약자</h4>`;
+        }
+
+        data.forEach((resv, idx) => {
+            const div = document.createElement('div');
+            div.className = 'reservation';
+            div.innerHTML = `
+      <span>${idx + 1}. ${resv.name} (${resv.phone})</span>
+      <button class="btn-reserve" onclick="alert('예약 처리!')">바로 예약</button>
+    `;
+            slider.appendChild(div);
+        });
+
+        loading = false;
+    }
+    // 스크롤 시 다음 날짜 자동 로드
+    slider.addEventListener('scroll', () => {
+        if (
+            slider.scrollTop + slider.clientHeight >= slider.scrollHeight - 5 &&
+            selectedDate
+        ) {
+            const nextDate = new Date(selectedDate);
+            nextDate.setDate(nextDate.getDate() + 1);
+            selectedDate = nextDate;
+            loadReservations(nextDate, false);
+        }
+    });
+
+    document.getElementById('prev-month').onclick = () => {
+        if (currentMonth > today.getMonth()) {
+            currentMonth--;
+            renderMonths();
+            renderDates();
+            slider.innerHTML = '<div>날짜를 선택하세요.</div>';
+        }
+    };
+
+    document.getElementById('next-month').onclick = () => {
+        if (currentMonth < 11) {
+            currentMonth++;
+            renderMonths();
+            renderDates();
+            slider.innerHTML = '<div>날짜를 선택하세요.</div>';
+        }
+    };
+
+    renderMonths();
+    renderDates();
+</script>
+</body>
+</html>
