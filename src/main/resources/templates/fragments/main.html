@@ -18,15 +18,19 @@
                         <h4>실시간 선상낚시 예약</h4>
                     </div>
                     <div class="card-body d-flex flex-column justify-content-center align-items-start gap-2"
-                         style="height: 40vh;">
-                        <div class="d-flex flex-column gap-2 ms-5 fs-4">
-                            <div>날짜 : <span th:text="${#dates.format(#dates.createNow(), 'yyyy-MM-dd')}"></span></div>
-                            <div>인원 : <span>20</span></div>
-                            <div>지역 : <span>전체</span></div>
-                            <div>어종 : <span>전체</span></div>
+                         style="height: 40vh; overflow: auto">
+                        <div class="d-flex flex-column gap-3 ms-5 fs-5">
+                            <div>날짜 : <span id="selected-date"></span></div>
+                            <div>인원 : <span id="selected-people"></span></div>
+                            <div>지역 : <span id="selected-region"></span></div>
+                            <div>어종 : <span id="selected-fish"></span></div>
                         </div>
-                        <div class="align-self-center btn btn-light">세부항목 변경</div>
-                        <a th:href="@{/reservation}" class="align-self-center btn btn-primary">검색하기</a>
+                        <div class="align-self-center btn btn-light w-100 mt-3 fs-5"
+                             data-bs-toggle="modal" data-bs-target="#searchModal">
+                            세부항목 변경</div>
+                        <a th:href="@{/reservation}"
+                           class="align-self-center btn btn-primary w-100 fs-5">
+                            검색하기</a>
                     </div>
                 </div>
             </div>
@@ -205,6 +209,55 @@
         </div>
     </div>
 
+
+    <!-- 모달 페이지----------------------------------------------->
+    <div class="modal fade" id="searchModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+
+                <form action="/reservation/search" method="get" onsubmit="updateSpan();">
+                    <div class="modal-header">
+                        <h5 class="modal-title">세부항목 변경</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+
+                    <div class="modal-body">
+                        <label>날짜:</label>
+                        <input type="date" class="form-control" name="date" id="modal-date">
+
+                        <label>인원:</label>
+                        <input type="number" class="form-control" name="people" id="modal-people">
+
+                        <label>지역:</label>
+                        <select class="form-control" name="region" id="modal-region">
+                            <option value="">전체</option>
+                            <option value="경북">경북</option>
+                            <option value="경남">경남</option>
+                        </select>
+
+                        <label>어종:</label>
+                        <select class="form-control" name="fishType" id="modal-fishType">
+                            <option value="">전체</option>
+                            <option value="광어">광어</option>
+                            <option value="우럭">우럭</option>
+                        </select>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary w-100"
+                                onclick="updateSpan()" data-bs-dismiss="modal">적용</button>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+
+    <script src="/js/reservation_modal.js"></script>
 </main>
+
+
 </body>
 </html>
+
+
