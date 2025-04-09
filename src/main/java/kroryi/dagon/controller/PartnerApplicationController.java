@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 @RequiredArgsConstructor
-@RequestMapping("/partners") // ⚠️ URL 깔끔하게 정리
+@RequestMapping("/partner") // ⚠️ URL 깔끔하게 정리
 public class PartnerApplicationController {
 
     private final PartnerApplicationService partnerApplicationService;
@@ -34,9 +34,9 @@ public class PartnerApplicationController {
     }
 
     @GetMapping("/detail/{id}")
-    public String partnerDetail(@PathVariable Long id, Model model) {
-        PartnerApplicationDTO app = partnerApplicationService.findById(id); // 서비스에 따로 구현
-        model.addAttribute("app", app);
-        return "partner/detail"; // => templates/partner/detail.html
+    public String detail(@PathVariable Long id, Model model) {
+        PartnerApplicationDTO dto = partnerApplicationService.findById(id);
+        model.addAttribute("app", dto);
+        return "partner/detail"; // ✅ 이 경로가 중요
     }
 }

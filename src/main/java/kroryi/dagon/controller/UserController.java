@@ -38,7 +38,7 @@ public class UserController {
             session.setAttribute("uid", user.getUid());
             session.setAttribute("upw", user.getUpw());
             session.setAttribute("loginUser", user);
-
+            session.setAttribute("displayName", user.getDisplayName());
 
 
             System.out.println("세션 확인: " + session.getAttribute("uname"));
