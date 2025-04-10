@@ -26,7 +26,7 @@ public class UserService {
 
         User user = optionalUser.get();
 
-
+        // 비밀번호 검증
         if (user.getUpw().equals(upw)) {
             Long uno = user.getUno();    // 유저 번호 가져오기
             String uname = user.getUname();  // 유저 이름 가져오기
