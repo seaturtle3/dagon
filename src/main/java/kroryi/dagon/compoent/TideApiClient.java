@@ -1,5 +1,6 @@
 package kroryi.dagon.compoent;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import kroryi.dagon.DTO.TideInfoDTO;
 import kroryi.dagon.DTO.TideItemDTO;
 import lombok.RequiredArgsConstructor;
@@ -23,26 +24,5 @@ public class TideApiClient {
     @Value("${tide.api.service-key}")
     private String serviceKey;
 
-    public List<TideItemDTO> getTideItems(String obsCode, String date){
-
-        String url = UriComponentsBuilder
-                .fromUri(URI.create(baseUrl))
-                .queryParam("ServiceKey", serviceKey)
-                .queryParam("ObsCode", obsCode)
-                .queryParam("Date", date)
-                .queryParam("ResultType", "json")
-                .toUriString();
-
-        System.out.println("요청 URL: " + url);
-
-        // key테스트 중
-        String rawResponse = restTemplate.getForObject(url, String.class);
-        System.out.println("응답 본문 (text): " + rawResponse);
-
-//        TideInfoDTO response = restTemplate.getForObject(url, TideInfoDTO.class);
-//        return response.getResult().getData();
-
-        return List.of();
-    }
 
 }
