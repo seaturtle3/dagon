@@ -31,7 +31,7 @@
             <span id="selected-fish" th:text="${fishType}"></span>
         </div>
 
-        <button type="button" class="btn btn-secondary"
+        <button type="button" class="btn btn-secondary" id="change-detail-btn"
                 data-bs-toggle="modal" data-bs-target="#searchModal">
             세부사항 변경
         </button>
@@ -46,7 +46,7 @@
 
             <form action="/reservation" method="get" onsubmit="updateSpan();">
                 <div class="modal-header">
-                    <h5 class="modal-title">검색 조건 설정</h5>
+                    <h5 class="modal-title">세부항목 변경</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
 
