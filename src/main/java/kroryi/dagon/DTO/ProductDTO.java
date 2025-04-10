@@ -13,9 +13,9 @@ import java.time.Instant;
 @Value
 public class ProductDTO implements Serializable {
     Long id;
-    Product.ProdRegion prodRegion;
-    Product.MainType mainType;
-    Product.SubType subType;
+//    Product.ProdRegion prodRegion;
+//    Product.MainType mainType;
+//    Product.SubType subType;
     Integer maxPerson;
     Integer minPerson;
     BigDecimal weight;
