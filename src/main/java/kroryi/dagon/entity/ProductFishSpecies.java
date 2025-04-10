@@ -24,5 +24,5 @@ public class ProductFishSpecies {
     private String fsIconUrl;
 
     @OneToMany(mappedBy = "fs", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ProductFishSpeciesMapping> mappedProducts = new ArrayList<>();
+    private List<ProdFishSpeciesMapping> mappedProducts = new ArrayList<>();
 }

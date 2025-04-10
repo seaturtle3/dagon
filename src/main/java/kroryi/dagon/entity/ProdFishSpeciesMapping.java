@@ -7,8 +7,8 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "product_fish_species_mapping")
-public class ProductFishSpeciesMapping {
+@Table(name = "prod_fish_species_mapping")
+public class ProdFishSpeciesMapping {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
