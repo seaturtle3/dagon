@@ -28,4 +28,9 @@ public enum ProdRegion {
     public String getKorean() {
         return korean;
     }
+
+    @Override
+    public String toString() {
+        return korean;
+    }
 }

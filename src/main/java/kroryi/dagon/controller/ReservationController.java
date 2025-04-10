@@ -1,10 +1,16 @@
 package kroryi.dagon.controller;
 
+import kroryi.dagon.enums.ProdRegion;
 import kroryi.dagon.service.ReservationService;
 import lombok.*;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import java.util.Arrays;
 
 @Controller
 @Getter
@@ -16,27 +22,28 @@ public class ReservationController {
 
     private final ReservationService reservationService;
 
-
-
     @GetMapping("/reservation")
-    public String reservation() {
+    public String reservation(
+            @RequestParam(required = false) String date,
+            @RequestParam(required = false) Integer people,
+            @RequestParam(required = false) String region,
+            @RequestParam(required = false) String fishType,
+            Model model) {
+
+        // 파라미터 값을 모델에 담아서 reservation.html에서 사용 가능하게 함
+        model.addAttribute("date", date);
+        model.addAttribute("people", people);
+        model.addAttribute("region", region);
+        model.addAttribute("fishType", fishType);
+
+        log.info("date : {}", date);
+        log.info("people : {}", people);
+        log.info("region : {}", region);
+        log.info("fishType : {}", fishType);
+
+        // reservation.html 반환
         return "sub_menu/reservation";
     }
-
-//    @GetMapping("/reservation/search")
-//    public String searchReservation(@RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
-//                                    @RequestParam(required = false) Integer people,
-//                                    @RequestParam(required = false) String reserveAt,
-//                                    @RequestParam(required = false) String fishType,
-//                                    Model model) {
-//        List<Reservation> results = reservationService.search(date, people, reserveAt, fishType);
-//        model.addAttribute("results", results);
-//
-//
-//
-//        return "sub_menu/reservation";
-//    }
-
 
 
 }
