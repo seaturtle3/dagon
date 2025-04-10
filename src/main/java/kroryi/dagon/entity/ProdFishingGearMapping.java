@@ -20,6 +20,6 @@ public class ProdFishingGearMapping {
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "prod_id", nullable = false)
-    private Product prod;
+    private Product product;
 
 }

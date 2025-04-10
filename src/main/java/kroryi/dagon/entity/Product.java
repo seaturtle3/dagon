@@ -61,9 +61,6 @@ public class Product extends BaseTimeEntity {
     @Column(name = "prod_notice")
     private String prodNotice;
 
-
-
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "uno", nullable = false)
     private Partner partner;
@@ -72,6 +69,18 @@ public class Product extends BaseTimeEntity {
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ProductOption> options = new ArrayList<>();
 
+    // 어종
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ProductFishSpeciesMapping> fishSpeciesMappings = new ArrayList<>();
+
+    // 낚시도구
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ProdFishingGearMapping> fishingGearMappings = new ArrayList<>();
+
+    // 편의시설
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ProdFacilityMapping> facilityMappings = new ArrayList<>();
+
     // 조황정보
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<FishingReport> fishingReports = new ArrayList<>();
@@ -79,4 +88,6 @@ public class Product extends BaseTimeEntity {
     // 조행기
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<FishingDiary> fishingDiaries = new ArrayList<>();
+
+
 }
