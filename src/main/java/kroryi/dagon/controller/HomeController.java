@@ -59,9 +59,10 @@ public class HomeController {
         return "sub_menu/notice";
     }
 
-    @GetMapping("/reservation")
-    public String reservation() {
-        return "sub_menu/reservation";
-    }
+// JANG : ReservationController랑 중복이라서 우선 주석처리합니다
+//    @GetMapping("/reservation")
+//    public String reservation() {
+//        return "sub_menu/reservation";
+//    }
 
 }
