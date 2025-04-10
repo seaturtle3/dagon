@@ -1,67 +1,41 @@
 package kroryi.dagon.controller;
 
-import kroryi.dagon.DTO.KakaoApproveResponse;
-import kroryi.dagon.DTO.KakaoCancelResponse;
-import kroryi.dagon.DTO.KakaoReadyResponse;
-import kroryi.dagon.service.KakaoPayService;
+import kroryi.service.KakaoPayService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import lombok.Setter;
+import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
-@RestController
-@RequestMapping("/payment")
+@Controller
 @RequiredArgsConstructor
+@Log4j2
 public class KakaoPayController {
 
-    private final KakaoPayService kakaoPayService;
+    @Setter(onMethod_ = @Autowired)
+    private KakaoPayService kakaoPay;
 
-    /**
-     * 결제요청
-     */
-    @PostMapping("/ready")
-    public KakaoReadyResponse readyToKakaoPay() {
+    @GetMapping("/kakaoPay")
+    public String kakaoPayGet() {
+        log.info("1111111111111111111111");
 
-        return kakaoPayService.kakaoPayReady();
+        return "kakaopay";
     }
 
-    /**
-     * 결제 성공
-     */
-    @GetMapping("/success")
-    public ResponseEntity afterPayRequest(@RequestParam("pg_token") String pgToken) {
+    @PostMapping("/kakaoPay")
+    public String kakaoPay() {
+        log.info("kakaoPay post.....................");
 
-        KakaoApproveResponse kakaoApprove = kakaoPayService.approveResponse(pgToken);
-
-        return new ResponseEntity<>(kakaoApprove, HttpStatus.OK);
+        return "redirect:" + kakaoPay.kakaoPayReady();
     }
 
-    /**
-     * 결제 진행 중 취소
-     */
-    @GetMapping("/cancel")
-    public void cancel() {
-
-        throw new BusinessLogicException(ExceptionCode.PAY_CANCEL);
-    }
-
-    /**
-     * 결제 실패
-     */
-    @GetMapping("/fail")
-    public void fail() {
-
-        throw new BusinessLogicException(ExceptionCode.PAY_FAILED);
-    }
-
-    /**
-     * 환불
-     */
-    @PostMapping("/refund")
-    public ResponseEntity refund() {
-
-        KakaoCancelResponse kakaoCancelResponse = kakaoPayService.kakaoCancel();
-
-        return new ResponseEntity<>(kakaoCancelResponse, HttpStatus.OK);
+    @GetMapping("/kakaoPaySuccess")
+    public void kakaoPaySuccess(@RequestParam("pg_token") String pg_token, Model model) {
+        log.info("kakaoPay Success get................");
+        log.info("kakaoPaySuccess pg_token : {}", pg_token);
     }
 }
