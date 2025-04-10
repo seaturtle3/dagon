@@ -62,11 +62,11 @@ public class Product extends BaseTimeEntity {
     private String prodNotice;
 
 
+
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "uno", nullable = false)
     private Partner partner;
-
-
 
     // 옵션
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -76,6 +76,7 @@ public class Product extends BaseTimeEntity {
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<FishingReport> fishingReports = new ArrayList<>();
 
+    // 조행기
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<FishingDiary> fishingDiaries = new ArrayList<>();
 }
