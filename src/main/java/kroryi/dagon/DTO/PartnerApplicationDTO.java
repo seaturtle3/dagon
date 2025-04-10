@@ -23,5 +23,5 @@ public class PartnerApplicationDTO {
     private LocalDateTime paReviewedAt;
     private String paRejectionReason;
     private String uname;  // 신청자 이름
-
+    private String displayName;
 }

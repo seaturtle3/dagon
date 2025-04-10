@@ -51,4 +51,8 @@ public class UsersDTO {
         String part3 = (phone3 != null) ? phone3 : "";
         return part1 + "-" + part2 + "-" + part3;
     }
+
+    public String getDisplayName() {
+        return (nickname != null && !nickname.isBlank()) ? nickname : uname;
+    }
 }
