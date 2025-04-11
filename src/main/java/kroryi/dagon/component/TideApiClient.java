@@ -1,6 +1,5 @@
-package kroryi.dagon.compoent;
+package kroryi.dagon.component;
 
-import kroryi.dagon.DTO.TideInfoDTO;
 import kroryi.dagon.DTO.TideItemDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;

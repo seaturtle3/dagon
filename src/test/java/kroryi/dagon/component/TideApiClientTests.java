@@ -1,4 +1,4 @@
-package kroryi.dagon.compoent;
+package kroryi.dagon.component;
 
 
 import kroryi.dagon.DTO.TideItemDTO;
