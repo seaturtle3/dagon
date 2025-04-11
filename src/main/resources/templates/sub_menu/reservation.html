@@ -52,7 +52,8 @@
 
                 <div class="modal-body">
                     <label>날짜 : </label>
-                    <input type="date" class="form-control" name="date" id="modal-date">
+                    <input type="date" class="form-control" name="date" id="modal-date"
+                           th:value="${#dates.format(#dates.createNow(), 'yyyy-MM-dd')}">
 
                     <label>인원 : </label>
                     <input type="number" class="form-control" name="people" id="modal-people"
@@ -60,15 +61,16 @@
 
                     <label>지역 : </label>
                     <select class="form-control" name="region" id="modal-region">
-                        <option value="">전체</option>
+                        <option value="전체">전체</option>
                         <option th:each="region : ${regions}"
+                                th:value="${region.korean}"
                                 th:text="${region.korean}">
                         </option>
                     </select>
 
                     <label>어종 : </label>
                     <select class="form-control" name="fishType" id="modal-fishType">
-                        <option value="">전체</option>
+                        <option value="전체">전체</option>
                         <option value="광어">광어</option>
                         <option value="우럭">우럭</option>
                     </select>

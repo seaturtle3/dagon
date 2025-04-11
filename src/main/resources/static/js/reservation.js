@@ -20,13 +20,12 @@ function syncModalValues() {
 
     // 모달 input/select에 값 세팅
     if (date) document.getElementById("modal-date").value = date;
-    if (people) document.getElementById("modal-people").value = people;
-    if (region) document.getElementById("modal-region").value = region;
-    if (fishType) document.getElementById("modal-fishType").value = fishType;
+    document.getElementById("modal-people").value = people
+    document.getElementById("modal-region").value = region
+    document.getElementById("modal-fishType").value = fishType
 
     console.log("date: ", date);
     console.log("people: ", people);
     console.log("region: ", region);
     console.log("fishType: ", fishType);
 }
-
