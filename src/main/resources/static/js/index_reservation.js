@@ -25,5 +25,3 @@ document.getElementById("search-btn").addEventListener('click', function() {
 window.addEventListener("DOMContentLoaded", () => {
     updateSpan();
 });
-
-

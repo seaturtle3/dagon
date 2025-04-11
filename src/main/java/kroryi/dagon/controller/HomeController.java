@@ -5,6 +5,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.Arrays;
@@ -12,12 +13,14 @@ import java.util.Arrays;
 @Controller
 @Log4j2
 public class HomeController {
+    @ModelAttribute("regions")
+    public ProdRegion[] regions() {
+        return ProdRegion.values();
+    }
+
     @GetMapping("/")
-    public String home(Model model) {
-        model.addAttribute("regions", ProdRegion.values());
-
+    public String home() {
         log.info("regions : {}", Arrays.toString(ProdRegion.values()));
-
         return "index";
     }
 

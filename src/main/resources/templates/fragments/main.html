@@ -234,7 +234,6 @@
                         <select class="form-control" name="region" id="modal-region">
                             <option value="">전체</option>
                             <option th:each="region : ${regions}"
-                                    th:value="${region.name()}"
                                     th:text="${region.korean}">
                             </option>
                         </select>
@@ -258,7 +257,7 @@
         </div>
     </div>
 
-    <script src="/js/reservation_modal.js"></script>
+    <script src="/js/index_reservation.js"></script>
 </main>
 
 
