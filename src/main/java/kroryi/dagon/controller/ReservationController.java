@@ -29,7 +29,6 @@ public class ReservationController {
 
     @ModelAttribute("regions")
     public List<ProdRegion> regions() {
-        log.info("regions : {}", Arrays.toString(ProdRegion.values()));
         return Arrays.asList(ProdRegion.values());
     }
 
@@ -52,10 +51,7 @@ public class ReservationController {
         model.addAttribute("region", region);
         model.addAttribute("fishType", fishType);
 
-        log.info("date : {}", date);
-        log.info("people : {}", people);
-        log.info("region : {}", region);
-        log.info("fishType : {}", fishType);
+        log.info("date : {}, people : {}, region : {}, fishType : {}", date , people , region, fishType);
 
         // reservation.html 반환
         return "sub_menu/reservation";

@@ -15,7 +15,7 @@ public class FishSpeciesInit implements CommandLineRunner {
     private final FishSpeciesRepository repository;
 
     @Override
-    public void run(String... args) throws Exception {
+    public void run(String... args) {
         if(repository.count() == 0) {
             repository.saveAll(List.of(
                     new ProductFishSpecies("가숭어", null),
@@ -40,7 +40,39 @@ public class FishSpeciesInit implements CommandLineRunner {
                     new ProductFishSpecies("방어", null),
                     new ProductFishSpecies("백조기", null),
                     new ProductFishSpecies("벵에돔", null),
-                    new ProductFishSpecies("벤자리", null)
+                    new ProductFishSpecies("벤자리", null),
+                    new ProductFishSpecies("볼락", null),
+                    new ProductFishSpecies("부시리", null),
+                    new ProductFishSpecies("불볼락(열기)", null),
+                    new ProductFishSpecies("붉바리", null),
+                    new ProductFishSpecies("붉퉁돔", null),
+                    new ProductFishSpecies("붕장어", null),
+                    new ProductFishSpecies("살오징어", null),
+                    new ProductFishSpecies("삼치", null),
+                    new ProductFishSpecies("송어", null),
+                    new ProductFishSpecies("숭어", null),
+                    new ProductFishSpecies("쏨뱅이", null),
+                    new ProductFishSpecies("옥돔", null),
+                    new ProductFishSpecies("어름돔", null),
+                    new ProductFishSpecies("용가자미", null),
+                    new ProductFishSpecies("임연수어", null),
+                    new ProductFishSpecies("자바리", null),
+                    new ProductFishSpecies("전갱이", null),
+                    new ProductFishSpecies("전어", null),
+                    new ProductFishSpecies("조피볼락(우럭)", null),
+                    new ProductFishSpecies("점성어", null),
+                    new ProductFishSpecies("주꾸미", null),
+                    new ProductFishSpecies("쥐치", null),
+                    new ProductFishSpecies("참가자미", null),
+                    new ProductFishSpecies("참돔", null),
+                    new ProductFishSpecies("참문어", null),
+                    new ProductFishSpecies("참우럭", null),
+                    new ProductFishSpecies("큰민어", null),
+                    new ProductFishSpecies("피문어", null),
+                    new ProductFishSpecies("학공치", null),
+                    new ProductFishSpecies("한치", null),
+                    new ProductFishSpecies("호래기", null),
+                    new ProductFishSpecies("황열기", null)
             ));
         }
     }

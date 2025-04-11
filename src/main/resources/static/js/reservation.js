@@ -24,8 +24,6 @@ function syncModalValues() {
     document.getElementById("modal-region").value = region
     document.getElementById("modal-fishType").value = fishType
 
-    console.log("date: ", date);
-    console.log("people: ", people);
-    console.log("region: ", region);
-    console.log("fishType: ", fishType);
+    console.log(`date : ${date}, people : ${people}, region : ${region}, fishType : ${fishType}`);
+
 }
