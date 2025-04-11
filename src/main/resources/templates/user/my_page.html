@@ -1,13 +1,200 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head th:insert="fragments/common_head :: head">
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
-<div th:replace="fragments/header :: header"></div>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>마이페이지</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .grade-silver {
+            color: #a0aec0;
+        }
 
-<h1>여기는 마이페이지입니다.</h1>
+        .grade-gold {
+            color: #fbbf24;
+        }
+
+        .grade-platinum {
+            color: #cbd5e0;
+        }
+
+        .grade-diamond {
+            color: #60a5fa;
+        }
+    </style>
+</head>
+<body class="bg-sky-50 min-h-screen">
+
+<div class="max-w-6xl mx-auto grid grid-cols-[auto,1fr] gap-0 min-h-screen">
+    <!-- 사이드바 -->
+    <aside class="bg-white p-6 rounded-l-xl shadow flex flex-col gap-4 text-sm w-52">
+        <button onclick="showSection('profile')" class="text-left text-sky-600 font-medium">👤 회원 정보</button>
+        <button onclick="showSection('reservation')" class="text-left">📅 예약 내역</button>
+        <button onclick="showSection('points')" class="text-left">💰 포인트</button>
+        <button onclick="showSection('password')" class="text-left">🔒 비밀번호 변경</button>
+        <button onclick="showSection('alarm')" class="text-left">🔔 알림 설정</button>
+        <button onclick="showSection('withdraw')" class="text-left text-red-500">❌ 회원 탈퇴</button>
+    </aside>
+
+    <!-- 본문 섹션들 -->
+    <div class="bg-white rounded-r-xl shadow p-6 space-y-8">
+
+        <!-- 회원 정보 -->
+        <section id="profile">
+            <h1 class="text-3xl font-bold mb-6 text-sky-600">마이페이지</h1>
+
+            <form id="profileForm" class="relative space-y-4">
+                <!-- 등급 -->
+                <div class="absolute top-4 right-4 text-xl font-extrabold">
+                    <div th:switch="${user.level}" class="flex items-center gap-2 bg-white/70 px-4 py-1 rounded-full shadow-sm">
+                        <span th:case="0" class="grade-silver">🩶 실버</span>
+                        <span th:case="1" class="grade-gold">🥇 골드</span>
+                        <span th:case="2" class="grade-platinum flex items-center gap-1">
+              <svg class="w-6 h-6 text-emerald-500" xmlns="http://www.w3.org/2000/svg" fill="none"
+                   viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                      d="M12 2l3 4.5h6l-4 5 4 5h-6l-3 4.5-3-4.5H3l4-5-4-5h6l3-4.5z"/>
+              </svg>
+              플래티넘
+            </span>
+                        <span th:case="3" class="grade-diamond text-sky-500">💎 다이아</span>
+                    </div>
+                </div>
+
+                <!-- 프로필 이미지 -->
+                <div class="flex items-center gap-4">
+                    <img id="profilePreview"
+                         th:src="${user.profile_image != null} ? @{${user.profile_image}(v=${#dates.createNow().time})} : @{/img/default.png}"
+                         class="w-24 h-24 rounded-full object-cover border" alt="프로필 이미지" />
+                    <input type="file" id="fileInput" name="profileImage" accept="image/*"
+                           onchange="previewImage(event)"
+                           class="hidden file:border file:mr-4 file:px-3 file:py-1 file:bg-sky-500 file:text-white"/>
+                </div>
+
+                <!-- 정보 입력 -->
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium">이름</label>
+                        <input type="text" name="uname" th:value="${user.uname}"
+                               class="w-full mt-1 p-2 border rounded editable" readonly />
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium">닉네임</label>
+                        <input type="text" name="nickname" th:value="${user.nickname}"
+                               class="w-full mt-1 p-2 border rounded editable" readonly />
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium">이메일</label>
+                        <input type="email" name="email" th:value="${user.email}"
+                               class="w-full mt-1 p-2 border rounded bg-gray-100" readonly />
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium">전화번호</label>
+                        <div class="flex gap-2">
+                            <input type="text" name="phone1" th:value="${user.phone1}" readonly class="w-1/4 p-2 border bg-gray-100 rounded" />
+                            <input type="text" name="phone2" th:value="${user.phone2}" maxlength="4"
+                                   class="w-1/4 p-2 border rounded editable" readonly />
+                            <input type="text" name="phone3" th:value="${user.phone3}" maxlength="4"
+                                   class="w-1/4 p-2 border rounded editable" readonly />
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 버튼 -->
+                <div class="mt-4 space-x-2">
+                    <button type="button" id="editBtn" onclick="enableEdit()" class="bg-sky-500 text-white px-4 py-2 rounded hover:bg-sky-600">
+                        정보 수정
+                    </button>
+                    <button type="submit" id="submitBtn" class="hidden bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">
+                        완료
+                    </button>
+                    <button type="button" id="cancelBtn" onclick="cancelEdit()" class="hidden bg-gray-400 text-white px-4 py-2 rounded hover:bg-gray-500">
+                        취소
+                    </button>
+                </div>
+            </form>
+        </section>
+
+        <!-- 포인트 -->
+        <section id="points" class="hidden">
+            <h2 class="text-xl font-bold text-sky-600 mb-4">💰 보유 포인트</h2>
+            <p class="text-4xl font-extrabold text-sky-500" th:text="${user.points} + ' P'">0 P</p>
+        </section>
+
+        <!-- 비밀번호 변경 -->
+        <section id="password" class="space-y-4">
+            <h2 class="text-xl font-bold text-sky-600 mb-4">🔒 비밀번호 변경</h2>
+
+            <form th:action="@{/mypage/password}" method="post" th:object="${passwordForm}">
+                <input type="password" th:field="*{currentPassword}" placeholder="현재 비밀번호" class="w-full p-2 border rounded" />
+                <input type="password" th:field="*{newPassword}" placeholder="새 비밀번호" class="w-full p-2 border rounded" />
+                <input type="password" th:field="*{confirmPassword}" placeholder="새 비밀번호 확인" class="w-full p-2 border rounded" />
+                <button type="submit" class="bg-sky-500 text-white px-4 py-2 rounded hover:bg-sky-600">확인</button>
+
+                <!-- 메시지 표시 -->
+                <p class="text-red-500" th:if="${errorMessage}" th:text="${errorMessage}"></p>
+                <p class="text-green-500" th:if="${successMessage}" th:text="${successMessage}"></p>
+            </form>
+        </section>
+        <!-- 회원 탈퇴 -->
+        <section id="withdraw" class="hidden space-y-4">
+            <h2 class="text-xl font-bold text-red-500 mb-4">❌ 회원 탈퇴</h2>
+            <p class="text-gray-700">정말 탈퇴하시겠습니까? 탈퇴 시 모든 정보가 삭제됩니다.</p>
+            <input type="password" placeholder="비밀번호 입력" class="w-full p-2 border rounded" />
+            <button class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">탈퇴하기</button>
+        </section>
+
+        <!-- 예약 내역 -->
+        <section id="reservation" class="hidden">
+            <h2 class="text-xl font-bold text-sky-600 mb-4">📅 예약 내역</h2>
+            <p class="text-gray-500">준비 중입니다.</p>
+        </section>
+
+        <!-- 알림 설정 -->
+        <section id="alarm" class="hidden">
+            <h2 class="text-xl font-bold text-sky-600 mb-4">🔔 알림 설정</h2>
+            <p class="text-gray-500">준비 중입니다.</p>
+        </section>
+    </div>
+</div>
+
+<!-- Script -->
+<script>
+    function showSection(id) {
+        const sections = document.querySelectorAll('section');
+        sections.forEach(s => s.style.display = 'none');
+        document.getElementById(id).style.display = 'block';
+    }
+
+    function previewImage(event) {
+        const reader = new FileReader();
+        reader.onload = () => {
+            document.getElementById('profilePreview').src = reader.result;
+        };
+        reader.readAsDataURL(event.target.files[0]);
+    }
+
+    function enableEdit() {
+        document.querySelectorAll('.editable').forEach(i => i.removeAttribute('readonly'));
+        document.getElementById('fileInput').classList.remove('hidden');
+        document.getElementById('editBtn').classList.add('hidden');
+        document.getElementById('submitBtn').classList.remove('hidden');
+        document.getElementById('cancelBtn').classList.remove('hidden');
+    }
+
+    function cancelEdit() {
+        document.getElementById('profileForm').reset();
+        document.querySelectorAll('.editable').forEach(i => i.setAttribute('readonly', true));
+        document.getElementById('fileInput').classList.add('hidden');
+        document.getElementById('editBtn').classList.remove('hidden');
+        document.getElementById('submitBtn').classList.add('hidden');
+        document.getElementById('cancelBtn').classList.add('hidden');
+    }
+
+    // 초기화면
+    window.onload = () => showSection('profile');
+</script>
 
 </body>
 </html>
+

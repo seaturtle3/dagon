@@ -87,9 +87,6 @@
         <label for="pinfo">파트너 설명</label>
         <textarea id="pinfo" name="pinfo" required placeholder="업체/서비스에 대한 설명 (10자 이상)"></textarea>
 
-        <input type="hidden" id="uno" name="uno" value="${sessionScope.uno}">
-        <input type="hidden" id="uname" name="uname" value="${sessionScope.uname}">
-
         <button type="submit">신청하기</button>
         <p id="errorMessage" class="error"></p>
     </form>
@@ -104,8 +101,6 @@
         const ceoName = document.getElementById("ceoName").value.trim();
         const license = document.getElementById("license").value.trim();
         const pinfo = document.getElementById("pinfo").value.trim();
-        const uno = document.getElementById("uno").value;
-        const uname = document.getElementById("uname").value;
         const errorBox = document.getElementById("errorMessage");
 
         const nameRegex = /^[가-힣]{2,10}$/;
@@ -140,25 +135,30 @@
 
         // 전송
         const data = {
-            pname, paddress, ceoName, license, pinfo, uno: Number(uno), uname
+            pname, paddress, ceoName, license, pinfo
         };
 
         fetch("/api/partners/review", {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": "Bearer " + localStorage.getItem("token")
+            },
             body: JSON.stringify(data)
         })
-            .then(res => {
-                if (!res.ok) throw new Error("신청 실패");
-                return res.text();
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("서버 오류");
+                }
+                return response.text();
             })
-            .then(msg => {
-                alert(msg || "신청이 완료되었습니다.");
-                window.location.href = "/";
+            .then(message => {
+                alert(message || "신청이 완료되었습니다!");
+                window.location.href = "/"; // 홈으로 리디렉션
             })
-            .catch(err => {
-                errorBox.textContent = "서버 오류가 발생했습니다.";
-                console.error(err);
+            .catch(error => {
+                errorBox.textContent = "신청 중 오류가 발생했습니다.";
+                console.error("에러:", error);
             });
     });
 </script>

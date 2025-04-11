@@ -22,7 +22,7 @@ public class ReservationController {
 
     private final ReservationService reservationService;
 
-    @GetMapping("/reservation")
+    @GetMapping
     public String reservation(
             @RequestParam(required = false) String date,
             @RequestParam(required = false) Integer people,
