@@ -2,7 +2,7 @@ package kroryi.dagon.service;
 
 import kroryi.DTO.KakaoPayDTO;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -14,7 +14,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 @Service
 @RequiredArgsConstructor
-@Slf4j
+@Log4j2
 public class KakaoPayService {
 
     private static final String HOST = "https://kapi.kakao.com";
