@@ -2,7 +2,11 @@ package kroryi.dagon.entity;
 
 import jakarta.persistence.*;
 import kroryi.dagon.enums.ProdRegion;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 @Entity
 @Table(name = "tide_station")
 public class TideStation {

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:insert="~{fragments/common_head :: head}">
+    <meta charset="UTF-8">
+    <title>Dagon</title>
+</head>
+<body>
+<div th:replace="~{fragments/header :: header}"></div>
+
+<h1>물때/날씨 정보</h1>
+
+<form method="get" action="/tide/multtae">
+    <label for="region">지역 선택:</label>
+    <select name="region" id="region">
+        <option value="">-- 지역 선택 --</option>
+        <option th:each="region : ${regions}"
+                th:value="${region.name()}"
+                th:text="${region.korean}"
+                th:selected="${region} == ${param.region}"></option>
+    </select>
+
+    <label for="stationCode">관측소 선택:</label>
+    <select name="stationCode" id="stationCode">
+        <option value="">-- 관측소 선택 --</option>
+        <option th:each="station : ${stations}"
+                th:value="${station.stationCode}"
+                th:text="${station.stationName}"
+                th:selected="${station.stationCode} == ${param.stationCode}"></option>
+    </select>
+
+    <label for="date">날짜:</label>
+    <input type="date" name="date" id="date"
+           th:value="${date != null ? date : T(java.time.LocalDate).now()}" required>
+
+    <button type="submit">조회</button>
+</form>
+
+<hr>
+
+<div th:if="${tideItems != null}">
+    <h2>물때 정보</h2>
+    <ul>
+        <li th:each="item : ${tideItems}">
+            시각: <span th:text="${item.tph_time}"></span>,
+            수위: <span th:text="${item.tph_level}"></span>,
+            구분: <span th:text="${item.hl_code}"></span>
+        </li>
+    </ul>
+</div>
+
+</body>
+<script>
+    document.getElementById("region").addEventListener("change", function () {
+        const selectedRegion = this.value;
+        const stationSelect = document.getElementById("stationCode");
+
+        stationSelect.innerHTML = '<option value="">-- 관측소 선택 --</option>';
+
+        if (!selectedRegion) return;
+
+        fetch(`/tide/api/stations?region=${selectedRegion}`)
+            .then(response => response.json())
+            .then(data => {
+                data.forEach(station => {
+                    const option = document.createElement("option");
+                    option.value = station.stationCode;
+                    option.text = station.stationName;
+                    stationSelect.appendChild(option);
+                });
+            })
+            .catch(error => console.error("관측소 목록 로드 실패:", error));
+    });
+</script>
+</html>
