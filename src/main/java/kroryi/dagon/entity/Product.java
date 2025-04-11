@@ -89,5 +89,8 @@ public class Product extends BaseTimeEntity {
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<FishingDiary> fishingDiaries = new ArrayList<>();
 
-
+//    // region 관측소 JANG
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "station_code")
+//    private TideStation tideStation;
 }
