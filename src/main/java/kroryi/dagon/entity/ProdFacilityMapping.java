@@ -8,17 +8,18 @@ import lombok.Setter;
 @Setter
 @Entity
 @Table(name = "prod_facility_mapping")
-public class ProductFacilityMapping {
+public class ProdFacilityMapping {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", nullable = false)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "fa_id", nullable = false)
+    private ProductFacility fa;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "prod_id", nullable = false)
     private Product product;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "fa_id", nullable = false)
-    private ProductFacility facility;
 
 }

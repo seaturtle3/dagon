@@ -1,13 +1,13 @@
 package kroryi.dagon.enums;
 
-public enum PartnerApplicationStatus {
-    PENDING("심사중"),
+public enum ContentReportStatus {
+    PENDING("처리 대기"),
     APPROVED("승인됨"),
-    REJECTED("반려");
+    REJECTED("신고 취소");
 
     private final String korean;
 
-    PartnerApplicationStatus(String korean) {
+    ContentReportStatus(String korean) {
         this.korean = korean;
     }
 

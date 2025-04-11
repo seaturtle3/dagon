@@ -61,7 +61,10 @@ public class User extends BaseTimeEntity {
     private UserRole role = UserRole.USER;
 
 
-    // 매핑
+    public String getDisplayName() {
+        return (nickname != null && !nickname.isBlank()) ? nickname : uname;
+    }
+
 
     // 파트너신청
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -89,3 +92,4 @@ public class User extends BaseTimeEntity {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<UserAction> userActions = new ArrayList<>();
 }
+

@@ -13,11 +13,8 @@ import java.util.Arrays;
 @Log4j2
 public class HomeController {
     @GetMapping("/")
-    public String home(@RequestParam(required = false) String goTo, Model model) {
+    public String home(Model model) {
         model.addAttribute("regions", ProdRegion.values());
-        if ("reservation".equals(goTo)) {
-            return "reservation";
-        }
 
         log.info("regions : {}", Arrays.toString(ProdRegion.values()));
 
