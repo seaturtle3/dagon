@@ -28,7 +28,7 @@ public class UserService {
 
         // 비밀번호 검증
         if (user.getUpw().equals(upw)) {
-            Long uno = user.getId();    // 유저 번호 가져오기
+            Long uno = user.getUno();    // 유저 번호 가져오기
             String uname = user.getUname();  // 유저 이름 가져오기
             System.out.println("로그인 성공: " + uname + " (유저 번호: " + uno + ")");
             // 로그인 성공 시 DTO로 변환하여 반환

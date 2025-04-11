@@ -1,14 +1,16 @@
 package kroryi.dagon.entity;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@AllArgsConstructor
+@NoArgsConstructor
 @Getter
 @Setter
+@ToString
 @Entity
 @Table(name = "prod_fish_species")
 public class ProductFishSpecies {
@@ -23,7 +25,11 @@ public class ProductFishSpecies {
     @Column(name = "fs_icon_url", length = 500)
     private String fsIconUrl;
 
-    @OneToMany(mappedBy = "fishSpecies", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ProductFishSpeciesMapping> fishSpeciesMappings = new ArrayList<>();
+    @OneToMany(mappedBy = "fs", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ProdFishSpeciesMapping> mappedProducts = new ArrayList<>();
 
+    public ProductFishSpecies(String fsName, String fsIconUrl) {
+        this.fsName = fsName;
+        this.fsIconUrl = fsIconUrl;
+    }
 }

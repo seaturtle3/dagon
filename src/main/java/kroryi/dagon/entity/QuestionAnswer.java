@@ -10,25 +10,23 @@ import java.time.Instant;
 @Setter
 @Entity
 @Table(name = "question_answers")
-public class QuestionAnswer {
+public class QuestionAnswer extends BaseTimeEntity{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "qaid", nullable = false)
-    private Long qaid;
+    @Column(name = "qa_id", nullable = false)
+    private Long qaId;
 
     @Column(name = "answer_id")
     private Long answerId;
 
-    @Column(name = "created_at")
-    private Instant createdAt;
 
     @Column(name = "qa_content", nullable = false)
     private String qaContent;
 
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "qid")
-    private Question qid;
+    @JoinColumn(name = "question_id")
+    private Question question;
 
 }

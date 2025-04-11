@@ -4,28 +4,18 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.time.Instant;
 import java.time.LocalDateTime;
 
 @Getter
 @Setter
 @Entity
 @Table(name = "freeboard_comments")
-public class FreeboardComment {
+public class FreeBoardComment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "commentid", nullable = false)
-    private Long commentid;
-
-    @Column(name = "uid", nullable = false)
-    private Long uid;
-
-    @Column(name = "level", nullable = false)
-    private Integer level;
-
-    @Column(name = "nickname", nullable = false, length = 50)
-    private String nickname;
+    @Column(name = "fb_comment_id", nullable = false)
+    private Long fbCommentId;
 
     @Column(name = "comment_content")
     private String commentContent;
@@ -33,8 +23,15 @@ public class FreeboardComment {
     @Column(name = "modify_at")
     private LocalDateTime modifyAt;
 
+
+    // 자유게시판
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "fbid", nullable = false)
-    private FishingReport fbid;
+    @JoinColumn(name = "fb_id", nullable = false)
+    private FreeBoard freeBoard;
+
+    // 회원
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "uid", nullable = false)
+    private User user;
 
 }

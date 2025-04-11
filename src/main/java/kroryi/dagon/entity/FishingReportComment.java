@@ -11,8 +11,8 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @Entity
-@Table(name = "fishingreportcomments")
-public class FishingReportComment {
+@Table(name = "fishing_report_comments")
+public class FishingReportComment extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,22 +20,20 @@ public class FishingReportComment {
     private Long frCommentId;
 
     @Lob
-    @Column(name = "fr_comment_content", nullable = false)
-    private String frCommentContent;
-
-    @ColumnDefault("CURRENT_TIMESTAMP")
-    @Column(name = "created_at", nullable = false)
-    private LocalDateTime createdAt;
+    @Column(name = "comment_content", nullable = false)
+    private String commentContent;
 
     @Column(name = "modify_at")
     private LocalDateTime modifyAt;
 
+    // 조황정보
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "frid", nullable = false)
-    private FishingReport frId;
+    @JoinColumn(name = "fr_id", nullable = false)
+    private FishingReport fishingReport;
 
+    // 회원
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "uid", nullable = false)
-    private kroryi.dagon.entity.User uid;
+    private User user;
 
 }

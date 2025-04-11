@@ -17,8 +17,6 @@ public class ProductOption {
     @Column(name = "opt_id", nullable = false)
     private Long optId;
 
-    @Column(name = "prod_id", nullable = false)
-    private Long prodId;
 
     @Column(name = "opt_name", nullable = false)
     private String optName;

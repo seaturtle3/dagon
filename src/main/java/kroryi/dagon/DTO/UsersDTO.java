@@ -2,44 +2,39 @@ package kroryi.dagon.DTO;
 
 import kroryi.dagon.entity.User;
 import lombok.*;
-import org.w3c.dom.Text;
-import java.util.Date;
 
-@Getter
-@Setter
-@RequiredArgsConstructor
-@ToString
+
 @Data
+@NoArgsConstructor
+@AllArgsConstructor// ✅ 기본 생성자 자동 생성
 public class UsersDTO {
     private Long uno;
     private String uid;
     private String upw;
     private String uname;
-    private String unickname;
-    private String uemail;
-    private Text uprofile_image;
-    private int upoints;
-    private int ulevel;
-    private Date ucreated_at;     // 유저 가입 날짜
+    private String nickname;
+    private String email;
+    private String profile_image;
+    private int points;
+    private int level;
     private String phone1;
     private String phone2;
     private String phone3;
     private String fullPhone;
-    private String urole;
+    private String role;
 
     // User 객체를 받는 생성자 추가
     public UsersDTO(User user) {
-        this.uno = user.getId();
+        this.uno = user.getUno();
         this.uid = user.getUid();
         this.upw = user.getUpw();
         this.uname = user.getUname();
-        this.unickname = user.getUnickname();
-        this.uemail = user.getUemail();
-        this.upoints = user.getUpoints();
-        this.ulevel = user.getUlevel() != null ? user.getUlevel().ordinal() : 0;
-        this.ucreated_at = java.sql.Timestamp.valueOf(user.getUcreatedAt());
-        this.urole = user.getUrole() != null ? user.getUrole().name() : null;
-        this.uprofile_image = null;  // 필요시 수정
+        this.nickname = user.getNickname();
+        this.email = user.getEmail();
+        this.points = user.getPoints();
+        this.level = user.getLevel() != null ? user.getLevel().ordinal() : 0;
+        this.role = user.getRole() != null ? user.getRole().name() : null;
+        this.profile_image = null;  // 필요시 수정
         this.phone1 = "";  // 필요시 수정
         this.phone2 = "";  // 필요시 수정
         this.phone3 = "";  // 필요시 수정

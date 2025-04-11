@@ -13,14 +13,15 @@ public class QuestionCategory {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "qcid", nullable = false)
-    private Long qcid;
+    @Column(name = "qc_id", nullable = false)
+    private Long qcId;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "category_type", nullable = false)
     private CategoryType categoryType;
 
-    @Column(name = "qcname", nullable = false)
-    private String qcname;
+
+    @Column(name = "qc_name", nullable = false)
+    private String qcName;
 
 }

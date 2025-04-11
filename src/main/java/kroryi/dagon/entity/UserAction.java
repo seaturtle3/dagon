@@ -1,6 +1,8 @@
 package kroryi.dagon.entity;
 
 import jakarta.persistence.*;
+import kroryi.dagon.enums.ActionType;
+import kroryi.dagon.enums.BoardType;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
@@ -13,30 +15,30 @@ public class UserAction {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "uaid", nullable = false)
-    private Long uaid;
+    @Column(name = "ua_id", nullable = false)
+    private Long uaId;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "board_type", nullable = false, length = 20)
+    private BoardType boardType;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "action_type", nullable = false, length = 20)
+    private ActionType actionType;;
 
-    @Lob
-    @Column(name = "board_type", nullable = false)
-    private String boardType;
+    @ColumnDefault("1")
+    @Column(name = "value", nullable = false)
+    private Integer value = 1;
 
-    @Lob
-    @Column(name = "action_type", nullable = false)
-    private String actionType;
+    // 게시글, 상품 ID
+    @Column(name = "target_id", nullable = false)
+    private Long targetId;
 
-    @ColumnDefault("0")
-    @Column(name = "views")
-    private Integer views;
-
+    // User
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "uid", nullable = false)
-    private kroryi.dagon.entity.User uid;
+    private User user;
 
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "board_id", nullable = false, referencedColumnName = "uid")
-    private FishingDiary boardId;
 
 }
