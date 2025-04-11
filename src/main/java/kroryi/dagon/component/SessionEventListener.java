@@ -1,4 +1,4 @@
-package kroryi.dagon.compoent;
+package kroryi.dagon.component;
 
 import jakarta.servlet.http.HttpSessionEvent;
 import jakarta.servlet.http.HttpSessionListener;
