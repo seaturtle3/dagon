@@ -1,12 +1,16 @@
 package kroryi.dagon.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@AllArgsConstructor
+@NoArgsConstructor
 @Getter
 @Setter
 @Entity
@@ -25,4 +29,9 @@ public class ProductFishSpecies {
 
     @OneToMany(mappedBy = "fs", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ProdFishSpeciesMapping> mappedProducts = new ArrayList<>();
+
+    public ProductFishSpecies(String fsName, String fsIconUrl) {
+        this.fsName = fsName;
+        this.fsIconUrl = fsIconUrl;
+    }
 }

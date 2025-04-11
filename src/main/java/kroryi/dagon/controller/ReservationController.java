@@ -1,6 +1,9 @@
 package kroryi.dagon.controller;
 
+import kroryi.dagon.entity.ProdFishSpeciesMapping;
+import kroryi.dagon.entity.ProductFishSpecies;
 import kroryi.dagon.enums.ProdRegion;
+import kroryi.dagon.repository.FishSpeciesRepository;
 import kroryi.dagon.service.ReservationService;
 import lombok.*;
 import lombok.extern.log4j.Log4j2;
@@ -22,11 +25,17 @@ import java.util.List;
 public class ReservationController {
 
     private final ReservationService reservationService;
+    private final FishSpeciesRepository fishSpeciesRepository;
 
     @ModelAttribute("regions")
     public List<ProdRegion> regions() {
         log.info("regions : {}", Arrays.toString(ProdRegion.values()));
         return Arrays.asList(ProdRegion.values());
+    }
+
+    @ModelAttribute("fishSpecies")
+    public List<ProductFishSpecies> fishSpecies() {
+        return fishSpeciesRepository.findAll();
     }
 
     @GetMapping("/reservation")

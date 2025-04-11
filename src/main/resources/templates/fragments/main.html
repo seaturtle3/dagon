@@ -224,7 +224,7 @@
                     <div class="modal-body">
                         <label>날짜:</label>
                         <input type="date" class="form-control" name="date" id="modal-date"
-                        th:value="${#dates.format(#dates.createNow(), 'yyyy-MM-dd')}">
+                               th:value="${#dates.format(#dates.createNow(), 'yyyy-MM-dd')}">
 
                         <label>인원:</label>
                         <input type="number" class="form-control" name="people" id="modal-people"
@@ -241,8 +241,9 @@
                         <label>어종:</label>
                         <select class="form-control" name="fishType" id="modal-fishType">
                             <option value="전체">전체</option>
-                            <option value="광어">광어</option>
-                            <option value="우럭">우럭</option>
+                            <option th:each="fish : ${fishSpecies}"
+                                    th:text="${fish.fsName}">
+                            </option>
                         </select>
                     </div>
 
