@@ -101,50 +101,13 @@
         const formData = new FormData(form);
 
         try {
-            // 회원가입 요청
-            const response = await fetch(form.action, {
+            const response = await fetch(form.action, { // 폼의 action 속성에서 URL 가져옴
                 method: form.method,
                 body: formData
             });
 
             if (response.ok) {
-                alert("회원가입 성공! 이제 파트너 신청을 진행합니다.");
-
-                // JWT 토큰 가져오기
-                const token = localStorage.getItem("token");
-                if (!token) {
-                    alert("로그인이 필요합니다. 먼저 로그인해주세요.");
-                    window.location.href = "/login";
-                    return;
-                }
-
-                // 파트너 신청 예시 데이터
-                const partnerApplicationData = {
-                    companyName: "예시 회사",
-                    email: formData.get("email"),
-                    uname: formData.get("uname"),
-                    phone: `010-${phone2}-${phone3}`
-                    // 필요한 다른 필드도 추가하세요
-                };
-
-                // 파트너 신청 요청
-                const partnerResponse = await fetch("/api/partners/review", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "Authorization": `Bearer ${token}`
-                    },
-                    body: JSON.stringify(partnerApplicationData)
-                });
-
-                if (partnerResponse.ok) {
-                    alert("파트너 신청 완료!");
-                    window.location.href = "/"; // 홈이나 다른 페이지로 이동
-                } else {
-                    const msg = await partnerResponse.text();
-                    alert("파트너 신청 실패: " + msg);
-                }
-
+                window.location.href = '/login';
             } else {
                 const errorText = await response.text();
                 alert("회원가입 실패: " + errorText);

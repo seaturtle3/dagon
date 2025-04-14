@@ -33,12 +33,14 @@ public class JwtUtil {
         this.secretKey = Keys.hmacShaKeyFor(keyBytes);
     }
 
-    public String generateToken(LoginRequestDTO dto) {
+    public String generateToken(LoginRequestDTO dto, Long uno, String uname) {
         Date now = new Date();
-        Date expiryDate = new Date(now.getTime() + 86400000); // 예: 1일 후
+        Date expiryDate = new Date(now.getTime() + expirationTime);
 
         return Jwts.builder()
                 .setSubject(dto.getUid())
+                .claim("uno", uno.toString())
+                .claim("uname", uname)
                 .setIssuedAt(now)
                 .setExpiration(expiryDate)
                 .signWith(secretKey, SignatureAlgorithm.HS256)

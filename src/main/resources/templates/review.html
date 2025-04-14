@@ -138,16 +138,19 @@
             pname, paddress, ceoName, license, pinfo
         };
 
+        const token = localStorage.getItem("authToken");
+        console.log("파트너 신청 API 요청 시 토큰:", token);
         fetch("/api/partners/review", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                "Authorization": "Bearer " + localStorage.getItem("token")
+                "Authorization": "Bearer " + localStorage.getItem("authToken")
             },
             body: JSON.stringify(data)
         })
             .then(response => {
                 if (!response.ok) {
+
                     throw new Error("서버 오류");
                 }
                 return response.text();
