@@ -25,4 +25,9 @@ public class ReservationRestController {
 
     }
 
+    @GetMapping("/q1")
+    public String getFindAll(){
+        return reservationService.getFindAll();
+    }
+
 }

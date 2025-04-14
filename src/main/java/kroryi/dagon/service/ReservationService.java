@@ -10,4 +10,7 @@ public class ReservationService {
 
     private final ReservationRepository reservationRepository;
 
+    public String getFindAll(){
+        return reservationRepository.findAll().toString();
+    }
 }
