@@ -40,10 +40,6 @@ public class TideController {
         if (stationCode == null) stationCode = "DT_0001";
         if (date == null) date = LocalDate.now();
 
-        // 물때 정보
-        String formattedDate = date.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
-        List<TideItemDTO> tideItems = tideApiClient.getTideItems(stationCode, formattedDate);
-        model.addAttribute("tideItems", tideItems);
 
         // 지역 그룹핑 (Map<ProdRegion, List<TideStation>>)
         Map<ProdRegion, List<TideStation>> groupedStations = Arrays.stream(ProdRegion.values())
