@@ -12,12 +12,13 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Controller
 @RequiredArgsConstructor
@@ -29,34 +30,31 @@ public class TideController {
 
 
     @GetMapping("/multtae")
-    public String showMulttaePage(@RequestParam(required = false) ProdRegion region,
+    public String showMulttaePage(@RequestParam(required = false) String region,
                                   @RequestParam(required = false) String stationCode,
                                   @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
                                   Model model) {
         model.addAttribute("regions", ProdRegion.values());
+        // 기본값 설정
+        if (region == null) region = "인천";
+        if (stationCode == null) stationCode = "DT_0001";
+        if (date == null) date = LocalDate.now();
 
-        if (region != null) {
-            model.addAttribute("stations", tideStationRepository.findByRegion(region));
-        }
 
-      if(stationCode != null && date != null) {
-          String formattedDate = date.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
-          List<TideItemDTO> tideItems = tideApiClient.getTideItems(stationCode, formattedDate);
-          model.addAttribute("tideItems", tideItems);
-          model.addAttribute("stationCode", stationCode);
-          model.addAttribute("date",date);
-      }
+        // 지역 그룹핑 (Map<ProdRegion, List<TideStation>>)
+        Map<ProdRegion, List<TideStation>> groupedStations = Arrays.stream(ProdRegion.values())
+                .collect(Collectors.toMap(
+                        r -> r,
+                        r -> tideStationRepository.findByRegion(r)
+                ));
 
-      return "menu/multtae";
+        model.addAttribute("groupedStations", groupedStations);
+        model.addAttribute("region", region);
+        model.addAttribute("stationCode", stationCode);
+        model.addAttribute("date", date);
+
+        return "menu/multtae";
     }
 
-    @GetMapping("/api/stations")
-    @ResponseBody
-    public List<Map<String, String>> getStationsByRegion(@RequestParam ProdRegion region) {
-        return tideStationRepository.findByRegion(region).stream()
-                .map(station -> Map.of(
-                        "stationCode", station.getStationCode(),
-                        "stationName", station.getStationName()
-                )).toList();
-    }
+
 }

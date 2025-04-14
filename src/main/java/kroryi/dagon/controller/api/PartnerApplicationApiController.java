@@ -1,4 +1,4 @@
-package kroryi.dagon.controller;
+package kroryi.dagon.controller.api;
 
 import kroryi.dagon.DTO.PartnerApplicationDTO;
 import kroryi.dagon.service.PartnerApplicationService;
@@ -6,8 +6,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.ResponseEntity;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 
