@@ -27,6 +27,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/**", "/login", "/web/users/register", "/css/**", "/js/**", "/img/**").permitAll() // 기존 경로는 허용
                         .requestMatchers("/api/auth/login").permitAll() // API 로그인 경로는 모두 허용
+                        .requestMatchers("/swagger-ui/**").permitAll() // API 로그인 경로는 모두 허용
                         .anyRequest().authenticated() // 나머지 API 경로는 인증 필요
                 )
                 .formLogin(formLogin -> { // 기존 폼 로그인 설정 유지

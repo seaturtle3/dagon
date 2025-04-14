@@ -1,6 +1,7 @@
 package kroryi.dagon.controller;
 
 import kroryi.dagon.DTO.TideItemDTO;
+import kroryi.dagon.component.LunarApiClient;
 import kroryi.dagon.component.TideApiClient;
 import kroryi.dagon.entity.TideStation;
 import kroryi.dagon.enums.ProdRegion;
@@ -25,9 +26,9 @@ import java.util.stream.Collectors;
 @RequestMapping("/tide")
 public class TideController {
 
-    private final TideApiClient tideApiClient;
     private final TideStationRepository tideStationRepository;
-
+    private final LunarApiClient lunarApiClient;
+    private final TideApiClient tideApiClient;
 
     @GetMapping("/multtae")
     public String showMulttaePage(@RequestParam(required = false) String region,
@@ -39,6 +40,15 @@ public class TideController {
         if (region == null) region = "인천";
         if (stationCode == null) stationCode = "DT_0001";
         if (date == null) date = LocalDate.now();
+
+        String formattedDate = date.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+
+        List<TideItemDTO> tideItems = tideApiClient.getTideItems(stationCode, formattedDate);
+        model.addAttribute("tideItems", tideItems);
+
+
+        Double lunarAge = lunarApiClient.getLunarAge(date.getYear(), date.getMonthValue(), date.getDayOfMonth());
+        model.addAttribute("lunarAge", lunarAge);
 
 
         // 지역 그룹핑 (Map<ProdRegion, List<TideStation>>)
@@ -55,6 +65,8 @@ public class TideController {
 
         return "menu/multtae";
     }
+
+
 
 
 }
