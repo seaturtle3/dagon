@@ -15,20 +15,24 @@
     <div class="form-control d-flex justify-content-between align-items-center"
          style="width:70%">
         <div class="fw-bold fs-5">
-            <label>날짜 : </label><span id="selected-date"></span>
+            <label>날짜 : </label>
+            <span id="selected-date" th:text="${date}"></span>
         </div>
         <div class="fw-bold fs-5">
-            <label>인원 : </label><span id="selected-people"></span>
+            <label>인원 : </label>
+            <span id="selected-people" th:text="${people}"></span>
         </div>
         <div class="fw-bold fs-5">
-            <label>지역 : </label><span id="selected-region"></span>
+            <label>지역 : </label>
+            <span id="selected-region" th:text="${region}"></span>
         </div>
         <div class="fw-bold fs-5">
-            <label>어종 : </label><span id="selected-fish"></span>
+            <label>어종 : </label>
+            <span id="selected-fish" th:text="${fishType}"></span>
         </div>
 
-        <button type="button" class="btn btn-secondary"
-                data-bs-toggle="modal" data-bs-target="#searchModal">
+        <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#searchModal"
+                onclick="syncModalValues()">
             세부사항 변경
         </button>
     </div>
@@ -40,37 +44,43 @@
     <div class="modal-dialog">
         <div class="modal-content">
 
-            <form action="/reservation/search" method="get" onsubmit="updateSpan();">
+            <form action="/reservation/research" method="get" onsubmit="updateSpan();">
                 <div class="modal-header">
-                    <h5 class="modal-title">검색 조건 설정</h5>
+                    <h5 class="modal-title">세부항목 변경</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
 
                 <div class="modal-body">
-                    <label>날짜:</label>
-                    <input type="date" class="form-control" name="date" id="modal-date">
+                    <label>날짜 : </label>
+                    <input type="date" class="form-control" name="date" id="modal-date"
+                           th:value="${#dates.format(#dates.createNow(), 'yyyy-MM-dd')}">
 
-                    <label>인원:</label>
-                    <input type="number" class="form-control" name="people" id="modal-people">
+                    <label>인원 : </label>
+                    <input type="number" class="form-control" name="people" id="modal-people"
+                           min="1" step="1" value="1">
 
-                    <label>지역:</label>
+                    <label>지역 : </label>
                     <select class="form-control" name="region" id="modal-region">
-                        <option value="">전체</option>
-                        <option value="경북">경북</option>
-                        <option value="경남">경남</option>
+                        <option value="전체">전체</option>
+                        <option th:each="region : ${regions}"
+                                th:value="${region.korean}"
+                                th:text="${region.korean}">
+                        </option>
                     </select>
 
-                    <label>어종:</label>
+                    <label>어종 : </label>
                     <select class="form-control" name="fishType" id="modal-fishType">
-                        <option value="">전체</option>
-                        <option value="광어">광어</option>
-                        <option value="우럭">우럭</option>
+                        <option value="전체">전체</option>
+                        <option th:each="fish : ${fishSpecies}"
+                                th:text="${fish.fsName}">
+                        </option>
                     </select>
                 </div>
 
                 <div class="modal-footer">
                     <button type="button" class="btn btn-primary w-100"
-                            onclick="updateSpan()" data-bs-dismiss="modal">적용</button>
+                            onclick="updateSpan()" data-bs-dismiss="modal">적용
+                    </button>
                 </div>
             </form>
 
@@ -79,8 +89,7 @@
 </div>
 
 
-
 </body>
 </html>
 
-<script src="/js/reservation_modal.js"></script>
+<script src="/js/reservation.js"></script>

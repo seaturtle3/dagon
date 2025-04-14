@@ -27,8 +27,9 @@
                         </div>
                         <div class="align-self-center btn btn-light w-100 mt-3 fs-5"
                              data-bs-toggle="modal" data-bs-target="#searchModal">
-                            세부항목 변경</div>
-                        <a th:href="@{/reservation}"
+                            세부항목 변경
+                        </div>
+                        <a href="#" id="search-btn"
                            class="align-self-center btn btn-primary w-100 fs-5">
                             검색하기</a>
                     </div>
@@ -209,13 +210,12 @@
         </div>
     </div>
 
-
     <!-- 모달 페이지----------------------------------------------->
     <div class="modal fade" id="searchModal" tabindex="-1">
         <div class="modal-dialog">
             <div class="modal-content">
 
-                <form action="/reservation/search" method="get" onsubmit="updateSpan();">
+                <form action="/" method="get" onsubmit="updateSpan();">
                     <div class="modal-header">
                         <h5 class="modal-title">세부항목 변경</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
@@ -223,29 +223,34 @@
 
                     <div class="modal-body">
                         <label>날짜:</label>
-                        <input type="date" class="form-control" name="date" id="modal-date">
+                        <input type="date" class="form-control" name="date" id="modal-date"
+                               th:value="${#dates.format(#dates.createNow(), 'yyyy-MM-dd')}">
 
                         <label>인원:</label>
-                        <input type="number" class="form-control" name="people" id="modal-people">
+                        <input type="number" class="form-control" name="people" id="modal-people"
+                               min="1" step="1" value="1">
 
                         <label>지역:</label>
                         <select class="form-control" name="region" id="modal-region">
-                            <option value="">전체</option>
-                            <option value="경북">경북</option>
-                            <option value="경남">경남</option>
+                            <option value="전체">전체</option>
+                            <option th:each="region : ${regions}"
+                                    th:text="${region.korean}">
+                            </option>
                         </select>
 
                         <label>어종:</label>
                         <select class="form-control" name="fishType" id="modal-fishType">
-                            <option value="">전체</option>
-                            <option value="광어">광어</option>
-                            <option value="우럭">우럭</option>
+                            <option value="전체">전체</option>
+                            <option th:each="fish : ${fishSpecies}"
+                                    th:text="${fish.fsName}">
+                            </option>
                         </select>
                     </div>
 
                     <div class="modal-footer">
                         <button type="button" class="btn btn-primary w-100"
-                                onclick="updateSpan()" data-bs-dismiss="modal">적용</button>
+                                onclick="updateSpan()" data-bs-dismiss="modal">적용
+                        </button>
                     </div>
                 </form>
 
@@ -253,7 +258,7 @@
         </div>
     </div>
 
-    <script src="/js/reservation_modal.js"></script>
+    <script src="/js/index_reservation.js"></script>
 </main>
 
 
