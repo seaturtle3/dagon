@@ -1,0 +1,54 @@
+<th:block th:fragment="user_info_scripts">
+
+
+    <script>
+        // 백엔드 API 엔드포인트 URL (사용자 정보를 반환하는 API)
+        const API_ENDPOINT = '/api/users/me'; // 실제 API 엔드포인트로 변경해야 합니다.
+
+        // localStorage에 저장된 JWT 토큰의 키
+        const TOKEN_KEY = 'authToken'; // 실제 토큰 키로 변경해야 합니다.
+
+        async function fetchUserInfo() {
+            try {
+                const token = localStorage.getItem(TOKEN_KEY);
+
+                if (!token) {
+                    console.error('JWT 토큰이 localStorage에 없습니다.');
+                    document.getElementById('userNo').innerText = '유저 번호: 로그인 필요';
+                    document.getElementById('displayName').innerText = '닉네임: 로그인 필요';
+                    return;
+                }
+
+                const config = {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                };
+
+                const response = await axios.get(API_ENDPOINT, config);
+                const userInfo = response.data;
+
+                if (userInfo && userInfo.uno && userInfo.displayName) {
+                    document.getElementById('userNo').innerText = `유저 번호: ${userInfo.uno}`;
+                    document.getElementById('displayName').innerText = `닉네임: ${userInfo.displayName}`;
+                } else {
+                    console.error('유저 정보 응답 형식이 잘못되었습니다.', userInfo);
+                    document.getElementById('userNo').innerText = '유저 번호: 정보 없음';
+                    document.getElementById('displayName').innerText = '닉네임: 정보 없음';
+                }
+
+            } catch (error) {
+                console.error('사용자 정보 가져오기 실패:', error);
+                document.getElementById('userNo').innerText = '유저 번호: 오류 발생';
+                document.getElementById('displayName').innerText = '닉네임: 오류 발생';
+                // 필요에 따라 로그인 페이지로 리다이렉트
+                // window.location.href = '/login';
+            }
+        }
+
+        // 페이지 로드 시 사용자 정보 가져오기
+        document.addEventListener('DOMContentLoaded', fetchUserInfo);
+
+    </script>
+
+</th:block>

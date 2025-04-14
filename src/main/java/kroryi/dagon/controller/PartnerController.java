@@ -1,24 +1,18 @@
 package kroryi.dagon.controller;
-
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpSession;
 import kroryi.dagon.DTO.PartnerApplicationDTO;
-import kroryi.dagon.DTO.PartnerDTO;
-import kroryi.dagon.DTO.UsersDTO;
-import kroryi.dagon.entity.User;
-import kroryi.dagon.repository.UserRepository;
+import kroryi.dagon.compoent.CustomUserDetails;
 import kroryi.dagon.service.PartnerService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 
 //            파트너 등록 컨트롤
-
+@Log4j2
 @RequiredArgsConstructor
 @Controller
 @RequestMapping("/api/partners")
@@ -27,23 +21,23 @@ public class PartnerController {
     private final PartnerService partnerService;
 
     @PostMapping("/review")
-    public ResponseEntity<String> submitPartnerReview(@RequestBody PartnerApplicationDTO partnerApplicationDTO,
-                                                      HttpSession session) throws Exception {
-        UsersDTO loginUser = (UsersDTO) session.getAttribute("loginUser");
+    public ResponseEntity<String> submitPartnerReview(
+            @RequestBody PartnerApplicationDTO partnerApplicationDTO,
+            @AuthenticationPrincipal CustomUserDetails userDetails) throws Exception {
 
-        if (loginUser == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인이 필요합니다."); // 미 로그인시 로그인하라는 표시
+        log.info("🔥 컨트롤러 진입");
+        if (userDetails == null) {
+            log.warn("❌ 인증 정보 없음");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인이 필요합니다.");
         }
 
-        partnerApplicationDTO.setUno(loginUser.getUno());
-        partnerApplicationDTO.setUname(loginUser.getUname()); // 로그인 정보 가져오는 로직
+        log.info("✅ 인증된 유저: uno={}, uname={}", userDetails.getUno(), userDetails.getUsername());
 
-        System.out.println("받은 요청 DTO: " + partnerApplicationDTO);
+        partnerApplicationDTO.setUno(userDetails.getUno());
+        partnerApplicationDTO.setUname(userDetails.getUsername());
 
         partnerService.partner(partnerApplicationDTO);
-
-        return ResponseEntity.ok("신청이 완료되었습니다!.");
-
+        return ResponseEntity.ok("신청이 완료되었습니다!");
     }
 
     @GetMapping("/review")
@@ -51,4 +45,5 @@ public class PartnerController {
         return "review";
     }
 }
+
 

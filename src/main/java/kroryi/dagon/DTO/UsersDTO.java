@@ -34,10 +34,12 @@ public class UsersDTO {
         this.points = user.getPoints();
         this.level = user.getLevel() != null ? user.getLevel().ordinal() : 0;
         this.role = user.getRole() != null ? user.getRole().name() : null;
-        this.profile_image = null;  // 필요시 수정
-        this.phone1 = "";  // 필요시 수정
-        this.phone2 = "";  // 필요시 수정
-        this.phone3 = "";  // 필요시 수정
+        this.profile_image = user.getProfileImg();  // 필요시 수정
+        String[] parts = user.getPhone().split("-");
+        this.phone1 = parts.length > 0 ? parts[0] : "";
+        this.phone2 = parts.length > 1 ? parts[1] : "";
+        this.phone3 = parts.length > 2 ? parts[2] : "";
+        this.fullPhone = user.getPhone();
     }
 
     // 전체 전화번호를 합치는 메서드

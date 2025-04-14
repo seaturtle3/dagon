@@ -37,7 +37,7 @@ public class ReservationController {
         return fishSpeciesRepository.findAll();
     }
 
-    @GetMapping("/reservation")
+    @GetMapping
     public String reservation(
             @RequestParam(required = false) String date,
             @RequestParam(required = false) Integer people,

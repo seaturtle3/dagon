@@ -1,97 +1,122 @@
-<!-- registration.html -->
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>회원가입</title>
-    <style>
-        body { font-family: Arial, sans-serif; background-color: #f4f4f4; margin: 0; padding: 20px; }
-        .container { max-width: 400px; margin: auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-        input, button { width: 100%; padding: 10px; margin: 8px 0; border-radius: 4px; border: 1px solid #ddd; }
-        button { background-color: #5cb85c; color: white; border: none; cursor: pointer; }
-        button:hover { background-color: #4cae4c; }
-        label { margin: 5px 0; display: block; }
-        .error { color: red; font-size: 0.9em; }
-    </style>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-<div class="container">
-    <h2>회원가입</h2>
-    <form action="/api/users/register" method="POST" id="registrationForm" enctype="multipart/form-data">
-        <!-- User ID -->
-        <label for="uid">아이디</label>
-        <input type="text" id="uid" name="id" required>
+<body class="bg-gray-100 flex justify-center items-center min-h-screen">
+<div class="bg-white p-8 rounded-xl shadow-md w-full max-w-md">
+    <h2 class="text-2xl font-bold mb-6 text-gray-800 text-center">회원가입</h2>
+    <form id="registrationForm" method="POST" action="/api/users/register">
+        <label class="block mb-2 font-medium">아이디</label>
+        <input type="text" name="uid" id="uid" minlength="7" required
+               placeholder="영문+숫자 조합 7자 이상"
+               class="w-full p-2 mb-4 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400" />
 
-        <!-- Password -->
-        <label for="upw">비밀번호</label>
-        <input type="password" id="upw" name="pw" required>
+        <label class="block mb-2 font-medium">비밀번호</label>
+        <input type="password" name="upw" id="upw" minlength="8" required
+               placeholder="영문+숫자 조합 8자 이상"
+               class="w-full p-2 mb-4 border rounded-md" />
 
-        <!-- Password Confirmation -->
-        <label for="confirmPw">비밀번호 확인</label>
-        <input type="password" id="confirmPw" required>
+        <label class="block mb-2 font-medium">비밀번호 확인</label>
+        <input type="password" id="confirmPw" required placeholder="비밀번호 재입력"
+               class="w-full p-2 mb-4 border rounded-md" />
 
-        <!-- Name -->
-        <label for="uname">이름</label>
-        <input type="text" id="uname" name="name" required>
+        <label class="block mb-2 font-medium">이름</label>
+        <input type="text" name="uname" required placeholder="실명을 입력하세요"
+               class="w-full p-2 mb-4 border rounded-md" />
 
+        <label class="block mb-2 font-medium">이메일</label>
+        <input type="email" name="email" required placeholder="예: user@example.com"
+               class="w-full p-2 mb-4 border rounded-md" />
 
-        <!-- Email -->
-        <label for="uemail">이메일</label>
-        <input type="email" id="uemail" name="email" required>
-
-        <!-- Phone Number -->
-        <label for="uphone1">전화번호</label>
-        <div style="display: flex; gap: 5px;">
-            <input type="text" id="uphone1" name="phone1" maxlength="3" required>
-            <input type="text" id="uphone2" name="phone2" maxlength="4"  required>
-            <input type="text" id="uphone3" name="phone3" maxlength="4" required>
+        <label class="block mb-2 font-medium">휴대폰 번호</label>
+        <div class="flex gap-2 mb-4">
+            <input type="text" name="phone1" value="010" readonly
+                   class="w-1/4 p-2 border bg-gray-100 rounded-md" />
+            <input type="text" name="phone2" id="phone2" maxlength="4" required pattern="[0-9]{3,4}" placeholder="1234"
+                   class="w-1/4 p-2 border rounded-md" />
+            <input type="text" name="phone3" id="phone3" maxlength="4" required pattern="[0-9]{4}" placeholder="5678"
+                   class="w-1/4 p-2 border rounded-md" />
         </div>
 
-        </select>
+        <p id="errorMessage" class="text-red-500 text-sm mb-4"></p>
 
-        <!-- Submit Button -->
-        <button type="submit">회원가입</button>
-        <p id="errorMessage" class="error"></p>
+        <p class="mt-4 text-center">
+            이미 계정이 있으신가요?
+            <a href="/login" class="text-blue-500 hover:underline">로그인하러 가기</a>
+        </p>
+
+        <button type="submit"
+                class="w-full bg-blue-500 text-white font-semibold py-2 rounded-md hover:bg-blue-600 transition">
+            회원가입
+        </button>
     </form>
 </div>
 
 <script>
+    document.getElementById("registrationForm").addEventListener("submit", async function (e) {
+        e.preventDefault();
 
-    // 회원가입 제약 넣어주는 스크립트
-    const form = document.getElementById('registrationForm');
-    form.addEventListener('submit', function(event) {
-        const password = document.getElementById('upw').value;
-        const confirmPw = document.getElementById('confirmPw').value;
-        const errorMessage = document.getElementById('errorMessage');
-        const uid = document.getElementById('uid').value;
-        const uemail = document.getElementById('uemail').value;
+        const uid = document.getElementById("uid").value.trim();
+        const pw = document.getElementById("upw").value;
+        const confirmPw = document.getElementById("confirmPw").value;
+        const phone2 = document.getElementById("phone2").value;
+        const phone3 = document.getElementById("phone3").value;
+        const errorBox = document.getElementById("errorMessage");
 
+        const hasLetter = /[a-zA-Z]/.test(uid);
+        const hasNumber = /[0-9]/.test(uid);
+        const pwHasLetter = /[a-zA-Z]/.test(pw);
+        const pwHasNumber = /[0-9]/.test(pw);
 
+        errorBox.textContent = "";
 
-
-
-
-        // 아이디 7자 이상 이어야함 넘어가게 만듬
-        if(uid.length < 7) {
-            event.preventDefault();  // 이게 없으면 바로 넘어감
-            errorMessage.textContent = '아이디가 7자 이상이어야 합니다.';
-
+        if (uid.length < 7 || !hasLetter || !hasNumber) {
+            errorBox.textContent = "아이디는 영문자와 숫자를 포함해 7자 이상이어야 합니다.";
+            return;
         }
 
-
-
-
-        // 비밀번호랑 재확인이 같아야 넘가게 만듬
-        if(password.length < 8) {
-            event.preventDefault();  // 이게 없으면 바로 넘어감
-            errorMessage.textContent = '비밀번호가 8자 이상이어야 합니다.';
-
-        }else if(password !== confirmPw) {
-            event.preventDefault();
-            errorMessage.textContent = '비밀번호가 일치하지 않습니다.';
+        if (pw.length < 8 || !pwHasLetter || !pwHasNumber) {
+            errorBox.textContent = "비밀번호는 영문자와 숫자를 포함해 8자 이상이어야 합니다.";
+            return;
         }
 
+        if (pw !== confirmPw) {
+            errorBox.textContent = "비밀번호가 일치하지 않습니다.";
+            return;
+        }
+
+        const phoneRegex3 = /^[0-9]{3,4}$/;
+        const phoneRegex4 = /^[0-9]{4}$/;
+
+        if (!phoneRegex3.test(phone2) || !phoneRegex4.test(phone3)) {
+            errorBox.textContent = "올바른 전화번호 형식을 입력해주세요.";
+            return;
+        }
+
+        const form = e.target;
+        const formData = new FormData(form);
+
+        try {
+            const response = await fetch(form.action, { // 폼의 action 속성에서 URL 가져옴
+                method: form.method,
+                body: formData
+            });
+
+            if (response.ok) {
+                window.location.href = '/login';
+            } else {
+                const errorText = await response.text();
+                alert("회원가입 실패: " + errorText);
+            }
+
+        } catch (error) {
+            console.error("서버 통신 실패:", error);
+            alert("서버 오류 발생");
+        }
     });
 </script>
 </body>

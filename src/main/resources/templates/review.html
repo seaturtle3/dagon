@@ -4,47 +4,67 @@
     <meta charset="UTF-8">
     <title>파트너 신청</title>
     <style>
+        body {
+            background-color: #f7fafc;
+            font-family: 'Pretendard', sans-serif;
+        }
         .container {
             max-width: 600px;
             margin: 50px auto;
-            padding: 20px;
-            border: 1px solid #ccc;
-            border-radius: 10px;
-            font-family: Arial, sans-serif;
+            padding: 30px;
+            background-color: #fff;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
+        }
+
+        h2 {
+            text-align: center;
+            color: #2d3748;
         }
 
         label {
             display: block;
-            margin-top: 15px;
-            font-weight: bold;
+            margin-top: 16px;
+            font-weight: 600;
+            color: #4a5568;
         }
 
         input, textarea {
             width: 100%;
-            padding: 10px;
-            margin-top: 5px;
-            border-radius: 5px;
-            border: 1px solid #ccc;
+            padding: 12px;
+            margin-top: 6px;
+            border: 1px solid #cbd5e0;
+            border-radius: 8px;
+            font-size: 15px;
+            transition: border 0.3s;
+        }
+
+        input:focus, textarea:focus {
+            border-color: #3182ce;
+            outline: none;
         }
 
         button {
-            margin-top: 20px;
+            margin-top: 25px;
             width: 100%;
-            padding: 12px;
-            background-color: #4CAF50;
+            padding: 14px;
+            background-color: #3182ce;
             color: white;
+            font-weight: bold;
             border: none;
             border-radius: 8px;
             cursor: pointer;
+            transition: background-color 0.2s;
         }
 
         button:hover {
-            background-color: #45a049;
+            background-color: #2b6cb0;
         }
 
         .error {
-            color: red;
+            color: #e53e3e;
             margin-top: 10px;
+            font-size: 14px;
         }
     </style>
 </head>
@@ -53,22 +73,19 @@
     <h2>파트너 신청서</h2>
     <form id="partnerForm">
         <label for="pname">업체명</label>
-        <input type="text" id="pname" name="pname" required>
+        <input type="text" id="pname" name="pname" required placeholder="2~30자, 특수문자 제외">
 
         <label for="paddress">업장 주소</label>
-        <input type="text" id="paddress" name="paddress" required>
+        <input type="text" id="paddress" name="paddress" required placeholder="도로명, 번지 등 상세주소 포함">
 
         <label for="ceoName">대표자 이름</label>
-        <input type="text" id="ceoName" name="ceoName" required>
+        <input type="text" id="ceoName" name="ceoName" required placeholder="한글 2~10자">
 
         <label for="license">사업자 등록 번호</label>
-        <input type="text" id="license" name="license" required>
+        <input type="text" id="license" name="license" required placeholder="숫자 10자리 (하이픈 제외)">
 
         <label for="pinfo">파트너 설명</label>
-        <textarea id="pinfo" name="pinfo" required></textarea>
-
-        <input type="hidden" id="uno" name="uno" value="${sessionScope.uno}">
-        <input type="hidden" id="uname" name="uname" value="${sessionScope.uname}">
+        <textarea id="pinfo" name="pinfo" required placeholder="업체/서비스에 대한 설명 (10자 이상)"></textarea>
 
         <button type="submit">신청하기</button>
         <p id="errorMessage" class="error"></p>
@@ -76,53 +93,75 @@
 </div>
 
 <script>
-    document.getElementById("partnerForm").addEventListener("submit", function(event) {
+    document.getElementById("partnerForm").addEventListener("submit", function (event) {
         event.preventDefault();
 
-        const pname = document.getElementById("pname").value;
-        const paddress = document.getElementById("paddress").value;
-        const ceoName = document.getElementById("ceoName").value;
-        const license = document.getElementById("license").value;
-        const pinfo = document.getElementById("pinfo").value;
-        const uno = document.getElementById("uno").value;
-        const uname = document.getElementById("uname").value;
-        const errorMessage = document.getElementById("errorMessage");
+        const pname = document.getElementById("pname").value.trim();
+        const paddress = document.getElementById("paddress").value.trim();
+        const ceoName = document.getElementById("ceoName").value.trim();
+        const license = document.getElementById("license").value.trim();
+        const pinfo = document.getElementById("pinfo").value.trim();
+        const errorBox = document.getElementById("errorMessage");
 
-        if (!pname || !paddress || !ceoName || !license || !pinfo || !uno) {
-            errorMessage.textContent = "모든 필드를 입력해주세요.";
+        const nameRegex = /^[가-힣]{2,10}$/;
+        const licenseRegex = /^\d{10}$/;
+        const pnameRegex = /^[a-zA-Z가-힣0-9\s]{2,30}$/;
+
+        // 검증
+        if (!pnameRegex.test(pname)) {
+            errorBox.textContent = "업체명은 특수문자 없이 2~30자로 입력해주세요.";
             return;
         }
 
-        const partnerData = {
-            pname: pname,
-            paddress: paddress,
-            ceoName: ceoName,
-            license: license,
-            pinfo: pinfo,
-            uno: Number(uno),
-            uname: uname
+        if (paddress.length < 5) {
+            errorBox.textContent = "주소를 더 구체적으로 입력해주세요 (5자 이상)";
+            return;
+        }
+
+        if (!nameRegex.test(ceoName)) {
+            errorBox.textContent = "대표자 이름은 한글 2~10자만 허용됩니다.";
+            return;
+        }
+
+        if (!licenseRegex.test(license)) {
+            errorBox.textContent = "사업자 등록 번호는 숫자 10자리여야 합니다.";
+            return;
+        }
+
+        if (pinfo.length < 10) {
+            errorBox.textContent = "파트너 설명을 10자 이상 입력해주세요.";
+            return;
+        }
+
+        // 전송
+        const data = {
+            pname, paddress, ceoName, license, pinfo
         };
 
+        const token = localStorage.getItem("authToken");
+        console.log("파트너 신청 API 요청 시 토큰:", token);
         fetch("/api/partners/review", {
             method: "POST",
             headers: {
-                "Content-Type": "application/json"
+                "Content-Type": "application/json",
+                "Authorization": "Bearer " + localStorage.getItem("authToken")
             },
-            body: JSON.stringify(partnerData)
+            body: JSON.stringify(data)
         })
             .then(response => {
                 if (!response.ok) {
-                    throw new Error("서버 오류: " + response.status);
+
+                    throw new Error("서버 오류");
                 }
                 return response.text();
             })
-            .then(result => {
-                alert(result); // 예: "신청이 완료되었습니다."
-                window.location.href = "/"; // 메인 페이지로 이동
+            .then(message => {
+                alert(message || "신청이 완료되었습니다!");
+                window.location.href = "/"; // 홈으로 리디렉션
             })
             .catch(error => {
-                errorMessage.textContent = "신청 중 오류가 발생했습니다.";
-                console.error("Error:", error);
+                errorBox.textContent = "신청 중 오류가 발생했습니다.";
+                console.error("에러:", error);
             });
     });
 </script>
