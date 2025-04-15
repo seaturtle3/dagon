@@ -82,14 +82,18 @@ public class ApiKeyFilter extends OncePerRequestFilter {
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
         String path = request.getRequestURI();
+        String method = request.getMethod(); // ← HTTP 메서드 가져오기
 
         // Swagger 관련 경로 제외
         return path.startsWith("/swagger-ui") ||
+                (path.equals("/partner/review") && method.equals("GET")) ||
+                (path.startsWith("/") && method.equals("GET"))||
                 path.startsWith("/v3/api-docs") ||
                 path.startsWith("/swagger-ui/index.html") ||
                 path.startsWith("/swagger-resources") ||
                 path.startsWith("/webjars") ||
-                path.startsWith("/") ||
+                path.startsWith("/partner/list") ||
+//                path.startsWith("/partner/review") ||
                 path.startsWith("/register") ||
                 path.startsWith("/js/**") ||
                 path.startsWith("/css/**") ||
