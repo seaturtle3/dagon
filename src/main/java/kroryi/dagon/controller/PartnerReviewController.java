@@ -25,14 +25,14 @@ public class PartnerReviewController {
 
     @PostMapping("/approve/{id}")
     public ResponseEntity<Void> approve(@PathVariable Long id) {
-        applicationService.approve(id);
+
         return ResponseEntity.ok().build();
     }
 
     @PostMapping("/reject/{id}")
     public ResponseEntity<Void> reject(@PathVariable Long id, @RequestBody Map<String, String> body) {
         String reason = body.get("reason");
-        applicationService.reject(id, reason);
+
         return ResponseEntity.ok().build();
     }
 }
