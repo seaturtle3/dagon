@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.Arrays;
+import java.util.List;
 
 @Controller
 @Getter
@@ -22,7 +23,13 @@ public class ReservationController {
 
     private final ReservationService reservationService;
 
-    @GetMapping
+    @ModelAttribute("regions")
+    public List<ProdRegion> regions() {
+        log.info("regions : {}", Arrays.toString(ProdRegion.values()));
+        return Arrays.asList(ProdRegion.values());
+    }
+
+    @GetMapping("/reservation")
     public String reservation(
             @RequestParam(required = false) String date,
             @RequestParam(required = false) Integer people,

@@ -1,4 +1,4 @@
-package kroryi.dagon.controller;
+package kroryi.dagon.controller.api;
 import kroryi.dagon.DTO.PartnerApplicationDTO;
 import kroryi.dagon.compoent.CustomUserDetails;
 import kroryi.dagon.service.PartnerService;
@@ -14,9 +14,9 @@ import org.springframework.web.bind.annotation.*;
 //            파트너 등록 컨트롤
 @Log4j2
 @RequiredArgsConstructor
-@Controller
+@RestController
 @RequestMapping("/api/partners")
-public class PartnerController {
+public class ApiPartnerController {
 
     private final PartnerService partnerService;
 
@@ -25,7 +25,8 @@ public class PartnerController {
             @RequestBody PartnerApplicationDTO partnerApplicationDTO,
             @AuthenticationPrincipal CustomUserDetails userDetails) throws Exception {
 
-        log.info("🔥 컨트롤러 진입");
+        log.info("🔥 컨트롤러 진입 {}", partnerApplicationDTO);
+        log.info("🔥 컨트롤러 진입1 {}", userDetails);
         if (userDetails == null) {
             log.warn("❌ 인증 정보 없음");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인이 필요합니다.");
@@ -40,10 +41,7 @@ public class PartnerController {
         return ResponseEntity.ok("신청이 완료되었습니다!");
     }
 
-    @GetMapping("/review")
-    public String getReviewPage() {
-        return "review";
-    }
+
 }
 
 

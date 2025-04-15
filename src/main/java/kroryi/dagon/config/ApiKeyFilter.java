@@ -38,6 +38,7 @@ public class ApiKeyFilter extends OncePerRequestFilter {
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
 
+        log.info("ApiKeyFilter--------------------------->");
         String authHeader = request.getHeader("Authorization");
 
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
@@ -80,25 +81,25 @@ public class ApiKeyFilter extends OncePerRequestFilter {
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
         String path = request.getRequestURI();
-
-        // Swagger 관련 경로 제외
         return path.startsWith("/swagger-ui") ||
                 path.startsWith("/v3/api-docs") ||
                 path.startsWith("/swagger-ui/index.html") ||
                 path.startsWith("/swagger-resources") ||
                 path.startsWith("/webjars") ||
-                path.startsWith("/") ||
+                path.equals("/login") ||
+                path.equals("/api/auth/login") ||
+                path.equals("/") ||
+
+                path.startsWith("/partner/") ||
                 path.startsWith("/register") ||
-                path.startsWith("/js/**") ||
-                path.startsWith("/css/**") ||
-                path.startsWith("/img/**") ||
-                path.startsWith("/images/**") ||
-                path.startsWith("/uploads/**") ||
-                path.startsWith("/uploadImage/**") ||
-                path.startsWith("/api/**") ||
+                path.startsWith("/js/") ||
+                path.startsWith("/css/") ||
+                path.startsWith("/img/") ||
+                path.startsWith("/images/") ||
+                path.startsWith("/uploads/") ||
+                path.startsWith("/uploadImage/") ||
                 path.startsWith("/reservation.html") ||
                 path.equals("/error") ||
-                path.equals("/*") ||
                 path.equals("/admin/api-keys"); // ✅ 여기를 추가!
 
     }

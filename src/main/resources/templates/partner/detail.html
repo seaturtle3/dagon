@@ -1,167 +1,191 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>파트너 상세</title>
+    <title>파트너 신청 상세</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <style>
-        body {
-            font-family: 'Pretendard', sans-serif;
-            background-color: #f9fafb;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
-            min-height: 100vh;
-        }
-
-        .container {
-            margin-top: 60px;
-            background-color: #ffffff;
-            border-radius: 12px;
-            padding: 30px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
-            max-width: 600px;
-            width: 100%;
-        }
-
-        h2 {
-            font-size: 26px;
-            margin-bottom: 20px;
-            color: #1f2937;
-        }
-
-        .detail-box p {
-            margin-bottom: 12px;
-            line-height: 1.6;
-        }
-
-        .detail-box strong {
-            display: inline-block;
-            width: 120px;
-            color: #4b5563;
-        }
-
-        button {
-            margin-top: 20px;
-            margin-right: 10px;
-            padding: 10px 18px;
-            font-size: 14px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        button:hover {
-            opacity: 0.9;
-        }
-
-        button.approve {
-            background-color: #10b981;
-            color: white;
-        }
-
-        button.reject {
-            background-color: #ef4444;
-            color: white;
-        }
-
-        textarea {
-            width: 100%;
-            height: 80px;
-            margin-top: 10px;
-            padding: 10px;
-            border-radius: 6px;
-            border: 1px solid #d1d5db;
-            resize: vertical;
-            font-size: 14px;
-        }
-
-        #rejectionForm {
-            margin-top: 20px;
-            display: none;
-        }
-
-        .back-link {
-            display: inline-block;
-            margin-top: 30px;
-            text-decoration: none;
-            color: #3b82f6;
-        }
-
-        .back-link:hover {
-            text-decoration: underline;
-        }
+        .container { width: 80%; margin: 20px auto; }
+        .detail-box { border: 1px solid #ddd; padding: 20px; border-radius: 5px; }
+        .field { margin-bottom: 15px; }
+        .field-label { font-weight: bold; display: inline-block; width: 150px; }
+        .button-group { margin-top: 20px; }
+        button { padding: 8px 15px; margin-right: 10px; cursor: pointer; }
+        .approve-btn { background-color: #4CAF50; color: white; border: none; }
+        .reject-btn { background-color: #f44336; color: white; border: none; }
+        .back-btn { background-color: #ccc; border: none; }
+        .reject-reason { display: none; margin-top: 15px; }
+        #rejectReason { width: 100%; height: 100px; margin-top: 10px; }
     </style>
 </head>
 <body>
-
 <div class="container">
-    <h2>파트너 상세 정보</h2>
+    <h1>파트너 신청 상세 정보</h1>
+
     <div class="detail-box">
-        <p><strong>ID:</strong> <span th:text="${app.pid}"></span></p>
-        <p><strong>상호명:</strong> <span th:text="${app.pname}"></span></p>
-        <p><strong>대표자명:</strong> <span th:text="${app.ceoName}"></span></p>
-        <p><strong>주소:</strong> <span th:text="${app.paddress}"></span></p>
-        <p><strong>사업자 번호:</strong> <span th:text="${app.license}"></span></p>
-        <p><strong>정보:</strong> <span th:text="${app.pinfo}"></span></p>
-        <p><strong>상태:</strong> <span th:text="${app.pstatus}"></span></p>
-        <p><strong>신청자:</strong> <span th:text="${app.uname}"></span></p>
-
-        <button class="approve" th:onclick="|approve(${app.pid})|">심사 완료</button>
-        <button class="reject" onclick="showRejectionForm()">반려</button>
-
-        <div id="rejectionForm">
-            <textarea id="rejectionReason" placeholder="반려 사유를 입력하세요"></textarea>
-            <button class="reject" th:onclick="|reject(${app.pid})|">반려 확정</button>
+        <div class="field">
+            <span class="field-label">신청 ID:</span>
+            <span id="pid"></span>
+        </div>
+        <div class="field">
+            <span class="field-label">상호명:</span>
+            <span id="pname"></span>
+        </div>
+        <div class="field">
+            <span class="field-label">사업자 주소:</span>
+            <span id="paddress"></span>
+        </div>
+        <div class="field">
+            <span class="field-label">대표자명:</span>
+            <span id="ceoName"></span>
+        </div>
+        <div class="field">
+            <span class="field-label">사업자 정보:</span>
+            <span id="pinfo"></span>
+        </div>
+        <div class="field">
+            <span class="field-label">사업자 등록증:</span>
+            <span id="license"></span>
+        </div>
+        <div class="field">
+            <span class="field-label">신청자 이름:</span>
+            <span id="uname"></span>
+        </div>
+        <div class="field">
+            <span class="field-label">신청 상태:</span>
+            <span id="pstatus"></span>
+        </div>
+        <div class="field" id="reviewedAtField" style="display: none;">
+            <span class="field-label">검토 일시:</span>
+            <span id="paReviewedAt"></span>
+        </div>
+        <div class="field" id="rejectionReasonField" style="display: none;">
+            <span class="field-label">반려 사유:</span>
+            <span id="paRejectionReason"></span>
         </div>
     </div>
 
-    <a href="/partner/list" class="back-link">← 목록으로 돌아가기</a>
+    <div class="button-group">
+        <button class="back-btn" onclick="goBack()">목록으로</button>
+        <button class="approve-btn" id="approveBtn" onclick="approveApplication()">승인</button>
+        <button class="reject-btn" id="rejectBtn" onclick="showRejectForm()">반려</button>
+    </div>
+
+    <div class="reject-reason" id="rejectForm">
+        <h3>반려 사유</h3>
+        <textarea id="rejectReason" placeholder="반려 사유를 입력하세요"></textarea>
+        <button onclick="rejectApplication()">반려 확인</button>
+        <button onclick="cancelReject()">취소</button>
+    </div>
 </div>
 
 <script>
-    function approve(pid) {
-        if (confirm("심사 완료 처리하시겠습니까?")) {
-            fetch(`/api/partner/approve/${pid}`, { method: "POST" })
-                .then(res => {
-                    if (res.ok) {
-                        alert("심사가 완료되었습니다.");
-                        window.location.href = "/partner/list";
-                    } else {
-                        alert("심사 처리 중 오류가 발생했습니다.");
-                    }
-                })
-                .catch(() => alert("서버 에러가 발생했습니다."));
-        }
+    let applicationId;
+
+    function loadApplicationDetail() {
+        // URL에서 ID 추출
+        const pathParts = window.location.pathname.split('/');
+        applicationId = pathParts[pathParts.length - 1];
+
+        $.ajax({
+            url: `/api/partners/${applicationId}`,
+            type: 'GET',
+            success: function(data) {
+                // 데이터 표시
+                $('#pid').text(data.pid);
+                $('#pname').text(data.pname);
+                $('#paddress').text(data.paddress);
+                $('#ceoName').text(data.ceoName);
+                $('#pinfo').text(data.pinfo);
+                $('#license').text(data.license);
+                $('#uname').text(data.uname);
+                $('#pstatus').text(data.pstatus);
+
+                // 검토 일시가 있으면 표시
+                if (data.paReviewedAt) {
+                    $('#paReviewedAt').text(formatDateTime(data.paReviewedAt));
+                    $('#reviewedAtField').show();
+                }
+
+                // 반려 사유가 있으면 표시
+                if (data.paRejectionReason) {
+                    $('#paRejectionReason').text(data.paRejectionReason);
+                    $('#rejectionReasonField').show();
+                }
+
+                // 이미 처리된 신청인 경우 버튼 숨김
+                if (data.pstatus !== '심사중') {
+                    $('#approveBtn').hide();
+                    $('#rejectBtn').hide();
+                }
+            },
+            error: function() {
+                alert('데이터를 불러오는 중 오류가 발생했습니다.');
+                goBack();
+            }
+        });
     }
 
-    function showRejectionForm() {
-        document.getElementById("rejectionForm").style.display = "block";
+    function formatDateTime(dateTimeStr) {
+        const date = new Date(dateTimeStr);
+        return date.toLocaleString();
     }
 
-    function reject(pid) {
-        const reason = document.getElementById("rejectionReason").value;
-        if (!reason.trim()) {
-            alert("반려 사유를 입력해주세요.");
+    function goBack() {
+        window.location.href = '/partner/list';
+    }
+
+    function approveApplication() {
+        if (!confirm('이 신청을 승인하시겠습니까?')) return;
+
+        $.ajax({
+            url: `/api/partners/${applicationId}/approve`,
+            type: 'POST',
+            success: function() {
+                alert('신청이 승인되었습니다.');
+                location.reload();
+            },
+            error: function() {
+                alert('승인 처리 중 오류가 발생했습니다.');
+            }
+        });
+    }
+
+    function showRejectForm() {
+        $('#rejectForm').show();
+    }
+
+    function cancelReject() {
+        $('#rejectForm').hide();
+        $('#rejectReason').val('');
+    }
+
+    function rejectApplication() {
+        const reason = $('#rejectReason').val().trim();
+        if (!reason) {
+            alert('반려 사유를 입력해주세요.');
             return;
         }
 
-        fetch(`/api/partner/reject/${pid}`, {
-            method: "POST",
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ reason: reason })
-        }).then(res => {
-            if (res.ok) {
-                alert("반려 처리가 완료되었습니다.");
-                window.location.href = "/partner/list";
-            } else {
-                alert("반려 처리 중 오류가 발생했습니다.");
-            }
-        }).catch(() => alert("서버 에러가 발생했습니다."));
-    }
-</script>
+        if (!confirm('이 신청을 반려하시겠습니까?')) return;
 
+        $.ajax({
+            url: `/api/partners/${applicationId}/reject`,
+            type: 'POST',
+            data: { reason: reason },
+            success: function() {
+                alert('신청이 반려되었습니다.');
+                location.reload();
+            },
+            error: function() {
+                alert('반려 처리 중 오류가 발생했습니다.');
+            }
+        });
+    }
+
+    $(document).ready(function() {
+        loadApplicationDetail();
+    });
+</script>
 </body>
 </html>

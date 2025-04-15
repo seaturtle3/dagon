@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
@@ -9,14 +8,20 @@
         table { width: 100%; border-collapse: collapse; margin-top: 10px; }
         th, td { padding: 8px; border: 1px solid #ddd; text-align: center; }
         .pagination { margin-top: 15px; text-align: center; }
-        .pagination button { margin: 0 3px; }
-        tr:hover { background-color: #f1f1f1; } /* 행 hover 효과 */
+        .pagination button { margin: 0 3px; cursor: pointer; padding: 5px 10px; }
+        .pagination button.active { background-color: #4CAF50; color: white; }
+        tr:hover { background-color: #f1f1f1; }
+        .search-container { margin: 20px 0; padding: 10px; background-color: #f8f9fa; border-radius: 5px; }
+        #searchKeyword { padding: 5px; width: 200px; }
+        select { padding: 5px; }
+        button { padding: 5px 10px; cursor: pointer; }
+        h1 { color: #333; }
     </style>
 </head>
 <body>
 <h1>파트너 신청 목록</h1>
 
-<div>
+<div class="search-container">
     <label>검색 기준:</label>
     <select id="searchType">
         <option value="pname">상호명</option>
@@ -48,19 +53,28 @@
     <tbody id="tableBody"></tbody>
 </table>
 
-<div id="pagination"></div>
+<div id="pagination" class="pagination"></div>
 
 <script>
     const size = 10;
+    let currentPage = 0;
 
     function loadData(page) {
+        currentPage = page;
         const keyword = $('#searchKeyword').val();
         const type = $('#searchType').val();
         const status = $('#statusFilter').val();
+        const token = localStorage.getItem('accessToken');
+        console.log("토큰:", token); // null 또는 undefined라면 문제!
+
+        console.log(`Loading data with page=${page}, size=${size}, keyword=${keyword}, type=${type}, status=${status}`);
 
         $.ajax({
             url: `/api/partners`,
             type: 'GET',
+            headers: {
+                'Authorization': 'Bearer ' + token
+            },
             data: {
                 page: page,
                 size: size,
@@ -69,27 +83,64 @@
                 status: status
             },
             success: function(data) {
-                const body = $('#tableBody');
-                body.empty();
-
-                data.content.forEach(item => {
-                    body.append(`
-                        <tr onclick="goToDetail(${item.pid})" style="cursor:pointer;">
-                            <td>${item.pid}</td>
-                            <td>${item.pname}</td>
-                            <td>${item.displayName}</td>
-                            <td>${item.pstatus}</td>
-                        </tr>
-                    `);
-                });
-
-                const pagination = $('#pagination');
-                pagination.empty();
-                for (let i = 0; i < data.totalPages; i++) {
-                    pagination.append(`<button onclick="loadData(${i})">${i + 1}</button>`);
-                }
+                console.log('Data fetched successfully:', data);
+                renderTable(data);
+                renderPagination(data);
+            },
+            error: function(xhr) {
+                console.error('Error fetching data', xhr.responseText);
+                alert('데이터를 불러오는 중 오류가 발생했습니다.');
             }
         });
+    }
+
+    function renderTable(data) {
+        const body = $('#tableBody');
+        body.empty();
+
+        if (data.content.length === 0) {
+            body.append(`
+                <tr>
+                    <td colspan="4">검색 결과가 없습니다.</td>
+                </tr>
+            `);
+            return;
+        }
+
+        data.content.forEach(item => {
+            body.append(`
+                <tr onclick="goToDetail(${item.pid})" style="cursor:pointer;">
+                    <td>${item.pid}</td>
+                    <td>${item.pname}</td>
+                    <td>${item.displayName}</td>
+                    <td>${item.pstatus}</td>
+                </tr>
+            `);
+        });
+    }
+
+    function renderPagination(data) {
+        const pagination = $('#pagination');
+        pagination.empty();
+
+        // 처음 페이지로 이동 버튼
+        if (data.totalPages > 1) {
+            pagination.append(`<button onclick="loadData(0)">&laquo;</button>`);
+        }
+
+        // 페이지 버튼 생성
+        const startPage = Math.max(0, currentPage - 2);
+        const endPage = Math.min(data.totalPages - 1, currentPage + 2);
+
+        for (let i = startPage; i <= endPage; i++) {
+            const activeClass = i === currentPage ? 'active' : '';
+            pagination.append(`<button class="${activeClass}" onclick="loadData(${i})">${i + 1}</button>`);
+        }
+
+        // 마지막 페이지로 이동 버튼
+        if (data.totalPages > 1) {
+            pagination.append(`<button onclick="loadData(${data.totalPages - 1})">&raquo;</button>`);
+        }
     }
 
     function goToDetail(id) {
