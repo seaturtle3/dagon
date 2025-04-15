@@ -3,9 +3,9 @@
 //import java.util.HashMap;
 //import java.util.Map;
 //
-//public class StripePaymentSservice {
+//public class PaymentSservice {
 //
-//    public StripePaymentSservice() {
+//    public PaymentSservice() {
 //        // Stripe API 키 설정
 //        Stripe.apiKey = "sk_test_your_api_key";
 //    }

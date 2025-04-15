@@ -39,8 +39,8 @@ public class KakaoPayService {
         params.add("quantity", "1");
         params.add("total_amount", "20000");
         params.add("tax_free_amount", "100");
-        params.add("approval_url", "http://localhost:9090/");
-        params.add("cancel_url", "http://localhost:9090/kakaoPayCancle");
+        params.add("approval_url", "http://localhost:9090/kakaoPaySuccess");
+        params.add("cancel_url", "http://localhost:9090/kakaoPayCancel");
         params.add("fail_url", "http://localhost:9090/kakaoPayFail");
 
         try {

@@ -23,7 +23,7 @@ public class KakaoPayController {
     public String kakaoPayGet() {
         log.info("1111111111111111111111");
 
-        return "kakaopay";
+        return "kakaopay/kakaopay";
     }
 
     @PostMapping("/kakaoPay")
@@ -34,8 +34,10 @@ public class KakaoPayController {
     }
 
     @GetMapping("/kakaoPaySuccess")
-    public void kakaoPaySuccess(@RequestParam("pg_token") String pg_token, Model model) {
+    public String kakaoPaySuccess(@RequestParam("pg_token") String pg_token, Model model) {
         log.info("kakaoPay Success get................");
         log.info("kakaoPaySuccess pg_token : {}", pg_token);
+        model.addAttribute("pg_token", pg_token);
+        return "kakaopay/kakaoPaySuccess";  // 템플릿 반환
     }
 }
