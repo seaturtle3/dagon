@@ -27,14 +27,15 @@
 
                 const response = await axios.get(API_ENDPOINT, config);
                 const userInfo = response.data;
+                console.log(userInfo)
 
                 if (userInfo && userInfo.uno && userInfo.displayName) {
                     document.getElementById('userNo').innerText = `유저 번호: ${userInfo.uno}`;
                     document.getElementById('displayName').innerText = `닉네임: ${userInfo.displayName}`;
                 } else {
-                    console.error('유저 정보 응답 형식이 잘못되었습니다.', userInfo);
-                    document.getElementById('userNo').innerText = '유저 번호: 정보 없음';
-                    document.getElementById('displayName').innerText = '닉네임: 정보 없음';
+                    console.error('유저 정보 응답 형식이 잘못되었습니다.');
+                    // document.getElementById('userNo').innerText = '유저 번호: 정보 없음';
+                    // document.getElementById('displayName').innerText = '닉네임: 정보 없음';
                 }
 
             } catch (error) {

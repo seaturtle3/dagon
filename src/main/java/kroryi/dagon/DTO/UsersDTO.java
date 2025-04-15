@@ -2,10 +2,6 @@ package kroryi.dagon.DTO;
 
 import kroryi.dagon.entity.User;
 import lombok.*;
-import org.w3c.dom.Text;
-import java.util.Date;
-
-
 
 
 @Data

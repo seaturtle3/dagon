@@ -31,8 +31,8 @@
             <span id="selected-fish" th:text="${fishType}"></span>
         </div>
 
-        <button type="button" class="btn btn-secondary" id="change-detail-btn"
-                data-bs-toggle="modal" data-bs-target="#searchModal">
+        <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#searchModal"
+                onclick="syncModalValues()">
             세부사항 변경
         </button>
     </div>
@@ -44,7 +44,7 @@
     <div class="modal-dialog">
         <div class="modal-content">
 
-            <form action="/reservation" method="get" onsubmit="updateSpan();">
+            <form action="/reservation/research" method="get" onsubmit="updateSpan();">
                 <div class="modal-header">
                     <h5 class="modal-title">세부항목 변경</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
@@ -52,23 +52,25 @@
 
                 <div class="modal-body">
                     <label>날짜 : </label>
-                    <input type="date" class="form-control" name="date" id="modal-date">
+                    <input type="date" class="form-control" name="date" id="modal-date"
+                           th:value="${#dates.format(#dates.createNow(), 'yyyy-MM-dd')}">
 
                     <label>인원 : </label>
                     <input type="number" class="form-control" name="people" id="modal-people"
-                    min="1" step="1">
+                           min="1" step="1" value="1">
 
                     <label>지역 : </label>
                     <select class="form-control" name="region" id="modal-region">
-                        <option value="">전체</option>
+                        <option value="전체">전체</option>
                         <option th:each="region : ${regions}"
+                                th:value="${region.korean}"
                                 th:text="${region.korean}">
                         </option>
                     </select>
 
                     <label>어종 : </label>
                     <select class="form-control" name="fishType" id="modal-fishType">
-                        <option value="">전체</option>
+                        <option value="전체">전체</option>
                         <option value="광어">광어</option>
                         <option value="우럭">우럭</option>
                     </select>
@@ -76,7 +78,8 @@
 
                 <div class="modal-footer">
                     <button type="button" class="btn btn-primary w-100"
-                            onclick="updateSpan()" data-bs-dismiss="modal">적용</button>
+                            onclick="updateSpan()" data-bs-dismiss="modal">적용
+                    </button>
                 </div>
             </form>
 
@@ -85,8 +88,7 @@
 </div>
 
 
-
 </body>
 </html>
 
-<script src="/js/reservation_modal.js"></script>
+<script src="/js/reservation.js"></script>

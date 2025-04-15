@@ -7,24 +7,22 @@
 </head>
 <body>
 
-<div th:replace="fragments/header :: header">
+<div th:replace="~{fragments/header :: header}">
     <h1>여기는 헤더입니다.</h1>
 </div>
 
-<div th:replace="fragments/nav :: nav">
+<div th:replace="~{fragments/nav :: nav}">
 
 </div>
 
-<div th:replace="fragments/main :: main">
+<div th:replace="~{fragments/main :: main}">
     <h1>여기는 메인 페이지입니다.</h1>
 </div>
 
-<div th:replace="fragments/footer :: footer">
+<div th:replace="~{fragments/footer :: footer}">
     <h1>여기는 푸터입니다.</h1>
 </div>
-<th:block th:replace="fragments/scripts :: user_info_scripts"></th:block>
-
-
+<th:block th:replace="~{fragments/scripts :: user_info_scripts}"></th:block>
 
 </body>
 </html>

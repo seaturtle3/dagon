@@ -3,20 +3,27 @@ package kroryi.dagon.controller;
 import kroryi.dagon.service.PartnerApplicationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
 
-@RestController
-@RequestMapping("/api/partner")
+@Controller
+@RequestMapping("/partner")
 @RequiredArgsConstructor
 public class PartnerReviewController {
 
     private final PartnerApplicationService applicationService;
 
-    @PostMapping("/approve/{id}")
+    @GetMapping("/review")
+    public String showReviewPage() {
+        // "partner-review.html"을 반환하여 실제 HTML 페이지를 렌더링
+        return "review"; // 반환할 HTML 파일 이름 (templates/partner-review.html)
+    }
 
+
+    @PostMapping("/approve/{id}")
     public ResponseEntity<Void> approve(@PathVariable Long id) {
         applicationService.approve(id);
         return ResponseEntity.ok().build();

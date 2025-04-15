@@ -38,7 +38,9 @@ public class ApiKeyFilter extends OncePerRequestFilter {
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
 
+        log.info("ApiKeyFilter--------------------------->");
         String authHeader = request.getHeader("Authorization");
+        log.info("------------------- {}", authHeader);
 
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             String jwt = authHeader.substring(7);
@@ -80,26 +82,36 @@ public class ApiKeyFilter extends OncePerRequestFilter {
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
         String path = request.getRequestURI();
+        String method = request.getMethod(); // ← HTTP 메서드 가져오기
 
-        // Swagger 관련 경로 제외
+        // GET 메서드일 때만 /partner/review 요청 필터 제외
+        if (path.equals("/partner/review") && method.equals("GET")) {
+            return true;
+        }
+
         return path.startsWith("/swagger-ui") ||
-                path.startsWith("/v3/api-docs") ||
+                path.startsWith("/api-docs") ||
                 path.startsWith("/swagger-ui/index.html") ||
                 path.startsWith("/swagger-resources") ||
                 path.startsWith("/webjars") ||
-                path.startsWith("/") ||
+                path.equals("/login") ||
+                path.equals("/api/auth/login") ||
+                path.equals("/") ||
+                path.equals("/web/users/register") ||
+                path.startsWith("/partner/list") ||
+//                path.startsWith("/partner/review") ||
                 path.startsWith("/register") ||
-                path.startsWith("/js/**") ||
-                path.startsWith("/css/**") ||
-                path.startsWith("/img/**") ||
-                path.startsWith("/images/**") ||
-                path.startsWith("/uploads/**") ||
-                path.startsWith("/uploadImage/**") ||
-                path.startsWith("/api/**") ||
+                path.startsWith("/js/") ||
+                path.startsWith("/css/") ||
+                path.startsWith("/img/") ||
+                path.startsWith("/images/") ||
+                path.startsWith("/uploads/") ||
+                path.startsWith("/uploadImage/") ||
                 path.startsWith("/reservation.html") ||
                 path.equals("/error") ||
-                path.equals("/*") ||
-                path.equals("/admin/api-keys"); // ✅ 여기를 추가!
+                path.equals("/admin/api-keys") ||
+                path.equals("/api/users/register") ||
+                path.equals("/my_page");
 
     }
 }
