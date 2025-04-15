@@ -17,7 +17,7 @@ public class ProductRestController {
 
     private final ProductService productService;
 
-    @GetMapping("api/products")
+    @GetMapping("/all")
     public List<ProductDTO> getAllProducts() {
         return productService.getAllProducts();
     }
