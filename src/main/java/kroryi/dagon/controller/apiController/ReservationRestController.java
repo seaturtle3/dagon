@@ -15,17 +15,7 @@ public class ReservationRestController {
 
     private final ReservationService reservationService;
 
-    @GetMapping
-    public ReservationDTO getReservation(@RequestParam(required = false) String date,
-                                         @RequestParam(required = false) Integer people,
-                                         @RequestParam(required = false) String region,
-                                         @RequestParam(required = false) String fishType) {
-
-        return new ReservationDTO(date, people, region, fishType);
-
-    }
-
-    @GetMapping("/q1")
+    @GetMapping("/api/reservation")
     public String getFindAll(){
         return reservationService.getFindAll();
     }
