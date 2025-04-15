@@ -40,4 +40,18 @@ public class KakaoPayController {
         model.addAttribute("pg_token", pg_token);
         return "kakaopay/kakaoPaySuccess";  // 템플릿 반환
     }
+
+    @GetMapping("/kakaoPayCancel")
+    public String kakaoPayCancel(Model model) {
+        log.info("kakaoPay Cancel get................");
+        // 취소된 결제에 대한 처리를 여기에 작성합니다.
+        return "kakaopay/kakaoPayCancel";  // 템플릿 반환
+    }
+
+    @GetMapping("/kakaoPayFail")
+    public String kakaoPayFail(Model model) {
+        log.info("kakaoPay Fail get................");
+        // 실패한 결제에 대한 처리를 여기에 작성합니다.
+        return "kakaopay/kakaoPayFail";  // 템플릿 반환
+    }
 }
