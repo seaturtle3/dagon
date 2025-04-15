@@ -49,8 +49,12 @@
                     <h5 class="modal-title">세부항목 변경</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
-
                 <div class="modal-body">
+                    <div>
+                        <div>바다</div>
+                        <div>민물</div>
+                    </div>
+
                     <label>날짜 : </label>
                     <input type="date" class="form-control" name="date" id="modal-date"
                            th:value="${#dates.format(#dates.createNow(), 'yyyy-MM-dd')}">

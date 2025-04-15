@@ -17,9 +17,10 @@ document.getElementById("search-btn").addEventListener('click', function() {
     const people = document.getElementById("modal-people").value || 1;
     const region = document.getElementById("modal-region").value || "전체";
     const fishType = document.getElementById("modal-fishType").value || "전체";
-    const url = `/reservation?date=${date}&people=${people}&region=${region}&fishType=${fishType}`;
+    const url1 = `/sea_fishing?date=${date}&people=${people}&region=${region}&fishType=${fishType}`;
+    const url2 = `freshwater_fishing?date=${date}&people=${people}&region=${region}&fishType=${fishType}`;
 
-    window.location.href = url;
+    window.location.href = url1;
 });
 
 window.addEventListener("DOMContentLoaded", () => {
