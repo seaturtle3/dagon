@@ -11,13 +11,22 @@ import org.w3c.dom.NodeList;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathFactory;
+import java.io.StringWriter;
 import java.net.URI;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
 @Component
-@RequiredArgsConstructor
 @Log4j2
 public class LunarApiClient {
-    private final RestTemplate restTemplate;
 
     @Value("${lunar.api.base-url}")
     private String baseUrl;
@@ -25,28 +34,35 @@ public class LunarApiClient {
     @Value("${lunar.api.service-key}")
     private String serviceKey;
 
-
     public Double getLunarAge(int year, int month, int day) {
-        URI uri = UriComponentsBuilder.fromHttpUrl(baseUrl + "/getLunPhInfo")
-                .queryParam("ServiceKey", serviceKey)
-                .queryParam("solYear", year)
-                .queryParam("solMonth", String.format("%02d", month))
-                .queryParam("solDay", String.format("%02d", day))
-                .build(false)
-                .encode()
-                .toUri();
 
         try {
+            String encodedKey = URLEncoder.encode(serviceKey, StandardCharsets.UTF_8);
+
+            URI uri = UriComponentsBuilder.fromHttpUrl(baseUrl + "/getLunPhInfo")
+                    .queryParam("ServiceKey", encodedKey)
+                    .queryParam("solYear", year)
+                    .queryParam("solMonth", String.format("%02d", month))
+                    .queryParam("solDay", String.format("%02d", day))
+                    .build(true)
+                    .toUri();
+
+            log.info("요청된 월령 API URI: {}", uri);
+
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             DocumentBuilder builder = factory.newDocumentBuilder();
             Document doc = builder.parse(uri.toString());
 
-            NodeList lunAgeList = doc.getElementsByTagName("lunAge");
-            if (lunAgeList.getLength() > 0) {
-                String lunAgeStr = lunAgeList.item(0).getTextContent();
+            XPath xPath = XPathFactory.newInstance().newXPath();
+            String lunAgeStr = xPath.compile("/response/body/items/item/lunAge")
+                    .evaluate(doc, XPathConstants.STRING)
+                    .toString();
+
+            if (!lunAgeStr.isBlank()) {
+                log.info("파싱된 lunAge 값: {}", lunAgeStr);
                 return Double.parseDouble(lunAgeStr);
             } else {
-                log.warn("월령 정보가 없음: {}", uri);
+                log.warn("XPath로 lunAge 값이 없음: {}", uri);
                 return null;
             }
 
@@ -54,5 +70,8 @@ public class LunarApiClient {
             log.error("월령 API 요청 중 오류", e);
             return null;
         }
+
     }
+
+
 }

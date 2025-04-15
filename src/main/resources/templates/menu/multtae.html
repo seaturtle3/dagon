@@ -85,26 +85,6 @@
     </div>
 </div>
 
-<!--<form id="stationForm" method="get" action="/tide/multtae">-->
-<!--    <input type="hidden" name="region" id="regionInput" th:value="${region}">-->
-<!--    <input type="hidden" name="stationCode" id="stationCodeInput" th:value="${stationCode}">-->
-<!--    <input type="hidden" name="date" id="dateInput" th:value="${date}">-->
-<!--</form>-->
-
-<!--<div class="region-wrapper">-->
-<!--    <div th:each="entry : ${groupedStations}" class="region-block">-->
-<!--        <h3 th:text="${entry.key.korean}"></h3>-->
-<!--        <div class="station-buttons">-->
-<!--            <button th:each="station : ${entry.value}"-->
-<!--                    type="button"-->
-<!--                    th:text="${station.stationName}"-->
-<!--                    th:attr="data-code=${station.stationCode},data-region=${station.region}"-->
-<!--                    th:classappend="${station.stationCode == stationCode} ? 'selected'"-->
-<!--                    onclick="selectStation(this.getAttribute('data-region'), this.getAttribute('data-code'))">-->
-<!--            </button>-->
-<!--        </div>-->
-<!--    </div>-->
-<!--</div>-->
 <hr/>
 
 <h2>물때 정보</h2>
@@ -116,13 +96,17 @@
     </li>
 </ul>
 
-<script>
+<hr/>
 
+<h2 id="mulNameHeading" th:text="'오늘의 물때: ' + ${mulName}"></h2>
+
+
+<script>
     function loadTideData(button) {
         const stationCode = button.getAttribute("data-code");
         const date = new Date().toISOString().slice(0, 10); // 오늘 날짜 YYYY-MM-DD
 
-        fetch(`/api/tide?stationCode=${stationCode}&date=${date}`)
+        fetch(`/api/multtae/daily?stationCode=${stationCode}&date=${date}`)
             .then(response => {
                 if (!response.ok) {
                     throw new Error("데이터 요청 실패.");
@@ -143,7 +127,18 @@
                 }
             });
 
+        fetch(`/api/multtae/lunar?date=${date}`)
+            .then(res => res.json())
+            .then(info => {
+                const heading = document.getElementById("mulNameHeading");
+                if (heading && info.mulName) {
+                    heading.textContent = `오늘의 물때: ${info.mulName}`;
+                }
+            });
+
     }
+
+
 
     function renderTideInfo(items) {
         const container = document.getElementById("tideInfo");
