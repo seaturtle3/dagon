@@ -82,36 +82,26 @@ public class ApiKeyFilter extends OncePerRequestFilter {
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
         String path = request.getRequestURI();
-        String method = request.getMethod(); // ← HTTP 메서드 가져오기
 
-        // GET 메서드일 때만 /partner/review 요청 필터 제외
-        if (path.equals("/partner/review") && method.equals("GET")) {
-            return true;
-        }
-
+        // Swagger 관련 경로 제외
         return path.startsWith("/swagger-ui") ||
-                path.startsWith("/api-docs") ||
+                path.startsWith("/v3/api-docs") ||
                 path.startsWith("/swagger-ui/index.html") ||
                 path.startsWith("/swagger-resources") ||
                 path.startsWith("/webjars") ||
-                path.equals("/login") ||
-                path.equals("/api/auth/login") ||
-                path.equals("/") ||
-                path.equals("/web/users/register") ||
-                path.startsWith("/partner/list") ||
-//                path.startsWith("/partner/review") ||
+                path.startsWith("/") ||
                 path.startsWith("/register") ||
-                path.startsWith("/js/") ||
-                path.startsWith("/css/") ||
-                path.startsWith("/img/") ||
-                path.startsWith("/images/") ||
-                path.startsWith("/uploads/") ||
-                path.startsWith("/uploadImage/") ||
+                path.startsWith("/js/**") ||
+                path.startsWith("/css/**") ||
+                path.startsWith("/img/**") ||
+                path.startsWith("/images/**") ||
+                path.startsWith("/uploads/**") ||
+                path.startsWith("/uploadImage/**") ||
+                path.startsWith("/api/**") ||
                 path.startsWith("/reservation.html") ||
                 path.equals("/error") ||
-                path.equals("/admin/api-keys") ||
-                path.equals("/api/users/register") ||
-                path.equals("/my_page");
+                path.equals("/*") ||
+                path.equals("/admin/api-keys"); // ✅ 여기를 추가!
 
     }
 }

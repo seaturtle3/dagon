@@ -1,4 +1,4 @@
-package kroryi.dagon.controller.api;
+package kroryi.dagon.controller;
 import kroryi.dagon.DTO.PartnerApplicationDTO;
 import kroryi.dagon.compoent.CustomUserDetails;
 import kroryi.dagon.service.PartnerService;
