@@ -11,4 +11,3 @@ public class ReservationDTO {
     private String region;
     private String fishType;
 }
-
