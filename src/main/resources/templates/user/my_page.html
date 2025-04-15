@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<html lang="ko">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>마이페이지</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
@@ -27,45 +27,27 @@
 
 <div class="max-w-6xl mx-auto grid grid-cols-[auto,1fr] gap-0 min-h-screen">
     <!-- 사이드바 -->
-    <aside class="bg-white p-6 rounded-l-xl shadow flex flex-col gap-4 text-sm w-52">
-        <button onclick="showSection('profile')" class="text-left text-sky-600 font-medium">👤 회원 정보</button>
-        <button onclick="showSection('reservation')" class="text-left">📅 예약 내역</button>
-        <button onclick="showSection('points')" class="text-left">💰 포인트</button>
-        <button onclick="showSection('password')" class="text-left">🔒 비밀번호 변경</button>
-        <button onclick="showSection('alarm')" class="text-left">🔔 알림 설정</button>
-        <button onclick="showSection('withdraw')" class="text-left text-red-500">❌ 회원 탈퇴</button>
-    </aside>
+    <div class="bg-white p-6 w-1/4">
+        <h2 class="text-xl font-semibold text-sky-600 mb-6">마이페이지</h2>
+        <button id="passwordChangeBtn" class="bg-sky-500 text-white px-4 py-2 rounded hover:bg-sky-600 w-full mb-4">
+            비밀번호 변경
+        </button>
+        <!-- 다른 사이드바 메뉴들 -->
+    </div>
 
     <!-- 본문 섹션들 -->
-    <div class="bg-white rounded-r-xl shadow p-6 space-y-8">
-
+    <div class="bg-white rounded-r-xl shadow p-6 space-y-8 w-3/4">
         <!-- 회원 정보 -->
         <section id="profile">
             <h1 class="text-3xl font-bold mb-6 text-sky-600">마이페이지</h1>
 
             <form id="profileForm" class="relative space-y-4">
                 <!-- 등급 -->
-                <div class="absolute top-4 right-4 text-xl font-extrabold">
-                    <div th:switch="${user.level}" class="flex items-center gap-2 bg-white/70 px-4 py-1 rounded-full shadow-sm">
-                        <span th:case="0" class="grade-silver">🩶 실버</span>
-                        <span th:case="1" class="grade-gold">🥇 골드</span>
-                        <span th:case="2" class="grade-platinum flex items-center gap-1">
-              <svg class="w-6 h-6 text-emerald-500" xmlns="http://www.w3.org/2000/svg" fill="none"
-                   viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round"
-                      d="M12 2l3 4.5h6l-4 5 4 5h-6l-3 4.5-3-4.5H3l4-5-4-5h6l3-4.5z"/>
-              </svg>
-              플래티넘
-            </span>
-                        <span th:case="3" class="grade-diamond text-sky-500">💎 다이아</span>
-                    </div>
-                </div>
+                <div id="userLevelBadge" class="absolute top-4 right-4 text-xl font-extrabold"></div>
 
                 <!-- 프로필 이미지 -->
                 <div class="flex items-center gap-4">
-                    <img id="profilePreview"
-                         th:src="${user.profile_image != null} ? @{${user.profile_image}(v=${#dates.createNow().time})} : @{/img/default.png}"
-                         class="w-24 h-24 rounded-full object-cover border" alt="프로필 이미지" />
+                    <img id="profilePreview" class="w-24 h-24 rounded-full object-cover border" alt="프로필 이미지"/>
                     <input type="file" id="fileInput" name="profileImage" accept="image/*"
                            onchange="previewImage(event)"
                            class="hidden file:border file:mr-4 file:px-3 file:py-1 file:bg-sky-500 file:text-white"/>
@@ -74,127 +56,328 @@
                 <!-- 정보 입력 -->
                 <div class="space-y-4">
                     <div>
-                        <label class="block text-sm font-medium">이름</label>
-                        <input type="text" name="uname" th:value="${user.uname}"
-                               class="w-full mt-1 p-2 border rounded editable" readonly />
+                        <label class="block text-sm font-medium" for="uname">이름</label>
+                        <input type="text" id="uname" name="uname"
+                               class="w-full mt-1 p-2 border rounded editable" readonly/>
                     </div>
                     <div>
-                        <label class="block text-sm font-medium">닉네임</label>
-                        <input type="text" name="nickname" th:value="${user.nickname}"
-                               class="w-full mt-1 p-2 border rounded editable" readonly />
+                        <label class="block text-sm font-medium" for="nickname">닉네임</label>
+                        <input type="text" id="nickname" name="nickname"
+                               class="w-full mt-1 p-2 border rounded editable" readonly/>
                     </div>
                     <div>
-                        <label class="block text-sm font-medium">이메일</label>
-                        <input type="email" name="email" th:value="${user.email}"
-                               class="w-full mt-1 p-2 border rounded bg-gray-100" readonly />
+                        <label class="block text-sm font-medium" for="email">이메일</label>
+                        <input type="email" id="email" name="email"
+                               class="w-full mt-1 p-2 border rounded bg-gray-100" readonly/>
                     </div>
                     <div>
                         <label class="block text-sm font-medium">전화번호</label>
                         <div class="flex gap-2">
-                            <input type="text" name="phone1" th:value="${user.phone1}" readonly class="w-1/4 p-2 border bg-gray-100 rounded" />
-                            <input type="text" name="phone2" th:value="${user.phone2}" maxlength="4"
-                                   class="w-1/4 p-2 border rounded editable" readonly />
-                            <input type="text" name="phone3" th:value="${user.phone3}" maxlength="4"
-                                   class="w-1/4 p-2 border rounded editable" readonly />
+                            <input type="text" id="phone1" name="phone1" readonly
+                                   class="w-1/4 p-2 border bg-gray-100 rounded"/>
+                            <input type="text" id="phone2" name="phone2" maxlength="4"
+                                   class="w-1/4 p-2 border rounded editable" readonly/>
+                            <input type="text" id="phone3" name="phone3" maxlength="4"
+                                   class="w-1/4 p-2 border rounded editable" readonly/>
                         </div>
                     </div>
                 </div>
 
                 <!-- 버튼 -->
                 <div class="mt-4 space-x-2">
-                    <button type="button" id="editBtn" onclick="enableEdit()" class="bg-sky-500 text-white px-4 py-2 rounded hover:bg-sky-600">
+                    <button type="button" id="editBtn" onclick="enableEdit()"
+                            class="bg-sky-500 text-white px-4 py-2 rounded hover:bg-sky-600">
                         정보 수정
                     </button>
-                    <button type="submit" id="submitBtn" class="hidden bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">
+
+                    <!-- 완료 버튼 -->
+                    <button type="button" id="submitBtn" onclick="submitUserUpdate()"
+                            class="hidden bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">
                         완료
                     </button>
-                    <button type="button" id="cancelBtn" onclick="cancelEdit()" class="hidden bg-gray-400 text-white px-4 py-2 rounded hover:bg-gray-500">
+
+                    <!-- 취소 버튼 -->
+                    <button type="button" id="cancelBtn" onclick="cancelEdit()"
+                            class="hidden bg-gray-400 text-white px-4 py-2 rounded hover:bg-gray-500">
                         취소
                     </button>
                 </div>
             </form>
         </section>
 
-        <!-- 포인트 -->
-        <section id="points" class="hidden">
-            <h2 class="text-xl font-bold text-sky-600 mb-4">💰 보유 포인트</h2>
-            <p class="text-4xl font-extrabold text-sky-500" th:text="${user.points} + ' P'">0 P</p>
-        </section>
-
         <!-- 비밀번호 변경 -->
-        <section id="password" class="space-y-4">
-            <h2 class="text-xl font-bold text-sky-600 mb-4">🔒 비밀번호 변경</h2>
-
-            <form th:action="@{/mypage/password}" method="post" th:object="${passwordForm}">
-                <input type="password" th:field="*{currentPassword}" placeholder="현재 비밀번호" class="w-full p-2 border rounded" />
-                <input type="password" th:field="*{newPassword}" placeholder="새 비밀번호" class="w-full p-2 border rounded" />
-                <input type="password" th:field="*{confirmPassword}" placeholder="새 비밀번호 확인" class="w-full p-2 border rounded" />
-                <button type="submit" class="bg-sky-500 text-white px-4 py-2 rounded hover:bg-sky-600">확인</button>
-
-                <!-- 메시지 표시 -->
-                <p class="text-red-500" th:if="${errorMessage}" th:text="${errorMessage}"></p>
-                <p class="text-green-500" th:if="${successMessage}" th:text="${successMessage}"></p>
+        <section id="passwordChangeSection" class="hidden">
+            <h2 class="text-2xl font-bold mb-4 text-sky-600">비밀번호 변경</h2>
+            <form id="passwordChangeForm" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium" for="currentPassword">현재 비밀번호</label>
+                    <input type="password" id="currentPassword" name="currentPassword" class="w-full p-2 border rounded" required/>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium" for="newPassword">새 비밀번호</label>
+                    <input type="password" id="newPassword" name="newPassword" class="w-full p-2 border rounded" required/>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium" for="confirmPassword">새 비밀번호 확인</label>
+                    <input type="password" id="confirmPassword" name="confirmPassword" class="w-full p-2 border rounded" required/>
+                </div>
+                <div class="mt-4 space-x-2">
+                    <button type="button" id="changePasswordBtn" onclick="submitPasswordChange()"
+                            class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">
+                        비밀번호 변경
+                    </button>
+                    <button type="button" id="cancelPasswordChangeBtn" onclick="cancelPasswordChange()"
+                            class="bg-gray-400 text-white px-4 py-2 rounded hover:bg-gray-500">
+                        취소
+                    </button>
+                </div>
             </form>
         </section>
-        <!-- 회원 탈퇴 -->
-        <section id="withdraw" class="hidden space-y-4">
-            <h2 class="text-xl font-bold text-red-500 mb-4">❌ 회원 탈퇴</h2>
-            <p class="text-gray-700">정말 탈퇴하시겠습니까? 탈퇴 시 모든 정보가 삭제됩니다.</p>
-            <input type="password" placeholder="비밀번호 입력" class="w-full p-2 border rounded" />
-            <button class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">탈퇴하기</button>
-        </section>
 
-        <!-- 예약 내역 -->
-        <section id="reservation" class="hidden">
-            <h2 class="text-xl font-bold text-sky-600 mb-4">📅 예약 내역</h2>
-            <p class="text-gray-500">준비 중입니다.</p>
-        </section>
-
-        <!-- 알림 설정 -->
-        <section id="alarm" class="hidden">
-            <h2 class="text-xl font-bold text-sky-600 mb-4">🔔 알림 설정</h2>
-            <p class="text-gray-500">준비 중입니다.</p>
-        </section>
     </div>
 </div>
 
-<!-- Script -->
+<!-- 포인트 -->
+
+<script src="/js/badge.js"></script>
+<script src="/js/auth.js"></script>
+
 <script>
-    function showSection(id) {
-        const sections = document.querySelectorAll('section');
-        sections.forEach(s => s.style.display = 'none');
-        document.getElementById(id).style.display = 'block';
+
+
+    // 사용자 정보를 불러오는 함수
+    async function loadUserInfo() {
+        const token = getAuthToken(); // 사용자 정의 함수로 토큰 가져오기
+
+        if (!token) {
+            alert("인증되지 않은 요청입니다. 로그인 후 다시 시도해주세요.");
+            return;
+        }
+
+        const response = await fetch("/api/mypage", {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}` // Authorization 헤더에 토큰 추가
+            }
+        });
+
+        if (response.ok) {
+            const userData = await response.json();
+            console.log("마이페이지 정보:", userData);
+
+            // 폼에 사용자 정보 채우기
+            document.getElementById("uname").value = userData.uname;
+            document.getElementById("email").value = userData.email;
+            document.getElementById("nickname").value = userData.nickname;
+            document.getElementById("phone1").value = userData.phone1;
+            document.getElementById("phone2").value = userData.phone2;
+            document.getElementById("phone3").value = userData.phone3;
+
+            console.log("레벨:", userData.level);
+            renderUserLevelBadge(userData.level); // 레벨에 맞는 뱃지 출력
+
+            // 읽기 전용으로 설정
+            document.getElementById("uname").readOnly = true;
+            document.getElementById("nickname").readOnly = true;
+            document.getElementById("email").readOnly = true;
+            document.getElementById("phone1").readOnly = true;
+            document.getElementById("phone2").readOnly = true;
+            document.getElementById("phone3").readOnly = true;
+
+            // "수정" 버튼만 보이게 하기
+            document.getElementById("editBtn").classList.remove("hidden");
+            document.getElementById("submitBtn").classList.add("hidden");
+            document.getElementById("cancelBtn").classList.add("hidden");
+
+        } else {
+            const error = await response.text();
+            alert("마이페이지 정보를 불러오는 데 실패했습니다.");
+            console.error("마이페이지 오류:", error);
+        }
     }
 
-    function previewImage(event) {
-        const reader = new FileReader();
-        reader.onload = () => {
-            document.getElementById('profilePreview').src = reader.result;
-        };
-        reader.readAsDataURL(event.target.files[0]);
-    }
-
-    function enableEdit() {
-        document.querySelectorAll('.editable').forEach(i => i.removeAttribute('readonly'));
-        document.getElementById('fileInput').classList.remove('hidden');
-        document.getElementById('editBtn').classList.add('hidden');
-        document.getElementById('submitBtn').classList.remove('hidden');
-        document.getElementById('cancelBtn').classList.remove('hidden');
-    }
-
+    // 수정 취소
     function cancelEdit() {
-        document.getElementById('profileForm').reset();
-        document.querySelectorAll('.editable').forEach(i => i.setAttribute('readonly', true));
-        document.getElementById('fileInput').classList.add('hidden');
-        document.getElementById('editBtn').classList.remove('hidden');
-        document.getElementById('submitBtn').classList.add('hidden');
-        document.getElementById('cancelBtn').classList.add('hidden');
+        // 입력 필드를 읽기 전용으로 설정
+        document.getElementById("uname").readOnly = true;
+        document.getElementById("nickname").readOnly = true;
+        document.getElementById("email").readOnly = true;
+        document.getElementById("phone1").readOnly = true;
+        document.getElementById("phone2").readOnly = true;
+        document.getElementById("phone3").readOnly = true;
+
+        // "수정" 버튼을 다시 보이게 하고, "완료"와 "취소" 버튼을 숨김
+        document.getElementById("editBtn").classList.remove("hidden");
+        document.getElementById("submitBtn").classList.add("hidden");
+        document.getElementById("cancelBtn").classList.add("hidden");
+
+        // 원래 정보를 로드하는 함수 호출 (취소 후 원래 상태로 복원)
+        loadUserInfo();
     }
 
-    // 초기화면
-    window.onload = () => showSection('profile');
-</script>
+    // 수정 가능하게 설정
+    function enableEdit() {
+        // 입력 필드 수정 가능하게 설정
+        document.getElementById("uname").readOnly = false;
+        document.getElementById("nickname").readOnly = false;
+        document.getElementById("email").readOnly = false;
+        document.getElementById("phone1").readOnly = false;
+        document.getElementById("phone2").readOnly = false;
+        document.getElementById("phone3").readOnly = false;
 
+        // 버튼 상태 변경
+        document.getElementById("editBtn").classList.add("hidden");  // "수정" 버튼 숨기기
+        document.getElementById("submitBtn").classList.remove("hidden");  // "완료" 버튼 보이기
+        document.getElementById("cancelBtn").classList.remove("hidden");  // "취소" 버튼 보이기
+    }
+
+    // 비밀번호 변경 화면으로 전환
+    document.getElementById('passwordChangeBtn').addEventListener('click', () => {
+        document.getElementById('profile').classList.add('hidden');
+        document.getElementById('passwordChangeSection').classList.remove('hidden');
+    });
+
+    // 비밀번호 변경 취소
+    function cancelPasswordChange() {
+        document.getElementById('passwordChangeSection').classList.add('hidden');
+        document.getElementById('profile').classList.remove('hidden');
+    }
+
+    // 비밀번호 변경
+    async function submitPasswordChange() {
+        const currentPassword = document.getElementById('currentPassword').value;
+        const newPassword = document.getElementById('newPassword').value;
+        const confirmPassword = document.getElementById('confirmPassword').value;
+
+        if (newPassword !== confirmPassword) {
+            alert("새 비밀번호와 확인 비밀번호가 일치하지 않습니다.");
+            return;
+        }
+
+        const token = getAuthToken(); // 사용자 정의 함수로 토큰 가져오기
+
+        if (!token) {
+            alert("인증되지 않은 요청입니다. 로그인 후 다시 시도해주세요.");
+            return;
+        }
+
+        const response = await fetch("/api/mypage/password", {
+            method: "PUT",
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}` // Authorization 헤더에 토큰 추가
+            },
+            body: JSON.stringify({
+                currentPassword: currentPassword,
+                newPassword: newPassword
+            })
+        });
+
+        if (response.ok) {
+            alert("비밀번호가 변경되었습니다.");
+            cancelPasswordChange();  // 비밀번호 변경 후, 기존 화면으로 돌아감
+        } else {
+            const error = await response.text();
+            alert(`비밀번호 변경 실패: ${error}`);
+            console.error("비밀번호 변경 오류:", error);
+        }
+    }
+
+    // 사용자 정보 수정
+    async function submitUserUpdate() {
+        const token = getAuthToken(); // 사용자 정의 함수로 토큰 가져오기
+
+        if (!token) {
+            alert("인증되지 않은 요청입니다. 로그인 후 다시 시도해주세요.");
+            return;
+        }
+
+        const updatedUserInfo = {
+            uname: document.getElementById('uname').value,
+            nickname: document.getElementById('nickname').value,
+            email: document.getElementById('email').value,
+            phone1: document.getElementById('phone1').value,
+            phone2: document.getElementById('phone2').value,
+            phone3: document.getElementById('phone3').value,
+            profileImage: document.getElementById('fileInput').files[0] // 프로필 이미지 파일
+        };
+
+        const formData = new FormData();
+        for (const key in updatedUserInfo) {
+            formData.append(key, updatedUserInfo[key]);
+        }
+
+        const response = await fetch("/api/update-profile", {
+            method: "POST",
+            headers: {
+                'Authorization': `Bearer ${token}` // Authorization 헤더에 토큰 추가
+            },
+            body: formData
+        });
+
+        if (response.ok) {
+            alert("사용자 정보가 업데이트되었습니다.");
+            cancelEdit();  // 정보 수정 후, 기존 화면으로 돌아감
+        } else {
+            const error = await response.text();
+            alert(`정보 수정 실패: ${error}`);
+            console.error("정보 수정 오류:", error);
+        }
+    }
+
+    // 이미지 미리보기
+    function previewImage(event) {
+        const file = event.target.files[0];
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            document.getElementById('profilePreview').src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+    }
+
+    // 사용자 레벨에 맞는 뱃지 표시
+    function renderUserLevelBadge(level) {
+        let levelText = "";
+        let levelClass = "";
+
+        switch (level) {
+            case 1:
+                levelText = "Silver";
+                levelClass = "grade-silver";
+                break;
+            case 2:
+                levelText = "Gold";
+                levelClass = "grade-gold";
+                break;
+            case 3:
+                levelText = "Platinum";
+                levelClass = "grade-platinum";
+                break;
+            case 4:
+                levelText = "Diamond";
+                levelClass = "grade-diamond";
+                break;
+            default:
+                levelText = "기타";
+                levelClass = "";
+        }
+
+        document.getElementById("userLevelBadge").textContent = levelText;
+        document.getElementById("userLevelBadge").className = `text-xl font-bold ${levelClass}`;
+    }
+
+    // 로그인 토큰 가져오기 (사용자 정의 함수)
+    function getAuthToken() {
+        return localStorage.getItem('authToken') || sessionStorage.getItem('authToken');
+    }
+
+    // 페이지 로드 시 사용자 정보 불러오기
+    window.onload = function() {
+        loadUserInfo(); // 사용자 정보 로드
+    };
+
+</script>
 </body>
 </html>
 

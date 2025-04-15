@@ -101,7 +101,7 @@
         const formData = new FormData(form);
 
         try {
-            const response = await fetch(form.action, { // 폼의 action 속성에서 URL 가져옴
+            const response = await fetch("/api/users/register", { // 폼의 action 속성에서 URL 가져옴
                 method: form.method,
                 body: formData
             });
