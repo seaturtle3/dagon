@@ -38,7 +38,7 @@
         const errorMessage = document.getElementById("errorMessage");
 
         try {
-            const response = await fetch('/api/auth/login', { // API 로그인 엔드포인트 변경
+            const response = await fetch('/api/auth/login', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -49,17 +49,31 @@
             if (response.ok) {
                 const responseData = await response.json();
                 console.log("로그인 성공:", responseData);
+
+                // 예: JWT 토큰이 포함되어 있다면 localStorage에 저장
                 localStorage.setItem('authToken', responseData.token);
-                window.location.href = '/'; // 로그인 성공 후 이동할 페이지
+
+                // 로그인 성공 후 페이지 이동
+                window.location.href = '/';
             } else {
-                const errorData = await response.json();
-                errorMessage.textContent = errorData.message || "로그인 실패";
+                // 응답 본문을 문자열로 받기 (JSON이 아닐 수 있기 때문)
+                const errorText = await response.text();
+
+                try {
+                    // JSON 형식이면 파싱
+                    const errorData = JSON.parse(errorText);
+                    errorMessage.textContent = errorData.message || "로그인 실패";
+                } catch (parseError) {
+                    // JSON 형식이 아니면 그냥 텍스트로 출력
+                    errorMessage.textContent = errorText || "로그인 실패";
+                }
             }
         } catch (error) {
             console.error("로그인 요청 실패:", error);
             errorMessage.textContent = "서버와 통신 중 오류가 발생했습니다.";
         }
     });
+
 </script>
 </body>
 </html>

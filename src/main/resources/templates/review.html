@@ -8,6 +8,7 @@
             background-color: #f7fafc;
             font-family: 'Pretendard', sans-serif;
         }
+
         .container {
             max-width: 600px;
             margin: 50px auto;
@@ -73,28 +74,32 @@
     <h2>파트너 신청서</h2>
     <form id="partnerForm">
         <label for="pname">업체명</label>
-        <input type="text" id="pname" name="pname" required placeholder="2~30자, 특수문자 제외">
+        <input type="text" id="pname" name="pname" required placeholder="2~30자, 특수문자 제외" value="가가가가가가가">
 
         <label for="paddress">업장 주소</label>
-        <input type="text" id="paddress" name="paddress" required placeholder="도로명, 번지 등 상세주소 포함">
+        <input type="text" id="paddress" name="paddress" required placeholder="도로명, 번지 등 상세주소 포함" value="나나나나나나나나난">
 
         <label for="ceoName">대표자 이름</label>
-        <input type="text" id="ceoName" name="ceoName" required placeholder="한글 2~10자">
+        <input type="text" id="ceoName" name="ceoName" required placeholder="한글 2~10자" value="다다">
 
         <label for="license">사업자 등록 번호</label>
-        <input type="text" id="license" name="license" required placeholder="숫자 10자리 (하이픈 제외)">
+        <input type="text" id="license" name="license" required placeholder="숫자 10자리 (하이픈 제외)" value="0123456780">
 
         <label for="pinfo">파트너 설명</label>
-        <textarea id="pinfo" name="pinfo" required placeholder="업체/서비스에 대한 설명 (10자 이상)"></textarea>
+        <textarea id="pinfo" name="pinfo" required placeholder="업체/서비스에 대한 설명 (10자 이상)">
+            ddddddddddddddddddddddddddddddddddddddddd
+        </textarea>
 
         <button type="submit">신청하기</button>
         <p id="errorMessage" class="error"></p>
     </form>
 </div>
 
+<script src="/js/auth.js"></script>
 <script>
-    document.getElementById("partnerForm").addEventListener("submit", function (event) {
-        event.preventDefault();
+
+    async function dataSend() {
+
 
         const pname = document.getElementById("pname").value.trim();
         const paddress = document.getElementById("paddress").value.trim();
@@ -138,32 +143,39 @@
             pname, paddress, ceoName, license, pinfo
         };
 
-        const token = localStorage.getItem("authToken");
+        const token = window.getAuthToken();  // 인증 토큰을 가져옵니다.
         console.log("파트너 신청 API 요청 시 토큰:", token);
-        fetch("/api/partners/review", {
-            method: "POST",
+
+
+        console.log(data)
+        const response = await fetch(`/partner/review`, {
+            method: 'POST',
             headers: {
-                "Content-Type": "application/json",
-                "Authorization": "Bearer " + localStorage.getItem("authToken")
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + getAuthToken()
             },
             body: JSON.stringify(data)
-        })
-            .then(response => {
-                if (!response.ok) {
+        });
 
-                    throw new Error("서버 오류");
-                }
-                return response.text();
-            })
-            .then(message => {
-                alert(message || "신청이 완료되었습니다!");
-                window.location.href = "/"; // 홈으로 리디렉션
-            })
-            .catch(error => {
-                errorBox.textContent = "신청 중 오류가 발생했습니다.";
-                console.error("에러:", error);
-            });
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(errorText || '서버 오류');
+        }
+
+        const obj = await response.text(); // ← 문자열 → JSON
+        console.log(obj)
+        alert(obj);
+        // ✅ 홈 또는 마이페이지 등으로 이동
+        window.location.href = "/"; // 또는 "/mypage", "/partner/status" 등 원하는 경로
+    }
+
+    document.getElementById("partnerForm").addEventListener("submit", function (event) {
+        event.preventDefault();
+
+        dataSend();
     });
+
 </script>
 </body>
 </html>

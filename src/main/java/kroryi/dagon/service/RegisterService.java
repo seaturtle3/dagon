@@ -11,7 +11,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-
+import java.time.LocalDateTime;
 
 @Service
 @Log4j2
@@ -25,7 +25,6 @@ public class RegisterService {
 
     public void register(UsersDTO usersDTO) throws Exception {
         log.info("회원가입 요청: {}", usersDTO);
-
 
         if (userRepository.existsByUid(usersDTO.getUid())) {
             throw new Exception("이미 사용 중인 아이디입니다.");
@@ -53,5 +52,4 @@ public class RegisterService {
         log.info("회원가입 완료: {}", user);
         log.info("DB 저장 완료: {}", user);
     }
-
 }
