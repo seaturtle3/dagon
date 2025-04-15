@@ -1,11 +1,14 @@
 package kroryi.dagon.controller;
 
 import kroryi.dagon.DTO.TideItemDTO;
+import kroryi.dagon.component.LunarApiClient;
 import kroryi.dagon.component.TideApiClient;
 import kroryi.dagon.entity.TideStation;
 import kroryi.dagon.enums.ProdRegion;
 import kroryi.dagon.repository.TideStationRepository;
+import kroryi.dagon.util.LunarUtil;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -23,11 +26,12 @@ import java.util.stream.Collectors;
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/tide")
+@Log4j2
 public class TideController {
 
-    private final TideApiClient tideApiClient;
     private final TideStationRepository tideStationRepository;
-
+    private final TideApiClient tideApiClient;
+    private final LunarApiClient lunarApiClient;
 
     @GetMapping("/multtae")
     public String showMulttaePage(@RequestParam(required = false) String region,
@@ -40,6 +44,18 @@ public class TideController {
         if (stationCode == null) stationCode = "DT_0001";
         if (date == null) date = LocalDate.now();
 
+        String formattedDate = date.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+
+        List<TideItemDTO> tideItems = tideApiClient.getTideItems(stationCode, formattedDate);
+        model.addAttribute("tideItems", tideItems);
+
+        Double lunarAge = lunarApiClient.getLunarAge(date.getYear(), date.getMonthValue(), date.getDayOfMonth());
+        model.addAttribute("lunarAge", lunarAge);
+
+        if (lunarAge != null) {
+            String mulName = LunarUtil.getMulName(lunarAge);
+            model.addAttribute("mulName", mulName);
+        }
 
         // 지역 그룹핑 (Map<ProdRegion, List<TideStation>>)
         Map<ProdRegion, List<TideStation>> groupedStations = Arrays.stream(ProdRegion.values())
@@ -55,6 +71,8 @@ public class TideController {
 
         return "menu/multtae";
     }
+
+
 
 
 }
