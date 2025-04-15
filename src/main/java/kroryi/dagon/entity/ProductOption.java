@@ -33,5 +33,4 @@ public class ProductOption {
     @JoinColumn(name = "prod_id", nullable = false)
     private Product product;
 
-
 }
