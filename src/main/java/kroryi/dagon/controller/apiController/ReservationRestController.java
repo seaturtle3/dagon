@@ -15,7 +15,7 @@ public class ReservationRestController {
 
     private final ReservationService reservationService;
 
-    @GetMapping("/api/reservation")
+    @GetMapping("/all")
     public String getFindAll(){
         return reservationService.getFindAll();
     }

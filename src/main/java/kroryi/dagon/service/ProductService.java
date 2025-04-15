@@ -34,7 +34,6 @@ public class ProductService {
         dto.setProdRegion(product.getProdRegion().toString());
         dto.setMaxPerson(product.getMaxPerson());
         dto.setProdAddress(product.getProdAddress());
-        // 필요한 만큼 추가
         return dto;
     }
 
