@@ -89,6 +89,7 @@ public class ApiKeyFilter extends OncePerRequestFilter {
                 (path.startsWith("/web/users/") && method.equals("POST")) ||
                 (path.startsWith("/api/users/register") && method.equals("POST")) ||
                 (path.startsWith("/api/auth/login") && method.equals("POST")) ||
-                (path.startsWith("/api/multtae/") && method.equals("GET"));
+                (path.startsWith("/api/multtae/") && method.equals("GET")) ||
+                (path.startsWith("/api/product/all") && method.equals("GET"));
     }
 }

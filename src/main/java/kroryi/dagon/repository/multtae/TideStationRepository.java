@@ -1,6 +1,6 @@
-package kroryi.dagon.repository;
+package kroryi.dagon.repository.multtae;
 
-import kroryi.dagon.entity.TideStation;
+import kroryi.dagon.entity.multtae.TideStation;
 import kroryi.dagon.enums.ProdRegion;
 import org.springframework.data.jpa.repository.JpaRepository;
 

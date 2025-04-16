@@ -40,9 +40,13 @@ public class MarineWeatherApiClient {
         log.info(" 파고 API 요청: {}", uri);
 
         WaveResponse response = restTemplate.getForObject(uri, WaveResponse.class);
-        return response != null && response.getResult() != null
-                ? response.getResult().getData()
-                : List.of();
+
+        if (response == null || response.getResult() == null || response.getResult().getData() == null) {
+            log.warn("Wave API 응답 없음 또는 result.data가 null - 관측소: {}", obsCode);
+            return List.of(); // 비어있는 리스트 반환
+        }
+
+        return response.getResult().getData();
     }
 
     public List<AirTempDTO> getAirTempData(String obsCode, String date) {

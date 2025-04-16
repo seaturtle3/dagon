@@ -1,4 +1,4 @@
-package kroryi.dagon.entity;
+package kroryi.dagon.entity.multtae;
 
 import jakarta.persistence.*;
 import kroryi.dagon.enums.ProdRegion;
