@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 
 @Controller
 @RequiredArgsConstructor
-@RequestMapping("/tide")
+@RequestMapping("/multtae")
 @Log4j2
 public class TideController {
 
@@ -33,7 +33,7 @@ public class TideController {
     private final TideApiClient tideApiClient;
     private final LunarApiClient lunarApiClient;
 
-    @GetMapping("/multtae")
+    @GetMapping("/tide")
     public String showMulttaePage(@RequestParam(required = false) String region,
                                   @RequestParam(required = false) String stationCode,
                                   @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
@@ -61,7 +61,7 @@ public class TideController {
         Map<ProdRegion, List<TideStation>> groupedStations = Arrays.stream(ProdRegion.values())
                 .collect(Collectors.toMap(
                         r -> r,
-                        r -> tideStationRepository.findByRegion(r)
+                        r -> tideStationRepository.findByRegionOrderByStationNameAsc(r)
                 ));
 
         model.addAttribute("groupedStations", groupedStations);

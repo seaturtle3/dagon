@@ -7,5 +7,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface TideStationRepository extends JpaRepository<TideStation, Integer> {
-    List<TideStation> findByRegion(ProdRegion region);
+    List<TideStation> findByRegionOrderByStationNameAsc(ProdRegion region);
 }

@@ -106,6 +106,10 @@
         const stationCode = button.getAttribute("data-code");
         const date = new Date().toISOString().slice(0, 10); // 오늘 날짜 YYYY-MM-DD
 
+
+        document.querySelectorAll(".station-buttons button").forEach(btn => btn.classList.remove("selected"));
+        button.classList.add("selected");
+
         fetch(`/api/multtae/daily?stationCode=${stationCode}&date=${date}`)
             .then(response => {
                 if (!response.ok) {
@@ -114,10 +118,9 @@
                 return response.json();
             })
             .then(data => {
-                if (!Array.isArray(data)) {
-                    throw new Error("응답 형식 오류");
-                }
-                renderTideInfo(data);
+
+                renderTideInfo(data.tideItems);
+                document.getElementById("mulNameHeading").textContent = `오늘의 물때: ${data.mulName}`;
             })
             .catch(err => {
                 console.error(err);
@@ -127,17 +130,7 @@
                 }
             });
 
-        fetch(`/api/multtae/lunar?date=${date}`)
-            .then(res => res.json())
-            .then(info => {
-                const heading = document.getElementById("mulNameHeading");
-                if (heading && info.mulName) {
-                    heading.textContent = `오늘의 물때: ${info.mulName}`;
-                }
-            });
-
     }
-
 
 
     function renderTideInfo(items) {
