@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>내 알림함</title>
+    <style>
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f7f9fc;
+        }
+        h1 {
+            margin-bottom: 20px;
+        }
+        .notification {
+            background-color: #fff;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            position: relative;
+        }
+        .notification.unread {
+            border-left: 5px solid #4a90e2;
+            font-weight: bold;
+        }
+        .notification.read {
+            color: #777;
+        }
+        .notification .meta {
+            font-size: 13px;
+            color: #888;
+            margin-bottom: 8px;
+        }
+        .notification .actions {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+        }
+        .notification button {
+            margin-left: 5px;
+            padding: 4px 10px;
+            font-size: 12px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+<h1>📢 내 알림</h1>
+<div id="notificationList">불러오는 중...</div>
+
+<script src="/js/auth.js"></script>
+<script>
+    let baseUrl = '';  // baseUrl을 전역 변수로 정의
+
+    // 토큰에서 유저 ID 추출하여 동적으로 receiverId 설정
+    const token = localStorage.getItem("authToken");
+
+
+    // 유효한 토큰이 있는지 확인
+    if (token) {
+        const decodedToken = JSON.parse(atob(token.split('.')[1])); // JWT 디코딩
+        console.log(decodedToken); // 디코딩된 토큰 확인
+
+        // 'uno'를 사용하여 실제 유저 ID 추출
+        const receiverId = decodedToken.uno; // 'uno' 필드를 사용
+
+        if (receiverId) {
+            baseUrl = '/api/notifications/user/' + receiverId;
+        } else {
+            console.warn("토큰에 유효한 uno가 없습니다.");
+        }
+    } else {
+        console.warn("인증 토큰이 없습니다.");
+    }
+
+    // 알림 목록 불러오기
+    function loadNotifications() {
+        if (!baseUrl) {
+            console.warn("알림을 불러올 수 없습니다. baseUrl이 정의되지 않았습니다.");
+            return;
+        }
+
+        fetch(baseUrl, {
+            headers: {
+                "Authorization": `Bearer ${token}`
+            }
+        })
+            .then(response => response.json())
+            .then(data => {
+                const container = document.getElementById('notificationList');
+                container.innerHTML = '';
+
+                // data가 배열인지 확인
+                if (!Array.isArray(data)) {
+                    container.innerHTML = '<p>알림 데이터가 잘못되었습니다.</p>';
+                    return;
+                }
+
+                if (data.length === 0) {
+                    container.innerHTML = '<p>알림이 없습니다.</p>';
+                    return;
+                }
+
+                data.forEach(noti => {
+                    const div = document.createElement('div');
+                    div.className = `notification ${noti.read ? 'read' : 'unread'}`;
+                    div.innerHTML = `
+                    <div class="meta">${noti.createdAt} · ${noti.senderType} (${noti.senderName})</div>
+                    <div class="title">${noti.title}</div>
+                    <div class="content">${noti.content}</div>
+                    <div class="actions">
+                        ${!noti.read ? `<button onclick="markAsRead(${noti.id})">읽음</button>` : ''}
+                        <button onclick="deleteNotification(${noti.id})">삭제</button>
+                    </div>
+                `;
+                    container.appendChild(div);
+                });
+            })
+            .catch(err => {
+                console.error("알림 불러오기 실패", err);
+                document.getElementById('notificationList').innerHTML = '<p>알림을 불러올 수 없습니다.</p>';
+            });
+    }
+
+    // 읽음 처리
+    function markAsRead(id) {
+        fetch(`/api/notifications/${id}/read`, {
+            method: 'PUT',
+            headers: {
+                "Authorization": `Bearer ${token}`
+            }
+        })
+            .then(() => loadNotifications())
+            .catch(err => console.error("읽음 처리 실패", err));
+    }
+
+    // 삭제 처리
+    function deleteNotification(id) {
+        if (!confirm("이 알림을 삭제하시겠습니까?")) return;
+
+        fetch(`/api/notifications/${id}`, {
+            method: 'DELETE',
+            headers: {
+                "Authorization": `Bearer ${token}`
+            }
+        })
+            .then(() => loadNotifications())
+            .catch(err => console.error("삭제 실패", err));
+    }
+
+    // 페이지 로딩 시 실행
+    document.addEventListener('DOMContentLoaded', loadNotifications);
+</script>
+
+
+</body>
+</html>

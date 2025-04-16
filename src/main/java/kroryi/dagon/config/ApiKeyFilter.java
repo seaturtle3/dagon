@@ -21,6 +21,8 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 import java.util.List;
 
+import static org.aspectj.weaver.tools.cache.SimpleCacheFactory.path;
+
 @Component
 @Log4j2
 public class ApiKeyFilter extends OncePerRequestFilter {
@@ -41,6 +43,7 @@ public class ApiKeyFilter extends OncePerRequestFilter {
         log.info("ApiKeyFilter--------------------------->");
         String authHeader = request.getHeader("Authorization");
         log.info("------------------- {}", authHeader);
+
 
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             String jwt = authHeader.substring(7);
@@ -82,17 +85,37 @@ public class ApiKeyFilter extends OncePerRequestFilter {
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
         String path = request.getRequestURI();
-        String method = request.getMethod(); // ← HTTP 메서드 가져오기
+        String method = request.getMethod();
 
-        // Swagger 관련 경로 제외
-        return !path.startsWith("/api/")||
-        (path.startsWith("/web/users/") && method.equals("POST"))||
-        (path.startsWith("/api/users/register") && method.equals("POST")) ||
-        (path.startsWith("/api/auth/login") && method.equals("POST")) ;
+        log.info("Request Path = {}", path);
+        log.info("Method = {}", method);
+
+        // Swagger, 정적 자원, 로그인/회원가입 예외 처리
+        return
+                path.startsWith("/swagger-ui") ||
+                        path.startsWith("/v3/api-docs") ||
+                        path.startsWith("/swagger-resources") ||
+                        path.startsWith("/webjars") ||
+                        path.startsWith("/favicon.ico") ||
+
+                        (path.startsWith("/api/users/register") && method.equals("POST")) ||
+                        (path.startsWith("/api/auth/login") && method.equals("POST")) ||
+
+                        (path.startsWith("/web/users/") && method.equals("POST")) ||
+
+                        // 알림 생성 로직
+                        (path.startsWith("/api/notifications") && method.equals("POST")) ||
+                        // PUT - 알림 읽음 처리
+                        (path.matches("/api/notifications/.*/read") && method.equals("PUT")) ||
+                        // GET - 특정 알림 조회
+                        (path.matches("/api/notifications/.+") && method.equals("GET")) ||
+                        // DELETE - 특정 알림 삭제
+                        (path.matches("/api/notifications/.+") && method.equals("DELETE")) ||
+                        // GET - 특정 유저의 알림 조회
+                        (path.matches("/api/notifications/user/.+") && method.equals("GET")) ||
 
 
-
-
-
+                        // api가 아니면 모두 통과
+                        !path.startsWith("/api/");
     }
 }

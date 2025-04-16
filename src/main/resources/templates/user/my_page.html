@@ -32,11 +32,29 @@
         <button id="passwordChangeBtn" class="bg-sky-500 text-white px-4 py-2 rounded hover:bg-sky-600 w-full mb-4">
             비밀번호 변경
         </button>
-        <!-- 다른 사이드바 메뉴들 -->
+        <button id="pointCheckBtn" class="bg-sky-500 text-white px-4 py-2 rounded hover:bg-sky-600 w-full mb-4">
+            포인트 조회
+        </button>
+        <button id="deleteAccountBtn" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 w-full">
+            회원 탈퇴
+        </button>
     </div>
 
     <!-- 본문 섹션들 -->
     <div class="bg-white rounded-r-xl shadow p-6 space-y-8 w-3/4">
+        <!-- 포인트 조회 -->
+        <section id="pointSection" class="hidden">
+            <h2 class="text-2xl font-bold mb-4 text-sky-600">포인트 조회</h2>
+            <div class="bg-gray-100 p-6 rounded-xl shadow text-center text-xl font-semibold">
+                현재 보유 포인트: <span id="pointAmount" class="text-green-600">0</span>P
+            </div>
+            <div class="mt-6 text-center">
+                <button type="button" onclick="hidePointSection()" class="bg-gray-400 text-white px-4 py-2 rounded hover:bg-gray-500">
+                    닫기
+                </button>
+            </div>
+        </section>
+
         <!-- 회원 정보 -->
         <section id="profile">
             <h1 class="text-3xl font-bold mb-6 text-sky-600">마이페이지</h1>
@@ -134,13 +152,29 @@
             </form>
         </section>
 
+        <!-- 회원 탈퇴 -->
+        <section id="deleteAccountSection" class="hidden">
+            <h2 class="text-2xl font-bold mb-4 text-red-600">회원 탈퇴</h2>
+            <p class="mb-6">회원 탈퇴를 진행하시겠습니까? 탈퇴 후에는 모든 데이터가 삭제되며 복구할 수 없습니다.</p>
+            <div class="flex justify-between">
+                <button type="button" onclick="cancelDelete()" class="bg-gray-400 text-white px-4 py-2 rounded hover:bg-gray-500">
+                    취소
+                </button>
+                <button type="button" onclick="confirmDelete()" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">
+                    회원 탈퇴
+                </button>
+            </div>
+        </section>
+
     </div>
 </div>
 
 <!-- 포인트 -->
 
+<script src="/js/point.js"></script>
 <script src="/js/badge.js"></script>
 <script src="/js/auth.js"></script>
+<script src="/js/delete.js"></script>
 
 <script>
 
@@ -230,12 +264,15 @@
         document.getElementById("editBtn").classList.add("hidden");  // "수정" 버튼 숨기기
         document.getElementById("submitBtn").classList.remove("hidden");  // "완료" 버튼 보이기
         document.getElementById("cancelBtn").classList.remove("hidden");  // "취소" 버튼 보이기
+
     }
 
     // 비밀번호 변경 화면으로 전환
     document.getElementById('passwordChangeBtn').addEventListener('click', () => {
         document.getElementById('profile').classList.add('hidden');
         document.getElementById('passwordChangeSection').classList.remove('hidden');
+        document.getElementById('pointSection').classList.add('hidden');
+        document.getElementById('deleteAccountSection').classList.add('hidden');
     });
 
     // 비밀번호 변경 취소
@@ -308,7 +345,7 @@
             formData.append(key, updatedUserInfo[key]);
         }
 
-        const response = await fetch("/api/update-profile", {
+        const response = await fetch("/api/mypage", {
             method: "POST",
             headers: {
                 'Authorization': `Bearer ${token}` // Authorization 헤더에 토큰 추가

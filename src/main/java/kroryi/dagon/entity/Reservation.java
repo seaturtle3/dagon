@@ -33,6 +33,8 @@ public class Reservation extends BaseTimeEntity {
     @JoinColumn(name = "opt_id", nullable = false)
     private ProductOption productOption;
 
+
+
     // 인원수
     @Column(name = "num_person", nullable = false)
     private Integer numPerson;
@@ -55,5 +57,7 @@ public class Reservation extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     @Column(name = "payment_method", nullable = false)
     private PaymentMethod paymentMethod;
+
+
 
 }
