@@ -36,7 +36,7 @@ public class ApiMyPageController {
     }
 
 
-    @PutMapping(value = "", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(value = "", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> updateUser(
             @AuthenticationPrincipal CustomUserDetails userDetails,
             @RequestParam String uname,
