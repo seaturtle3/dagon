@@ -11,7 +11,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("api/prod_option")
+@RequestMapping("api/product-option")
 public class ProductOptionRestController {
 
     private final ProductOptionService prod_optionService;
