@@ -87,6 +87,7 @@ public class ApiKeyFilter extends OncePerRequestFilter {
         // Swagger 관련 경로 제외
         return !path.startsWith("/api/") ||
                 (path.startsWith("/web/users/") && method.equals("POST")) ||
-                (path.startsWith("/api/users/register") && method.equals("POST"));
+                (path.startsWith("/api/users/register") && method.equals("POST")) ||
+                (path.startsWith("/api/auth/login") && method.equals("POST"));
     }
 }
