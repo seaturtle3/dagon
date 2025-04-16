@@ -13,7 +13,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("api/product-fish-speices")
+@RequestMapping("api/product-fish-species")
 public class ProductFishSpeciesRestController {
 
     private final FishSpeciesRepository fishSpeciesRepository;
@@ -24,13 +24,8 @@ public class ProductFishSpeciesRestController {
         return fishSpeciesRepository.findAll();
     }
 
-    @Operation(summary = "어종 추가", description = "새로운 어종을 추가합니다.")
-    @PostMapping
-    public ProductFishSpecies createFishSpecies(@RequestBody ProductFishSpecies species) {
-        return fishSpeciesRepository.save(species);
-    }
-
-    @GetMapping("/fishSpeices")
+    @Operation(summary = "바다/민물 어종 리스트 조회", description = "바다/민물 구분")
+    @GetMapping("/fishSpecies")
     public List<ProductFishSpecies> getFishSpecies(@RequestParam("type") MainType type) {
         return fishSpeciesRepository.findByMainType(type);
     }

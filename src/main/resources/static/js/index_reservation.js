@@ -14,6 +14,7 @@ function updateSpan() {
     console.log(`date : ${date}, people : ${people}, region : ${region}, fishType : ${fishType}`);
 }
 
+
 // 검색하기 버튼 클릭 시 선택한 옵션값과 함께 바다/민물 페이지로 이동
 document.getElementById("search-btn").addEventListener('click', function () {
     const today = new Date().toISOString().split("T")[0];
@@ -22,6 +23,9 @@ document.getElementById("search-btn").addEventListener('click', function () {
     const region = document.getElementById("modal-region").value || "전체";
     const fishType = document.getElementById("modal-fishType").value || "전체";
     const type = document.querySelector('input[name="waterType"]:checked').value;
+
+    // 물고기 유형에 따라 어종 목록 업데이트
+    updateFishList(type);  // 바다 또는 민물에 맞는 어종 리스트를 업데이트
 
     const url = type === "freshwater"
         ? `freshwater?type=${type}&date=${date}&people=${people}&region=${region}&fishType=${fishType}`

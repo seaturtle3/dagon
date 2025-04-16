@@ -37,4 +37,8 @@ public class ProductService {
         return dto;
     }
 
+    public void saveProduct(Product product) {
+        productRepository.save(product);
+    }
+
 }
