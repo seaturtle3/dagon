@@ -1,4 +1,4 @@
-// 모달 적용 버튼
+// 모달에서 옵션 선택 후 화면에 출력되는 설정
 function updateSpan() {
     const date = document.getElementById("modal-date").value;
     const people = document.getElementById("modal-people").value;
