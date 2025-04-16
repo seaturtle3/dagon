@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @OpenAPIDefinition(
         info = @Info(
-                title = "Dagon API Server",
+                title = "API Server",
                 version = "1.0",
                 description = "Spring boot 3 Open API + JWT 설정"
         ),
