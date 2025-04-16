@@ -1,11 +1,9 @@
 package kroryi.dagon.controller.api;
 
 import io.swagger.v3.oas.annotations.Operation;
-import kroryi.dagon.DTO.ProductFishSpeciesDTO;
 import kroryi.dagon.entity.ProductFishSpecies;
 import kroryi.dagon.enums.MainType;
 import kroryi.dagon.repository.FishSpeciesRepository;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,7 +12,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("api/product-fish-species")
-public class ProductFishSpeciesRestController {
+public class ProductFishSpeciesApiController {
 
     private final FishSpeciesRepository fishSpeciesRepository;
 
