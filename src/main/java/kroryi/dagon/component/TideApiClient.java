@@ -1,7 +1,7 @@
 package kroryi.dagon.component;
 
-import kroryi.dagon.DTO.TideInfoDTO;
-import kroryi.dagon.DTO.TideItemDTO;
+import kroryi.dagon.DTO.multtae.TideInfoDTO;
+import kroryi.dagon.DTO.multtae.TideItemDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;

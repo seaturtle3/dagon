@@ -1,6 +1,6 @@
 package kroryi.dagon.controller;
 
-import kroryi.dagon.DTO.TideItemDTO;
+import kroryi.dagon.DTO.multtae.TideItemDTO;
 import kroryi.dagon.component.LunarApiClient;
 import kroryi.dagon.component.TideApiClient;
 import kroryi.dagon.entity.TideStation;

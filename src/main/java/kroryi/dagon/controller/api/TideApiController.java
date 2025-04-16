@@ -1,10 +1,13 @@
 package kroryi.dagon.controller.api;
 
 import io.swagger.v3.oas.annotations.Operation;
-import kroryi.dagon.DTO.MulttaeDailyDTO;
-import kroryi.dagon.DTO.TideItemDTO;
+import kroryi.dagon.DTO.multtae.MulttaeDailyDTO;
+import kroryi.dagon.DTO.multtae.MulttaeTodayDTO;
+import kroryi.dagon.DTO.multtae.TideItemDTO;
 import kroryi.dagon.component.LunarApiClient;
+import kroryi.dagon.component.SunriseApiClient;
 import kroryi.dagon.component.TideApiClient;
+import kroryi.dagon.entity.TideStation;
 import kroryi.dagon.enums.ProdRegion;
 import kroryi.dagon.repository.TideStationRepository;
 import kroryi.dagon.util.LunarUtil;
@@ -18,7 +21,6 @@ import org.springframework.web.bind.annotation.RestController;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -30,6 +32,7 @@ public class TideApiController {
     private final TideApiClient tideApiClient;
     private final TideStationRepository tideStationRepository;
     private final LunarApiClient lunarApiClient;
+    private final SunriseApiClient sunriseApiClient;
 
 
     @GetMapping("/stations")
@@ -86,6 +89,39 @@ public class TideApiController {
         }
 
         return result;
+    }
+
+    @GetMapping("/today")
+    @Operation(summary = "오늘의 물때, 일출일몰, 날씨 정보")
+    public MulttaeTodayDTO getTodayInfo(
+            @RequestParam String stationCode
+    ) {
+        LocalDate today = LocalDate.now();
+        String dateStr = today.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+
+        TideStation station = tideStationRepository.findById(stationCode)
+                .orElseThrow(() -> new RuntimeException("관측소 없음"));
+
+        String location = station.getRegion().getKorean();
+
+        List<TideItemDTO> tideItems = tideApiClient.getTideItems(stationCode, dateStr);
+        Double lunAge = lunarApiClient.getLunarAge(today.getYear(), today.getMonthValue(), today.getDayOfMonth());
+        String mulName = LunarUtil.getMulName(lunAge);
+
+        Map<String, String> sunMap = sunriseApiClient.getSunriseSunset(location, today);
+
+        return MulttaeTodayDTO.builder()
+                .date(today)
+                .stationCode(stationCode)
+                .stationName(station.getStationName())
+                .mulName(mulName)
+                .lunarAge(lunAge)
+                .sunrise(sunMap.get("sunrise"))
+                .sunset(sunMap.get("sunset"))
+                .weatherNow("-")
+                .temperature("-")
+                .tideItems(tideItems)
+                .build();
     }
 
 

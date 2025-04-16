@@ -1,4 +1,4 @@
-package kroryi.dagon.DTO;
+package kroryi.dagon.DTO.multtae;
 
 import lombok.Data;
 

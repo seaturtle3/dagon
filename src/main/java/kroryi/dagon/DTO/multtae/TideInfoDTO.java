@@ -1,4 +1,4 @@
-package kroryi.dagon.DTO;
+package kroryi.dagon.DTO.multtae;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
