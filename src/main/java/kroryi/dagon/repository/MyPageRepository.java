@@ -9,4 +9,7 @@ public interface MyPageRepository extends JpaRepository<User, Long> {
     Optional<User> findByUid(String uid);
 
 
+    Optional<User> findByUno(Long uno);
+
+
 }
