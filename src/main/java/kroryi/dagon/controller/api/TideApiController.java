@@ -89,28 +89,4 @@ public class TideApiController {
     }
 
 
-    @GetMapping("/lunar")
-    public Map<String, Object> getLunarInfo(
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
-
-        Double lunAge = lunarApiClient.getLunarAge(
-                date.getYear(),
-                date.getMonthValue(),
-                date.getDayOfMonth());
-
-        Map<String, Object> response = new HashMap<>();
-        response.put("solDate", date.toString());
-
-        if (lunAge != null) {
-            String mulName = LunarUtil.getMulName(lunAge);
-            response.put("lunarAge", lunAge);
-            response.put("mulName", mulName);
-        } else {
-            response.put("error", "월령 정보를 가져올 수 없습니다.");
-        }
-
-        return response;
-    }
-
-
 }
