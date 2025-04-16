@@ -1,17 +1,12 @@
 package kroryi.dagon.service;
 
 import kroryi.dagon.DTO.ProductDTO;
-import kroryi.dagon.entity.Partner;
 import kroryi.dagon.entity.Product;
-import kroryi.dagon.enums.MainType;
-import kroryi.dagon.enums.ProdRegion;
-import kroryi.dagon.enums.SubType;
 import kroryi.dagon.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 
