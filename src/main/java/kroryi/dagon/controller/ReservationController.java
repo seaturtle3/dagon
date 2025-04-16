@@ -1,6 +1,5 @@
 package kroryi.dagon.controller;
 
-import kroryi.dagon.entity.ProdFishSpeciesMapping;
 import kroryi.dagon.entity.ProductFishSpecies;
 import kroryi.dagon.enums.ProdRegion;
 import kroryi.dagon.repository.FishSpeciesRepository;
@@ -37,24 +36,45 @@ public class ReservationController {
         return fishSpeciesRepository.findAll();
     }
 
-    @GetMapping("/reservation")
-    public String reservation(
+    @GetMapping("/sea")
+    public String sea(
+            @RequestParam(required = false) String type,
             @RequestParam(required = false) String date,
             @RequestParam(required = false) Integer people,
             @RequestParam(required = false) String region,
             @RequestParam(required = false) String fishType,
             Model model) {
 
-        // 파라미터 값을 모델에 담아서 reservation.html에서 사용 가능하게 함
-        model.addAttribute("date", date);
-        model.addAttribute("people", people);
-        model.addAttribute("region", region);
-        model.addAttribute("fishType", fishType);
+            model.addAttribute("type", type);
+            model.addAttribute("date", date);
+            model.addAttribute("people", people);
+            model.addAttribute("region", region);
+            model.addAttribute("fishType", fishType);
 
-        log.info("date : {}, people : {}, region : {}, fishType : {}", date , people , region, fishType);
 
-        // reservation.html 반환
-        return "sub_menu/reservation";
+        log.info("type:{}, date:{}, people:{}, region:{}, fishType:{}", type, date , people , region, fishType);
+
+        return "menu/sea_fishing";
+    }
+
+    @GetMapping("/freshwater")
+    public String freshwater(
+            @RequestParam(required = false) String type,
+            @RequestParam(required = false) String date,
+            @RequestParam(required = false) Integer people,
+            @RequestParam(required = false) String region,
+            @RequestParam(required = false) String fishType,
+            Model model) {
+
+            model.addAttribute("type", type);
+            model.addAttribute("date", date);
+            model.addAttribute("people", people);
+            model.addAttribute("region", region);
+            model.addAttribute("fishType", fishType);
+
+        log.info("type:{}, date:{}, people:{}, region:{}, fishType:{}", type, date , people , region, fishType);
+
+        return "menu/freshwater_fishing";
     }
 
 

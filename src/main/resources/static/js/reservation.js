@@ -1,3 +1,9 @@
+window.addEventListener("DOMContentLoaded", () => {
+    updateSpan();
+    console.log("로딩 완료")
+});
+
+// 모달 적용 버튼
 function updateSpan() {
     const date = document.getElementById("modal-date").value;
     const people = document.getElementById("modal-people").value;
@@ -11,19 +17,27 @@ function updateSpan() {
     document.getElementById("selected-fish").textContent = fishType || "전체";
 }
 
+// 세부사항 변경 누를 시 화면에 선택된 옵션과 동일한 값을 가져옴
 function syncModalValues() {
-    // span 값 읽기
     const date = document.getElementById("selected-date").textContent.trim();
     const people = document.getElementById("selected-people").textContent.trim();
     const region = document.getElementById("selected-region").textContent.trim();
     const fishType = document.getElementById("selected-fish").textContent.trim();
+    const type = document.querySelector('input[name=waterType]:checked').value;
 
-    // 모달 input/select에 값 세팅
+    if (type === "freshwater") {
+        document.getElementById("freshwater").checked = true;
+    } else {
+        document.getElementById("sea").checked = true;
+    }
+
     if (date) document.getElementById("modal-date").value = date;
     document.getElementById("modal-people").value = people
     document.getElementById("modal-region").value = region
     document.getElementById("modal-fishType").value = fishType
 
-    console.log(`date : ${date}, people : ${people}, region : ${region}, fishType : ${fishType}`);
+    const typeText = type === "freshwater" ? "민물" : "바다";
+
+    console.log(`type : ${typeText}, date : ${date}, people : ${people}, region : ${region}, fishType : ${fishType}`);
 
 }
