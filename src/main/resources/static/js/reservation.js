@@ -57,7 +57,6 @@ function updateSpanFromURL() {
 }
 
 
-
 // 세부사항 변경 누를 시 화면에 선택된 옵션과 동일한 값을 가져옴
 function syncModalValues() {
     const date = document.getElementById("selected-date").textContent.trim();

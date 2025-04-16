@@ -24,9 +24,6 @@ document.getElementById("search-btn").addEventListener('click', function () {
     const fishType = document.getElementById("modal-fishType").value || "전체";
     const type = document.querySelector('input[name="waterType"]:checked').value;
 
-    // 물고기 유형에 따라 어종 목록 업데이트
-    updateFishList(type);  // 바다 또는 민물에 맞는 어종 리스트를 업데이트
-
     const url = type === "freshwater"
         ? `freshwater?type=${type}&date=${date}&people=${people}&region=${region}&fishType=${fishType}`
         : `/sea?type=${type}&date=${date}&people=${people}&region=${region}&fishType=${fishType}`;
