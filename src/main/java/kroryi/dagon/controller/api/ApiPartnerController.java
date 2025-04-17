@@ -17,6 +17,12 @@ public class ApiPartnerController {
 
     private final PartnerService partnerService;
 
+//    @Operation(summary = "파트너 생성", description = "파트너 정보 생성")
+//    @GetMapping("/all")
+//    public List<PartnerDTO> Create() {
+//        return partnerService.createPartners();
+//    }
+
     @Operation(summary = "모든 파트너 정보 조회", description = "모든 파트너 정보 조회")
     @GetMapping("/all")
     public List<PartnerDTO> getAllPartners() {

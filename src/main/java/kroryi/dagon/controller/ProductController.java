@@ -50,9 +50,7 @@ public class ProductController {
         model.addAttribute("mainType", mainType());
         model.addAttribute("subType", subType());
 
-        log.info("GET regions: {}", regions());
-        log.info("GET regions: {}", mainType());
-        log.info("GET regions: {}", subType());
+        log.info("GET regions: {}, {}, {}", regions(), mainType(), subType());
 
         return "product/ProdRegistration";
     }
@@ -67,9 +65,7 @@ public class ProductController {
             product.setPartner(defaultPartner);  // 상품에 파트너 자동 설정
         }
 
-        log.info("POST Selected Region: {}", product.getProdRegion());
-        log.info("POST Selected Region: {}", product.getMainType());
-        log.info("POST Selected Region: {}", product.getSubType());
+        log.info("POST Selected Region: {}, {}, {}", product.getProdRegion(), product.getMainType(), product.getSubType());
 
         productService.saveProduct(product); // 상품 저장
         return "redirect:/product/register-list"; // 등록 후 리스트 페이지로 리다이렉트

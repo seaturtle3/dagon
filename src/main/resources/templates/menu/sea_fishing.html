@@ -38,15 +38,15 @@
     </div>
 </div>
 
-<!-- 제품 등록 리스트---------------------------------->
-<div th:replace="product/ProdRegistrationList :: productList"></div>
+<!--등록된 상품들---------------------------------------------->
+<div th:each="product : ${products}"></div>
 
 <!-- 모달 페이지----------------------------------------------->
 <div class="modal fade" id="searchModal" tabindex="-1">
     <div class="modal-dialog">
         <div class="modal-content">
 
-            <form action="/reservation/research" method="get" onsubmit="updateSpan();">
+            <form action="/fishing/sea" method="get" onsubmit="updateSpan();">
                 <div class="modal-header">
                     <h5 class="modal-title">세부항목 변경</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>

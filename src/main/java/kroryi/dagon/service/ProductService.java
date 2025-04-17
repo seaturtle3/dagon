@@ -3,7 +3,9 @@ package kroryi.dagon.service;
 import kroryi.dagon.DTO.ProductDTO;
 import kroryi.dagon.entity.Partner;
 import kroryi.dagon.entity.Product;
+import kroryi.dagon.entity.ProductOption;
 import kroryi.dagon.repository.ProductRepository;
+import kroryi.dagon.repository.ReservationRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,6 +19,7 @@ public class ProductService {
 
     private final ProductRepository productRepository;
     private final PartnerService partnerService;
+    private final ReservationRepository reservationRepository;
 
     @Transactional
     public Long addProduct(ProductDTO productDTO) {
@@ -73,6 +76,14 @@ public class ProductService {
     public void deleteProduct(Long id) {
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("상품을 찾을 수 없습니다. id=" + id));
+
+        // product 안에 옵션들 돌면서 예약 체크
+        for (ProductOption option : product.getOptions()) {
+            if (reservationRepository.existsByProductOption_OptId(option.getOptId())) {
+                throw new IllegalStateException("예약된 상품은 삭제할 수 없습니다.");
+            }
+        }
+
         productRepository.delete(product);
     }
 
@@ -116,10 +127,7 @@ public class ProductService {
             Partner defaultPartner = partnerService.getDefaultPartner();  // 기본 파트너 가져오기
             product.setPartner(defaultPartner);  // 파트너 자동 설정
         }
-
         productRepository.save(product);
     }
-
-
 
 }
