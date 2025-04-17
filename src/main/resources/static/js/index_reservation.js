@@ -25,8 +25,8 @@ document.getElementById("search-btn").addEventListener('click', function () {
     const type = document.querySelector('input[name="waterType"]:checked').value;
 
     const url = type === "freshwater"
-        ? `freshwater?type=${type}&date=${date}&people=${people}&region=${region}&fishType=${fishType}`
-        : `/sea?type=${type}&date=${date}&people=${people}&region=${region}&fishType=${fishType}`;
+        ? `/fishing/freshwater?type=${type}&date=${date}&people=${people}&region=${region}&fishType=${fishType}`
+        : `/fishing/sea?type=${type}&date=${date}&people=${people}&region=${region}&fishType=${fishType}`;
 
     window.location.href = url;
 

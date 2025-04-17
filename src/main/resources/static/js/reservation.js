@@ -28,7 +28,7 @@ function handleApply() {
     const region = document.getElementById("modal-region").value;
     const fishType = document.getElementById("modal-fishType").value;
 
-    const url = `/${type}?type=${type}&date=${date}&people=${people}&region=${region}&fishType=${fishType}`;
+    const url = `/fishing/${type}?type=${type}&date=${date}&people=${people}&region=${region}&fishType=${fishType}`;
     window.location.href = url;
 }
 
