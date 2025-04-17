@@ -27,6 +27,8 @@ public class Admin {
     private List<Notice> notices = new ArrayList<>();
 
     // 신고
-    @OneToMany(mappedBy = "handledBy")
+    @OneToMany(mappedBy = "handledBy", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ContentReport> handledReports = new ArrayList<>();
+
+
 }

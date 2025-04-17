@@ -69,7 +69,21 @@ public class MyPageService {
         return "success";
     }
 
+// MyPageService.java 안에 아래 메서드를 추가
 
+    public Integer getUserPoint(Long uno) {
+        User user = myPageRepository.findById(uno)
+                .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
+
+        return user.getPoints();  // User 엔티티에 point 필드가 있다고 가정
+    }
+
+    // 회원 탈퇴
+    public String deleteUserAccount(Long uno) {
+        User user = myPageRepository.findById(uno).orElseThrow(() -> new IllegalArgumentException("User not found"));
+        myPageRepository.delete(user);
+        return "success";
+    }
 }
 
 

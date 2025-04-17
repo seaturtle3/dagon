@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @RequestMapping("/api/partners")
 @Log4j2
-public class PartnerApplicationApiController {
+public class ApiPartnerApplicationController {
 
     private final PartnerApplicationService partnerApplicationService;
 
