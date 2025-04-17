@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <script src="https://cdn.iamport.kr/js/iamport.payment-1.1.8.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <title>Payments</title>
+</head>
+<body>
+<h1>카드결제 테스트</h1>
+<button onclick="requestPay()">결제하기</button>
+</body>
+<script src="/js/auth.js"></script>
+
+<script>
+    var IMP = window.IMP;
+    IMP.init("imp64386158");
+    function requestPay() {
+        IMP.request_pay({
+            pg: "html5_inicis.INIpayTest",
+            pay_method: "card",
+            merchant_uid: "ORD-" + new Date().getTime(),
+            name: "테스트 상품",
+            amount: 100,
+            buyer_email: "test@test.com",
+            buyer_name: "홍길동",
+            buyer_tel: "010-0000-0000",
+            buyer_addr: "서울시 강남구",
+            buyer_postcode: "12345"
+        }, function (rsp) {
+            if (rsp.success) {
+                // JSON 데이터를 서버로 전송
+                const requestData = {
+                    imp_uid: rsp.imp_uid
+                };
+
+                fetch("/api/payment/verify", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": "Bearer " + localStorage.getItem("authToken") // 인증 토큰 있을 경우
+                    },
+                    body: JSON.stringify(requestData)
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success === "true") {
+                            alert("결제 성공 및 검증 완료");
+                        } else {
+                            alert("결제 검증 실패: " + data.message);
+                        }
+                    })
+                    .catch(error => {
+                        console.error("서버 통신 오류:", error);
+                        alert("서버 오류가 발생했습니다.");
+                    });
+
+            } else {
+                alert("결제 실패: " + rsp.error_msg);
+            }
+        });
+    }
+</script>
+</html>
