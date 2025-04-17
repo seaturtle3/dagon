@@ -44,7 +44,6 @@ public class ApiKeyFilter extends OncePerRequestFilter {
         String authHeader = request.getHeader("Authorization");
         log.info("------------------- {}", authHeader);
 
-
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             String jwt = authHeader.substring(7);
 
@@ -103,6 +102,7 @@ public class ApiKeyFilter extends OncePerRequestFilter {
 
                         (path.startsWith("/web/users/") && method.equals("POST")) ||
 
+
                         // 알림 생성 로직
                         (path.startsWith("/api/notifications") && method.equals("POST")) ||
                         // PUT - 알림 읽음 처리
@@ -114,8 +114,11 @@ public class ApiKeyFilter extends OncePerRequestFilter {
                         // GET - 특정 유저의 알림 조회
                         (path.matches("/api/notifications/user/.+") && method.equals("GET")) ||
 
+                        (path.startsWith("/api/payments/") && method.equals("POST")) ||
+
 
                         // api가 아니면 모두 통과
                         !path.startsWith("/api/");
+
     }
 }

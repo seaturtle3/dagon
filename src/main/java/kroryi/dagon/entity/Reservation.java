@@ -1,7 +1,7 @@
 package kroryi.dagon.entity;
 
 import jakarta.persistence.*;
-import kroryi.dagon.enums.PaymentMethod;
+import kroryi.dagon.enums.PaymentsMethod;
 import kroryi.dagon.enums.ReservationStatus;
 import lombok.Getter;
 import lombok.Setter;
@@ -57,7 +57,7 @@ public class Reservation extends BaseTimeEntity {
     // 결제수단
     @Enumerated(EnumType.STRING)
     @Column(name = "payment_method", nullable = false)
-    private PaymentMethod paymentMethod;
+    private PaymentsMethod paymentsMethod;
 
 
 
