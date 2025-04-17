@@ -7,10 +7,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 @Controller
 @RequestMapping("/api/kakaopay")
@@ -23,10 +20,9 @@ public class KakaoPayController {
 
     @GetMapping("/kakaoPay")
     public String kakaoPayGet() {
-
         log.info("1111111111111111111111");
 
-        return "kakaopay/kakaopay";
+        return "kakaopay";
     }
 
     @PostMapping("/kakaoPay")
@@ -57,6 +53,4 @@ public class KakaoPayController {
         // 실패한 결제에 대한 처리를 여기에 작성합니다.
         return "kakaopay/kakaoPayFail";  // 템플릿 반환
     }
-
-
 }

@@ -27,7 +27,7 @@ public class ApiPaymentsCrudController {
         return paymentsCrudService.findById(id);
     }
 
-    @PostMapping("/{id}")
+    @PostMapping
     @Operation(summary = "결제 정보 생성", description = "결제 정보 생성")
     public PaymentsDTO createPayment(@RequestBody PaymentsDTO dto) {
         return paymentsCrudService.save(dto);
