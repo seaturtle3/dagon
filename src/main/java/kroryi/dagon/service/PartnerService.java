@@ -10,7 +10,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class PartnersService {
+public class PartnerService {
 
     private final PartnersRepository partnersRepository;
 
@@ -32,5 +32,11 @@ public class PartnersService {
         return dto;
     }
 
+    // PartnersService.java
+    public Partner getDefaultPartner() {
+        return partnersRepository.findAll().stream()
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("기본 파트너가 없습니다."));  // 기본 파트너가 없으면 예외 처리
+    }
 
 }

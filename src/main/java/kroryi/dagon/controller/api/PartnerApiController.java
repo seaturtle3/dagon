@@ -2,7 +2,7 @@ package kroryi.dagon.controller.api;
 
 import io.swagger.v3.oas.annotations.Operation;
 import kroryi.dagon.DTO.PartnerDTO;
-import kroryi.dagon.service.PartnersService;
+import kroryi.dagon.service.PartnerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,14 +13,14 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("api/partners")
-public class PartnersApiController {
+public class PartnerApiController {
 
-    private final PartnersService partnersService;
+    private final PartnerService partnerService;
 
     @Operation(summary = "모든 파트너 정보 조회", description = "모든 파트너 정보 조회")
     @GetMapping("/all")
     public List<PartnerDTO> getAllPartners() {
-        return partnersService.getAllPartners();
+        return partnerService.getAllPartners();
     }
 
 
