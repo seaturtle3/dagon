@@ -1,6 +1,7 @@
 package kroryi.dagon.entity;
 
 import jakarta.persistence.*;
+import kroryi.dagon.enums.MainType;
 import lombok.*;
 
 import java.util.ArrayList;
@@ -10,7 +11,6 @@ import java.util.List;
 @NoArgsConstructor
 @Getter
 @Setter
-@ToString
 @Entity
 @Table(name = "prod_fish_species")
 public class ProductFishSpecies {
@@ -28,8 +28,15 @@ public class ProductFishSpecies {
     @OneToMany(mappedBy = "fs", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ProdFishSpeciesMapping> mappedProducts = new ArrayList<>();
 
-    public ProductFishSpecies(String fsName, String fsIconUrl) {
+    @Enumerated(EnumType.STRING)
+    private MainType mainType;
+
+    public ProductFishSpecies(String fsName, MainType mainType, String fsIconUrl) {
         this.fsName = fsName;
+        this.mainType = mainType;
         this.fsIconUrl = fsIconUrl;
     }
+
+
+
 }

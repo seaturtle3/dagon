@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<form action="/product/register" method="post" enctype="multipart/form-data">
+    <div class="form-group">
+        <label for="prodName">배 이름</label>
+        <input type="text" class="form-control" id="prodName" name="prodName" required>
+    </div>
+
+    <div class="form-group">
+        <label for="prodRegion">지역</label>
+        <select class="form-control" id="prodRegion" name="prodRegion">
+            <option value="NORTH">북쪽</option>
+            <option value="SOUTH">남쪽</option>
+            <!-- 다른 지역 옵션 추가 -->
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label for="mainType">주 유형</label>
+        <select class="form-control" id="mainType" name="mainType">
+            <option value="TYPE1">타입 1</option>
+            <option value="TYPE2">타입 2</option>
+            <!-- 다른 타입 옵션 추가 -->
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label for="subType">서브 유형</label>
+        <select class="form-control" id="subType" name="subType">
+            <option value="TYPEA">서브타입 A</option>
+            <option value="TYPEB">서브타입 B</option>
+            <!-- 다른 서브 유형 옵션 추가 -->
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label for="maxPerson">최대 인원</label>
+        <input type="number" class="form-control" id="maxPerson" name="maxPerson" required>
+    </div>
+
+    <div class="form-group">
+        <label for="minPerson">최소 인원</label>
+        <input type="number" class="form-control" id="minPerson" name="minPerson" required>
+    </div>
+
+    <div class="form-group">
+        <label for="weight">배 무게</label>
+        <input type="number" step="0.01" class="form-control" id="weight" name="weight">
+    </div>
+
+    <div class="form-group">
+        <label for="prodAddress">배 주소</label>
+        <input type="text" class="form-control" id="prodAddress" name="prodAddress">
+    </div>
+
+    <div class="form-group">
+        <label for="prodDescription">배 설명</label>
+        <textarea class="form-control" id="prodDescription" name="prodDescription"></textarea>
+    </div>
+
+    <div class="form-group">
+        <label for="prodEvent">이벤트</label>
+        <textarea class="form-control" id="prodEvent" name="prodEvent"></textarea>
+    </div>
+
+    <div class="form-group">
+        <label for="prodNotice">공지 사항</label>
+        <textarea class="form-control" id="prodNotice" name="prodNotice"></textarea>
+    </div>
+
+    <button type="submit" class="btn btn-primary">등록</button>
+</form>
+
+
+
+</body>
+</html>

@@ -1,6 +1,8 @@
 package kroryi.dagon.controller;
 
+import kroryi.dagon.entity.ProductFishSpecies;
 import kroryi.dagon.enums.ProdRegion;
+import kroryi.dagon.repository.FishSpeciesRepository;
 import kroryi.dagon.service.ReservationService;
 import lombok.*;
 import lombok.extern.log4j.Log4j2;
@@ -22,34 +24,57 @@ import java.util.List;
 public class ReservationController {
 
     private final ReservationService reservationService;
+    private final FishSpeciesRepository fishSpeciesRepository;
 
     @ModelAttribute("regions")
     public List<ProdRegion> regions() {
-        log.info("regions : {}", Arrays.toString(ProdRegion.values()));
         return Arrays.asList(ProdRegion.values());
     }
 
-    @GetMapping("/reservation")
-    public String reservation(
+    @ModelAttribute("fishSpecies")
+    public List<ProductFishSpecies> fishSpecies() {
+        return fishSpeciesRepository.findAll();
+    }
+
+    @GetMapping("/sea")
+    public String sea(
+            @RequestParam(required = false) String type,
             @RequestParam(required = false) String date,
             @RequestParam(required = false) Integer people,
             @RequestParam(required = false) String region,
             @RequestParam(required = false) String fishType,
             Model model) {
 
-        // 파라미터 값을 모델에 담아서 reservation.html에서 사용 가능하게 함
-        model.addAttribute("date", date);
-        model.addAttribute("people", people);
-        model.addAttribute("region", region);
-        model.addAttribute("fishType", fishType);
+            model.addAttribute("type", type);
+            model.addAttribute("date", date);
+            model.addAttribute("people", people);
+            model.addAttribute("region", region);
+            model.addAttribute("fishType", fishType);
 
-        log.info("date : {}", date);
-        log.info("people : {}", people);
-        log.info("region : {}", region);
-        log.info("fishType : {}", fishType);
 
-        // reservation.html 반환
-        return "sub_menu/reservation";
+        log.info("type:{}, date:{}, people:{}, region:{}, fishType:{}", type, date , people , region, fishType);
+
+        return "menu/sea_fishing";
+    }
+
+    @GetMapping("/freshwater")
+    public String freshwater(
+            @RequestParam(required = false) String type,
+            @RequestParam(required = false) String date,
+            @RequestParam(required = false) Integer people,
+            @RequestParam(required = false) String region,
+            @RequestParam(required = false) String fishType,
+            Model model) {
+
+            model.addAttribute("type", type);
+            model.addAttribute("date", date);
+            model.addAttribute("people", people);
+            model.addAttribute("region", region);
+            model.addAttribute("fishType", fishType);
+
+        log.info("type:{}, date:{}, people:{}, region:{}, fishType:{}", type, date , people , region, fishType);
+
+        return "menu/freshwater_fishing";
     }
 
 
