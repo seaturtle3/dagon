@@ -18,6 +18,20 @@ public class ProductService {
     private final ProductRepository productRepository;
     private final PartnerService partnerService;
 
+    @Transactional
+    public Long addProduct(ProductDTO productDTO) {
+        Product product = convertToEntity(productDTO);
+
+        if (product.getPartner() == null) {
+            Partner defaultPartner = partnerService.getDefaultPartner();
+            product.setPartner(defaultPartner);
+        }
+
+        Product savedProduct = productRepository.save(product);
+        return savedProduct.getProdId();
+    }
+
+    // [Read] 전체 상품 조회
     @Transactional(readOnly = true)
     public List<ProductDTO> getAllProducts() {
         return productRepository.findAll().stream()
@@ -25,6 +39,44 @@ public class ProductService {
                 .collect(Collectors.toList());
     }
 
+    // [Read] id로 단건 조회
+    @Transactional(readOnly = true)
+    public ProductDTO getProductById(Long id) {
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("상품을 찾을 수 없습니다. id=" + id));
+        return convertToDTO(product);
+    }
+
+    // [Update] 상품 수정
+    @Transactional
+    public Long updateProduct(Long id, ProductDTO productDTO) {
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("상품을 찾을 수 없습니다. id=" + id));
+
+        product.setProdName(productDTO.getProdName());
+        product.setProdRegion(productDTO.getProdRegion());
+        product.setMainType(productDTO.getMainType());
+        product.setSubType(productDTO.getSubType());
+        product.setMaxPerson(productDTO.getMaxPerson());
+        product.setMinPerson(productDTO.getMinPerson());
+        product.setWeight(productDTO.getWeight());
+        product.setProdAddress(productDTO.getProdAddress());
+        product.setProdDescription(productDTO.getProdDescription());
+        product.setProdEvent(productDTO.getProdEvent());
+        product.setProdNotice(productDTO.getProdNotice());
+
+        return product.getProdId();
+    }
+
+    // [Delete] 상품 삭제
+    @Transactional
+    public void deleteProduct(Long id) {
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("상품을 찾을 수 없습니다. id=" + id));
+        productRepository.delete(product);
+    }
+
+    // Entity -> DTO 변환
     private ProductDTO convertToDTO(Product product) {
         ProductDTO dto = new ProductDTO();
         dto.setProdName(product.getProdName());
@@ -39,6 +91,23 @@ public class ProductService {
         dto.setProdEvent(product.getProdEvent());
         dto.setProdNotice(product.getProdNotice());
         return dto;
+    }
+
+    // DTO -> Entity 변환
+    private Product convertToEntity(ProductDTO dto) {
+        Product product = new Product();
+        product.setProdName(dto.getProdName());
+        product.setProdRegion(dto.getProdRegion());
+        product.setMainType(dto.getMainType());
+        product.setSubType(dto.getSubType());
+        product.setMaxPerson(dto.getMaxPerson());
+        product.setMinPerson(dto.getMinPerson());
+        product.setWeight(dto.getWeight());
+        product.setProdAddress(dto.getProdAddress());
+        product.setProdDescription(dto.getProdDescription());
+        product.setProdEvent(dto.getProdEvent());
+        product.setProdNotice(dto.getProdNotice());
+        return product;
     }
 
     public void saveProduct(Product product) {
