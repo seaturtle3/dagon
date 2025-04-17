@@ -1,24 +1,17 @@
-package kroryi.dagon.entity;
+package kroryi.dagon.DTO;
 
-import jakarta.persistence.*;
 import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-@Entity
-@Table(name = "payments")
 @Getter
 @Setter
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class PaymentEntity {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+@Builder
+public class PaymentsDTO {
     private Long id;
-
     private String impUid;
     private String merchantUid;
     private BigDecimal amount;

@@ -9,9 +9,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
+@RequestMapping("/api/kakaopay")
 @RequiredArgsConstructor
 @Log4j2
 public class KakaoPayController {
@@ -54,4 +56,6 @@ public class KakaoPayController {
         // 실패한 결제에 대한 처리를 여기에 작성합니다.
         return "kakaopay/kakaoPayFail";  // 템플릿 반환
     }
+
+
 }

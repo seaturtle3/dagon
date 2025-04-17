@@ -1,7 +1,7 @@
 package kroryi.dagon.service;
 
 import com.siot.IamportRestClient.response.Payment;
-import kroryi.dagon.entity.PaymentEntity;
+import kroryi.dagon.entity.PaymentsEntity;
 import kroryi.dagon.repository.PaymentsRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -15,7 +15,7 @@ public class PaymentsService {
     private final PaymentsRepository paymentsRepository;
 
     public void savePayment(Payment payment) {
-        PaymentEntity entity = PaymentEntity.builder()
+        PaymentsEntity entity = PaymentsEntity.builder()
                 .impUid(payment.getImpUid())
                 .merchantUid(payment.getMerchantUid())
                 .amount(payment.getAmount())
