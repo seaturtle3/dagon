@@ -23,6 +23,7 @@ public class KakaoPayController {
 
     @GetMapping("/kakaoPay")
     public String kakaoPayGet() {
+
         log.info("1111111111111111111111");
 
         return "kakaopay/kakaopay";

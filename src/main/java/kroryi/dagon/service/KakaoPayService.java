@@ -58,6 +58,7 @@ public class KakaoPayService {
         } catch (Exception e) {
             log.error("카카오페이 요청 실패", e);
             return "/pay";
+
         }
     }
 }
