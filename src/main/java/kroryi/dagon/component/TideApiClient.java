@@ -1,10 +1,12 @@
 package kroryi.dagon.component;
 
-import kroryi.dagon.DTO.multtae.TideInfoDTO;
+import kroryi.dagon.DTO.multtae.MarineBaseResponse;
 import kroryi.dagon.DTO.multtae.TideItemDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -37,7 +39,9 @@ public class TideApiClient {
 
         log.info("물때 API 요청 URI: {}", uri);
 
-        TideInfoDTO response = restTemplate.getForObject(uri, TideInfoDTO.class);
+        MarineBaseResponse<TideItemDTO> response =
+                restTemplate.exchange(uri, HttpMethod.GET, null,
+                        new ParameterizedTypeReference<MarineBaseResponse<TideItemDTO>>() {}).getBody();
 
         if (response != null && response.getResult() != null) {
             return response.getResult().getData();

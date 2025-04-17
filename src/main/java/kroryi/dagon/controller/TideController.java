@@ -6,7 +6,7 @@ import kroryi.dagon.component.TideApiClient;
 import kroryi.dagon.entity.multtae.TideStation;
 import kroryi.dagon.enums.ProdRegion;
 import kroryi.dagon.repository.multtae.TideStationRepository;
-import kroryi.dagon.util.LunarUtil;
+import kroryi.dagon.util.multtae.LunarUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.format.annotation.DateTimeFormat;

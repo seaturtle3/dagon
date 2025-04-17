@@ -28,4 +28,9 @@ public class MulttaeTodayDTO {
 
     private List<TideItemDTO> tideItems;
 
+    private List<WaveDTO> waveList;
+    private List<WindDTO> windList;
+    private List<AirTempDTO> airTempList;
+    private List<TideLevelDTO> tideLevelList;
+
 }

@@ -17,4 +17,8 @@ public class MulttaeDailyDTO {
     private Double lunarAge;
     private String mulName;
     private List<TideItemDTO> tideItems;
+    private List<WaveDTO> waveList;
+    private List<WindDTO> windList;
+    private List<AirTempDTO> airTempList;
+    private List<TideLevelDTO> tideLevelList;
 }

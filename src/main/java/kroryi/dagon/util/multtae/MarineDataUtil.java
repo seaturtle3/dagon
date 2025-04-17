@@ -1,5 +1,7 @@
-package kroryi.dagon.util;
+package kroryi.dagon.util.multtae;
 
+
+import kroryi.dagon.DTO.multtae.HasRecordTime;
 
 import java.time.LocalTime;
 import java.util.List;

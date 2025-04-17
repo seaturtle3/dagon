@@ -1,6 +1,5 @@
 package kroryi.dagon.DTO.multtae;
 
-import kroryi.dagon.util.HasRecordTime;
 import lombok.Data;
 
 @Data
