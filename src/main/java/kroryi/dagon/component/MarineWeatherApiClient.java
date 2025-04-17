@@ -49,7 +49,9 @@ public class MarineWeatherApiClient {
             return List.of(); // 비어있는 리스트 반환
         }
 
-        return response.getResult().getData();
+        List<WaveDTO> data = response.getResult().getData();
+        log.info("Wave API 응답 데이터: {}", data);
+        return data;
     }
 
     public List<AirTempDTO> getAirTempData(String obsCode, String date) {
@@ -66,9 +68,14 @@ public class MarineWeatherApiClient {
         MarineBaseResponse<AirTempDTO> response = restTemplate.exchange(uri, HttpMethod.GET, null,
                 new ParameterizedTypeReference<MarineBaseResponse<AirTempDTO>>() {}).getBody();
 
-        return response != null && response.getResult() != null
-                ? response.getResult().getData()
-                : List.of();
+        if (response == null || response.getResult() == null || response.getResult().getData() == null) {
+            log.warn("AirTemp API 응답 없음 또는 result.data가 null - 관측소: {}", obsCode);
+            return List.of();
+        }
+
+        List<AirTempDTO> data = response.getResult().getData();
+        log.info("AirTemp API 응답 데이터: {}", data); // ✅ 로그 추가
+        return data;
     }
 
     public List<WindDTO> getWindData(String obsCode, String date) {
@@ -86,9 +93,14 @@ public class MarineWeatherApiClient {
         MarineBaseResponse<WindDTO> response = restTemplate.exchange(uri, HttpMethod.GET, null,
                 new ParameterizedTypeReference<MarineBaseResponse<WindDTO>>() {}).getBody();
 
-        return response != null && response.getResult() != null
-                ? response.getResult().getData()
-                : List.of();
+        if (response == null || response.getResult() == null || response.getResult().getData() == null) {
+            log.warn("Wind API 응답 없음 또는 result.data가 null - 관측소: {}", obsCode);
+            return List.of();
+        }
+
+        List<WindDTO> data = response.getResult().getData();
+        log.info("Wind API 응답 데이터: {}", data); // ✅ 로그 추가
+        return data;
     }
 
     public List<TideLevelDTO> getTideLevelData(String obsCode, String date) {
@@ -106,9 +118,14 @@ public class MarineWeatherApiClient {
         MarineBaseResponse<TideLevelDTO> response = restTemplate.exchange(uri, HttpMethod.GET, null,
                 new ParameterizedTypeReference<MarineBaseResponse<TideLevelDTO>>() {}).getBody();
 
-        return response != null && response.getResult() != null
-                ? response.getResult().getData()
-                : List.of();
+        if (response == null || response.getResult() == null || response.getResult().getData() == null) {
+            log.warn("TideLevel API 응답 없음 또는 result.data가 null - 관측소: {}", obsCode);
+            return List.of();
+        }
+
+        List<TideLevelDTO> data = response.getResult().getData();
+        log.info("TideLevel API 응답 데이터: {}", data); // ✅ 로그 추가
+        return data;
     }
 
 }
