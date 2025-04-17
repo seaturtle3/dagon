@@ -33,6 +33,13 @@ public class MyPageService {
                 .orElseThrow(() -> new NoSuchElementException("해당 사용자를 찾을 수 없습니다."));
     }
 
+    public UsersDTO findUserInfoByUname(String uname) {
+        User user = myPageRepository.findByUname(uname)
+                .orElseThrow(() -> new NoSuchElementException("해당 이름의 사용자를 찾을 수 없습니다."));
+
+        return new UsersDTO(user);
+    }
+
     // 내 정보 수정
     public void updateUser(Long uno, User formData) {
         User user = myPageRepository.findByUno(uno)

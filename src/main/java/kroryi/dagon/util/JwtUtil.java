@@ -4,6 +4,7 @@ import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
 import kroryi.dagon.DTO.LoginRequestDTO;
+import kroryi.dagon.entity.User;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -33,12 +34,12 @@ public class JwtUtil {
         this.secretKey = Keys.hmacShaKeyFor(keyBytes);
     }
 
-    public String generateToken(LoginRequestDTO dto, Long uno, String uname) {
+    public String generateToken(String uid, Long uno, String uname) {
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + expirationTime);
 
         return Jwts.builder()
-                .setSubject(dto.getUid())
+                .setSubject(uid)
                 .claim("uno", uno.toString())
                 .claim("uname", uname)
                 .setIssuedAt(now)
@@ -46,6 +47,8 @@ public class JwtUtil {
                 .signWith(secretKey, SignatureAlgorithm.HS256)
                 .compact();
     }
+
+
 
     public Claims parseToken(String token) {
         try {
@@ -72,5 +75,6 @@ public class JwtUtil {
             return null;
         }
     }
+
 }
 

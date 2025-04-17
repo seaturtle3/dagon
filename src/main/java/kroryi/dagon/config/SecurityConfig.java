@@ -1,5 +1,6 @@
 package kroryi.dagon.config;
 
+import kroryi.dagon.handler.CustomSocialLoginSuccessHandler;
 import kroryi.dagon.service.ApiKeyService;
 import kroryi.dagon.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +14,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
@@ -44,8 +46,10 @@ public class SecurityConfig {
                                 "/css/**",
                                 "/js/**",
                                 "/img/**",
-                                "/api/auth/login"
+                                "/api/auth/login",
+                                "/api/users/me"
                         ).permitAll()
+                        .requestMatchers("/login/oauth2/code/kakao").permitAll()
                         .anyRequest().authenticated()
                 )
                 .formLogin(formLogin -> { // 기존 폼 로그인 설정 유지
@@ -55,6 +59,9 @@ public class SecurityConfig {
                             .failureUrl("/login?error")
                             .permitAll();
                 })
+                .oauth2Login(
+                        (login)->login.loginPage("/login")
+                                .successHandler(socialLoginSuccessHandler()))
                 .logout(logout -> logout
                         .logoutSuccessUrl("/login?logout")
                         .permitAll()
@@ -74,4 +81,10 @@ public class SecurityConfig {
     public UserDetailsService userDetailsService() {
         return userDetailsService;
     }
+
+    @Bean
+    public AuthenticationSuccessHandler socialLoginSuccessHandler() {
+        return new CustomSocialLoginSuccessHandler(passwordEncoder());
+    }
+
 }

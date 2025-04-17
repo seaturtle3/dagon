@@ -1,4 +1,5 @@
 package kroryi.dagon.controller;
+import io.swagger.v3.oas.annotations.Operation;
 import kroryi.dagon.DTO.PartnerApplicationDTO;
 import kroryi.dagon.compoent.CustomUserDetails;
 import kroryi.dagon.service.PartnerService;
@@ -21,6 +22,7 @@ public class ApiPartnerController {
     private final PartnerService partnerService;
 
     @PostMapping("/review")
+    @Operation(summary = "파트너 등록 ", description = "파트너 등록")
     public ResponseEntity<String> submitPartnerReview(
             @RequestBody PartnerApplicationDTO partnerApplicationDTO,
             @AuthenticationPrincipal CustomUserDetails userDetails) throws Exception {
