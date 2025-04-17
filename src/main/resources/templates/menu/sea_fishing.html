@@ -39,7 +39,19 @@
 </div>
 
 <!--등록된 상품들---------------------------------------------->
-<div th:each="product : ${products}"></div>
+<tr th:each="product : ${products}">
+    <td th:text="${product.prodName}">배 이름</td>
+    <td th:text="${product.prodRegion}">지역</td>
+    <td th:text="${product.mainType}">바다/민물 유형</td>
+    <td th:text="${product.subType}">서브 유형</td>
+    <td th:text="${product.maxPerson}">최대 인원</td>
+    <td th:text="${product.minPerson}">최소 인원</td>
+    <td th:text="${product.weight}">배 무게</td>
+    <td th:text="${product.prodAddress}">배 주소</td>
+    <td th:text="${product.prodDescription}">배 설명</td>
+    <td th:text="${product.prodEvent}">이벤트</td>
+    <td th:text="${product.prodNotice}">공지사항</td>
+</tr><br>
 
 <!-- 모달 페이지----------------------------------------------->
 <div class="modal fade" id="searchModal" tabindex="-1">

@@ -37,7 +37,9 @@ public class ReservationController {
     }
 
     // 공통 메서드로 파라미터 바인딩
-    private void addSearchAttributes(Model model, String type, String date, Integer people, String region, String fishType) {
+    private void addSearchAttributes(Model model, String type,
+                                     String date, Integer people,
+                                     String region, String fishType) {
         model.addAttribute("type", type);
         model.addAttribute("date", date);
         model.addAttribute("people", people);
