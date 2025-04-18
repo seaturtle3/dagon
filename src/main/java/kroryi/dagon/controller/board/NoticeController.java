@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 @Controller
 @RequestMapping("/notices")
 @RequiredArgsConstructor
-public class NoticeWebController {
+public class NoticeController {
     private final NoticeService noticeService;
 
     @GetMapping("/{id}")
@@ -63,5 +63,12 @@ public class NoticeWebController {
                          @ModelAttribute NoticeRequestDTO dto) {
         noticeService.updateNotice(id, dto);
         return "redirect:/notices/" + id;
+    }
+
+
+    @PostMapping("/{id}/delete")
+    public String delete(@PathVariable Long id) {
+        noticeService.deleteNotice(id);
+        return "redirect:/notices";
     }
 }

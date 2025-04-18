@@ -13,5 +13,14 @@
 <!-- HTML로 저장된 content를 그대로 렌더링 -->
 <div th:utext="${notice.content}">내용</div>
 
+<div style="margin-top: 20px;">
+    <a th:href="@{/notices}" class="btn">목록으로</a>
+    <a th:href="@{/notices/{id}/edit(id=${notice.noticeId})}" class="btn">수정</a>
+    <form th:action="@{/notices/{id}/delete(id=${notice.noticeId})}" method="post"
+          onsubmit="return confirm('정말 삭제하시겠습니까?');" style="display:inline;">
+        <button type="submit" class="btn">삭제</button>
+    </form>
+</div>
+
 </body>
 </html>

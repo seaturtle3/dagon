@@ -11,13 +11,20 @@
 <body>
 
 <h1>공지사항 작성</h1>
-<form th:action="@{/notices}" method="post" th:object="${noticeForm}">
+<form th:action="${noticeId != null} ? '/notices/' + noticeId + '/edit' : '/notices'"
+      th:object="${noticeForm}"
+      method="post">
+      method="post" th:object="${noticeForm}">
     <input type="text" th:field="*{title}" placeholder="제목"><br><br>
     <textarea id="summernote" th:field="*{content}"></textarea><br>
     <input type="text" th:field="*{thumbnailUrl}" placeholder="썸네일 URL"><br>
     <label><input type="checkbox" th:field="*{isTop}"> 상단 고정</label><br>
     <button type="submit">등록</button>
 </form>
+
+<div style="margin-top: 20px;">
+    <a th:href="@{/notices}" class="btn">목록으로</a>
+</div>
 
 <script>
     $(document).ready(function () {
