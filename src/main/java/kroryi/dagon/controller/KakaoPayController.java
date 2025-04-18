@@ -10,7 +10,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 @Controller
-@RequestMapping("/api/kakaopay")
 @RequiredArgsConstructor
 @Log4j2
 public class KakaoPayController {
@@ -22,7 +21,7 @@ public class KakaoPayController {
     public String kakaoPayGet() {
         log.info("1111111111111111111111");
 
-        return "kakaopay";
+        return "kakaopay/kakaopay";
     }
 
     @PostMapping("/kakaoPay")

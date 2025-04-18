@@ -91,7 +91,6 @@ public class KakaoPayService {
                     .block();
 
             log.info("카카오페이 요청 성공: {}", kakaoPayDTO);
-//            log.info("리디렉션 URL: {}", kakaoPayDTO.getNext_redirect_pc_url());
             return kakaoPayDTO != null ? kakaoPayDTO.getNext_redirect_pc_url() : "/pay";
 
 
