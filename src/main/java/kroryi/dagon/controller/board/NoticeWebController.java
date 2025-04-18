@@ -2,6 +2,7 @@ package kroryi.dagon.controller.board;
 
 import jakarta.validation.Valid;
 import kroryi.dagon.DTO.board.NoticeRequestDTO;
+import kroryi.dagon.entity.Notice;
 import kroryi.dagon.service.NoticeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -41,5 +42,26 @@ public class NoticeWebController {
     public String list(Model model) {
         model.addAttribute("notices", noticeService.findAll());
         return "board/notice/list";
+    }
+
+    @GetMapping("/{id}/edit")
+    public String editForm(@PathVariable Long id, Model model) {
+        Notice notice = noticeService.findById(id);
+        NoticeRequestDTO dto = new NoticeRequestDTO();
+        dto.setTitle(notice.getTitle());
+        dto.setContent(notice.getContent());
+        dto.setThumbnailUrl(notice.getThumbnailUrl());
+        dto.setIsTop(notice.getIsTop());
+
+        model.addAttribute("noticeForm", dto);
+        model.addAttribute("noticeId", notice.getNoticeId());
+        return "board/notice/form";
+    }
+
+    @PostMapping("/{id}/edit")
+    public String update(@PathVariable Long id,
+                         @ModelAttribute NoticeRequestDTO dto) {
+        noticeService.updateNotice(id, dto);
+        return "redirect:/notices/" + id;
     }
 }
