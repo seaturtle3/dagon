@@ -31,8 +31,8 @@ public class ReservePaymentController {
         return "reservation/form"; // 템플릿 파일: reservation/form.html
     }
 
-    @GetMapping("/reservation/confirm")
+    @GetMapping("/confirm")
     public String confirmReservationPage() {
-        return "reservation/form";
+        return "reservation/confirm";
     }
 }

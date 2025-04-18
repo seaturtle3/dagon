@@ -5,80 +5,89 @@
     <title>예약 등록</title>
     <script src="https://cdn.iamport.kr/js/iamport.payment-1.1.8.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
 </head>
 <body>
 <h1>예약 등록</h1>
+
 <p th:text="'예약할 배: ' + ${product.prodName}"></p>
 
 <form method="post" th:action="@{/api/kakaopay/kakaoPay}">
     <label for="fishingAt">출조일</label>
     <input type="datetime-local"
+           id="fishingAt"
            name="fishingAt"
            th:value="${#temporals.format(fishingAt, 'yyyy-MM-dd''T''HH:mm')}"/>
 
-
     <label for="numPerson">인원 수:</label>
-    <input type="number" id="numPerson" name="numPerson" min="1" max="20" step="1" value="1">
+    <input type="number" id="numPerson" name="numPerson" min="1" max="20" step="1" value="1"/>
+
+    <label for="uid">예약자:</label>
     <input type="text" id="uid" name="uid" disabled/>
-<!--    <input type="number" name="uno" th:value="${product.prodId}"/>-->
-<!--    <input type="text" name="uname" th:value="${product.prodId}"/>-->
-<!--    <input type="text" name="nickname" th:value="${product.prodId}"/>-->
-<!--    <input type="tel" name="phone" th:value="${product.prodId}"/>-->
-<!--    <input type="email" name="email" th:value="${product.prodId}"/>-->
-<!--    <input type="text" name="level" th:value="${product.prodId}"/>-->
-<!--    <input type="text" name="nickname" th:value="${product.prodId}"/>-->
-<!--    <input type="number" name="points" th:value="${product.prodId}"/>-->
-<!--    <input type="url" name="profile_image" th:value="${product.prodId}"/>-->
-<!--    <input type="text" name="role" th:value="${product.prodId}"/>-->
-<!--    <input type="text" name="nickname" th:value="${product.prodId}"/>-->
+
     <label for="totalAmount">총 금액:</label>
     <span id="totalAmount">1000</span> 원
-    <input type="hidden" id="amount" name="amount" value="1000"/> <!-- 금액이 여기 저장됩니다 -->
-
+    <input type="hidden" id="amount" name="amount" value="1000"/>
 </form>
-</body>
+
+<button type="button" onclick="openReservationPopup()">예약 확인</button>
+
 <script src="/js/auth.js"></script>
-
 <script>
-    fetch('/api/users/me', {
-        method: 'GET',
-        headers: getAuthHeaders()
-    })
-        .then(response => {
-            if (!response.ok) throw new Error("사용자 정보 요청 실패");
-            return response.json();
-        })
-        .then(user => {
-            console.log("사용자 정보:", user);
-            document.getElementById('uid').value = user.displayName;
-            // 여기에 필요한 정보 DOM에 넣기
-        })
-        .catch(error => {
-            console.error("에러:", error);
-        });
+    const pricePerPerson = 1000;
 
-    // 금액 계산 로직
-    const pricePerPerson = 1000; // 1인당 가격 (예시: 1000원)
-    const numPersonInput = document.getElementById('numPerson');
-    const totalAmountSpan = document.getElementById('totalAmount');
-    const amountInput = document.getElementById('amount');
-
-    // numPerson 변경 시 금액 계산
-    numPersonInput.addEventListener('input', function () {
-        const numPerson = parseInt(numPersonInput.value) || 1;  // 기본값은 1
-        const totalAmount = numPerson * pricePerPerson;
-
-        // 금액 업데이트
-        totalAmountSpan.textContent = totalAmount;
-        amountInput.value = totalAmount;  // hidden input에 값 업데이트
+    document.addEventListener("DOMContentLoaded", () => {
+        fetchUserInfo();
+        setupAmountCalculation();
     });
 
+    function fetchUserInfo() {
+        fetch('/api/users/me', {
+            method: 'GET',
+            headers: getAuthHeaders()
+        })
+            .then(response => {
+                if (!response.ok) throw new Error("사용자 정보 요청 실패");
+                return response.json();
+            })
+            .then(user => {
+                document.getElementById('uid').value = user.displayName;
+            })
+            .catch(error => {
+                console.error("에러:", error);
+            });
+    }
 
-    var IMP = window.IMP;
+    function setupAmountCalculation() {
+        const numPersonInput = document.getElementById('numPerson');
+        const totalAmountSpan = document.getElementById('totalAmount');
+        const amountInput = document.getElementById('amount');
+
+        const updateAmount = () => {
+            const numPerson = parseInt(numPersonInput.value) || 1;
+            const totalAmount = numPerson * pricePerPerson;
+            totalAmountSpan.textContent = totalAmount;
+            amountInput.value = totalAmount;
+        };
+
+        numPersonInput.addEventListener('input', updateAmount);
+        updateAmount(); // 초기 계산
+    }
+
+    function openReservationPopup() {
+        const fishingAt = document.getElementById('fishingAt').value;
+        const numPerson = document.getElementById('numPerson').value;
+        const amount = document.getElementById('amount').value;
+
+        const query = `?fishingAt=${encodeURIComponent(fishingAt)}&numPerson=${numPerson}&amount=${amount}`;
+        window.open('/reservation/confirm' + query, '예약확인', 'width=600,height=400');
+    }
+
+    const IMP = window.IMP;
     IMP.init("imp64386158");
 
     function requestPay() {
+        const amount = document.getElementById('amount').value;
+
         IMP.request_pay({
             pg: "html5_inicis.INIpayTest",
             pay_method: "card",
@@ -92,49 +101,35 @@
             buyer_postcode: "12345"
         }, function (rsp) {
             if (rsp.success) {
-                // JSON 데이터를 서버로 전송
-                const requestData = {
-                    imp_uid: rsp.imp_uid
-                };
-
-                fetch("/api/payment/verify", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "Authorization": "Bearer " + localStorage.getItem("authToken") // 인증 토큰 있을 경우
-                    },
-                    body: JSON.stringify(requestData)
-                })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success === "true") {
-                            alert("결제 성공 및 검증 완료");
-                        } else {
-                            alert("결제 검증 실패: " + data.message);
-                        }
-                    })
-                    .catch(error => {
-                        console.error("서버 통신 오류:", error);
-                        alert("서버 오류가 발생했습니다.");
-                    });
-
+                verifyPayment(rsp.imp_uid);
             } else {
                 alert("결제 실패: " + rsp.error_msg);
             }
         });
     }
-</script>
 
-<button type="button" onClick="openReservationPopup()">예약 확인</button>
-<script>
-    function openReservationPopup() {
-        const fishingAt = document.querySelector('input[name="fishingAt"]').value;
-        const numPerson = document.querySelector('input[name="numPerson"]').value;
-        const amount = document.querySelector('input[name="amount"]').value;
-
-        // 팝업에 전달할 데이터 쿼리스트링으로 생성
-        const query = `?fishingAt=${encodeURIComponent(fishingAt)}&numPerson=${numPerson}&amount=${amount}`;
-        const popup = window.open('/reservation/confirm' + query, '예약확인', 'width=600,height=400');
+    function verifyPayment(impUid) {
+        fetch("/api/payment/verify", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": "Bearer " + localStorage.getItem("authToken")
+            },
+            body: JSON.stringify({ imp_uid: impUid })
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success === "true") {
+                    alert("결제 성공 및 검증 완료");
+                } else {
+                    alert("결제 검증 실패: " + data.message);
+                }
+            })
+            .catch(error => {
+                console.error("서버 통신 오류:", error);
+                alert("서버 오류가 발생했습니다.");
+            });
     }
 </script>
+</body>
 </html>
