@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>공지사항 목록</title>
+</head>
+<body>
+<h1>공지사항 목록</h1>
+<ul>
+    <li th:each="n : ${notices}">
+        <a th:href="@{'/notices/' + ${n.noticeId}}"
+           th:text="${n.title}">공지 제목</a>
+    </li>
+</ul>
+<a href="/notices/new">공지 작성</a>
+</body>
+</html>
