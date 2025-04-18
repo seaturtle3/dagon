@@ -20,9 +20,21 @@ public class PartnerService {
                 .toList();
     }
 
+    public PartnerDTO updatePartner(long id, PartnerDTO partnerDTO) {
+        Partner partner = partnersRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("파트너를 찾을 수 없습니다."));
 
+        // 업데이트할 값 세팅
+        partner.setPname(partnerDTO.getPname());
+        partner.setPAddress(partnerDTO.getPAddress());
+        partner.setCeoName(partnerDTO.getCeoName());
+        partner.setPInfo(partnerDTO.getPInfo());
+        partner.setLicense(partnerDTO.getLicense());
+        partner.setLicenseImg(partnerDTO.getLicenseImg());
 
-
+        Partner updatedPartner = partnersRepository.save(partner);
+        return convertToDTO(updatedPartner);
+    }
 
     private PartnerDTO convertToDTO(Partner partner) {
         PartnerDTO dto = new PartnerDTO();

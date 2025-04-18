@@ -21,11 +21,11 @@ public class ApiPartnerController {
         return partnerService.getAllPartners();
     }
 
-//    @Operation(summary = "파트너 정보 업데이트", description = "파트너 정보 업데이트")
-//    @PutMapping("/update/{id}")
-//    public PartnerDTO updatePartner(@PathVariable int id, @RequestBody PartnerDTO partnerDTO) {
-//        return partnerService.updatePartner(id, partnerDTO);
-//    }
+    @Operation(summary = "파트너 정보 업데이트", description = "파트너 정보 업데이트")
+    @PutMapping("/update/{id}")
+    public PartnerDTO updatePartner(@PathVariable long id, @RequestBody PartnerDTO partnerDTO) {
+        return partnerService.updatePartner(id, partnerDTO);
+    }
 
 
 }
