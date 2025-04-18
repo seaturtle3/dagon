@@ -2,6 +2,7 @@ package kroryi.dagon.controller;
 
 import kroryi.dagon.DTO.ProductDTO;
 import kroryi.dagon.entity.ProductFishSpecies;
+import kroryi.dagon.enums.MainType;
 import kroryi.dagon.enums.ProdRegion;
 import kroryi.dagon.repository.FishSpeciesRepository;
 import kroryi.dagon.service.ReservationService;
@@ -52,13 +53,16 @@ public class ReservationController {
     // 공통 메서드로 파라미터 바인딩
     private void addSearchAttributes(Model model, String type,
                                      String date, Integer people,
-                                     String region, String fishType) {
+                                     String region, String fishType,
+                                     MainType mainType) {
         model.addAttribute("type", type);
         model.addAttribute("date", date);
         model.addAttribute("people", people);
         model.addAttribute("region", region);
         model.addAttribute("fishType", fishType);
-        log.info("Search Params => type: {}, date: {}, people: {}, region: {}, fishType: {}", type, date, people, region, fishType);
+        model.addAttribute("mainType", mainType);
+        log.info("Search Params => type: {}, date: {}, people: {}, region: {}, fishType: {}, mainType: {}",
+                type, date, people, region, fishType, mainType);
     }
 
     @GetMapping("/sea")
@@ -68,13 +72,12 @@ public class ReservationController {
             @RequestParam(required = false) Integer people,
             @RequestParam(required = false) String region,
             @RequestParam(required = false) String fishType,
+            MainType mainType,
             Model model) {
 
         ProdRegion prodRegion = convertToProdRegion(region);
-
-        addSearchAttributes(model, type, date, people, region, fishType);
-
-        List<ProductDTO> products = reservationService.getAllProductsByRegion(prodRegion);
+        addSearchAttributes(model, type, date, people, region, fishType, mainType);
+        List<ProductDTO> products = reservationService.getAllProductsByRegionAndMainType(prodRegion, mainType);
         model.addAttribute("products", products);
 
         return "menu/sea_fishing";
@@ -87,9 +90,10 @@ public class ReservationController {
             @RequestParam(required = false) Integer people,
             @RequestParam(required = false) String region,
             @RequestParam(required = false) String fishType,
+            MainType mainType,
             Model model) {
 
-        addSearchAttributes(model, type, date, people, region, fishType);
+        addSearchAttributes(model, type, date, people, region, fishType, mainType);
         return "menu/freshwater_fishing";
     }
 

@@ -3,6 +3,7 @@ package kroryi.dagon.service;
 import kroryi.dagon.DTO.ProductDTO;
 import kroryi.dagon.entity.Product;
 import kroryi.dagon.entity.ProductFishSpecies;
+import kroryi.dagon.enums.MainType;
 import kroryi.dagon.enums.ProdRegion;
 import kroryi.dagon.repository.FishSpeciesRepository;
 import kroryi.dagon.repository.ProductRepository;
@@ -19,24 +20,21 @@ import java.util.List;
 public class ReservationService {
 
     private final ReservationRepository reservationRepository;
-    private final ProductService productService;
     private final ProductRepository productRepository;
 
     public String getFindAll(){
         return reservationRepository.findAll().toString();
     }
 
-    public List<ProductDTO> getAllProducts() {
-        return productService.getAllProducts();
-    }
-
-    public List<ProductDTO> getAllProductsByRegion(ProdRegion region) {
+    public List<ProductDTO> getAllProductsByRegionAndMainType(ProdRegion region, MainType mainType) {
         if (region == null || region.equals("전체")) {
-            return productRepository.findAll().stream()
+            return productRepository.findByMainType(mainType)
+                    .stream()
                     .map(this::convertToDTO)
                     .toList();
         } else {
-            return productRepository.findByProdRegion(region).stream()
+            return productRepository.findByProdRegionAndMainType(region, mainType)
+                    .stream()
                     .map(this::convertToDTO)
                     .toList();
         }
