@@ -1,10 +1,12 @@
 package kroryi.dagon.controller.board;
 
+import jakarta.validation.Valid;
 import kroryi.dagon.DTO.board.NoticeRequestDTO;
 import kroryi.dagon.service.NoticeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 @Controller
@@ -26,7 +28,11 @@ public class NoticeWebController {
     }
 
     @PostMapping
-    public String save(@ModelAttribute NoticeRequestDTO dto) {
+    public String save(@Valid @ModelAttribute("noticeForm") NoticeRequestDTO dto,
+                       BindingResult result, Model model) {
+        if (result.hasErrors()) {
+            return "board/notice/form"; // 다시 작성 폼으로 이동
+        }
         noticeService.createNotice(dto, "admin001"); // 테스트용
         return "redirect:/notices";
     }

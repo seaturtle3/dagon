@@ -2,6 +2,7 @@ package kroryi.dagon.controller.api.board;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
@@ -21,9 +22,10 @@ import java.time.format.DateTimeFormatter;
 import java.util.UUID;
 
 @RestController
+@Log4j2
 public class ImageUploadController {
 
-    @Value("${app.file.upload-dir}")
+    @Value("${app.board.file.upload-dir}")
     private String baseUploadDir;
 
     @Operation(summary = "이미지 업로드", description = "이미지 업로드 API")
@@ -60,6 +62,7 @@ public class ImageUploadController {
                                                @PathVariable String day,
                                                @PathVariable String filename) throws IOException {
         Path path = Paths.get(baseUploadDir, year, month, day, filename);
+        log.info("pat--->: {}", path);
         Resource resource = new UrlResource(path.toUri());
         if (resource.exists() && resource.isReadable()) {
             return ResponseEntity.ok()
