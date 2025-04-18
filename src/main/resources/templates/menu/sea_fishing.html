@@ -44,9 +44,6 @@
         <thead>
         <tr>
             <th>이름</th>
-            <th>지역</th>
-            <th>주 유형</th>
-            <th>서브 유형</th>
             <th>최대 인원</th>
             <th>최소 인원</th>
             <th>배 무게</th>
@@ -59,9 +56,6 @@
         <tbody>
         <tr th:each="product : ${products}">
             <td th:text="${product.prodName}">배 이름</td>
-            <td th:text="${product.prodRegion}">지역</td>
-            <td th:text="${product.mainType}">바다/민물 유형</td>
-            <td th:text="${product.subType}">서브 유형</td>
             <td th:text="${product.maxPerson}">최대 인원</td>
             <td th:text="${product.minPerson}">최소 인원</td>
             <td th:text="${product.weight}">배 무게</td>

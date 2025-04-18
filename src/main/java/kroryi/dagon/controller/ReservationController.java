@@ -36,6 +36,19 @@ public class ReservationController {
         return fishSpeciesRepository.findAll();
     }
 
+    private ProdRegion convertToProdRegion(String region) {
+        if(region == null || region.equals("전체")) {
+            return null;
+        }
+
+        for(ProdRegion prodRegion : ProdRegion.values()) {
+            if (prodRegion.getKorean().equals(region)) {
+                return prodRegion;
+            }
+        }
+        throw new IllegalArgumentException("Unknown region: " + region);
+    }
+
     // 공통 메서드로 파라미터 바인딩
     private void addSearchAttributes(Model model, String type,
                                      String date, Integer people,
@@ -57,9 +70,11 @@ public class ReservationController {
             @RequestParam(required = false) String fishType,
             Model model) {
 
+        ProdRegion prodRegion = convertToProdRegion(region);
+
         addSearchAttributes(model, type, date, people, region, fishType);
 
-        List<ProductDTO> products = reservationService.getAllProducts();
+        List<ProductDTO> products = reservationService.getAllProductsByRegion(prodRegion);
         model.addAttribute("products", products);
 
         return "menu/sea_fishing";

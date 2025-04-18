@@ -20,6 +20,4 @@ public class ProductDTO {
     private String prodDescription;
     private String prodEvent;
     private String prodNotice;
-
-
 }
