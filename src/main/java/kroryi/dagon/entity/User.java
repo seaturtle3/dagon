@@ -91,5 +91,9 @@ public class User extends BaseTimeEntity {
     // 찜, 좋아요
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<UserAction> userActions = new ArrayList<>();
+
+    // 알림
+    @OneToMany(mappedBy = "receiver", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Notification> notifications;
 }
 

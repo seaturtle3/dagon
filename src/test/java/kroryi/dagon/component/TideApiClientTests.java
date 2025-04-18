@@ -1,6 +1,6 @@
 package kroryi.dagon.component;
 
-import kroryi.dagon.DTO.TideItemDTO;
+import kroryi.dagon.DTO.multtae.TideItemDTO;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

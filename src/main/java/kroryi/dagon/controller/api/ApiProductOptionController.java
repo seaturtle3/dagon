@@ -13,7 +13,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("api/product-option")
-public class ProductOptionApiController {
+public class ApiProductOptionController {
 
     private final ProductOptionService prod_optionService;
 

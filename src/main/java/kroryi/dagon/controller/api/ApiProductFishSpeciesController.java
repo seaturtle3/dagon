@@ -12,7 +12,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("api/product-fish-species")
-public class ProductFishSpeciesApiController {
+public class ApiProductFishSpeciesController {
 
     private final FishSpeciesRepository fishSpeciesRepository;
 

@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>알림 등록</title>
+    <script>
+        const authToken = "YOUR_AUTH_TOKEN_HERE";  // authToken을 여기서 지정하세요
+
+        function createNotification() {
+            const dto = {
+                receiverId: document.getElementById("receiverId").value,
+                senderId: document.getElementById("senderId").value,
+                senderType: document.getElementById("senderType").value,
+                reservationId: document.getElementById("reservationId").value,
+                type: document.getElementById("type").value,
+                title: document.getElementById("title").value,
+                content: document.getElementById("content").value,
+                senderName: document.getElementById("senderName").value,
+                createdAt: new Date().toISOString(),
+                read: document.getElementById("read").checked
+            };
+
+            fetch('http://localhost:9090/api/notifications', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${authToken}`  // 토큰을 Authorization 헤더에 추가
+                },
+                body: JSON.stringify(dto)
+            })
+                .then(response => response.json())
+                .then(data => {
+                    console.log("알림 등록 성공:", data);
+                    alert("알림이 등록되었습니다.");
+                })
+                .catch(error => {
+                    console.error("알림 등록 실패:", error);
+                    alert("알림 등록에 실패했습니다.");
+                });
+        }
+
+        function createSimpleNotification() {
+            const dto = {
+                receiverId: document.getElementById("receiverIdSimple").value,
+                senderId: document.getElementById("senderIdSimple").value,
+                senderType: document.getElementById("senderTypeSimple").value,
+                type: document.getElementById("typeSimple").value,
+                title: document.getElementById("titleSimple").value,
+                content: document.getElementById("contentSimple").value,
+                senderName: document.getElementById("senderNameSimple").value,
+                createdAt: new Date().toISOString(),
+                read: document.getElementById("readSimple").checked
+            };
+
+            fetch('http://localhost:9090/api/notifications/simple', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${authToken}`  // 토큰을 Authorization 헤더에 추가
+                },
+                body: JSON.stringify(dto)
+            })
+                .then(response => response.json())
+                .then(data => {
+                    console.log("공지사항/답변 알림 등록 성공:", data);
+                    alert("공지사항/답변 알림이 등록되었습니다.");
+                })
+                .catch(error => {
+                    console.error("공지사항/답변 알림 등록 실패:", error);
+                    alert("공지사항/답변 알림 등록에 실패했습니다.");
+                });
+        }
+    </script>
+</head>
+<body>
+
+<h1>예약 알림 등록</h1>
+<form id="notificationForm">
+    <label for="receiverId">받는 사람 ID:</label><br>
+    <input type="number" id="receiverId" required><br><br>
+
+    <label for="senderId">보내는 사람 ID:</label><br>
+    <input type="number" id="senderId"  value="1" readonly required><br><br>
+
+    <label for="senderType">보내는 사람 타입 :</label><br>
+    <input type="text" id="senderType" value="SYSTEM" readonly required><br><br>
+
+    <label for="reservationId">예약 ID:</label><br>
+    <input type="number" id="reservationId"><br><br>
+
+    <label for="type">알림 타입:</label><br>
+    <input type="text" id="type" value="RESERVATION" readonly required><br><br>
+
+    <label for="title">제목:</label><br>
+    <input type="text" id="title" required><br><br>
+
+    <label for="content">내용:</label><br>
+    <textarea id="content" required></textarea><br><br>
+
+    <label for="senderName">보내는 사람 이름:</label><br>
+    <input type="text" id="senderName" value="SYSTEM" readonly required><br><br>
+
+    <label for="read">읽었는지 여부:</label>
+    <input type="checkbox" id="read"><br><br>
+
+    <button type="button" onclick="createNotification()">예약 알림 등록</button>
+</form>
+
+<hr>
+
+<h1>공지사항/답변 알림 등록</h1>
+<form id="simpleNotificationForm">
+    <label for="receiverIdSimple">받는 사람 ID:</label><br>
+    <input type="number" id="receiverIdSimple" required><br><br>
+
+    <label for="senderIdSimple">보내는 사람 ID:</label><br>
+    <input type="number" id="senderIdSimple"><br><br>
+
+    <label for="senderTypeSimple">보내는 사람 타입 (ADMIN / PARTNER):</label><br>
+    <input type="text" id="senderTypeSimple" required><br><br>
+
+    <label for="typeSimple">알림 타입(NOTICE / ANSWER)  : </label><br>
+    <input type="text" id="typeSimple"  required><br><br>
+
+    <label for="titleSimple">제목:</label><br>
+    <input type="text" id="titleSimple" required><br><br>
+
+    <label for="contentSimple">내용:</label><br>
+    <textarea id="contentSimple" required></textarea><br><br>
+
+    <label for="senderNameSimple">보내는 사람 이름:</label><br>
+    <input type="text" id="senderNameSimple"  required><br><br>
+
+    <label for="readSimple">읽었는지 여부:</label>
+    <input type="checkbox" id="readSimple"><br><br>
+
+    <button type="button" onclick="createSimpleNotification()">공지사항/답변 알림 등록</button>
+</form>
+
+</body>
+</html>

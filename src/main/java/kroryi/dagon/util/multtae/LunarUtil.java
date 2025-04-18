@@ -1,4 +1,4 @@
-package kroryi.dagon.util;
+package kroryi.dagon.util.multtae;
 
 public class LunarUtil {
     public static String getMulName(double lunAge) {

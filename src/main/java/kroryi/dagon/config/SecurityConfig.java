@@ -35,6 +35,10 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
+                                "/swagger-ui/**",
+                                "/v3/api-docs/**",
+                                "/swagger-resources/**",
+                                "/webjars/**",
                                 "/**",
                                 "/web/users/register",
                                 "/css/**",
@@ -70,4 +74,15 @@ public class SecurityConfig {
     public UserDetailsService userDetailsService() {
         return userDetailsService;
     }
+
+//    @Bean
+//    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+//        http
+//                .csrf(csrf -> csrf.disable()) // csrf 비활성화
+//                .authorizeHttpRequests(auth -> auth
+//                        .anyRequest().permitAll()
+//                );
+//
+//        return http.build();
+//    }
 }

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
@@ -14,27 +14,31 @@
     <div class="form-group">
         <label for="prodRegion">지역</label>
         <select class="form-control" id="prodRegion" name="prodRegion">
-            <option value="NORTH">북쪽</option>
-            <option value="SOUTH">남쪽</option>
-            <!-- 다른 지역 옵션 추가 -->
+            <option value="전체">전체</option>
+            <option th:each="region : ${regions}"
+                    th:value="${region.name()}"
+                    th:text="${region.korean}">
+            </option>
         </select>
     </div>
 
     <div class="form-group">
-        <label for="mainType">주 유형</label>
+        <label for="mainType">바다/민물 유형</label>
         <select class="form-control" id="mainType" name="mainType">
-            <option value="TYPE1">타입 1</option>
-            <option value="TYPE2">타입 2</option>
-            <!-- 다른 타입 옵션 추가 -->
+            <option th:each="type : ${mainType}"
+                    th:value="${type.name()}"
+                    th:text="${type.korean}">
+            </option>
         </select>
     </div>
 
     <div class="form-group">
         <label for="subType">서브 유형</label>
         <select class="form-control" id="subType" name="subType">
-            <option value="TYPEA">서브타입 A</option>
-            <option value="TYPEB">서브타입 B</option>
-            <!-- 다른 서브 유형 옵션 추가 -->
+            <option th:each="sub : ${subType}"
+                    th:value="${sub.name()}"
+                    th:text="${sub.korean}">
+            </option>
         </select>
     </div>
 

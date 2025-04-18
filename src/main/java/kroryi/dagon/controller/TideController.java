@@ -1,12 +1,12 @@
 package kroryi.dagon.controller;
 
-import kroryi.dagon.DTO.TideItemDTO;
+import kroryi.dagon.DTO.multtae.TideItemDTO;
 import kroryi.dagon.component.LunarApiClient;
 import kroryi.dagon.component.TideApiClient;
-import kroryi.dagon.entity.TideStation;
+import kroryi.dagon.entity.multtae.TideStation;
 import kroryi.dagon.enums.ProdRegion;
-import kroryi.dagon.repository.TideStationRepository;
-import kroryi.dagon.util.LunarUtil;
+import kroryi.dagon.repository.multtae.TideStationRepository;
+import kroryi.dagon.util.multtae.LunarUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 
 @Controller
 @RequiredArgsConstructor
-@RequestMapping("/tide")
+@RequestMapping("/multtae")
 @Log4j2
 public class TideController {
 
@@ -33,7 +33,7 @@ public class TideController {
     private final TideApiClient tideApiClient;
     private final LunarApiClient lunarApiClient;
 
-    @GetMapping("/multtae")
+    @GetMapping("/tide")
     public String showMulttaePage(@RequestParam(required = false) String region,
                                   @RequestParam(required = false) String stationCode,
                                   @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
@@ -61,7 +61,7 @@ public class TideController {
         Map<ProdRegion, List<TideStation>> groupedStations = Arrays.stream(ProdRegion.values())
                 .collect(Collectors.toMap(
                         r -> r,
-                        r -> tideStationRepository.findByRegion(r)
+                        r -> tideStationRepository.findByRegionOrderByStationNameAsc(r)
                 ));
 
         model.addAttribute("groupedStations", groupedStations);

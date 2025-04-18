@@ -76,5 +76,30 @@ public class ApiMyPageController {
             return ResponseEntity.badRequest().body(Map.of("error", "비밀번호 변경에 실패했습니다."));
         }
     }
+    // 현재 컨트롤러 클래스 내부에 아래 메서드 추가하세요.
+
+    @GetMapping("/point")
+    public ResponseEntity<?> getUserPoint(@AuthenticationPrincipal CustomUserDetails userDetails) {
+        log.info("포인트 조회 요청 - 사용자: {}", userDetails.getUsername());
+
+        Integer point = myPageService.getUserPoint(userDetails.getUno());  // 서비스에서 포인트 조회
+        return ResponseEntity.ok(Map.of("point", point));
+    }
+
+    // 회원 탈퇴
+    @DeleteMapping("/delete")
+    public ResponseEntity<?> deleteAccount(@AuthenticationPrincipal CustomUserDetails userDetails) {
+        log.info("회원 탈퇴 요청 - 사용자: {}", userDetails.getUsername());
+
+        String result = myPageService.deleteUserAccount(userDetails.getUno());  // 사용자 탈퇴 처리
+        if ("success".equals(result)) {
+            return ResponseEntity.ok(Map.of("message", "회원 탈퇴가 성공적으로 완료되었습니다."));
+        } else {
+            return ResponseEntity.badRequest().body(Map.of("error", "회원 탈퇴에 실패했습니다."));
+        }
+    }
 }
+
+
+
 
