@@ -38,11 +38,11 @@ public class ReservationController {
     }
 
     private ProdRegion convertToProdRegion(String region) {
-        if(region == null || region.equals("전체")) {
+        if (region == null || region.equals("전체")) {
             return null;
         }
 
-        for(ProdRegion prodRegion : ProdRegion.values()) {
+        for (ProdRegion prodRegion : ProdRegion.values()) {
             if (prodRegion.getKorean().equals(region)) {
                 return prodRegion;
             }
@@ -50,53 +50,72 @@ public class ReservationController {
         throw new IllegalArgumentException("Unknown region: " + region);
     }
 
+    private MainType convertToMainType(String mainType) {
+        if (mainType == null || mainType.equals("")) {
+            return null;
+        }
+
+        try {
+            return MainType.valueOf(mainType.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("Unknown MainType: " + mainType);
+        }
+    }
+
     // 공통 메서드로 파라미터 바인딩
-    private void addSearchAttributes(Model model, String type,
-                                     String date, Integer people,
-                                     String region, String fishType,
-                                     MainType mainType) {
-        model.addAttribute("type", type);
+    private void addSearchAttributes(String mainType, String date, Integer people, String region, String fishType,
+    Model model) {
+        model.addAttribute("mainType", mainType);
         model.addAttribute("date", date);
         model.addAttribute("people", people);
         model.addAttribute("region", region);
         model.addAttribute("fishType", fishType);
-        model.addAttribute("mainType", mainType);
-        log.info("Search Params => type: {}, date: {}, people: {}, region: {}, fishType: {}, mainType: {}",
-                type, date, people, region, fishType, mainType);
+
+        log.info("Search Params => mainType: {}, date: {}, people: {}, region: {}, fishType: {}",
+                mainType, date, people, region, fishType);
     }
 
     @GetMapping("/sea")
     public String sea(
-            @RequestParam(required = false) String type,
+            @RequestParam(required = false) String mainType,
             @RequestParam(required = false) String date,
             @RequestParam(required = false) Integer people,
             @RequestParam(required = false) String region,
             @RequestParam(required = false) String fishType,
-            MainType mainType,
             Model model) {
 
-        ProdRegion prodRegion = convertToProdRegion(region);
-        addSearchAttributes(model, type, date, people, region, fishType, mainType);
-        List<ProductDTO> products = reservationService.getAllProductsByRegionAndMainType(prodRegion, mainType);
+        ProdRegion convertedProdRegion = convertToProdRegion(region);
+        MainType convertedMainType = convertToMainType(mainType);
+
+        addSearchAttributes(mainType, date, people, region, fishType, model);
+        List<ProductDTO> products = reservationService.getAllProductsByRegionAndMainType(convertedProdRegion, convertedMainType);
         model.addAttribute("products", products);
+
+        log.info("----------sea getAllProductsByRegionAndMainType {}", products);
 
         return "menu/sea_fishing";
     }
 
     @GetMapping("/freshwater")
     public String freshwater(
-            @RequestParam(required = false) String type,
+            @RequestParam(required = false) String mainType,
             @RequestParam(required = false) String date,
             @RequestParam(required = false) Integer people,
             @RequestParam(required = false) String region,
             @RequestParam(required = false) String fishType,
-            MainType mainType,
             Model model) {
 
-        addSearchAttributes(model, type, date, people, region, fishType, mainType);
+        ProdRegion convertedProdRegion = convertToProdRegion(region);
+        MainType convertedMainType = convertToMainType(mainType);
+
+        addSearchAttributes(mainType, date, people, region, fishType, model);
+        List<ProductDTO> products = reservationService.getAllProductsByRegionAndMainType(convertedProdRegion, convertedMainType);
+        model.addAttribute("products", products);
+
+        log.info("----------freshWater getAllProductsByRegionAndMainType {}", convertedMainType.getKorean());
+
         return "menu/freshwater_fishing";
     }
-
 
 
 }

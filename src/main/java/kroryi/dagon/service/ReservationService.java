@@ -27,7 +27,7 @@ public class ReservationService {
     }
 
     public List<ProductDTO> getAllProductsByRegionAndMainType(ProdRegion region, MainType mainType) {
-        if (region == null || region.equals("전체")) {
+        if (region == null) {
             return productRepository.findByMainType(mainType)
                     .stream()
                     .map(this::convertToDTO)
@@ -43,6 +43,9 @@ public class ReservationService {
     public ProductDTO convertToDTO(Product product) {
         ProductDTO dto = new ProductDTO();
         dto.setProdName(product.getProdName());
+        dto.setProdRegion(product.getProdRegion());
+        dto.setMainType(product.getMainType());
+        dto.setSubType(product.getSubType());
         dto.setMaxPerson(product.getMaxPerson());
         dto.setMinPerson(product.getMinPerson());
         dto.setWeight(product.getWeight());
