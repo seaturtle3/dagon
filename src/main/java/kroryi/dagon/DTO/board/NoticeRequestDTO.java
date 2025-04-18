@@ -1,4 +1,4 @@
-package kroryi.dagon.DTO.notice;
+package kroryi.dagon.DTO.board;
 
 import lombok.Data;
 

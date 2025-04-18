@@ -1,5 +1,6 @@
 package kroryi.dagon.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -24,6 +25,7 @@ public class Admin {
 
     // 공지사항
     @OneToMany(mappedBy = "admin", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     private List<Notice> notices = new ArrayList<>();
 
     // 신고
