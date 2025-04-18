@@ -20,6 +20,13 @@ public class PartnerService {
                 .toList();
     }
 
+    public PartnerDTO getPartnerById(Long id) {
+        Partner partner = partnersRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("파트너를 찾을 수 없습니다."));
+        return convertToDTO(partner);
+    }
+
+
     public PartnerDTO updatePartner(long id, PartnerDTO partnerDTO) {
         Partner partner = partnersRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("파트너를 찾을 수 없습니다."));
@@ -34,6 +41,13 @@ public class PartnerService {
 
         Partner updatedPartner = partnersRepository.save(partner);
         return convertToDTO(updatedPartner);
+    }
+
+    public void deletePartner(long id) {
+        Partner partner = partnersRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("파트너를 찾을 수 없습니다."));
+
+        partnersRepository.delete(partner);
     }
 
     private PartnerDTO convertToDTO(Partner partner) {
