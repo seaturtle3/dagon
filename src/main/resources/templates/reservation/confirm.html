@@ -14,6 +14,7 @@
 <button onclick="goBack()">예약정보 수정</button>
 <button onclick="requestPay()">결제하기</button>
 
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.iamport.kr/js/iamport.payment-1.1.8.js"></script>
 
 <script>
@@ -59,7 +60,7 @@
         })
                 .then(res => res.json())
                 .then(data => {
-                  if (data.success === "true") {
+                  if (data.success === "true" || data.success === true) {
                     alert("결제 완료!");
                     window.close();
                   } else {
