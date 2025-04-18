@@ -9,17 +9,18 @@ import java.math.BigDecimal;
 
 @Data
 public class ProductDTO {
-    private String prodName;
-    private ProdRegion prodRegion;
-    private MainType mainType;
-    private SubType subType;
-    private Integer maxPerson;
-    private Integer minPerson;
-    private BigDecimal weight;
-    private String prodAddress;
-    private String prodDescription;
-    private String prodEvent;
-    private String prodNotice;
+    public Long prodId;
+    public String prodName;
+    public ProdRegion prodRegion;
+    public MainType mainType;
+    public SubType subType;
+    public Integer maxPerson;
+    public Integer minPerson;
+    public BigDecimal weight;
+    public String prodAddress;
+    public String prodDescription;
+    public String prodEvent;
+    public String prodNotice;
 
 
 }

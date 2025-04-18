@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>예약 확인</title>
+</head>
+<body>
+<h2>예약 확인</h2>
+
+<p id="fishingAtText"></p>
+<p id="numPersonText"></p>
+<p id="amountText"></p>
+
+<button onclick="goBack()">예약정보 수정</button>
+<button onclick="requestPay()">결제하기</button>
+
+<script src="https://cdn.iamport.kr/js/iamport.payment-1.1.8.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+
+<script>
+  // URL에서 쿼리스트링 파싱
+  const params = new URLSearchParams(window.location.search);
+  const fishingAt = params.get("fishingAt");
+  const numPerson = params.get("numPerson");
+  const amount = params.get("amount");
+
+  document.getElementById("fishingAtText").textContent = "출조일: " + fishingAt;
+  document.getElementById("numPersonText").textContent = "인원 수: " + numPerson + "명";
+  document.getElementById("amountText").textContent = "결제 금액: " + amount + "원";
+
+  function goBack() {
+    window.opener.focus();
+    window.close();
+  }
+
+  var IMP = window.IMP;
+  IMP.init("imp64386158");
+
+  function requestPay() {
+    IMP.request_pay({
+      pg: "html5_inicis.INIpayTest",
+      pay_method: "card",
+      merchant_uid: "ORD-" + new Date().getTime(),
+      name: "출조 예약",
+      amount: amount,
+      buyer_email: "test@test.com",
+      buyer_name: "홍길동",
+      buyer_tel: "010-0000-0000",
+      buyer_addr: "서울시 강남구",
+      buyer_postcode: "12345"
+    }, function (rsp) {
+      if (rsp.success) {
+        fetch("/api/payment/verify", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer " + localStorage.getItem("authToken")
+          },
+          body: JSON.stringify({ imp_uid: rsp.imp_uid })
+        })
+                .then(res => res.json())
+                .then(data => {
+                  if (data.success === "true") {
+                    alert("결제 완료!");
+                    window.close();
+                  } else {
+                    alert("결제 검증 실패: " + data.message);
+                  }
+                })
+                .catch(err => {
+                  console.error("결제 검증 오류:", err);
+                  alert("서버 오류가 발생했습니다.");
+                });
+      } else {
+        alert("결제 실패: " + rsp.error_msg);
+      }
+    });
+  }
+</script>
+</body>
+</html>

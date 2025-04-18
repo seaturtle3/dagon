@@ -1,10 +1,12 @@
 package kroryi.dagon.controller.api;
 
+import kroryi.dagon.DTO.UsersDTO;
 import kroryi.dagon.entity.User;
 import kroryi.dagon.repository.UserRepository;
 import kroryi.dagon.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,6 +22,7 @@ import java.util.Optional;
 @Log4j2
 public class ApiUserController {
 
+    private final ModelMapper modelMapper;
     private final UserRepository userRepository;
     private final JwtUtil jwtUtil;
 
@@ -52,9 +55,9 @@ public class ApiUserController {
         User user = optionalUser.get();
 
         log.info("user-----> {}", user);
-
+        UsersDTO usersDTO = modelMapper.map(user, UsersDTO.class);
         // 4. 유저 번호와 닉네임을 JSON 형태로 응답
-        return ResponseEntity.ok(new UserInfoResponseDTO(user.getUno(), user.getDisplayName()));
+        return ResponseEntity.ok(usersDTO);
     }
 
     // 응답 DTO
