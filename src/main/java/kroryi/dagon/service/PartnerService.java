@@ -20,6 +20,10 @@ public class PartnerService {
                 .toList();
     }
 
+
+
+
+
     private PartnerDTO convertToDTO(Partner partner) {
         PartnerDTO dto = new PartnerDTO();
         dto.setUno(partner.getUno());
