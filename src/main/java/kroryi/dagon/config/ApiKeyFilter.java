@@ -104,6 +104,11 @@ public class ApiKeyFilter extends OncePerRequestFilter {
 
                         (path.startsWith("/api/multtae/") && method.equals("GET")) ||
 
+                        // 공지사항 admin/notices 추후 삭제
+                        (path.startsWith("/api/notices") && method.equals("GET")) ||
+                        (path.startsWith("/api/admin/notices") && method.equals("POST")) ||
+                        (path.startsWith("/api/admin/notices") && method.equals("DELETE")) ||
+
                         // 알림 생성 로직
                         (path.startsWith("/api/notifications") && method.equals("POST")) ||
                         // PUT - 알림 읽음 처리

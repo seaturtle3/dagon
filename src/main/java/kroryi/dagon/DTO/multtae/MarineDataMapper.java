@@ -56,8 +56,6 @@ public class MarineDataMapper {
                 LocalTime itemTime = LocalTime.parse(timeStr); // LocalTime으로 변환
                 long diff = Math.abs(itemTime.toSecondOfDay() - target.toSecondOfDay());
 
-                log.info("⏱️ 비교 대상: {}, 기준 시간: {}, 차이: {}", itemTime, target, diff);
-
                 if (diff < minDiff) {
                     minDiff = diff;
                     closest = item;
