@@ -1,11 +1,10 @@
 package kroryi.dagon.entity;
 
 import jakarta.persistence.*;
+import kroryi.dagon.enums.LoginType;
 import kroryi.dagon.enums.UserLevel;
 import kroryi.dagon.enums.UserRole;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 
 import java.time.LocalDateTime;
@@ -15,7 +14,10 @@ import java.util.List;
 @Getter
 @Setter
 @Entity
+@Builder
 @Table(name = "users")
+@NoArgsConstructor
+@AllArgsConstructor
 public class User extends BaseTimeEntity {
 
     @Id
@@ -59,6 +61,10 @@ public class User extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private UserRole role = UserRole.USER;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private LoginType loginType = LoginType.LOCAL;
 
 
     public String getDisplayName() {

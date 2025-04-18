@@ -1,5 +1,6 @@
 package kroryi.dagon.controller.api;
 
+import io.swagger.v3.oas.annotations.Operation;
 import kroryi.dagon.DTO.UsersDTO;
 import kroryi.dagon.service.RegisterService;
 import lombok.extern.log4j.Log4j2;
@@ -16,6 +17,7 @@ public class ApiRegisterController {
     private RegisterService registerService;
 
     @PostMapping("/register")
+    @Operation(summary = "회원 등록 ", description = "회원 등록")
     public ResponseEntity<String> registerUser(@ModelAttribute UsersDTO usersDTO) {
         try {
             registerService.register(usersDTO);

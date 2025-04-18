@@ -12,4 +12,4 @@ public interface MyPageRepository extends JpaRepository<User, Long> {
     Optional<User> findByUno(Long uno);
 
 
-}
+    Optional<User> findByUname(String uname);}
