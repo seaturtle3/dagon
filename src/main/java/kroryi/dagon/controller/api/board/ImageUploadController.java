@@ -1,0 +1,72 @@
+package kroryi.dagon.controller.api.board;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.UUID;
+
+@RestController
+public class ImageUploadController {
+
+    @Value("${app.file.upload-dir}")
+    private String baseUploadDir;
+
+    @Operation(summary = "이미지 업로드", description = "이미지 업로드 API")
+    @PostMapping(value = "/uploadImage", consumes = "multipart/form-data")
+    public ResponseEntity<String> uploadImage(@Parameter(description = "업로드할 이미지 파일", required = true)
+                                              @RequestPart("file") MultipartFile file) throws IOException {
+
+        if (file.isEmpty()) {
+            return ResponseEntity.badRequest().body("빈파일");
+        }
+
+        String dateFolder = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd"));
+        Path uploadPath = Paths.get(baseUploadDir).resolve(dateFolder);
+
+        try {
+            Files.createDirectories(uploadPath);
+
+            String ext = file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf(".") + 1);
+            String storedFileName = UUID.randomUUID() + "." + ext;
+            Path targetPath = uploadPath.resolve(storedFileName);
+            Files.copy(file.getInputStream(), targetPath, StandardCopyOption.REPLACE_EXISTING);
+
+            String url = "/images/" + dateFolder + "/" + storedFileName;
+            return ResponseEntity.ok(url);
+        } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("저장 실패");
+        }
+
+    }
+
+    @GetMapping("/images/{year}/{month}/{day}/{filename:.+}")
+    public ResponseEntity<Resource> serveImage(@PathVariable String year,
+                                               @PathVariable String month,
+                                               @PathVariable String day,
+                                               @PathVariable String filename) throws IOException {
+        Path path = Paths.get(baseUploadDir, year, month, day, filename);
+        Resource resource = new UrlResource(path.toUri());
+        if (resource.exists() && resource.isReadable()) {
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.CONTENT_TYPE, Files.probeContentType(path))
+                    .body(resource);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+}
