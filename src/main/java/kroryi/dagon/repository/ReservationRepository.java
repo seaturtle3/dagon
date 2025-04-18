@@ -9,6 +9,7 @@ import java.util.List;
 @Repository
 public interface ReservationRepository extends JpaRepository<Reservation, Long> {
     List<Reservation> findAll();
+        List<Reservation> findByUid(Long uid);
 //    List<Reservation> findByReservationAt(Instant reservationAt);       // 예약 장소
 //    List<Reservation> findByFishType(String fishType);      // 어종 종류
 //    List<Reservation> findByDate(LocalDate date); // 예약 날짜

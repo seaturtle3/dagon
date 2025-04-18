@@ -35,6 +35,13 @@
         <button id="pointCheckBtn" class="bg-sky-500 text-white px-4 py-2 rounded hover:bg-sky-600 w-full mb-4">
             포인트 조회
         </button>
+        <button id="reservationStatusBtn" class="bg-sky-500 text-white px-4 py-2 rounded hover:bg-sky-600 w-full mb-4">
+            예약 현황
+        </button>
+        <button id="notificationPageBtn" class="bg-sky-500 text-white px-4 py-2 rounded hover:bg-sky-600 w-full mb-4">
+            내 알람
+        </button>
+
         <button id="deleteAccountBtn" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 w-full">
             회원 탈퇴
         </button>
@@ -65,10 +72,13 @@
 
                 <!-- 프로필 이미지 -->
                 <div class="flex items-center gap-4">
-                    <img id="profilePreview" class="w-24 h-24 rounded-full object-cover border" alt="프로필 이미지"/>
-                    <input type="file" id="fileInput" name="profileImage" accept="image/*"
+                    <label for="fileInput" class="cursor-pointer">
+                        <img id="profilePreview" class="w-24 h-24 rounded-full object-cover border hover:brightness-75"
+                             src="${profileImagePath}" alt="프로필 이미지" />
+                    </label>
+                    <input type="file" id="fileInput" name="profile_image" accept="image/*"
                            onchange="previewImage(event)"
-                           class="hidden file:border file:mr-4 file:px-3 file:py-1 file:bg-sky-500 file:text-white"/>
+                           class="hidden"/>
                 </div>
 
                 <!-- 정보 입력 -->
@@ -123,6 +133,46 @@
             </form>
         </section>
 
+
+        <!-- 알림 목록 -->
+        <section id="notificationSection" class="hidden">
+            <h2 class="text-2xl font-bold mb-4 text-sky-600">알림</h2>
+            <div id="notificationList" class="space-y-4">
+                <!-- 알림 항목은 JS로 렌더링 -->
+            </div>
+            <div class="mt-6 text-center">
+                <button type="button" onclick="hideNotificationSection()" class="bg-gray-400 text-white px-4 py-2 rounded hover:bg-gray-500">
+                    닫기
+                </button>
+            </div>
+        </section>
+
+        <!-- 예약 현황 -->
+        <section id="reservationStatusSection" class="hidden">
+            <h2 class="text-2xl font-bold mb-4 text-sky-600">예약 현황</h2>
+            <div id="reservationList" class="space-y-4">
+                <!-- 예약 항목은 JS로 렌더링 -->
+            </div>
+            <div class="mt-6 text-center">
+                <button type="button" onclick="hideReservationSection()" class="bg-gray-400 text-white px-4 py-2 rounded hover:bg-gray-500">
+                    닫기
+                </button>
+            </div>
+        </section>
+
+
+        <div id="reservationDetailModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+            <div class="bg-white p-6 rounded-xl shadow-lg w-full max-w-xl">
+                <h3 class="text-xl font-bold mb-4 text-sky-600">예약 상세 정보</h3>
+                <div class="space-y-2" id="reservationDetailContent">
+                    <!-- 상세 내용은 JS로 렌더링 -->
+                </div>
+                <div class="text-right mt-4">
+                    <button onclick="closeReservationDetail()" class="bg-sky-500 text-white px-4 py-2 rounded hover:bg-sky-600">닫기</button>
+                </div>
+            </div>
+        </div>
+
         <!-- 비밀번호 변경 -->
         <section id="passwordChangeSection" class="hidden">
             <h2 class="text-2xl font-bold mb-4 text-sky-600">비밀번호 변경</h2>
@@ -175,6 +225,7 @@
 <script src="/js/badge.js"></script>
 <script src="/js/auth.js"></script>
 <script src="/js/delete.js"></script>
+<script src="/js/notifications.js"></script>
 
 <script>
 
@@ -201,17 +252,20 @@
             console.log("마이페이지 정보:", userData);
 
             // 폼에 사용자 정보 채우기
+
             document.getElementById("uname").value = userData.uname;
             document.getElementById("email").value = userData.email;
             document.getElementById("nickname").value = userData.nickname;
             document.getElementById("phone1").value = userData.phone1;
             document.getElementById("phone2").value = userData.phone2;
             document.getElementById("phone3").value = userData.phone3;
+            document.getElementById('profilePreview').src = userData.profile_image;
 
             console.log("레벨:", userData.level);
             renderUserLevelBadge(userData.level); // 레벨에 맞는 뱃지 출력
 
             // 읽기 전용으로 설정
+
             document.getElementById("uname").readOnly = true;
             document.getElementById("nickname").readOnly = true;
             document.getElementById("email").readOnly = true;
@@ -231,6 +285,13 @@
         }
     }
 
+    function hideAllSections() {
+        document.getElementById('profile').classList.add('hidden');
+        document.getElementById('passwordChangeSection').classList.add('hidden');
+        document.getElementById('pointSection').classList.add('hidden');
+        document.getElementById('deleteAccountSection').classList.add('hidden');
+    }
+
     // 수정 취소
     function cancelEdit() {
         // 입력 필드를 읽기 전용으로 설정
@@ -240,6 +301,9 @@
         document.getElementById("phone1").readOnly = true;
         document.getElementById("phone2").readOnly = true;
         document.getElementById("phone3").readOnly = true;
+        document.querySelectorAll(".editable").forEach(input => input.setAttribute("readonly", true));
+
+        document.getElementById("fileInput").classList.add("hidden");
 
         // "수정" 버튼을 다시 보이게 하고, "완료"와 "취소" 버튼을 숨김
         document.getElementById("editBtn").classList.remove("hidden");
@@ -259,6 +323,10 @@
         document.getElementById("phone1").readOnly = false;
         document.getElementById("phone2").readOnly = false;
         document.getElementById("phone3").readOnly = false;
+        document.querySelectorAll(".editable").forEach(input => input.removeAttribute("readonly"));
+
+        // 프로필 이미지 변경 가능하게
+        document.getElementById("fileInput").classList.remove("hidden");
 
         // 버튼 상태 변경
         document.getElementById("editBtn").classList.add("hidden");  // "수정" 버튼 숨기기
@@ -269,10 +337,8 @@
 
     // 비밀번호 변경 화면으로 전환
     document.getElementById('passwordChangeBtn').addEventListener('click', () => {
-        document.getElementById('profile').classList.add('hidden');
+        hideAllSections(); // 모든 섹션 숨기기
         document.getElementById('passwordChangeSection').classList.remove('hidden');
-        document.getElementById('pointSection').classList.add('hidden');
-        document.getElementById('deleteAccountSection').classList.add('hidden');
     });
 
     // 비밀번호 변경 취소
@@ -323,54 +389,59 @@
 
     // 사용자 정보 수정
     async function submitUserUpdate() {
-        const token = getAuthToken(); // 사용자 정의 함수로 토큰 가져오기
-
-        if (!token) {
-            alert("인증되지 않은 요청입니다. 로그인 후 다시 시도해주세요.");
-            return;
-        }
-
-        const updatedUserInfo = {
-            uname: document.getElementById('uname').value,
-            nickname: document.getElementById('nickname').value,
-            email: document.getElementById('email').value,
-            phone1: document.getElementById('phone1').value,
-            phone2: document.getElementById('phone2').value,
-            phone3: document.getElementById('phone3').value,
-            profileImage: document.getElementById('fileInput').files[0] // 프로필 이미지 파일
-        };
+        const token = getAuthToken();
 
         const formData = new FormData();
-        for (const key in updatedUserInfo) {
-            formData.append(key, updatedUserInfo[key]);
+        formData.append("uname", document.getElementById("uname").value);
+        formData.append("nickname", document.getElementById("nickname").value);
+        formData.append("email", document.getElementById("email").value);
+        formData.append("phone1", document.getElementById("phone1").value);
+        formData.append("phone2", document.getElementById("phone2").value);
+        formData.append("phone3", document.getElementById("phone3").value);
+
+        const fileInput = document.getElementById("fileInput");
+        if (fileInput.files.length > 0) {
+            formData.append("profileImage", fileInput.files[0]);
         }
 
-        const response = await fetch("/api/mypage", {
-            method: "POST",
-            headers: {
-                'Authorization': `Bearer ${token}` // Authorization 헤더에 토큰 추가
-            },
-            body: formData
-        });
+        try {
+            const response = await fetch("/api/mypage", {
+                method: "POST",
+                headers: {
+                    Authorization: `Bearer ${token}`
+                },
+                body: formData
+            });
 
-        if (response.ok) {
-            alert("사용자 정보가 업데이트되었습니다.");
-            cancelEdit();  // 정보 수정 후, 기존 화면으로 돌아감
-        } else {
-            const error = await response.text();
-            alert(`정보 수정 실패: ${error}`);
-            console.error("정보 수정 오류:", error);
+            if (response.ok) {
+                alert("회원 정보가 성공적으로 수정되었습니다.");
+                cancelEdit();  // 수정 종료 및 재로드
+            } else {
+                const errorText = await response.text();
+                alert("수정 실패: " + errorText);
+            }
+        } catch (error) {
+            console.error("업데이트 오류:", error);
+            alert("서버 오류가 발생했습니다.");
         }
     }
 
+
+    document.getElementById("notificationPageBtn").addEventListener("click", function() {
+        hideAllSections();
+        document.getElementById("notificationSection").classList.remove("hidden");
+        loadNotifications(); // 알림 목록 불러오기
+    });
+
+
     // 이미지 미리보기
     function previewImage(event) {
-        const file = event.target.files[0];
         const reader = new FileReader();
-        reader.onload = function(e) {
-            document.getElementById('profilePreview').src = e.target.result;
+        reader.onload = function () {
+            const output = document.getElementById("profilePreview");
+            output.src = reader.result;
         };
-        reader.readAsDataURL(file);
+        reader.readAsDataURL(event.target.files[0]);
     }
 
     // 사용자 레벨에 맞는 뱃지 표시
@@ -413,6 +484,9 @@
     window.onload = function() {
         loadUserInfo(); // 사용자 정보 로드
     };
+
+
+
 
 </script>
 </body>
