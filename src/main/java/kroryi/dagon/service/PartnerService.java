@@ -2,7 +2,7 @@ package kroryi.dagon.service;
 
 import kroryi.dagon.DTO.PartnerDTO;
 import kroryi.dagon.entity.Partner;
-import kroryi.dagon.repository.PartnersRepository;
+import kroryi.dagon.repository.PartnerRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -12,7 +12,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class PartnerService {
 
-    private final PartnersRepository partnersRepository;
+    private final PartnerRepository partnersRepository;
 
     public List<PartnerDTO> getAllPartners() {
         return partnersRepository.findAll().stream()
