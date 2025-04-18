@@ -16,6 +16,7 @@ public class ApiReservationController {
 
     @Operation(summary="예약 전 선택한 옵션 조회", description="예약 전 선택한 옵션 조회")
     @GetMapping("/all")
+
     public String getFindAll(){
         return reservationService.getFindAll();
     }

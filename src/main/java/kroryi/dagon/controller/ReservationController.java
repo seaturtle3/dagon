@@ -25,15 +25,8 @@ public class ReservationController {
     private final FishSpeciesRepository fishSpeciesRepository;
     private final ProductService productService;
 
-    @GetMapping("/{id}")
-    public String showReservationForm(@PathVariable Long id, Model model) {
-        ProductDTO product = productService.getProductById(id);
-        log.info("showReservationForm--> {}",product);
-        model.addAttribute("product", product);
-        model.addAttribute("fishingAt", LocalDateTime.now());
 
-        return "reservation/form"; // 템플릿 파일: reservation/form.html
-    }
+
 
 
 
@@ -89,7 +82,6 @@ public class ReservationController {
         addSearchAttributes(model, type, date, people, region, fishType);
         return "menu/freshwater_fishing";
     }
-
 
 
 }

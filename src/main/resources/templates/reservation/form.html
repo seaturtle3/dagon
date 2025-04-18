@@ -65,7 +65,7 @@
     const amountInput = document.getElementById('amount');
 
     // numPerson 변경 시 금액 계산
-    numPersonInput.addEventListener('input', function() {
+    numPersonInput.addEventListener('input', function () {
         const numPerson = parseInt(numPersonInput.value) || 1;  // 기본값은 1
         const totalAmount = numPerson * pricePerPerson;
 
@@ -125,9 +125,7 @@
     }
 </script>
 
-<!-- 예약 확인 버튼 추가 -->
-<button type="button" onclick="openReservationPopup()">예약 확인</button>
-
+<button type="button" onClick="openReservationPopup()">예약 확인</button>
 <script>
     function openReservationPopup() {
         const fishingAt = document.querySelector('input[name="fishingAt"]').value;
