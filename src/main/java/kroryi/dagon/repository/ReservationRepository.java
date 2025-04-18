@@ -11,6 +11,4 @@ import java.util.List;
 public interface ReservationRepository extends JpaRepository<Reservation, Long> {
     List<Reservation> findAll();
     boolean existsByProductOption_OptId(Long optId);
-
-
 }
