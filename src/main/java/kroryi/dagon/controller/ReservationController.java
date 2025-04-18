@@ -4,26 +4,31 @@ import kroryi.dagon.DTO.ProductDTO;
 import kroryi.dagon.entity.ProductFishSpecies;
 import kroryi.dagon.enums.ProdRegion;
 import kroryi.dagon.repository.FishSpeciesRepository;
+import kroryi.dagon.service.ProductService;
 import kroryi.dagon.service.ReservationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
 @Log4j2
-@RequestMapping("/fishing")
+@RequestMapping("/reservation")
 public class ReservationController {
 
     private final ReservationService reservationService;
     private final FishSpeciesRepository fishSpeciesRepository;
+    private final ProductService productService;
+
+
+
+
+
 
     // 공통 데이터 주입
     @ModelAttribute("regions")
@@ -92,7 +97,6 @@ public class ReservationController {
         addSearchAttributes(model, type, date, people, region, fishType);
         return "menu/freshwater_fishing";
     }
-
 
 
 }

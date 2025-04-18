@@ -85,4 +85,3 @@ public class ApiUserController {
     // 응답 DTO
     record UserIdResponseDTO(String uid) {}
 }
-

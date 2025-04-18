@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>예약 등록</title>
+    <script src="https://cdn.iamport.kr/js/iamport.payment-1.1.8.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+<h1>예약 등록</h1>
+
+<p th:text="'예약할 배: ' + ${product.prodName}"></p>
+
+<form method="post" th:action="@{/api/kakaopay/kakaoPay}">
+    <label for="fishingAt">출조일</label>
+    <input type="datetime-local"
+           id="fishingAt"
+           name="fishingAt"
+           th:value="${#temporals.format(fishingAt, 'yyyy-MM-dd''T''HH:mm')}"/>
+
+    <label for="numPerson">인원 수:</label>
+    <input type="number" id="numPerson" name="numPerson" min="1" max="20" step="1" value="1"/>
+
+    <label for="uid">예약자:</label>
+    <input type="text" id="uid" name="uid" disabled/>
+
+    <label for="totalAmount">총 금액:</label>
+    <span id="totalAmount">1000</span> 원
+    <input type="hidden" id="amount" name="amount" value="1000"/>
+</form>
+
+<button type="button" onclick="openReservationPopup()">예약 확인</button>
+
+<script src="/js/auth.js"></script>
+<script>
+    const pricePerPerson = 1000;
+
+    document.addEventListener("DOMContentLoaded", () => {
+        fetchUserInfo();
+        setupAmountCalculation();
+    });
+
+    function fetchUserInfo() {
+        fetch('/api/users/me', {
+            method: 'GET',
+            headers: getAuthHeaders()
+        })
+            .then(response => {
+                if (!response.ok) throw new Error("사용자 정보 요청 실패");
+                return response.json();
+            })
+            .then(user => {
+                document.getElementById('uid').value = user.displayName;
+            })
+            .catch(error => {
+                console.error("에러:", error);
+            });
+    }
+
+    function setupAmountCalculation() {
+        const numPersonInput = document.getElementById('numPerson');
+        const totalAmountSpan = document.getElementById('totalAmount');
+        const amountInput = document.getElementById('amount');
+
+        const updateAmount = () => {
+            const numPerson = parseInt(numPersonInput.value) || 1;
+            const totalAmount = numPerson * pricePerPerson;
+            totalAmountSpan.textContent = totalAmount;
+            amountInput.value = totalAmount;
+        };
+
+        numPersonInput.addEventListener('input', updateAmount);
+        updateAmount(); // 초기 계산
+    }
+
+    function openReservationPopup() {
+        const fishingAt = document.getElementById('fishingAt').value;
+        const numPerson = document.getElementById('numPerson').value;
+        const amount = document.getElementById('amount').value;
+
+        const query = `?fishingAt=${encodeURIComponent(fishingAt)}&numPerson=${numPerson}&amount=${amount}`;
+        window.open('/reservation/confirm' + query, '예약확인', 'width=600,height=400');
+    }
+
+    const IMP = window.IMP;
+    IMP.init("imp64386158");
+
+    function requestPay() {
+        const amount = document.getElementById('amount').value;
+
+        IMP.request_pay({
+            pg: "html5_inicis.INIpayTest",
+            pay_method: "card",
+            merchant_uid: "ORD-" + new Date().getTime(),
+            name: "테스트 상품",
+            amount: amount,
+            buyer_email: "test@test.com",
+            buyer_name: "홍길동",
+            buyer_tel: "010-0000-0000",
+            buyer_addr: "서울시 강남구",
+            buyer_postcode: "12345"
+        }, function (rsp) {
+            if (rsp.success) {
+                verifyPayment(rsp.imp_uid);
+            } else {
+                alert("결제 실패: " + rsp.error_msg);
+            }
+        });
+    }
+
+    function verifyPayment(impUid) {
+        fetch("/api/payment/verify", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": "Bearer " + localStorage.getItem("authToken")
+            },
+            body: JSON.stringify({ imp_uid: impUid })
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success === "true") {
+                    alert("결제 성공 및 검증 완료");
+                } else {
+                    alert("결제 검증 실패: " + data.message);
+                }
+            })
+            .catch(error => {
+                console.error("서버 통신 오류:", error);
+                alert("서버 오류가 발생했습니다.");
+            });
+    }
+</script>
+</body>
+</html>

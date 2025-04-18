@@ -44,7 +44,6 @@ public class ApiKeyFilter extends OncePerRequestFilter {
         String authHeader = request.getHeader("Authorization");
         log.info("------------------- {}", authHeader);
 
-
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             String jwt = authHeader.substring(7);
 
