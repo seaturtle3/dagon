@@ -10,16 +10,18 @@
 </head>
 <body>
 
-<h1>공지사항 작성</h1>
-<form th:action="${noticeId != null} ? '/notices/' + noticeId + '/edit' : '/notices'"
-      th:object="${noticeForm}"
-      method="post">
-      method="post" th:object="${noticeForm}">
+<h1 th:text="${noticeId != null} ? '공지사항 수정' : '공지사항 작성'">공지사항</h1>
+
+<form th:action="@{${formAction}}" th:object="${noticeForm}" method="post">
     <input type="text" th:field="*{title}" placeholder="제목"><br><br>
+
     <textarea id="summernote" th:field="*{content}"></textarea><br>
-    <input type="text" th:field="*{thumbnailUrl}" placeholder="썸네일 URL"><br>
-    <label><input type="checkbox" th:field="*{isTop}"> 상단 고정</label><br>
-    <button type="submit">등록</button>
+
+    <label>
+        <input type="checkbox" th:field="*{isTop}"> 상단 고정
+    </label><br>
+
+    <button type="submit" th:text="${noticeId != null} ? '수정 완료' : '등록'">등록</button>
 </form>
 
 <div style="margin-top: 20px;">

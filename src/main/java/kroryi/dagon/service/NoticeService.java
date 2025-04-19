@@ -42,7 +42,7 @@ public class NoticeService {
 
         notice.setTitle(dto.getTitle());
         notice.setContent(dto.getContent());
-        notice.setThumbnailUrl(dto.getThumbnailUrl());
+//        notice.setThumbnailUrl(dto.getThumbnailUrl());
         notice.setIsTop(dto.getIsTop() != null && dto.getIsTop());
         notice.setAdmin(admin);
         return noticeRepository.save(notice);
@@ -54,7 +54,7 @@ public class NoticeService {
 
         notice.setTitle(dto.getTitle());
         notice.setContent(dto.getContent());
-        notice.setThumbnailUrl(dto.getThumbnailUrl());
+//        notice.setThumbnailUrl(dto.getThumbnailUrl());
         notice.setIsTop(dto.getIsTop() != null && dto.getIsTop());
         notice.setModifyAt(java.time.LocalDateTime.now());
         return noticeRepository.save(notice);

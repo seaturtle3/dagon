@@ -25,6 +25,7 @@ public class NoticeController {
     @GetMapping("/new")
     public String writeForm(Model model) {
         model.addAttribute("noticeForm", new NoticeRequestDTO());
+        model.addAttribute("formAction", "/notices");
         return "board/notice/form";
     }
 
@@ -50,11 +51,11 @@ public class NoticeController {
         NoticeRequestDTO dto = new NoticeRequestDTO();
         dto.setTitle(notice.getTitle());
         dto.setContent(notice.getContent());
-        dto.setThumbnailUrl(notice.getThumbnailUrl());
         dto.setIsTop(notice.getIsTop());
 
         model.addAttribute("noticeForm", dto);
         model.addAttribute("noticeId", notice.getNoticeId());
+        model.addAttribute("formAction", "/notices/" + notice.getNoticeId() + "/edit");
         return "board/notice/form";
     }
 
