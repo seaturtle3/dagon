@@ -4,15 +4,54 @@
     <meta charset="UTF-8">
     <title>공지사항 목록</title>
 </head>
+<style>
+    .active {
+        font-weight: bold;
+        text-decoration: underline;
+    }
+</style>
 <body>
 <h1>공지사항 목록</h1>
-<ul>
-    <li th:each="n : ${notices}">
-        <a th:href="@{'/notices/' + ${n.noticeId}}"
-           th:text="${n.title}">공지 제목</a>
-    </li>
-</ul>
+<table border="1">
+    <thead>
+    <tr>
+        <th>번호</th>
+        <th>제목</th>
+        <th>작성일</th>
+        <th>조회수</th>
+        <th>TOP</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="n, iterStat : ${notices}">
+        <td th:text="${iterStat.index + 1}">1</td>
+        <td>
+            <a th:href="@{'/notices/' + ${n.noticeId}}"
+               th:text="${n.title}">공지 제목</a>
+        </td>
+        <td th:text="${#temporals.format(n.createdAt, 'yyyy-MM-dd')}">2025-04-18</td>
+        <td th:text="${n.views}">0</td>
+        <td th:text="${n.isTop ? '✔' : ''}"></td>
+    </tr>
+    </tbody>
+</table>
 <a href="/notices/new">공지 작성</a>
 
+<div style="margin-top: 20px;">
+    <div th:if="${totalPages > 1}">
+        <a th:if="${currentPage > 0}"
+           th:href="@{'/notices?page=' + ${currentPage - 1}}">이전</a>
+
+        <span th:each="i : ${#numbers.sequence(0, totalPages - 1)}">
+            <a th:href="@{'/notices?page=' + ${i}}"
+               th:text="${i + 1}"
+               th:classappend="${i == currentPage} ? 'active' : ''"
+               style="margin: 0 5px;"></a>
+        </span>
+
+        <a th:if="${currentPage + 1 < totalPages}"
+           th:href="@{'/notices?page=' + ${currentPage + 1}}">다음</a>
+    </div>
+</div>
 </body>
 </html>

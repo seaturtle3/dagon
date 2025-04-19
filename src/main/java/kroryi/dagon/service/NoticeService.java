@@ -4,9 +4,11 @@ import jakarta.transaction.Transactional;
 import kroryi.dagon.DTO.board.NoticeRequestDTO;
 import kroryi.dagon.entity.Admin;
 import kroryi.dagon.entity.Notice;
-import kroryi.dagon.repository.board.AdminRepository;
+import kroryi.dagon.repository.AdminRepository;
 import kroryi.dagon.repository.board.NoticeRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -27,10 +29,9 @@ public class NoticeService {
     private final NoticeRepository noticeRepository;
     private final AdminRepository adminRepository;
 
-    public List<Notice> findAll(){
-        return noticeRepository.findAllByOrderByIsTopDescCreatedAtDesc();
+    public Page<Notice> findAllPaged(Pageable pageable){
+        return noticeRepository.findAllByOrderByIsTopDescCreatedAtDesc(pageable);
     }
-
     public Notice findById(Long id){
         return noticeRepository.findById(id).orElse(null);
     }

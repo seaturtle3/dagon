@@ -5,6 +5,9 @@ import kroryi.dagon.DTO.board.NoticeRequestDTO;
 import kroryi.dagon.entity.Notice;
 import kroryi.dagon.service.NoticeService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -40,8 +43,15 @@ public class NoticeController {
     }
 
     @GetMapping
-    public String list(Model model) {
-        model.addAttribute("notices", noticeService.findAll());
+    public String list(@RequestParam(defaultValue = "0") int page,
+                       @RequestParam(defaultValue = "10") int size,
+                       Model model) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Notice> pagedNotices = noticeService.findAllPaged(pageable);
+
+        model.addAttribute("notices", pagedNotices.getContent());
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", pagedNotices.getTotalPages());
         return "board/notice/list";
     }
 
