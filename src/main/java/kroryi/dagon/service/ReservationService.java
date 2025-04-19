@@ -40,8 +40,17 @@ public class ReservationService {
         }
     }
 
+    public ProductDTO getProductById(Long prodId) {
+        Product product = productRepository.findById(prodId)
+                .orElseThrow(() -> new IllegalArgumentException("Product not found with id: " + prodId));
+
+        // Product를 ProductDTO로 변환하여 리턴
+        return convertToDTO(product);
+    }
+
     public ProductDTO convertToDTO(Product product) {
         ProductDTO dto = new ProductDTO();
+        dto.setProdId(product.getProdId());
         dto.setProdName(product.getProdName());
         dto.setProdRegion(product.getProdRegion());
         dto.setMainType(product.getMainType());
