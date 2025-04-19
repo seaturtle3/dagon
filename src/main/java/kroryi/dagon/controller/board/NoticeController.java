@@ -52,6 +52,7 @@ public class NoticeController {
         model.addAttribute("notices", pagedNotices.getContent());
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", pagedNotices.getTotalPages());
+        model.addAttribute("size", size); // 추가
         return "board/notice/list";
     }
 
