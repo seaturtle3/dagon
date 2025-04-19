@@ -16,7 +16,7 @@ import org.springframework.context.annotation.Configuration;
                 description = "Spring boot 3 Open API + JWT 설정"
         ),
         servers = {
-                @Server(url = "http://localhost:9090", description = "Local Server")
+                @Server(url = "/", description = "Local Server")
         },
         security = {
                 @SecurityRequirement(name = "BearerAuth")

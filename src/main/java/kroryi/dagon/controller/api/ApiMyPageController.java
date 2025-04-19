@@ -1,5 +1,6 @@
 package kroryi.dagon.controller.api;
 
+import io.swagger.v3.oas.annotations.Operation;
 import kroryi.dagon.DTO.PasswordFormDTO;
 import kroryi.dagon.DTO.UsersDTO;
 import kroryi.dagon.compoent.CustomUserDetails;
@@ -27,6 +28,7 @@ public class ApiMyPageController {
 
     // 내 정보 조회
     @PostMapping("")
+    @Operation(summary = "내 정보", description = "내 정보")
     public ResponseEntity<UsersDTO> getMyPage(@AuthenticationPrincipal CustomUserDetails userDetails) {
 
         log.info("--> {}",userDetails.getUsername());
@@ -36,7 +38,15 @@ public class ApiMyPageController {
     }
 
 
+    @GetMapping("/me")
+    @Operation(summary = "이름으로 사용자 정보 조회", description = "uname으로 사용자 정보 조회")
+    public ResponseEntity<UsersDTO> getUserByUname(@RequestParam String uname) {
+        UsersDTO dto = myPageService.findUserInfoByUname(uname);
+        return ResponseEntity.ok(dto);
+    }
+
     @PostMapping(value = "", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @Operation(summary = "내 정보 수정 ", description = "내 정보 수정")
     public ResponseEntity<?> updateUser(
             @AuthenticationPrincipal CustomUserDetails userDetails,
             @RequestParam String uname,
@@ -66,6 +76,7 @@ public class ApiMyPageController {
 
     // 비밀번호 변경
     @PutMapping("/password")
+    @Operation(summary = "비밀번호 변경 ", description = "비밀번호 변경")
     public ResponseEntity<?> changePassword(@AuthenticationPrincipal CustomUserDetails userDetails,
                                             @RequestBody PasswordFormDTO form) {
         String result = myPageService.changePassword(userDetails.getUno(), form);  // uno로 변경
@@ -79,6 +90,7 @@ public class ApiMyPageController {
     // 현재 컨트롤러 클래스 내부에 아래 메서드 추가하세요.
 
     @GetMapping("/point")
+    @Operation(summary = "포인트 확인", description = "포인트 확인")
     public ResponseEntity<?> getUserPoint(@AuthenticationPrincipal CustomUserDetails userDetails) {
         log.info("포인트 조회 요청 - 사용자: {}", userDetails.getUsername());
 
@@ -88,6 +100,7 @@ public class ApiMyPageController {
 
     // 회원 탈퇴
     @DeleteMapping("/delete")
+    @Operation(summary = "회원 탈퇴 ", description = "회원 탈퇴")
     public ResponseEntity<?> deleteAccount(@AuthenticationPrincipal CustomUserDetails userDetails) {
         log.info("회원 탈퇴 요청 - 사용자: {}", userDetails.getUsername());
 

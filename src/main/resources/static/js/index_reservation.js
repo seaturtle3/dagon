@@ -22,11 +22,11 @@ document.getElementById("search-btn").addEventListener('click', function () {
     const people = document.getElementById("modal-people").value || 1;
     const region = document.getElementById("modal-region").value || "전체";
     const fishType = document.getElementById("modal-fishType").value || "전체";
-    const type = document.querySelector('input[name="waterType"]:checked').value;
+    const mainType = document.querySelector('input[name="waterType"]:checked').value;
 
-    const url = type === "freshwater"
-        ? `/fishing/freshwater?type=${type}&date=${date}&people=${people}&region=${region}&fishType=${fishType}`
-        : `/fishing/sea?type=${type}&date=${date}&people=${people}&region=${region}&fishType=${fishType}`;
+    const url = mainType === "freshwater"
+        ? `/fishing/freshwater?mainType=${mainType}&date=${date}&people=${people}&region=${region}&fishType=${fishType}`
+        : `/fishing/sea?mainType=${mainType}&date=${date}&people=${people}&region=${region}&fishType=${fishType}`;
 
     window.location.href = url;
 

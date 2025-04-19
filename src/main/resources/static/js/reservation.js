@@ -21,14 +21,14 @@ function handleApply() {
     updateSpan(); // 화면에 선택 값 반영
 
     const selectedRadio = document.querySelector('input[name="waterType"]:checked');
-    const type = selectedRadio ? selectedRadio.value : 'sea';
+    const mainType = selectedRadio ? selectedRadio.value : 'sea';
 
     const date = document.getElementById("modal-date").value;
     const people = document.getElementById("modal-people").value;
     const region = document.getElementById("modal-region").value;
     const fishType = document.getElementById("modal-fishType").value;
 
-    const url = `/fishing/${type}?type=${type}&date=${date}&people=${people}&region=${region}&fishType=${fishType}`;
+    const url = `/fishing/${mainType}?mainType=${mainType}&date=${date}&people=${people}&region=${region}&fishType=${fishType}`;
     window.location.href = url;
 }
 
@@ -39,7 +39,7 @@ function updateSpanFromURL() {
     const people = params.get("people") || 1;
     const region = params.get("region") || "전체";
     const fishType = params.get("fishType") || "전체";
-    const type = params.get("type") || "sea";
+    const mainType = params.get("mainType") || "sea";
 
     // 화면 반영
     document.getElementById("selected-date").textContent = date;
@@ -53,7 +53,7 @@ function updateSpanFromURL() {
     document.getElementById("modal-region").value = region;
     document.getElementById("modal-fishType").value = fishType;
 
-    document.getElementById(type).checked = true;
+    document.getElementById(mainType).checked = true;
 }
 
 
@@ -63,9 +63,9 @@ function syncModalValues() {
     const people = document.getElementById("selected-people").textContent.trim();
     const region = document.getElementById("selected-region").textContent.trim();
     const fishType = document.getElementById("selected-fish").textContent.trim();
-    const type = document.querySelector('input[name=waterType]:checked').value;
+    const mainType = document.querySelector('input[name=waterType]:checked').value;
 
-    if (type === "freshwater") {
+    if (mainType === "freshwater") {
         document.getElementById("freshwater").checked = true;
     } else {
         document.getElementById("sea").checked = true;
@@ -76,7 +76,7 @@ function syncModalValues() {
     document.getElementById("modal-region").value = region
     document.getElementById("modal-fishType").value = fishType
 
-    const typeText = type === "freshwater" ? "민물" : "바다";
+    const mainTypeText = mainType === "freshwater" ? "민물" : "바다";
 
-    console.log(`type : ${typeText}, date : ${date}, people : ${people}, region : ${region}, fishType : ${fishType}`);
+    console.log(`type : ${mainTypeText}, date : ${date}, people : ${people}, region : ${region}, fishType : ${fishType}`);
 }

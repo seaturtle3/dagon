@@ -14,7 +14,6 @@
     <div class="form-group">
         <label for="prodRegion">지역</label>
         <select class="form-control" id="prodRegion" name="prodRegion">
-            <option value="전체">전체</option>
             <option th:each="region : ${regions}"
                     th:value="${region.name()}"
                     th:text="${region.korean}">
@@ -25,9 +24,9 @@
     <div class="form-group">
         <label for="mainType">바다/민물 유형</label>
         <select class="form-control" id="mainType" name="mainType">
-            <option th:each="type : ${mainType}"
-                    th:value="${type.name()}"
-                    th:text="${type.korean}">
+            <option th:each="mainType : ${mainType}"
+                    th:value="${mainType.name()}"
+                    th:text="${mainType.korean}">
             </option>
         </select>
     </div>

@@ -1,5 +1,6 @@
 package kroryi.dagon.controller.api;
 
+import io.swagger.v3.oas.annotations.Operation;
 import kroryi.dagon.DTO.AuthResponseDTO;
 import kroryi.dagon.DTO.LoginRequestDTO;
 import kroryi.dagon.entity.ApiKeyEntity;
@@ -29,7 +30,9 @@ public class ApiAuthController {
     private final PasswordEncoder passwordEncoder; // 주입
     private final JwtUtil jwtUtil;
 
+
     @PostMapping("/login")
+    @Operation(summary = "로그인 ", description = "로그인")
     public ResponseEntity<?> login(@RequestBody LoginRequestDTO loginRequestDTO) {
         Optional<User> optionalUser = userRepository.findByUid(loginRequestDTO.getUid());
 
@@ -43,7 +46,7 @@ public class ApiAuthController {
         // 입력된 비밀번호를 암호화하여 데이터베이스 비밀번호와 비교
         if (passwordEncoder.matches(loginRequestDTO.getUpw(), user.getUpw())) {
 
-            String token = jwtUtil.generateToken(loginRequestDTO, user.getUno(), user.getUname());
+            String token = jwtUtil.generateToken(String.valueOf(loginRequestDTO), user.getUno(), user.getUname());
             log.info("token {}", token);
 
             return ResponseEntity.ok(new AuthResponseDTO(token, "로그인 성공"));

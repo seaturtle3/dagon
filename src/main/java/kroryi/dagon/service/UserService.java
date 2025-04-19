@@ -4,6 +4,8 @@ import kroryi.dagon.DTO.UsersDTO;
 import kroryi.dagon.entity.User;
 import kroryi.dagon.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -38,4 +40,6 @@ public class UserService {
         System.out.println("비밀번호가 일치하지 않습니다");
         return null;
     }
+
+
 }
