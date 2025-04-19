@@ -38,7 +38,7 @@
     </div>
 </div>
 
-<!--등록된 상품들---------------------------------------------->
+<!--등록된 상품 리스트---------------------------------------------->
 <div class="container mt-5">
     <table class="table table-striped">
         <thead>
@@ -61,7 +61,11 @@
             <td th:text="${product.prodAddress}">배 주소</td>
             <td th:text="${product.prodDescription}">배 설명</td>
             <td th:text="${product.prodEvent}">이벤트</td>
-            <td><button type="button">예약하기</button></td>
+            <td>
+                <button type="button">
+                    <a th:href="@{/reservation/${id}(id=${prodId})}">예약하기</a>
+                </button>
+            </td>
         </tr>
         </tbody>
     </table>
