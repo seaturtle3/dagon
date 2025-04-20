@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @Entity
 @Getter
 @Setter
-@Table(name = "")
+@Table(name = "event")
 public class Event extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,8 +21,12 @@ public class Event extends BaseTimeEntity {
     @Column(name = "title", nullable = false)
     private String title;
 
+    @Lob
     @Column(name = "content", nullable = false)
     private String content;
+
+    @Column(length = 512)
+    private String thumbnailUrl;
 
     @Column(name = "start_at")
     private LocalDateTime startAt;
@@ -40,6 +44,10 @@ public class Event extends BaseTimeEntity {
     @Column(name = "views", nullable = false)
     @ColumnDefault("0")
     private int views = 0;
+
+    @Column(name = "is_top", nullable = false)
+    @ColumnDefault("false")
+    private Boolean isTop = false;
 
     // 매핑
 
