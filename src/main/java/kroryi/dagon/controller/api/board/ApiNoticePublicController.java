@@ -17,7 +17,7 @@ public class ApiNoticePublicController {
 
     private final NoticeService noticeService;
 
-    @Operation(summary = "공지사항 목록 조회", description = "전체 공지사항을 페이징 방식으로 조회")
+    @Operation(summary = "공지사항 목록 조회", description = "전체 공지사항 페이징 방식으로 조회")
     @GetMapping
     public Page<NoticeResponseDTO> getAllPaged(@RequestParam(defaultValue = "0") int page,
                                                @RequestParam(defaultValue = "10") int size) {
@@ -26,7 +26,7 @@ public class ApiNoticePublicController {
                 .map(NoticeResponseDTO::from);
     }
 
-    @Operation(summary = "공지사항 단건 조회", description = "공지사항 상세 내용을 조회하고 조회수를 1 증가시킵니다.")
+    @Operation(summary = "공지사항 단건 조회", description = "공지사항 상세 내용 조회하고 조회수를 1 증가")
     @GetMapping("/{id}")
     public NoticeResponseDTO getOne(@PathVariable Long id){
         noticeService.increaseViews(id);

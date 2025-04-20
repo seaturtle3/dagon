@@ -7,7 +7,10 @@
 <body>
 
 <h1 th:text="${notice.title}">제목</h1>
-<p th:text="${notice.createdAt}">작성일</p>
+<p><strong>작성일:</strong>
+    <span th:text="${#temporals.format(notice.createdAt, 'yyyy-MM-dd')}">2025-04-19</span>
+</p>
+
 <hr>
 
 <!-- HTML로 저장된 content를 그대로 렌더링 -->

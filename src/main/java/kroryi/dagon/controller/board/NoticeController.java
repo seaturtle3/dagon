@@ -19,45 +19,51 @@ import org.springframework.web.bind.annotation.*;
 public class NoticeController {
     private final NoticeService noticeService;
 
-    @GetMapping("/{id}")
-    public String getNoticeRead(@PathVariable Long id, Model model) {
-        model.addAttribute("notice", noticeService.findById(id));
-        return "board/notice/read";
-    }
-
-    @GetMapping("/new")
-    public String writeForm(Model model) {
-        model.addAttribute("noticeForm", new NoticeRequestDTO());
-        model.addAttribute("formAction", "/notices");
-        return "board/notice/form";
-    }
-
-    @PostMapping
-    public String save(@Valid @ModelAttribute("noticeForm") NoticeRequestDTO dto,
-                       BindingResult result, Model model) {
-        if (result.hasErrors()) {
-            return "board/notice/form"; // 다시 작성 폼으로 이동
-        }
-        noticeService.createNotice(dto, "admin001"); // 테스트용
-        return "redirect:/notices";
-    }
-
+    // [R] 목록 조회
     @GetMapping
-    public String list(@RequestParam(defaultValue = "0") int page,
-                       @RequestParam(defaultValue = "10") int size,
-                       Model model) {
+    public String readAll(@RequestParam(defaultValue = "0") int page,
+                          @RequestParam(defaultValue = "10") int size,
+                          Model model) {
         Pageable pageable = PageRequest.of(page, size);
         Page<Notice> pagedNotices = noticeService.findAllPaged(pageable);
 
         model.addAttribute("notices", pagedNotices.getContent());
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", pagedNotices.getTotalPages());
-        model.addAttribute("size", size); // 추가
+        model.addAttribute("size", size);
         return "board/notice/list";
     }
 
+    // [R] 단건 조회
+    @GetMapping("/{id}")
+    public String readOne(@PathVariable Long id, Model model) {
+        noticeService.increaseViews(id);
+        model.addAttribute("notice", noticeService.findById(id));
+        return "board/notice/read";
+    }
+
+    // [C] 등록 폼
+    @GetMapping("/new")
+    public String createForm(Model model) {
+        model.addAttribute("noticeForm", new NoticeRequestDTO());
+        model.addAttribute("formAction", "/notices");
+        return "board/notice/form";
+    }
+
+    // [C] 등록 처리
+    @PostMapping
+    public String create(@Valid @ModelAttribute("noticeForm") NoticeRequestDTO dto,
+                         BindingResult result, Model model) {
+        if (result.hasErrors()) {
+            return "board/notice/form";
+        }
+        noticeService.createNotice(dto, "admin001");
+        return "redirect:/notices";
+    }
+
+    // [U] 수정 폼
     @GetMapping("/{id}/edit")
-    public String editForm(@PathVariable Long id, Model model) {
+    public String updateForm(@PathVariable Long id, Model model) {
         Notice notice = noticeService.findById(id);
         NoticeRequestDTO dto = new NoticeRequestDTO();
         dto.setTitle(notice.getTitle());
@@ -65,22 +71,23 @@ public class NoticeController {
         dto.setIsTop(notice.getIsTop());
 
         model.addAttribute("noticeForm", dto);
-        model.addAttribute("noticeId", notice.getNoticeId());
-        model.addAttribute("formAction", "/notices/" + notice.getNoticeId() + "/edit");
+        model.addAttribute("noticeId", id);
+        model.addAttribute("formAction", "/notices/" + id + "/edit");
         return "board/notice/form";
     }
 
+    // [U] 수정 처리
     @PostMapping("/{id}/edit")
-    public String update(@PathVariable Long id,
-                         @ModelAttribute NoticeRequestDTO dto) {
+    public String update(@PathVariable Long id, @ModelAttribute NoticeRequestDTO dto) {
         noticeService.updateNotice(id, dto);
         return "redirect:/notices/" + id;
     }
 
-
+    // [D] 삭제 처리
     @PostMapping("/{id}/delete")
     public String delete(@PathVariable Long id) {
         noticeService.deleteNotice(id);
         return "redirect:/notices";
     }
+
 }

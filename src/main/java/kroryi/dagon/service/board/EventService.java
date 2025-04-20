@@ -26,14 +26,14 @@ public class EventService {
     private final ImageFileUtil imageFileUtil;
 
     public Page<Event> findAllPaged(Pageable pageable) {
-        return eventRepository.findAll(pageable);
+        return eventRepository.findAllByOrderByIsTopDescCreatedAtDesc(pageable);
     }
 
     public Event findById(long id) {
         return eventRepository.findById(id).orElse(null);
     }
 
-    public List<Event> getAllEvents() {
+    public List<Event> getAllEvent() {
         return eventRepository.findAll();
     }
 
