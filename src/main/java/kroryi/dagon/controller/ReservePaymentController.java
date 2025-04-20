@@ -1,9 +1,7 @@
 package kroryi.dagon.controller;
 
 import kroryi.dagon.DTO.ProductDTO;
-import kroryi.dagon.entity.Product;
 import kroryi.dagon.service.ProductService;
-import kroryi.dagon.service.ReservationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Controller;

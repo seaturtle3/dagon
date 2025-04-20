@@ -1,11 +1,12 @@
 package kroryi.dagon.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
 import kroryi.dagon.DTO.ProductDTO;
 import kroryi.dagon.entity.ProductFishSpecies;
 import kroryi.dagon.enums.MainType;
 import kroryi.dagon.enums.ProdRegion;
 import kroryi.dagon.repository.FishSpeciesRepository;
-import kroryi.dagon.service.ReservationService;
+import kroryi.dagon.service.SeaFreshwaterFishingService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Controller;
@@ -21,9 +22,9 @@ import java.util.List;
 @RequiredArgsConstructor
 @Log4j2
 @RequestMapping("/fishing")
-public class ReservationController {
+public class SeaFreshwaterFishingController {
 
-    private final ReservationService reservationService;
+    private final SeaFreshwaterFishingService seaFreshwaterFishingService;
     private final FishSpeciesRepository fishSpeciesRepository;
 
     // 공통 데이터 주입
@@ -82,13 +83,22 @@ public class ReservationController {
             @RequestParam(required = false) Integer people,
             @RequestParam(required = false) String region,
             @RequestParam(required = false) String fishType,
+            HttpServletRequest request,
             Model model) {
 
         ProdRegion convertedProdRegion = convertToProdRegion(region);
         MainType convertedMainType = convertToMainType(mainType);
+        if (convertedMainType == null) {
+            // URL이 /fishing/sea라면 SEA, /fishing/freshwater라면 FRESHWATER로 강제 지정
+            if (request.getRequestURI().contains("/sea")) {
+                convertedMainType = MainType.SEA;
+            } else if (request.getRequestURI().contains("/freshwater")) {
+                convertedMainType = MainType.FRESHWATER;
+            }
+        }
 
         addSearchAttributes(mainType, date, people, region, fishType, model);
-        List<ProductDTO> products = reservationService.getAllProductsByRegionAndMainType(convertedProdRegion, convertedMainType);
+        List<ProductDTO> products = seaFreshwaterFishingService.getAllProductsByRegionAndMainType(convertedProdRegion, convertedMainType);
         model.addAttribute("products", products);
 
         log.info("----------sea getAllProductsByRegionAndMainType {}", products);
@@ -103,13 +113,21 @@ public class ReservationController {
             @RequestParam(required = false) Integer people,
             @RequestParam(required = false) String region,
             @RequestParam(required = false) String fishType,
+            HttpServletRequest request,
             Model model) {
 
         ProdRegion convertedProdRegion = convertToProdRegion(region);
         MainType convertedMainType = convertToMainType(mainType);
+        if (convertedMainType == null) {
+            if (request.getRequestURI().contains("/sea")) {
+                convertedMainType = MainType.SEA;
+            } else if (request.getRequestURI().contains("/freshwater")) {
+                convertedMainType = MainType.FRESHWATER;
+            }
+        }
 
         addSearchAttributes(mainType, date, people, region, fishType, model);
-        List<ProductDTO> products = reservationService.getAllProductsByRegionAndMainType(convertedProdRegion, convertedMainType);
+        List<ProductDTO> products = seaFreshwaterFishingService.getAllProductsByRegionAndMainType(convertedProdRegion, convertedMainType);
         model.addAttribute("products", products);
 
         log.info("----------freshWater getAllProductsByRegionAndMainType {}", convertedMainType.getKorean());
