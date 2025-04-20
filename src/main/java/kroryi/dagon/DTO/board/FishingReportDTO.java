@@ -4,10 +4,8 @@ import kroryi.dagon.entity.FishingReport;
 import kroryi.dagon.entity.FishingReportComment;
 import kroryi.dagon.entity.Product;
 import kroryi.dagon.entity.User;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.List;
