@@ -1,8 +1,10 @@
 package kroryi.dagon.DTO.board;
 
+import kroryi.dagon.entity.Event;
 import lombok.Builder;
 import lombok.Data;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Data
@@ -12,12 +14,30 @@ public class EventResponseDTO {
     private String title;
     private String content;
     private String thumbnailUrl;
-    private LocalDateTime startAt;
-    private LocalDateTime endAt;
+    private LocalDate startAt;
+    private LocalDate endAt;
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
     private String eventStatus;
     private Integer views;
     private Boolean isTop;
     private String adminName;
+
+    public static EventResponseDTO from(Event e) {
+        return EventResponseDTO.builder()
+                .eventId(e.getEventId())
+                .title(e.getTitle())
+                .content(e.getContent())
+                .thumbnailUrl(e.getThumbnailUrl())
+                .startAt(e.getStartAt())
+                .endAt(e.getEndAt())
+                .createdAt(e.getCreatedAt())
+                .modifiedAt(e.getModifyAt())
+                .eventStatus(e.getEventStatus().getKorean())
+                .views(e.getViews())
+                .isTop(e.getIsTop())
+                .adminName(e.getAdmin().getAname())
+                .build();
+    }
+
 }

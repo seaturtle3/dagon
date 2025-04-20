@@ -1,19 +1,45 @@
 package kroryi.dagon.controller.api.board;
 
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
+import kroryi.dagon.DTO.board.EventRequestDTO;
+import kroryi.dagon.DTO.board.EventResponseDTO;
+import kroryi.dagon.entity.Event;
+import kroryi.dagon.service.board.EventService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/admin/event")
 public class ApiEventAdminController {
 
-//    @PostMapping
-//    public ResponseEntity<?> create(@Valid @RequestBody )
+    private final EventService eventService;
 
+    @Operation(summary = "이벤트 등록", description = "관리자가 새로운 이벤트 등록")
+    @PostMapping
+    public ResponseEntity<?> create(@Valid @RequestBody EventRequestDTO dto, BindingResult result) {
+        if (result.hasErrors()) {
+            return ResponseEntity.badRequest().body(result.getAllErrors());
+        }
+
+        String adminId = "admin001"; // 테스트용
+        Event event = eventService.createEvent(dto, adminId);
+        return ResponseEntity.ok(EventResponseDTO.from(event));
+    }
+
+    @Operation(summary = "이벤트 수정", description = "기존 이벤트 정보수정")
+    @PostMapping("/{id}")
+    public EventResponseDTO update(@PathVariable Long id, @RequestBody EventRequestDTO dto) {
+        Event event = eventService.updateEvent(id, dto);
+        return EventResponseDTO.from(event);
+    }
+
+    @Operation(summary = "이벤트 삭제", description = "해당 이벤트 삭제")
+    @DeleteMapping("/{id}")
+    public void delete(@PathVariable Long id) {
+        eventService.deleteEvent(id);
+    }
 }

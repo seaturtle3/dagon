@@ -56,6 +56,8 @@ public class ImageUploadController {
 
     }
 
+    @Operation(summary = "이미지 조회", description = "저장된 이미지 파일을 URL 경로를 통해 조회\n" +
+            "예: /images/2025/04/21/uuid-filename.png 형식의 경로로 접근")
     @GetMapping("/images/{year}/{month}/{day}/{filename:.+}")
     public ResponseEntity<Resource> serveImage(@PathVariable String year,
                                                @PathVariable String month,

@@ -1,4 +1,4 @@
-package kroryi.dagon.service;
+package kroryi.dagon.service.board;
 
 import jakarta.transaction.Transactional;
 import kroryi.dagon.DTO.board.NoticeRequestDTO;

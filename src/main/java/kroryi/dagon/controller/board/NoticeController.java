@@ -3,7 +3,7 @@ package kroryi.dagon.controller.board;
 import jakarta.validation.Valid;
 import kroryi.dagon.DTO.board.NoticeRequestDTO;
 import kroryi.dagon.entity.Notice;
-import kroryi.dagon.service.NoticeService;
+import kroryi.dagon.service.board.NoticeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;

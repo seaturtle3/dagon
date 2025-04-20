@@ -1,10 +1,11 @@
 package kroryi.dagon.controller.api.board;
 
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import kroryi.dagon.DTO.board.NoticeRequestDTO;
 import kroryi.dagon.DTO.board.NoticeResponseDTO;
 import kroryi.dagon.entity.Notice;
-import kroryi.dagon.service.NoticeService;
+import kroryi.dagon.service.board.NoticeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -17,6 +18,7 @@ public class ApiNoticeAdminController {
 
     private final NoticeService noticeService;
 
+    @Operation(summary = "공지사항 등록", description = "관리자가 새 공지사항 등록")
     @PostMapping
     public ResponseEntity<?> create(@Valid @RequestBody NoticeRequestDTO dto, BindingResult result) {
         if (result.hasErrors()) {
@@ -28,6 +30,8 @@ public class ApiNoticeAdminController {
 
         return ResponseEntity.ok(NoticeResponseDTO.from(notice));
     }
+
+    @Operation(summary = "공지사항 수정", description = "기존 공지사항 내용 수정")
     @PostMapping("/{id}")
     public NoticeResponseDTO update(@PathVariable Long id, @RequestBody NoticeRequestDTO dto){
         Notice notice = noticeService.updateNotice(id, dto);
@@ -35,6 +39,7 @@ public class ApiNoticeAdminController {
         return NoticeResponseDTO.from(notice);
     }
 
+    @Operation(summary = "공지사항 삭제", description = "해당 공지사항을 삭제")
     @DeleteMapping("/{id}")
     public void delete(@PathVariable Long id){
         noticeService.deleteNotice(id);
