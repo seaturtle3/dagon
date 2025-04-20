@@ -26,35 +26,13 @@ public class ApiNoticeAdminController {
         String adminId = "admin001"; // 테스트용
         Notice notice = noticeService.createNotice(dto, adminId);
 
-        return ResponseEntity.ok(
-                NoticeResponseDTO.builder()
-                        .noticeId(notice.getNoticeId())
-                        .title(notice.getTitle())
-                        .content(notice.getContent())
-                        .thumbnailUrl(notice.getThumbnailUrl())
-                        .createdAt(notice.getCreatedAt())
-                        .modifyAt(notice.getModifyAt())
-                        .views(notice.getViews())
-                        .isTop(notice.getIsTop())
-                        .adminName(notice.getAdmin().getAname())
-                        .build()
-        );
+        return ResponseEntity.ok(NoticeResponseDTO.from(notice));
     }
     @PostMapping("/{id}")
     public NoticeResponseDTO update(@PathVariable Long id, @RequestBody NoticeRequestDTO dto){
         Notice notice = noticeService.updateNotice(id, dto);
 
-        return NoticeResponseDTO.builder()
-                .noticeId(notice.getNoticeId())
-                .title(notice.getTitle())
-                .content(notice.getContent())
-                .thumbnailUrl(notice.getThumbnailUrl())
-                .createdAt(notice.getCreatedAt())
-                .modifyAt(notice.getModifyAt())
-                .views(notice.getViews())
-                .isTop(notice.getIsTop())
-                .adminName(notice.getAdmin().getAname())
-                .build();
+        return NoticeResponseDTO.from(notice);
     }
 
     @DeleteMapping("/{id}")

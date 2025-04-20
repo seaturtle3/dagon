@@ -1,5 +1,6 @@
 package kroryi.dagon.DTO.board;
 
+import kroryi.dagon.entity.Notice;
 import lombok.Builder;
 import lombok.Data;
 
@@ -17,4 +18,18 @@ public class NoticeResponseDTO {
     private Integer views;
     private Boolean isTop;
     private String adminName;
+
+    public static NoticeResponseDTO from(Notice notice) {
+        return NoticeResponseDTO.builder()
+                .noticeId(notice.getNoticeId())
+                .title(notice.getTitle())
+                .content(notice.getContent())
+                .thumbnailUrl(notice.getThumbnailUrl())
+                .createdAt(notice.getCreatedAt())
+                .modifyAt(notice.getModifyAt())
+                .views(notice.getViews())
+                .isTop(notice.getIsTop())
+                .adminName(notice.getAdmin().getAname())
+                .build();
+    }
 }
