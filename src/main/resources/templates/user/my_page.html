@@ -27,8 +27,14 @@
 
 <div class="max-w-6xl mx-auto grid grid-cols-[auto,1fr] gap-0 min-h-screen">
     <!-- 사이드바 -->
-    <div class="bg-white p-6 w-1/4">
+    <div class="bg-white p-5 w-1/4">
         <h2 class="text-xl font-semibold text-sky-600 mb-6">마이페이지</h2>
+
+        <button id="profileBtn" onclick="showProfileSection()"
+                class="bg-sky-500 text-white px-4 py-2 rounded hover:bg-sky-600 w-full mb-4">
+            회원 정보
+        </button>
+
         <button id="passwordChangeBtn" class="bg-sky-500 text-white px-4 py-2 rounded hover:bg-sky-600 w-full mb-4">
             비밀번호 변경
         </button>
@@ -48,7 +54,7 @@
     </div>
 
     <!-- 본문 섹션들 -->
-    <div class="bg-white rounded-r-xl shadow p-6 space-y-8 w-3/4">
+    <div class="bg-white rounded-r-xl shadow p-6 space-y-8 w-full max-w-screen-lg">
         <!-- 포인트 조회 -->
         <section id="pointSection" class="hidden">
             <h2 class="text-2xl font-bold mb-4 text-sky-600">포인트 조회</h2>
@@ -285,11 +291,17 @@
         }
     }
 
+    function showProfileSection() {
+        hideAllSections();  // 모든 섹션 숨기기
+        document.getElementById('profile').classList.remove('hidden');  // 프로필 보이기
+    }
+
     function hideAllSections() {
         document.getElementById('profile').classList.add('hidden');
         document.getElementById('passwordChangeSection').classList.add('hidden');
         document.getElementById('pointSection').classList.add('hidden');
         document.getElementById('deleteAccountSection').classList.add('hidden');
+        document.getElementById('notificationSection').classList.add('hidden');
     }
 
     // 수정 취소
@@ -337,10 +349,9 @@
 
     // 비밀번호 변경 화면으로 전환
     document.getElementById('passwordChangeBtn').addEventListener('click', () => {
-        hideAllSections(); // 모든 섹션 숨기기
+        hideAllSections();
         document.getElementById('passwordChangeSection').classList.remove('hidden');
     });
-
     // 비밀번호 변경 취소
     function cancelPasswordChange() {
         document.getElementById('passwordChangeSection').classList.add('hidden');
