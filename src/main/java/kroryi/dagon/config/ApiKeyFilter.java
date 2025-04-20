@@ -112,6 +112,11 @@ public class ApiKeyFilter extends OncePerRequestFilter {
                         (path.startsWith("/api/admin/event") && method.equals("POST")) ||
                         (path.startsWith("/api/admin/event") && method.equals("DELETE")) ||
 
+                        // 이벤트 /admin/faq 추후 삭제
+                        (path.startsWith("/api/faq") && method.equals("GET")) ||
+                        (path.startsWith("/api/admin/faq") && method.equals("POST")) ||
+                        (path.startsWith("/api/admin/faq") && method.equals("DELETE")) ||
+
                         // 알림 생성 로직
                         (path.startsWith("/api/notifications") && method.equals("POST")) ||
                         // PUT - 알림 읽음 처리

@@ -17,7 +17,7 @@ public class EventResponseDTO {
     private LocalDate startAt;
     private LocalDate endAt;
     private LocalDateTime createdAt;
-    private LocalDateTime modifiedAt;
+    private LocalDateTime modifyAt;
     private String eventStatus;
     private Integer views;
     private Boolean isTop;
@@ -32,7 +32,7 @@ public class EventResponseDTO {
                 .startAt(e.getStartAt())
                 .endAt(e.getEndAt())
                 .createdAt(e.getCreatedAt())
-                .modifiedAt(e.getModifyAt())
+                .modifyAt(e.getModifyAt())
                 .eventStatus(e.getEventStatus().getKorean())
                 .views(e.getViews())
                 .isTop(e.getIsTop())
