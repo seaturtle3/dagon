@@ -128,6 +128,14 @@ public class ApiKeyFilter extends OncePerRequestFilter {
 
                         (path.matches("/api/admin") && method.equals("GET")) ||
 
+                        // 조황정보
+                        (path.matches("/api/fishing-report/create") && method.equals("POST")) ||
+                        (path.matches("/api/fishing-report/get-all") && method.equals("GET")) ||
+                        (path.matches("/api/fishing-report/get/.+") && method.equals("GET")) ||
+                        (path.matches("/api/fishing-report/update/.+") && method.equals("PUT")) ||
+                        (path.matches("/api/fishing-report/delete/.+") && method.equals("DELETE")) ||
+
+
 
 
                         (path.startsWith("/api/users/me") && method.equals("GET")) ||

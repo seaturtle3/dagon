@@ -5,6 +5,7 @@ import kroryi.dagon.entity.FishingReport;
 import kroryi.dagon.repository.board.FishingReportRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
 import java.util.Optional;
@@ -40,7 +41,7 @@ public class FishingReportService {
                 .collect(Collectors.toList());
     }
 
-    public FishingReport getFishingReport(Long frId) {
+    public FishingReport getFishingReport(@PathVariable Long frId) {
         return fishingReportRepository.findById(frId)
                 .orElseThrow(() -> new RuntimeException("조황정보를 찾을 수 없습니다."));
     }
