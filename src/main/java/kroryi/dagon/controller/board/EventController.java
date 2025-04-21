@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.*;
 public class EventController {
     private final EventService eventService;
 
-    // [R] 목록 조회
+    // 목록 조회
     @GetMapping
     public String readAll(@RequestParam(defaultValue = "0") int page,
                           @RequestParam(defaultValue = "10") int size,
@@ -34,7 +34,7 @@ public class EventController {
         return "board/event/list";
     }
 
-    // [R] 단건 조회
+    // 단건 조회
     @GetMapping("/{id}")
     public String readOne(@PathVariable Long id, Model model) {
         eventService.increaseViews(id);
@@ -43,7 +43,7 @@ public class EventController {
         return "board/event/read";
     }
 
-    // [C] 등록 폼
+    // 등록 폼
     @GetMapping("/new")
     public String createForm(Model model) {
         model.addAttribute("eventForm", new EventRequestDTO());
@@ -51,7 +51,7 @@ public class EventController {
         return "board/event/form";
     }
 
-    // [C] 등록 처리
+    // 등록 처리
     @PostMapping
     public String create(@Valid @ModelAttribute("eventForm") EventRequestDTO dto,
                          BindingResult result, Model model) {
@@ -63,7 +63,7 @@ public class EventController {
         return "redirect:/event";
     }
 
-    // [U] 수정 폼
+    // 수정 폼
     @GetMapping("/{id}/edit")
     public String updateForm(@PathVariable Long id, Model model) {
         Event event = eventService.findById(id);
@@ -81,7 +81,7 @@ public class EventController {
         return "board/event/form";
     }
 
-    // [U] 수정 처리
+    // 수정 처리
     @PostMapping("/{id}/edit")
     public String update(@PathVariable Long id,
                          @ModelAttribute EventRequestDTO dto) {
@@ -89,7 +89,7 @@ public class EventController {
         return "redirect:/event/" + id;
     }
 
-    // [D] 삭제 처리
+    // 삭제 처리
     @PostMapping("/{id}/delete")
     public String delete(@PathVariable Long id) {
         eventService.deleteEvent(id);
