@@ -4,7 +4,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import kroryi.dagon.DTO.PasswordFormDTO;
 import kroryi.dagon.DTO.ReservationDTO;
 import kroryi.dagon.DTO.UsersDTO;
-import kroryi.dagon.compoent.CustomUserDetails;
+
+import kroryi.dagon.component.CustomUserDetails;
 import kroryi.dagon.entity.User;
 import kroryi.dagon.service.FileStorageService;
 import kroryi.dagon.service.MyPageService;
@@ -16,7 +17,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.List;
+
 import java.util.Map;
 
 @RestController

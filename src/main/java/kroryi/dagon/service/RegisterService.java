@@ -46,10 +46,10 @@ public class RegisterService {
         user.setRole(UserRole.valueOf("USER"));
 
         log.info("저장할 사용자: {}", user);
+        log.info("비밀번호 암호화 완료: {}", user.getUpw());
 
         userRepository.save(user);
         log.info("회원가입 완료: {}", user);
         log.info("DB 저장 완료: {}", user);
     }
-
 }

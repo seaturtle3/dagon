@@ -8,7 +8,7 @@ import kroryi.dagon.entity.Admin;
 import kroryi.dagon.entity.User;
 import kroryi.dagon.enums.UserLevel;
 import kroryi.dagon.enums.UserRole;
-import kroryi.dagon.repository.AdminRepository;
+import kroryi.dagon.repository.ApiAdminRepository;
 import kroryi.dagon.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -20,12 +20,12 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class AdminService {
 
-    private final AdminRepository adminRepository;
+    private final ApiAdminRepository apiAdminRepository;
     private final PasswordEncoder passwordEncoder; // 비밀번호 암호화
     private final UserRepository userRepository;
 
     public void registerAdmin(AdminDTO adminDTO) {
-        if (adminRepository.existsByAid(adminDTO.getAid())) {
+        if (apiAdminRepository.existsByAid(adminDTO.getAid())) {
             throw new IllegalArgumentException("이미 존재하는 관리자 ID입니다.");
         }
 
@@ -34,7 +34,7 @@ public class AdminService {
         admin.setApw(passwordEncoder.encode(adminDTO.getApw())); // 비밀번호 암호화
         admin.setAname(adminDTO.getAname());
 
-        adminRepository.save(admin);
+        apiAdminRepository.save(admin);
     }
 
 

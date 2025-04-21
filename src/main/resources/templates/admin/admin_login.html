@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>관리자 로그인</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+<h1>관리자 로그인</h1>
+
+<!-- 로그인 폼 -->
+<form id="adminLoginForm">
+    <label for="aid">아이디:</label>
+    <input type="text" id="aid" name="aid" required><br><br>
+
+    <label for="apw">비밀번호:</label>
+    <input type="password" id="apw" name="apw" required><br><br>
+
+    <button type="submit">로그인</button>
+</form>
+
+<p>계정이 없으신가요? <a href="/admin/registration">회원가입 페이지로</a></p>
+
+
+
+<script>
+    document.getElementById("adminLoginForm").addEventListener("submit", async function (e) {
+        e.preventDefault(); // 기본 폼 제출 동작을 막음
+
+        const uid = document.getElementById("aid").value;  // 입력된 아이디
+        const upw = document.getElementById("apw").value;  // 입력된 비밀번호
+        const errorMessage = document.getElementById("errorMessage"); // 오류 메시지를 출력할 요소
+
+        if (errorMessage) {
+            errorMessage.textContent = '';  // 오류 메시지 초기화
+        }
+
+        try {
+            // 로그인 API 호출
+            const response = await fetch('/api/admin/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'  // 요청 내용이 JSON임을 명시
+                },
+                body: JSON.stringify({ aid: uid, apw: upw })  // 아이디와 비밀번호를 JSON으로 전달
+            });
+
+            if (response.ok) {  // 로그인 성공
+                const responseData = await response.json();  // 응답 본문을 JSON으로 파싱
+                console.log("로그인 성공:", responseData);
+
+                // JWT 토큰이 포함되어 있으면 localStorage에 저장
+                localStorage.setItem('authToken', responseData.token);
+
+                // 로그인 성공 후 홈페이지로 리다이렉트
+                window.location.href = '/';  // 원하는 페이지로 리다이렉트
+            } else {  // 로그인 실패
+                const errorText = await response.text();
+
+                try {
+                    const errorData = JSON.parse(errorText);
+                    if (errorMessage) {
+                        errorMessage.textContent = errorData.message || "로그인 실패";
+                    }
+                } catch (parseError) {
+                    if (errorMessage) {
+                        errorMessage.textContent = errorText || "로그인 실패";
+                    }
+                }
+            }
+        } catch (error) {  // 네트워크나 서버 오류 처리
+            console.error("로그인 요청 실패:", error);
+            if (errorMessage) {
+                errorMessage.textContent = "서버와 통신 중 오류가 발생했습니다.";
+            }
+        }
+    });
+
+</script>
+</body>
+</html>

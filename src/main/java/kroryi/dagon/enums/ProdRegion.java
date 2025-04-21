@@ -33,4 +33,13 @@ public enum ProdRegion {
     public String toString() {
         return korean;
     }
+
+    public static ProdRegion fromKorean(String koreanName) {
+        for (ProdRegion region : values()) {
+            if (region.getKorean().equals(koreanName)) {
+                return region;
+            }
+        }
+        throw new IllegalArgumentException("존재하지 않는 지역명입니다: " + koreanName);
+    }
 }

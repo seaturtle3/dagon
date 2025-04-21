@@ -34,7 +34,7 @@ public class JwtUtil {
         this.secretKey = Keys.hmacShaKeyFor(keyBytes);
     }
 
-    public String generateToken(String uid, Long uno, String uname) {
+    public String generateToken(String uid, Long uno, String uname, String role) {
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + expirationTime);
 
@@ -42,6 +42,7 @@ public class JwtUtil {
                 .setSubject(uid)
                 .claim("uno", uno.toString())
                 .claim("uname", uname)
+                .claim("role",role)
                 .setIssuedAt(now)
                 .setExpiration(expiryDate)
                 .signWith(secretKey, SignatureAlgorithm.HS256)
@@ -73,6 +74,20 @@ public class JwtUtil {
             // 토큰 파싱 실패 시 null 또는 예외 처리
             log.error("JWT 파싱 실패: {}", e.getMessage());
             return null;
+        }
+    }
+
+
+    // isValidToken: 토큰이 유효한지 확인하는 메서드
+    public boolean isValidToken(String token) {
+        try {
+            Claims claims = parseToken(token);
+            // 토큰이 유효한 경우 만료일이 지나지 않았는지 체크
+            return !claims.getExpiration().before(new Date());
+        } catch (JwtException e) {
+            // 유효하지 않거나 만료된 토큰일 경우 false 리턴
+            log.error("Invalid JWT: {}", e.getMessage());
+            return false;
         }
     }
 

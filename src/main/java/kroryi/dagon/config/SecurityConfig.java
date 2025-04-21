@@ -6,6 +6,9 @@ import kroryi.dagon.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -47,7 +50,10 @@ public class SecurityConfig {
                                 "/js/**",
                                 "/img/**",
                                 "/api/auth/login",
-                                "/api/users/me"
+                                "/api/users/me",
+                                "/admin/login",
+                                "/register",
+                                "/admin/registration"
                         ).permitAll()
                         .requestMatchers("/login/oauth2/code/kakao").permitAll()
                         .anyRequest().authenticated()
@@ -77,14 +83,16 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
-    @Bean
-    public UserDetailsService userDetailsService() {
-        return userDetailsService;
-    }
+
 
     @Bean
     public AuthenticationSuccessHandler socialLoginSuccessHandler() {
         return new CustomSocialLoginSuccessHandler(passwordEncoder());
+    }
+
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
+        return configuration.getAuthenticationManager(); // ✅ 최신 방식
     }
 
 }
