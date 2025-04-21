@@ -13,6 +13,9 @@
 <h1 th:text="${eventId != null} ? '이벤트 수정' : '이벤트 작성'">이벤트</h1>
 
 <form th:action="@{${formAction}}" th:object="${eventForm}" method="post">
+    <input type="hidden" name="page" th:value="${page}">
+    <input type="hidden" name="size" th:value="${size}">
+
     <label>제목:</label><br>
     <input type="text" th:field="*{title}"><br><br>
 
@@ -34,10 +37,11 @@
         <input type="hidden" th:field="*{thumbnailUrl}" id="thumbnailUrl">
     </div>
 
-    <button type="submit" th:text="${eventId != null} ? '수정 완료' : '등록'">등록</button>
+    <button type="submit">등록</button>
 </form>
 <div style="margin-top: 20px;">
-    <a th:href="@{/event}">목록으로</a>
+
+    <a th:href="@{'/event?page=' + ${page} + '&size=' + ${size}}">목록으로</a>
 </div>
 <script>
     $(document).ready(function () {

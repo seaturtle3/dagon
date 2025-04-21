@@ -3,11 +3,12 @@ package kroryi.dagon.service.board;
 import kroryi.dagon.entity.Event;
 import kroryi.dagon.repository.board.EventRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-@Service
+@Component
 @RequiredArgsConstructor
 public class EventContentProvider extends BaseContentProvider<Event> {
 

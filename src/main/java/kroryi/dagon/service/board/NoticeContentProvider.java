@@ -3,11 +3,12 @@ package kroryi.dagon.service.board;
 import kroryi.dagon.entity.Notice;
 import kroryi.dagon.repository.board.NoticeRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-@Service
+@Component
 @RequiredArgsConstructor
 public class NoticeContentProvider extends BaseContentProvider<Notice> {
     private final NoticeRepository noticeRepository;

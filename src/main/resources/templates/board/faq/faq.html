@@ -26,22 +26,23 @@
 
 <!-- 관리자만 보이는 등록 버튼 -->
 <div th:if="${isAdmin}">
-    <button onclick="location.href='/faq/form'">FAQ 등록</button>
+    <button th:onclick="'location.href=\'/faq/create?page=' + ${pagination.currentPage} + '&size=' + ${size} + '\''">FAQ 등록</button>
 </div>
 
+<div th:replace="~{fragments/paging_options :: sizeSelector('/faq', ${size}, ${pagination.currentPage})}"></div>
 <hr>
-
 <!-- FAQ 목록 출력 -->
 <div th:each="faq : ${faqPage.content}">
     <div>
         <strong th:text="${faq.question}"></strong><br>
         <span th:utext="${faq.answer}"></span><br>
 
-        <!-- 관리자만 보이는 부가 정보 및 수정/삭제 버튼 -->
+        <!-- 관리자만 보이는 수정/삭제 버튼 -->
         <div th:if="${isAdmin}">
             <small th:text="'노출 상태: ' + (faq.isActive ? '활성' : '비활성')"></small><br>
             <small th:text="'표시 순서: ' + ${faq.displayOrder}"></small><br>
-            <button th:onclick="'location.href=\'/faq/form/' + ${faq.faqId} + '\''">수정</button>
+
+            <button th:onclick="'location.href=\'/faq/' + ${faq.faqId} + '/edit?page=' + ${pagination.currentPage} + '&size=' + ${size} + '\''">수정</button>
             <button th:onclick="'deleteFaq(' + ${faq.faqId} + ')'">삭제</button>
         </div>
     </div>
@@ -49,7 +50,7 @@
 </div>
 
 <!-- 페이징 영역 -->
-<div th:replace="~{fragments/pagination :: pagination(${pagination})}"></div>
+<div th:replace="~{fragments/pagination :: pagination(${pagination}, ${size})}"></div>
 
 </body>
 </html>

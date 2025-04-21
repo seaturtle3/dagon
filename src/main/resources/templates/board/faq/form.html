@@ -12,10 +12,9 @@
 
 <h1 th:text="${faq.faqId != null} ? 'FAQ 수정' : 'FAQ 등록'">FAQ</h1>
 
-<form th:action="@{${formAction}}"
-      method="post"
-      th:object="${faq}"
-      class="faq-form">
+<form th:action="@{${formAction}}" method="post" th:object="${faq}" class="faq-form">
+    <input type="hidden" name="page" th:value="${page}">
+    <input type="hidden" name="size" th:value="${size}">
 
     <label>질문</label><br>
     <input type="text" th:field="*{question}" required><br><br>
@@ -30,7 +29,7 @@
     <input type="number" th:field="*{displayOrder}"><br><br>
 
     <button type="submit">저장</button>
-    <button type="button" onclick="location.href='/faq'">목록으로</button>
+    <button type="button" th:onclick="'location.href=\'/faq?page=' + ${page} + '&size=' + ${size} + '\''">목록으로</button>
 </form>
 
 <script>
@@ -51,42 +50,6 @@
                         });
                 }
             }
-        });
-    });
-
-    document.querySelector('.faq-form').addEventListener('submit', function (e) {
-        e.preventDefault();
-
-        const form = e.target;
-        const formData = new FormData(form);
-        const answerHtml = $('.faq-answer-area').summernote('code');
-        formData.set('answer', answerHtml);
-
-        const question = formData.get("question")?.trim();
-        const answer = answerHtml.trim();
-
-        if (!question) {
-            alert("질문은 필수입니다.");
-            return;
-        }
-
-        if (!answer || answer === "<p><br></p>") {
-            alert("답변은 필수입니다.");
-            return;
-        }
-
-        fetch(form.action, {
-            method: 'POST',
-            body: new URLSearchParams(formData)
-        }).then(res => {
-            if (res.ok) {
-                alert("저장되었습니다.");
-                location.href = "/faq";
-            } else {
-                res.text().then(msg => alert("저장 실패\n" + msg));
-            }
-        }).catch(err => {
-            alert("요청 오류: " + err);
         });
     });
 </script>

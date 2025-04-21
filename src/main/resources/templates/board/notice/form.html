@@ -13,21 +13,26 @@
 <h1 th:text="${noticeId != null} ? '공지사항 수정' : '공지사항 작성'">공지사항</h1>
 
 <form th:action="@{${formAction}}" th:object="${noticeForm}" method="post">
+    <input type="hidden" name="page" th:value="${page}">
+    <input type="hidden" name="size" th:value="${size}">
 
+    <label>제목</label><br>
     <input type="text" th:field="*{title}" placeholder="제목"><br><br>
 
     <label>
         <input type="checkbox" th:field="*{isTop}"> 상단 고정
-    </label><br>
+    </label><br><br>
 
+    <label>내용</label><br>
     <textarea id="summernote" th:field="*{content}"></textarea><br>
 
     <button type="submit" th:text="${noticeId != null} ? '수정 완료' : '등록'">등록</button>
 </form>
 
 <div style="margin-top: 20px;">
-    <a th:href="@{/notices}" class="btn">목록으로</a>
+    <a th:href="@{'/notices?page=' + ${page} + '&size=' + ${size}}">목록으로</a>
 </div>
+
 
 <script>
     $(document).ready(function () {

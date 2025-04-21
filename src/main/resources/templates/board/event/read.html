@@ -23,11 +23,13 @@
 <div th:utext="${event.content}">내용</div>
 
 <div style="margin-top: 20px;">
-    <a th:href="@{/event}" class="btn">목록으로</a>
-    <a th:href="@{/event/{id}/edit(id=${event.eventId})}" class="btn">수정</a>
-    <form th:action="@{/event/{id}/delete(id=${event.eventId})}" method="post"
-          onsubmit="return confirm('정말 삭제하시겠습니까?');" style="display:inline;">
-        <button type="submit" class="btn">삭제</button>
+    <a th:href="@{'/event?page=' + ${page} + '&size=' + ${size}}">목록으로</a>
+    <a th:href="@{'/event/' + ${event.eventId} + '/edit?page=' + ${page} + '&size=' + ${size}}">수정</a>
+
+    <form th:action="@{'/event/' + ${event.eventId} + '/delete?page=' + ${page} + '&size=' + ${size}}"
+          method="post"
+          onsubmit="return confirm('정말 삭제하시겠습니까?');">
+        <button type="submit">삭제</button>
     </form>
 </div>
 
