@@ -129,7 +129,7 @@
     }
 
     function goBack() {
-        window.location.href = '/partner/list';
+        window.location.href = '/admin/dashboard';
     }
 
     function approveApplication() {
@@ -157,7 +157,6 @@
         $('#rejectForm').hide();
         $('#rejectReason').val('');
     }
-
     function rejectApplication() {
         const reason = $('#rejectReason').val().trim();
         if (!reason) {
@@ -171,7 +170,8 @@
             url: `/api/partners/${applicationId}/reject`,
             type: 'POST',
             headers: getAuthHeaders(), // ✅ 토큰 포함
-            data: { reason: reason },
+            contentType: 'application/json', // JSON 형식으로 전송
+            data: JSON.stringify({ reason: reason }), // JSON 형식으로 데이터 전송
             success: function() {
                 alert('신청이 반려되었습니다.');
                 location.reload();

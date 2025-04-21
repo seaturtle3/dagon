@@ -7,6 +7,7 @@ import kroryi.dagon.service.AdminService;
 import kroryi.dagon.service.UserService;
 import kroryi.dagon.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
@@ -25,6 +26,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/admin")
 @RequiredArgsConstructor
+@Log4j2
 public class ApiAdminController {
 
     private final AdminService adminService;
@@ -64,7 +66,7 @@ public class ApiAdminController {
 
 
     // 전체 회원 조회 (페이징)
-    @GetMapping
+    @GetMapping("/users")
     @Operation(summary = "전체 회원 조회 ", description = "전체 회원 조회")
     public Page<UsersDTO> getAllUsers(@RequestParam(defaultValue = "0") int page,
                                       @RequestParam(defaultValue = "10") int size,
@@ -73,23 +75,29 @@ public class ApiAdminController {
     }
 
     // 회원 상세 조회
-    @GetMapping("/{uid}")
+    @GetMapping("/user/{uid}")
     @Operation(summary = "상세 조회 ", description = "상세 조회")
     public UsersDTO getUser(@PathVariable String uid) {
         return adminService.getUserByUid(uid);
     }
 
     // 회원 수정
-    @PutMapping("/{uid}")
+    @PutMapping("/user/{uno}")
     @Operation(summary = "회원 수정 ", description = "회원 수정")
-    public UsersDTO updateUser(@PathVariable String uid, @RequestBody UsersDTO dto) {
-        return adminService.updateUser((uid), dto);
+    public UsersDTO updateUser(@PathVariable String uno, @RequestBody UsersDTO dto) {
+        return adminService.updateUser((uno), dto);
     }
 
     // 회원 삭제
-    @DeleteMapping("/{uid}")
-    @Operation(summary = "회원 삭제 ", description = "회원 삭제")
-    public void deleteUser(@PathVariable String uid) {
-        adminService.deleteUser(uid);
+    @DeleteMapping("/user/{uno}")
+    public ResponseEntity<?> deleteUser(@PathVariable String uno) {
+        try {
+            adminService.deleteUser(uno);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            log.error("회원 삭제 중 오류 발생", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("삭제 실패: " + e.getMessage());
+        }
     }
 }

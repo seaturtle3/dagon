@@ -12,18 +12,19 @@
     <div class="sidebar">
         <div class="sidebar-item" id="dashboard-link">대시보드</div>
         <div class="sidebar-item" id="user-info-link">회원 정보</div>
+        <div class="sidebar-item" id="partner-list-link">파트너 신청 목록</div>
     </div>
 
     <!-- 메인 콘텐츠 영역 -->
     <div class="content">
         <!-- 대시보드 -->
-        <div id="dashboard" class="page">
+        <div id="dashboard" class="page visible">
             <h1>대시보드</h1>
             <!-- 대시보드 내용 -->
         </div>
 
         <!-- 회원 정보 -->
-        <div id="user-info" class="page hidden">
+        <div id="user-info" class="page ">
             <h1>회원 정보</h1>
             <div class="search-bar">
                 <input type="text" id="search" placeholder="이름, 아이디, 이메일 검색...">
@@ -50,9 +51,77 @@
                 <!-- ... -->
             </div>
         </div>
-    </div>
-</div>
 
-<script src="/js/app.js"></script>
+        <div id="partner-list" class="page ">
+            <h1>파트너 신청 목록</h1>
+
+            <div class="search-container">
+                <label>검색 기준:</label>
+                <select id="searchType">
+                    <option value="pname">상호명</option>
+                    <option value="uname">신청자 이름</option>
+                </select>
+
+                <input type="text" id="searchKeyword" placeholder="검색어 입력">
+
+                <label>상태:</label>
+                <select id="statusFilter">
+                    <option value="">전체</option>
+                    <option value="심사중">심사중</option>
+                    <option value="반려">반려</option>
+                    <option value="승인됨">승인됨</option>
+                </select>
+
+                <button onclick="loadData(0)">검색</button>
+            </div>
+
+            <table>
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>상호명</th>
+                    <th>신청자</th>
+                    <th>상태</th>
+                </tr>
+                </thead>
+                <tbody id="tableBody"></tbody>
+            </table>
+
+            <div id="pagination" class="pagination"></div>
+
+        </div>
+
+
+
+
+
+        <!-- 사용자 상세 정보 팝업 -->
+        <div id="user-detail" class="popup hidden">
+            <div id="user-details"></div>
+
+        </div>
+    </div>
+    </div>
+
+<script src="/js/admin/partneradmin.js"></script>
+<script src="/js/admin/app.js"></script>
+<script src="/js/auth.js"></script>
+
+<script>
+    const pages = document.querySelectorAll('.page');
+    const links = {
+        'dashboard-link': 'dashboard',
+        'user-info-link': 'user-info',
+        'partner-list-link': 'partner-list'
+    };
+
+    Object.keys(links).forEach(linkId => {
+        document.getElementById(linkId).addEventListener('click', () => {
+            pages.forEach(p => p.classList.remove('visible'));
+            document.getElementById(links[linkId]).classList.add('visible');
+        });
+    });
+</script>
+
 </body>
 </html>

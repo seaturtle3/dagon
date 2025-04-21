@@ -3,6 +3,10 @@ package kroryi.dagon.DTO;
 import kroryi.dagon.entity.User;
 import lombok.*;
 
+import java.time.LocalDateTime;
+
+import static kroryi.dagon.enums.LoginType.LOCAL;
+
 
 @Data
 @NoArgsConstructor
@@ -22,6 +26,10 @@ public class UsersDTO {
     private String phone3;
     private String fullPhone;
     private String role;
+    private String levelPoint; // levelPoint 추가
+    private String loginType;  // 로그인 타입 추가
+    private String createdAt;  // 생성일 추가 (BaseTimeEntity에서 자동 생성되는 값)
+
 
     // User 객체를 받는 생성자 추가
     public UsersDTO(User user) {
@@ -40,6 +48,9 @@ public class UsersDTO {
         this.phone2 = parts.length > 1 ? parts[1] : "";
         this.phone3 = parts.length > 2 ? parts[2] : "";
         this.fullPhone = user.getPhone();
+        this.levelPoint = String.valueOf(user.getLevelPoint());
+        this.loginType = user.getLoginType() != null ? user.getLoginType().name() : String.valueOf(LOCAL);
+        this.createdAt = user.getCreatedAt() != null ? user.getCreatedAt().toString() : LocalDateTime.now().toString();
     }
 
     // 전체 전화번호를 합치는 메서드
