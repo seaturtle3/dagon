@@ -1,4 +1,4 @@
-package kroryi.dagon.compoent;
+package kroryi.dagon.component;
 
 import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;

@@ -5,7 +5,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Operation;
 import kroryi.dagon.DTO.PartnerApplicationDTO;
 import kroryi.dagon.DTO.PartnerDTO;
-import kroryi.dagon.compoent.CustomUserDetails;
+import kroryi.dagon.component.CustomUserDetails;
 import kroryi.dagon.service.PartnerService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
