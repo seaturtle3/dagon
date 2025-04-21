@@ -50,8 +50,9 @@ public class HomeController {
 
     @GetMapping("/")
     public String home() {
-        log.info("regions : {}", Arrays.toString(ProdRegion.values()));
-        log.info("fishSpecies : {}", fishSpeciesRepository.findFsName());
+        log.info("home--------------------------------");
+//        log.info("regions : {}", Arrays.toString(ProdRegion.values()));
+//        log.info("fishSpecies : {}", fishSpeciesRepository.findFsName());
         return "index";
     }
 

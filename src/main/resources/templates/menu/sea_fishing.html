@@ -50,6 +50,7 @@
             <th>배 주소</th>
             <th>배 설명</th>
             <th>이벤트</th>
+            <th>등록일</th>
         </tr>
         </thead>
         <tbody>
@@ -61,6 +62,7 @@
             <td th:text="${product.prodAddress}">배 주소</td>
             <td th:text="${product.prodDescription}">배 설명</td>
             <td th:text="${product.prodEvent}">이벤트</td>
+            <td th:text="${product.createdAt}">등록일</td>
             <td>
                 <button type="button">
                     <a th:href="@{/reservation/${id}(id=${prodId})}">예약하기</a>

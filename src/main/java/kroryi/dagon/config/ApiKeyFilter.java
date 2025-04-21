@@ -6,7 +6,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-import kroryi.dagon.compoent.CustomUserDetails;
+import kroryi.dagon.component.CustomUserDetails;
 import kroryi.dagon.service.ApiKeyService;
 import kroryi.dagon.util.JwtUtil;
 import lombok.extern.log4j.Log4j2;
@@ -15,13 +15,10 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.util.List;
-
-import static org.aspectj.weaver.tools.cache.SimpleCacheFactory.path;
 
 @Component
 @Log4j2
@@ -128,7 +125,14 @@ public class ApiKeyFilter extends OncePerRequestFilter {
 
                         (path.matches("/api/admin") && method.equals("GET")) ||
 
-                        // 조황정보
+                        // 상품 CRUD
+                        (path.matches("/api/product/create") && method.equals("POST")) ||
+                        (path.matches("/api/product/getAll") && method.equals("GET")) ||
+                        (path.matches("/api/product/get/.+") && method.equals("GET")) ||
+                        (path.matches("/api/product/update/.+") && method.equals("PUT")) ||
+                        (path.matches("/api/product/delete/.+") && method.equals("DELETE")) ||
+
+                        // 조황 CRUD
                         (path.matches("/api/fishing-report/create") && method.equals("POST")) ||
                         (path.matches("/api/fishing-report/get-all") && method.equals("GET")) ||
                         (path.matches("/api/fishing-report/get/.+") && method.equals("GET")) ||

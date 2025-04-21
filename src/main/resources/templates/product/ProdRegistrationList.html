@@ -23,6 +23,7 @@
             <th>배 설명</th>
             <th>이벤트</th>
             <th>공지사항</th>
+            <th>등록일</th>
             <th>예약</th>
         </tr>
         </thead>
@@ -39,6 +40,7 @@
             <td th:text="${product.prodDescription}">배 설명</td>
             <td th:text="${product.prodEvent}">이벤트</td>
             <td th:text="${product.prodNotice}">공지사항</td>
+            <td th:text="${product.createdAt}">등록일</td>
             <td><button type="button">예약</button></td>
         </tr>
         </tbody>

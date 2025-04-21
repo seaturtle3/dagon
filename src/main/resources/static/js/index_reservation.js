@@ -1,18 +1,51 @@
-// 모달에서 옵션 선택 후 화면에 출력되는 설정
+// 모달에서 옵션 선택 후 selected 화면에 출력되는 설정
 function updateSpan() {
+    const mainType = document.querySelector('input[name="waterType"]:checked').value;
+    const subType = document.getElementById("modal-subType").value;
     const date = document.getElementById("modal-date").value;
     const people = document.getElementById("modal-people").value;
     const region = document.getElementById("modal-region").value;
     const fishType = document.getElementById("modal-fishType").value;
     const today = new Date().toISOString().split("T")[0];
 
+    updateSubTypes()
+
+    document.getElementById("selected-mainType").textContent = mainType === 'sea' ? '바다' : '민물';  // "바다" 또는 "민물" 표시
+    document.getElementById("selected-subType").textContent = subType || "전체";
     document.getElementById("selected-date").textContent = date || today;
     document.getElementById("selected-people").textContent = people || 1;
     document.getElementById("selected-region").textContent = region || "전체";
     document.getElementById("selected-fish").textContent = fishType || "전체";
 
-    console.log(`date : ${date}, people : ${people}, region : ${region}, fishType : ${fishType}`);
+    console.log(`MainType: ${mainType}, SubType: ${subType}, date : ${date}, people : ${people}, region : ${region}, fishType : ${fishType}`);
 }
+
+function updateSubTypes() {
+    const mainType = document.querySelector('input[name="waterType"]:checked').value;
+
+    // SubType을 필터링해서 갱신
+    const allSubTypes = document.getElementById("modal-subType");
+    allSubTypes.innerHTML = ''; // 기존 내용 제거
+
+    const option = document.createElement('option');
+    option.value = "";
+    option.textContent = "전체";
+    allSubTypes.appendChild(option);
+
+    // JavaScript로 필터링하기
+    fetch(`/api/subtypes?mainType=${mainType}`)
+        .then(response => response.json())
+        .then(subTypes => {
+            subTypes.forEach(subType => {
+                const option = document.createElement('option');
+                option.value = subType.name;
+                option.textContent = subType.korean;
+                allSubTypes.appendChild(option);
+            });
+        })
+        .catch(error => console.error('Error fetching subtypes:', error));
+}
+
 
 
 // 검색하기 버튼 클릭 시 선택한 옵션값과 함께 바다/민물 페이지로 이동
