@@ -6,6 +6,8 @@ import kroryi.dagon.entity.FAQ;
 import kroryi.dagon.repository.AdminRepository;
 import kroryi.dagon.repository.board.FAQRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,14 +20,15 @@ public class FAQService {
     private final AdminRepository adminRepository;
 
     // 전체 FAQ 조회 (관리자용)
-    public List<FAQ> findAll() {
-        return faqRepository.findAllByOrderByDisplayOrderAsc();
+    public Page<FAQ> findAllPaged(Pageable pageable) {
+        return faqRepository.findAllByOrderByDisplayOrderAsc(pageable);
     }
 
     // 활성화된 FAQ만 조회 (사용자용)
-    public List<FAQ> findActiveOnly() {
-        return faqRepository.findByIsActiveTrueOrderByDisplayOrderAsc();
+    public Page<FAQ> findActivePaged(Pageable pageable) {
+        return faqRepository.findByIsActiveTrueOrderByDisplayOrderAsc(pageable);
     }
+
 
     // 단건 조회
     public FAQ findById(Long id) {

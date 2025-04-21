@@ -4,13 +4,14 @@ import kroryi.dagon.DTO.board.FAQRequestDTO;
 import kroryi.dagon.entity.FAQ;
 import kroryi.dagon.service.board.FAQService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-
-import java.util.List;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 @RequiredArgsConstructor
@@ -19,16 +20,18 @@ public class FAQController {
     private final FAQService faqService;
 
     @GetMapping
-    public String showFAQ(Model model) {
+    public String showFAQ(Model model,
+                          @RequestParam(defaultValue = "0") int page,
+                          @RequestParam(defaultValue = "10") int size) {
 
-        // 임시 관리자 모드 설정 (true로 하면 관리자처럼 보임)
-        boolean isAdmin = true; // 이후 로그인 연동 시 실제 관리자 여부로 대체
+        boolean isAdmin = true;
 
-        List<FAQ> faqs = isAdmin
-                ? faqService.findAll()
-                : faqService.findActiveOnly();
-        model.addAttribute("faqList", faqs);
-        model.addAttribute("isAdmin", isAdmin); // 뷰에서 분기 처리용
+        Page<FAQ> faqPage = isAdmin
+                ? faqService.findAllPaged(PageRequest.of(page, size))
+                : faqService.findActivePaged(PageRequest.of(page, size));
+
+        model.addAttribute("faqPage", faqPage);
+        model.addAttribute("isAdmin", isAdmin);
         return "board/faq/faq";
     }
 

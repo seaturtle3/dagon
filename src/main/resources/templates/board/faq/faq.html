@@ -21,6 +21,7 @@
 </head>
 <body>
 
+
 <h1>자주 묻는 질문</h1>
 
 <!-- 관리자만 보이는 등록 버튼 -->
@@ -31,14 +32,14 @@
 <hr>
 
 <!-- FAQ 목록 출력 -->
-<div th:each="faq : ${faqList}">
+<div th:each="faq : ${faqPage.content}">
     <div>
         <strong th:text="${faq.question}"></strong><br>
         <span th:utext="${faq.answer}"></span><br>
 
         <!-- 관리자만 보이는 부가 정보 및 수정/삭제 버튼 -->
         <div th:if="${isAdmin}">
-            <small th:text="${faq.isActive} ? '노출 상태: 활성' : '노출 상태: 비활성'"></small><br>
+            <small th:text="'노출 상태: ' + (faq.isActive ? '활성' : '비활성')"></small><br>
             <small th:text="'표시 순서: ' + ${faq.displayOrder}"></small><br>
             <button th:onclick="'location.href=\'/faq/form/' + ${faq.faqId} + '\''">수정</button>
             <button th:onclick="'deleteFaq(' + ${faq.faqId} + ')'">삭제</button>
@@ -46,6 +47,45 @@
     </div>
     <hr>
 </div>
+
+<!-- 페이징 영역 -->
+<div>
+    <span th:if="${faqPage.hasPrevious()}">
+        <a th:href="@{/faq(page=${faqPage.number - 1}, size=${faqPage.size})}">이전</a>
+    </span>
+
+    <span th:each="i : ${#numbers.sequence(0, faqPage.totalPages - 1)}">
+        <a th:href="@{/faq(page=${i}, size=${faqPage.size})}"
+           th:text="${i + 1}"
+           th:class="${i == faqPage.number} ? 'active' : ''">1</a>
+    </span>
+
+    <span th:if="${faqPage.hasNext()}">
+        <a th:href="@{/faq(page=${faqPage.number + 1}, size=${faqPage.size})}">다음</a>
+    </span>
+</div>
+
+<style>
+    .active {
+        font-weight: bold;
+        text-decoration: underline;
+    }
+</style>
+
+<script>
+    function deleteFaq(id) {
+        if (!confirm("정말 삭제하시겠습니까?")) return;
+        fetch(`/api/admin/faq/${id}`, { method: 'DELETE' })
+            .then(res => {
+                if (res.ok) {
+                    alert("삭제되었습니다.");
+                    location.reload();
+                } else {
+                    alert("삭제 실패");
+                }
+            });
+    }
+</script>
 
 </body>
 </html>

@@ -8,6 +8,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface EventRepository extends JpaRepository<Event, Long> {
 
-    Page<Event> findAllByOrderByIsTopDescCreatedAtDesc(Pageable pageable); // 🔧 추가
+    Page<Event> findAllByOrderByIsTopDescCreatedAtDesc(Pageable pageable);
 
 }
