@@ -32,9 +32,7 @@ public class MulttaeAsyncService {
             waveStationCode = tideStation.getWaveStation().getStationCode();
         } else {
             // 지역 내 waveStation만 필터링
-            List<WaveStation> sameRegionWaveStations = waveStationRepository.findAll().stream()
-                    .filter(ws -> ws.getRegion() == tideStation.getRegion())
-                    .toList();
+            List<WaveStation> sameRegionWaveStations = waveStationRepository.findAll();
 
             if (!sameRegionWaveStations.isEmpty()) {
                 WaveStation closest = StationUtil.findClosestWaveStation(tideStation, sameRegionWaveStations);

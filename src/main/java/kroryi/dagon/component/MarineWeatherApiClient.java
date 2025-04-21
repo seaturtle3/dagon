@@ -52,6 +52,8 @@ public class MarineWeatherApiClient {
         List<WaveDTO> data = response.getResult().getData();
         log.info("Wave API 응답 데이터: {}", data);
         return data;
+
+
     }
 
     public List<AirTempDTO> getAirTempData(String obsCode, String date) {

@@ -100,7 +100,10 @@ public class ApiKeyFilter extends OncePerRequestFilter {
                         (path.startsWith("/js/")) ||
                         (path.startsWith("/web/users/") && method.equals("POST")) ||
 
+
+                        // 물때/api/admin/station
                         (path.startsWith("/api/multtae/") && method.equals("GET")) ||
+                        (path.startsWith("/api/admin/station") && method.equals("POST")) ||
 
                         // 공지사항 admin/notices 추후 삭제
                         (path.startsWith("/api/notices") && method.equals("GET")) ||
