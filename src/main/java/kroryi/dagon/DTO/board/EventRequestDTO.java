@@ -7,6 +7,7 @@ import java.time.LocalDate;
 
 @Data
 public class EventRequestDTO {
+
     @NotBlank(message = "제목은 필수")
     private String title;
 

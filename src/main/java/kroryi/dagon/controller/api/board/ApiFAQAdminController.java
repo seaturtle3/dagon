@@ -34,14 +34,14 @@ public class ApiFAQAdminController {
 
     @Operation(summary = "FAQ 등록", description = "새로운 FAQ 등록")
     @PostMapping
-    public ResponseEntity<FAQResponseDTO> create(@Valid @RequestBody FAQRequestDTO dto) {
+    public ResponseEntity<FAQResponseDTO> create(@Valid FAQRequestDTO dto) {
         FAQ faq = faqService.createFAQ(dto, "admin001"); // 관리자 ID는 테스트용
         return ResponseEntity.ok(FAQResponseDTO.from(faq));
     }
 
     @Operation(summary = "FAQ 수정", description = "기존 FAQ 내용 수정")
     @PostMapping("/{id}")
-    public ResponseEntity<FAQResponseDTO> update(@PathVariable Long id, @RequestBody FAQRequestDTO dto) {
+    public ResponseEntity<FAQResponseDTO> update(@PathVariable Long id, FAQRequestDTO dto) {
         FAQ faq = faqService.updateFAQ(id, dto);
         return ResponseEntity.ok(FAQResponseDTO.from(faq));
     }

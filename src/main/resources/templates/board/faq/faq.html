@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>FAQ</title>
+
+    <script>
+        function deleteFaq(id) {
+            if (!confirm("정말 삭제하시겠습니까?")) return;
+            fetch(`/api/admin/faq/${id}`, {method: 'DELETE'})
+                .then(res => {
+                    if (res.ok) {
+                        alert("삭제되었습니다.");
+                        location.reload();
+                    } else {
+                        alert("삭제 실패");
+                    }
+                });
+        }
+    </script>
+</head>
+<body>
+
+<h1>자주 묻는 질문</h1>
+
+<!-- 관리자만 보이는 등록 버튼 -->
+<div th:if="${isAdmin}">
+    <button onclick="location.href='/faq/form'">FAQ 등록</button>
+</div>
+
+<hr>
+
+<!-- FAQ 목록 출력 -->
+<div th:each="faq : ${faqList}">
+    <div>
+        <strong th:text="${faq.question}"></strong><br>
+        <span th:utext="${faq.answer}"></span><br>
+
+        <!-- 관리자만 보이는 부가 정보 및 수정/삭제 버튼 -->
+        <div th:if="${isAdmin}">
+            <small th:text="${faq.isActive} ? '노출 상태: 활성' : '노출 상태: 비활성'"></small><br>
+            <small th:text="'표시 순서: ' + ${faq.displayOrder}"></small><br>
+            <button th:onclick="'location.href=\'/faq/form/' + ${faq.faqId} + '\''">수정</button>
+            <button th:onclick="'deleteFaq(' + ${faq.faqId} + ')'">삭제</button>
+        </div>
+    </div>
+    <hr>
+</div>
+
+</body>
+</html>
