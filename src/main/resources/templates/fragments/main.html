@@ -236,7 +236,6 @@
                         <select class="form-control" name="subType" id="modal-subType">
                             <option value="">전체</option>
                             <option th:each="subType : ${subTypes}"
-                                    th:value="${subType.name()}"
                                     th:text="${subType.korean}">
                             </option>
                         </select>

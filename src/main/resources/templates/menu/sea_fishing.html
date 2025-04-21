@@ -65,7 +65,7 @@
             <td th:text="${product.createdAt}">등록일</td>
             <td>
                 <button type="button">
-                    <a th:href="@{/reservation/${id}(id=${prodId})}">예약하기</a>
+                    <a th:href="@{/reservation/{prodId}(prodId=${product.prodId})}">예약하기</a>
                 </button>
             </td>
         </tr>

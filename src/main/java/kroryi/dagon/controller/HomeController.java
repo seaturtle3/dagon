@@ -9,7 +9,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 
-import java.util.Arrays;
 import java.util.List;
 
 @Controller
@@ -18,19 +17,14 @@ import java.util.List;
 public class HomeController {
     private final FishSpeciesRepository fishSpeciesRepository;
 
-    @GetMapping("/fishing_report")
-    public String fishingReport() {
-        return "menu/fishing_report";
-    }
-
     @GetMapping("/community")
     public String community() {
-        return "menu/community";
+        return "board/community";
     }
 
     @GetMapping("/cs_center")
     public String csCenter() {
-        return "menu/cs_center";
+        return "board/cs_center";
     }
 
     @GetMapping("/my_page")

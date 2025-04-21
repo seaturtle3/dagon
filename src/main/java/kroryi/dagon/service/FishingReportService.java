@@ -2,13 +2,16 @@ package kroryi.dagon.service;
 
 import kroryi.dagon.DTO.board.FishingReportDTO;
 import kroryi.dagon.entity.FishingReport;
+import kroryi.dagon.entity.Product;
+import kroryi.dagon.entity.User;
+import kroryi.dagon.repository.ProductRepository;
+import kroryi.dagon.repository.UserRepository;
 import kroryi.dagon.repository.board.FishingReportRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -16,6 +19,8 @@ import java.util.stream.Collectors;
 public class FishingReportService {
 
     private final FishingReportRepository fishingReportRepository;
+    private final UserRepository userRepository;
+    private final ProductRepository productRepository;
 
     public FishingReportDTO createFishingReport(FishingReportDTO fishingReportDTO) {
         FishingReport fishingReport = new FishingReport();
@@ -25,9 +30,16 @@ public class FishingReportService {
         fishingReport.setFishingAt(fishingReportDTO.getFishingAt());
         fishingReport.setModifyAt(fishingReportDTO.getModifyAt());
         fishingReport.setViews(fishingReportDTO.getViews());
-        fishingReport.setUser(fishingReportDTO.getUser());
-        fishingReport.setProduct(fishingReportDTO.getProduct());
         fishingReport.setComments(fishingReportDTO.getComments());
+
+        User user = userRepository.findById(fishingReportDTO.getUserId())
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+
+        Product product = productRepository.findById(fishingReportDTO.getProdId())
+                .orElseThrow(() -> new IllegalArgumentException("Product not found"));
+
+        fishingReport.setUser(user);
+        fishingReport.setProduct(product);
 
         fishingReport = fishingReportRepository.save(fishingReport);
 

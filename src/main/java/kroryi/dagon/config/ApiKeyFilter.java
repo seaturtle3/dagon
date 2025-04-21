@@ -138,6 +138,8 @@ public class ApiKeyFilter extends OncePerRequestFilter {
                         (path.matches("/api/fishing-report/get/.+") && method.equals("GET")) ||
                         (path.matches("/api/fishing-report/update/.+") && method.equals("PUT")) ||
                         (path.matches("/api/fishing-report/delete/.+") && method.equals("DELETE")) ||
+                        // 조황정보 리스트 조회 (추가)
+                        (path.matches("/api/fishing-reports") && method.equals("GET")) ||
 
 
 
@@ -145,8 +147,6 @@ public class ApiKeyFilter extends OncePerRequestFilter {
                         (path.startsWith("/api/users/me") && method.equals("GET")) ||
                         // GET - 이름으로 유저 개인정보  조회
                         (path.matches("/api/mypage/me") && method.equals("GET")) ;
-
-
 
 
 
