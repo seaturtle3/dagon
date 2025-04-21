@@ -20,6 +20,7 @@
                     <div class="card-body d-flex flex-column justify-content-center align-items-start gap-2"
                          style="height: 40vh; overflow: auto">
                         <div class="d-flex flex-column gap-3 ms-5 fs-5">
+                            <div><span id="selected-location" th:default="바다"></span></div>
                             <div>날짜 : <span id="selected-date"></span></div>
                             <div>인원 : <span id="selected-people"></span></div>
                             <div>지역 : <span id="selected-region"></span></div>
@@ -43,7 +44,7 @@
                     <div class="card-body d-flex flex-column justify-content-center align-items-center"
                          style="height: 40vh;">
                         <p>공지사항</p>
-                        <a th:href="@{/notice}">
+                        <a th:href="@{/notices}">
                             공지사항 내용
                         </a>
                     </div>
@@ -222,9 +223,17 @@
                     </div>
 
                     <div class="modal-body">
+                        <div class="btn-group w-100 mb-2" role="group">
+                            <input type="radio" class="btn-check" name="waterType" id="sea" value="sea" checked>
+                            <label class="btn btn-outline-primary" for="sea">바다</label>
+
+                            <input type="radio" class="btn-check" name="waterType" id="freshwater" value="freshwater">
+                            <label class="btn btn-outline-primary" for="freshwater">민물</label>
+                        </div>
+
                         <label>날짜:</label>
                         <input type="date" class="form-control" name="date" id="modal-date"
-                        th:value="${#dates.format(#dates.createNow(), 'yyyy-MM-dd')}">
+                               th:value="${#dates.format(#dates.createNow(), 'yyyy-MM-dd')}">
 
                         <label>인원:</label>
                         <input type="number" class="form-control" name="people" id="modal-people"
@@ -241,8 +250,9 @@
                         <label>어종:</label>
                         <select class="form-control" name="fishType" id="modal-fishType">
                             <option value="전체">전체</option>
-                            <option value="광어">광어</option>
-                            <option value="우럭">우럭</option>
+                            <option th:each="fish : ${fishSpecies}"
+                                    th:text="${fish.fsName}">
+                            </option>
                         </select>
                     </div>
 

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>아이디 찾기</title>
+</head>
+<body>
+<h2>아이디 찾기</h2>
+<form id="findIdForm">
+  <label for="uname">이름:</label>
+  <input type="text" id="uname" name="uname" required><br><br>
+
+  <label for="phone">전화번호:</label>
+  <input type="text" id="phone" name="phone" required><br><br>
+
+  <button type="submit">아이디 찾기</button>
+</form>
+
+<div id="result" style="margin-top: 20px; font-weight: bold;"></div>
+<script>
+  document.getElementById("findIdForm").addEventListener("submit", function (e) {
+    e.preventDefault();
+
+    const uname = document.getElementById("uname").value;
+    const phone = document.getElementById("phone").value;
+
+    // 로컬스토리지에서 토큰 가져오기
+    const token = localStorage.getItem("authToken");
+
+    fetch(`/api/users/find-id?uname=${encodeURIComponent(uname)}&phone=${encodeURIComponent(phone)}`, {
+      method: "GET",
+      headers: {
+        "Authorization": `Bearer ${token}`
+      }
+    })
+            .then(response => {
+              if (!response.ok) {
+                throw new Error("사용자를 찾을 수 없습니다.");
+              }
+              return response.json();
+            })
+            .then(data => {
+              document.getElementById("result").innerText = `당신의 아이디는: ${data.uid}`;
+            })
+            .catch(error => {
+              document.getElementById("result").innerText = error.message;
+            });
+  });
+</script>
+</body>
+</html>

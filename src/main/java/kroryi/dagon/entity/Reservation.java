@@ -1,16 +1,17 @@
 package kroryi.dagon.entity;
 
 import jakarta.persistence.*;
-import kroryi.dagon.enums.PaymentMethod;
+import kroryi.dagon.enums.PaymentsMethod;
 import kroryi.dagon.enums.ReservationStatus;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.time.LocalDateTime;
 
-
 @Getter
 @Setter
+@ToString
 @Entity
 @Table(name = "reservation")
 public class Reservation extends BaseTimeEntity {
@@ -20,8 +21,9 @@ public class Reservation extends BaseTimeEntity {
     private Long reservationId;
 
     // 예약자 정보
-    @Column(name = "uid", nullable = false)
-    private Long uid;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "uid", nullable = false)
+    private User user;
 
     // 상품연결
     @ManyToOne(fetch = FetchType.LAZY)
@@ -56,7 +58,7 @@ public class Reservation extends BaseTimeEntity {
     // 결제수단
     @Enumerated(EnumType.STRING)
     @Column(name = "payment_method", nullable = false)
-    private PaymentMethod paymentMethod;
+    private PaymentsMethod paymentsMethod;
 
 
 

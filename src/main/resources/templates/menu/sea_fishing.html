@@ -7,7 +7,128 @@
 <body>
 <div th:replace="fragments/header :: header"></div>
 
-<h1>여기는 바다낚시입니다.</h1>
+<div class="d-flex justify-content-center my-5">
+    <h1>여기는 바다 예약페이지입니다.</h1>
+</div>
+
+<div class="d-flex justify-content-center">
+    <div class="form-control d-flex justify-content-between align-items-center"
+         style="width:70%">
+        <div class="fw-bold fs-5">
+            <label>날짜 : </label>
+            <span id="selected-date" th:text="${date}"></span>
+        </div>
+        <div class="fw-bold fs-5">
+            <label>인원 : </label>
+            <span id="selected-people" th:text="${people}"></span>
+        </div>
+        <div class="fw-bold fs-5">
+            <label>지역 : </label>
+            <span id="selected-region" th:text="${region}"></span>
+        </div>
+        <div class="fw-bold fs-5">
+            <label>어종 : </label>
+            <span id="selected-fish" th:text="${fishType}"></span>
+        </div>
+
+        <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#searchModal"
+                onclick="syncModalValues()">
+            세부사항 변경
+        </button>
+    </div>
+</div>
+
+<!--등록된 상품 리스트---------------------------------------------->
+<div class="container mt-5">
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>이름</th>
+            <th>최대 인원</th>
+            <th>최소 인원</th>
+            <th>배 무게</th>
+            <th>배 주소</th>
+            <th>배 설명</th>
+            <th>이벤트</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="product : ${products}">
+            <td th:text="${product.prodName}">배 이름</td>
+            <td th:text="${product.maxPerson}">최대 인원</td>
+            <td th:text="${product.minPerson}">최소 인원</td>
+            <td th:text="${product.weight}">배 무게</td>
+            <td th:text="${product.prodAddress}">배 주소</td>
+            <td th:text="${product.prodDescription}">배 설명</td>
+            <td th:text="${product.prodEvent}">이벤트</td>
+            <td>
+                <button type="button">
+                    <a th:href="@{/reservation/${id}(id=${prodId})}">예약하기</a>
+                </button>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<!-- 모달 페이지----------------------------------------------->
+<div class="modal fade" id="searchModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <form action="/fishing/sea" method="get" onsubmit="updateSpan();">
+                <div class="modal-header">
+                    <h5 class="modal-title">세부항목 변경</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="btn-group w-100 mb-2" role="group">
+                        <input type="radio" class="btn-check" name="waterType" id="sea" value="sea" checked>
+                        <label class="btn btn-outline-primary" for="sea">바다</label>
+
+                        <input type="radio" class="btn-check" name="waterType" id="freshwater" value="freshwater">
+                        <label class="btn btn-outline-primary" for="freshwater">민물</label>
+                    </div>
+
+                    <label>날짜 : </label>
+                    <input type="date" class="form-control" name="date" id="modal-date"
+                           th:value="${#dates.format(#dates.createNow(), 'yyyy-MM-dd')}">
+
+                    <label>인원 : </label>
+                    <input type="number" class="form-control" name="people" id="modal-people"
+                           min="1" step="1" value="1">
+
+                    <label>지역 : </label>
+                    <select class="form-control" name="region" id="modal-region">
+                        <option value="전체">전체</option>
+                        <option th:each="region : ${regions}"
+                                th:value="${region.korean}"
+                                th:text="${region.korean}">
+                        </option>
+                    </select>
+
+                    <label>어종 : </label>
+                    <select class="form-control" name="fishType" id="modal-fishType">
+                        <option value="전체">전체</option>
+                        <option th:each="fish : ${fishSpecies}"
+                                th:text="${fish.fsName}">
+                        </option>
+                    </select>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary w-100"
+                            onclick="handleApply()" data-bs-dismiss="modal">적용
+                    </button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+
 
 </body>
 </html>
+
+<script src="/js/reservation.js"></script>

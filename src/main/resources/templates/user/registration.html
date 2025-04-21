@@ -9,7 +9,7 @@
 <body class="bg-gray-100 flex justify-center items-center min-h-screen">
 <div class="bg-white p-8 rounded-xl shadow-md w-full max-w-md">
     <h2 class="text-2xl font-bold mb-6 text-gray-800 text-center">회원가입</h2>
-    <form id="registrationForm" method="POST" action="/api/users/register">
+    <form id="registrationForm" method="POST">
         <label class="block mb-2 font-medium">아이디</label>
         <input type="text" name="uid" id="uid" minlength="7" required
                placeholder="영문+숫자 조합 7자 이상"
@@ -55,7 +55,7 @@
         </button>
     </form>
 </div>
-
+<script src="/js/auth.js"></script>
 <script>
     document.getElementById("registrationForm").addEventListener("submit", async function (e) {
         e.preventDefault();

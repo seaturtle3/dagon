@@ -6,7 +6,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-import kroryi.dagon.compoent.CustomUserDetails;
+import kroryi.dagon.component.CustomUserDetails;
 import kroryi.dagon.service.ApiKeyService;
 import kroryi.dagon.util.JwtUtil;
 import lombok.extern.log4j.Log4j2;
@@ -43,7 +43,6 @@ public class ApiKeyFilter extends OncePerRequestFilter {
         log.info("ApiKeyFilter--------------------------->");
         String authHeader = request.getHeader("Authorization");
         log.info("------------------- {}", authHeader);
-
 
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             String jwt = authHeader.substring(7);
@@ -96,10 +95,30 @@ public class ApiKeyFilter extends OncePerRequestFilter {
                 !path.startsWith("/api/") ||
                         (path.startsWith("/api/users/register") && method.equals("POST")) ||
                         (path.startsWith("/api/auth/login") && method.equals("POST")) ||
+                        (path.startsWith("/api/admin/login") && method.equals("POST")) ||
                         (path.startsWith("/api/auth/kakao") && method.equals("POST")) ||
                         (path.startsWith("/login")) ||
+                        (path.startsWith("admin/login")) ||
                         (path.startsWith("/js/")) ||
                         (path.startsWith("/web/users/") && method.equals("POST")) ||
+
+                        (path.startsWith("/api/multtae/") && method.equals("GET")) ||
+
+                        // 공지사항 admin/notices 추후 삭제
+                        (path.startsWith("/api/notices") && method.equals("GET")) ||
+                        (path.startsWith("/api/admin/notices") && method.equals("POST")) ||
+                        (path.startsWith("/api/admin/notices") && method.equals("DELETE")) ||
+
+                        // 이벤트 admin/event 추후 삭제
+                        (path.startsWith("/api/event") && method.equals("GET")) ||
+                        (path.startsWith("/api/admin/event") && method.equals("POST")) ||
+                        (path.startsWith("/api/admin/event") && method.equals("DELETE")) ||
+
+                        // 이벤트 /admin/faq 추후 삭제
+                        (path.startsWith("/api/faq") && method.equals("GET")) ||
+                        (path.startsWith("/api/admin/faq") && method.equals("POST")) ||
+                        (path.startsWith("/api/admin/faq") && method.equals("DELETE")) ||
+
                         // 알림 생성 로직
                         (path.startsWith("/api/notifications") && method.equals("POST")) ||
                         // PUT - 알림 읽음 처리
@@ -121,11 +140,19 @@ public class ApiKeyFilter extends OncePerRequestFilter {
 
                         (path.matches("/api/admin") && method.equals("GET")) ||
 
+                        (path.matches("/api/reservation/all") && method.equals("GET")) ||
+
+                        (path.matches("/api/reservation/get") && method.equals("GET")) ||
+
+                        (path.equals("/register") && method.equals("POST")) ||
+                        (path.equals("/admin/registration") && method.equals("GET")) ||
 
 
                         (path.startsWith("/api/users/me") && method.equals("GET")) ||
                         // GET - 이름으로 유저 개인정보  조회
                         (path.matches("/api/mypage/me") && method.equals("GET")) ;
+
+
 
 
 

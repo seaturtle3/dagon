@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>관리자 회원가입</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+<h1>관리자 회원가입</h1>
+<form id="adminRegisterForm">
+    <label for="aid">아이디:</label>
+    <input type="text" id="aid" name="aid" required><br><br>
+
+    <label for="apw">비밀번호:</label>
+    <input type="password" id="apw" name="apw" required><br><br>
+
+    <label for="aname">이름:</label>
+    <input type="text" id="aname" name="aname" required><br><br>
+
+    <button type="submit">회원가입</button>
+</form>
+
+<p>이미 계정이 있으신가요? <a href="/admin/login">로그인 페이지로</a></p>
+
+
+</body>
+<script>
+    $(document).ready(function () {
+        $('#adminRegisterForm').submit(function (e) {
+            e.preventDefault();
+
+            const adminData = {
+                aid: $('#aid').val(),
+                apw: $('#apw').val(),
+                aname: $('#aname').val(),
+                role: 'admin'  // 역할은 고정으로 'admin'으로 설정
+            };
+
+            $.ajax({
+                type: 'POST',
+                url: '/api/admin/register',  // 관리자 회원가입 API의 올바른 경로
+                contentType: 'application/json',
+                data: JSON.stringify(adminData),
+                success: function (response) {
+                    alert('회원가입 성공! 로그인 페이지로 이동합니다.');
+                    window.location.href = '/admin/login';  // 회원가입 성공 시 로그인 페이지로 리다이렉트
+                },
+                error: function (error) {
+                    console.log(error.responseText)
+                    alert('회원가입에 실패했습니다: ' + error.responseText);
+                }
+            });
+        });
+    });
+</script>
+</html>

@@ -1,12 +1,14 @@
 package kroryi.dagon.entity;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import kroryi.dagon.enums.MainType;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@AllArgsConstructor
+@NoArgsConstructor
 @Getter
 @Setter
 @Entity
@@ -25,4 +27,16 @@ public class ProductFishSpecies {
 
     @OneToMany(mappedBy = "fs", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ProdFishSpeciesMapping> mappedProducts = new ArrayList<>();
+
+    @Enumerated(EnumType.STRING)
+    private MainType mainType;
+
+    public ProductFishSpecies(String fsName, MainType mainType, String fsIconUrl) {
+        this.fsName = fsName;
+        this.mainType = mainType;
+        this.fsIconUrl = fsIconUrl;
+    }
+
+
+
 }
