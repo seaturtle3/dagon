@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>FAQ</title>
-
+    <link rel="stylesheet" th:href="@{/css/common.css}">
     <script>
         function deleteFaq(id) {
             if (!confirm("정말 삭제하시겠습니까?")) return;
@@ -49,43 +49,7 @@
 </div>
 
 <!-- 페이징 영역 -->
-<div>
-    <span th:if="${faqPage.hasPrevious()}">
-        <a th:href="@{/faq(page=${faqPage.number - 1}, size=${faqPage.size})}">이전</a>
-    </span>
-
-    <span th:each="i : ${#numbers.sequence(0, faqPage.totalPages - 1)}">
-        <a th:href="@{/faq(page=${i}, size=${faqPage.size})}"
-           th:text="${i + 1}"
-           th:class="${i == faqPage.number} ? 'active' : ''">1</a>
-    </span>
-
-    <span th:if="${faqPage.hasNext()}">
-        <a th:href="@{/faq(page=${faqPage.number + 1}, size=${faqPage.size})}">다음</a>
-    </span>
-</div>
-
-<style>
-    .active {
-        font-weight: bold;
-        text-decoration: underline;
-    }
-</style>
-
-<script>
-    function deleteFaq(id) {
-        if (!confirm("정말 삭제하시겠습니까?")) return;
-        fetch(`/api/admin/faq/${id}`, { method: 'DELETE' })
-            .then(res => {
-                if (res.ok) {
-                    alert("삭제되었습니다.");
-                    location.reload();
-                } else {
-                    alert("삭제 실패");
-                }
-            });
-    }
-</script>
+<div th:replace="~{fragments/pagination :: pagination(${pagination})}"></div>
 
 </body>
 </html>

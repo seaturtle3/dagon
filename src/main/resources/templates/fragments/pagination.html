@@ -1,0 +1,18 @@
+<div th:fragment="pagination(pagination)">
+    <nav>
+        <ul class="pagination">
+            <li th:classappend="${pagination.hasPrevious} ? '' : 'disabled'">
+                <a th:href="@{|?page=${pagination.currentPage - 1}|}">이전</a>
+            </li>
+
+            <li th:each="i : ${#numbers.sequence(0, pagination.totalPages - 1)}"
+                th:classappend="${i == pagination.currentPage} ? 'active'">
+                <a th:href="@{|?page=${i}|}" th:text="${i + 1}">1</a>
+            </li>
+
+            <li th:classappend="${pagination.hasNext} ? '' : 'disabled'">
+                <a th:href="@{|?page=${pagination.currentPage + 1}|}">다음</a>
+            </li>
+        </ul>
+    </nav>
+</div>

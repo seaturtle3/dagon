@@ -1,0 +1,19 @@
+
+.pagination {
+    display: flex;
+    list-style: none;
+    padding: 0;
+    gap: 8px; /* 버튼 간 간격 */
+}
+.pagination li {
+    display: inline;
+}
+.pagination li.active a {
+    font-weight: bold;
+    text-decoration: underline;
+}
+.pagination li.disabled a {
+    color: #ccc;
+    pointer-events: none;
+    cursor: not-allowed;
+}

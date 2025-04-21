@@ -3,6 +3,7 @@ package kroryi.dagon.controller.board;
 import kroryi.dagon.DTO.board.FAQRequestDTO;
 import kroryi.dagon.entity.FAQ;
 import kroryi.dagon.service.board.FAQService;
+import kroryi.dagon.util.PaginationUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -31,6 +32,7 @@ public class FAQController {
                 : faqService.findActivePaged(PageRequest.of(page, size));
 
         model.addAttribute("faqPage", faqPage);
+        model.addAttribute("pagination", PaginationUtil.getPaginationData(faqPage));
         model.addAttribute("isAdmin", isAdmin);
         return "board/faq/faq";
     }
