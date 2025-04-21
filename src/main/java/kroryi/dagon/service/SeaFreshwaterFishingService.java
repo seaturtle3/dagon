@@ -2,22 +2,18 @@ package kroryi.dagon.service;
 
 import kroryi.dagon.DTO.ProductDTO;
 import kroryi.dagon.entity.Product;
-import kroryi.dagon.entity.ProductFishSpecies;
 import kroryi.dagon.enums.MainType;
 import kroryi.dagon.enums.ProdRegion;
-import kroryi.dagon.repository.FishSpeciesRepository;
 import kroryi.dagon.repository.ProductRepository;
 import kroryi.dagon.repository.ReservationRepository;
 import lombok.*;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.ModelAttribute;
 
-import java.util.Arrays;
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class ReservationService {
+public class SeaFreshwaterFishingService {
 
     private final ReservationRepository reservationRepository;
     private final ProductRepository productRepository;
@@ -40,8 +36,17 @@ public class ReservationService {
         }
     }
 
+    public ProductDTO getProductById(Long prodId) {
+        Product product = productRepository.findById(prodId)
+                .orElseThrow(() -> new IllegalArgumentException("Product not found with id: " + prodId));
+
+        // Product를 ProductDTO로 변환하여 리턴
+        return convertToDTO(product);
+    }
+
     public ProductDTO convertToDTO(Product product) {
         ProductDTO dto = new ProductDTO();
+        dto.setProdId(product.getProdId());
         dto.setProdName(product.getProdName());
         dto.setProdRegion(product.getProdRegion());
         dto.setMainType(product.getMainType());

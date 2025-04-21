@@ -38,11 +38,6 @@ public class HomeController {
         return "user/my_page";
     }
 
-    @GetMapping("/notice")
-    public String notice() {
-        return "sub_menu/notice";
-    }
-
     @ModelAttribute("regions")
     public ProdRegion[] regions() {
         return ProdRegion.values();
