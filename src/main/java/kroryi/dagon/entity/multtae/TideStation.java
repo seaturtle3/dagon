@@ -26,4 +26,8 @@ public class TideStation {
 
     @Column(name = "longitude")
     private Double longitude;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "wave_station_code")
+    private WaveStation waveStation;
 }
