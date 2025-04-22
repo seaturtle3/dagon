@@ -21,4 +21,7 @@ public class MulttaeDailyDTO {
 
     private List<TideItemDTO> tideItems;
     private List<HourlyDataDTO> hourlyData;
+
+    private Double todayWindSpeed;
+    private String todayWindDir;
 }

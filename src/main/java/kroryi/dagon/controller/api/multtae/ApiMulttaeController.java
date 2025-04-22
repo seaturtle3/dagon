@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -52,6 +53,14 @@ public class ApiMulttaeController {
                         "stationCode", station.getStationCode(),
                         "stationName", station.getStationName()
                 ))
+                .toList();
+    }
+
+    @GetMapping("/regions")
+    public List<String> getRegions() {
+        return Arrays.stream(ProdRegion.values())
+                .map(ProdRegion::getKorean)
+                .sorted()
                 .toList();
     }
 
@@ -95,15 +104,6 @@ public class ApiMulttaeController {
         return result;
     }
 
-    @GetMapping("/test-wave")
-    @Operation(summary = "WaveStation 테스트용 파고 데이터 조회")
-    public List<WaveDTO> testWave(
-            @RequestParam String waveStationCode,
-            @RequestParam @DateTimeFormat(pattern = "yyyyMMdd") LocalDate date
-    ) {
-        String dateStr = date.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
-        return marineWeatherApiClient.getWaveData(waveStationCode, dateStr);
-    }
 
     @GetMapping("/today")
     public MulttaeDailyDTO getTodayInfo(@RequestParam String stationCode) {
@@ -122,13 +122,35 @@ public class ApiMulttaeController {
 
         CompletableFuture.allOf(waveFuture, windFuture, airFuture, tideLevelFuture).join();
 
+        // 풍속, 풍향 (가장 최근값)
+        List<WindDTO> windList = windFuture.join();
+        Double recentSpeed = MarineDataMapper.getMostRecentValue(windList, WindDTO::getWind_speed);
+        String recentDir = MarineDataMapper.getMostRecentValue(windList, WindDTO::getWind_dir);
+        String windDirName = getWindDirName(recentDir);
+
         // 시간대별 기상 데이터 병합
         List<HourlyDataDTO> hourlyData = MarineDataMapper.mergeToHourly(
                 waveFuture.join(), windFuture.join(), airFuture.join(), tideLevelFuture.join()
         );
 
         // 물때 정보 조회
-        List<TideItemDTO> tideItems = tideApiClient.getTideItems(stationCode, dateStr);
+        List<TideItemDTO> tideItems = tideApiClient.getTideItems(stationCode, dateStr)
+                .stream()
+                .map(item -> {
+                    if ("고조".equals(item.getHl_code())) item.setHl_code("만조");
+                    else if ("저조".equals(item.getHl_code())) item.setHl_code("간조");
+
+                    if (item.getTph_time() != null && item.getTph_time().length() >= 16) {
+                        item.setTph_time(item.getTph_time().substring(11, 16));
+                    }
+
+                    if (item.getTph_level() != null) {
+                        item.setTph_level(item.getTph_level());
+                    }
+
+                    return item;
+                })
+                .toList();
 
         // 월령 → 물 이름 계산
         Double lunarAge = lunarCacheService.getLunarAge(today);
@@ -136,6 +158,8 @@ public class ApiMulttaeController {
 
         // 일출/일몰 정보 조회
         Map<String, String> sunMap = sunriseCacheService.getSunInfo(station.getRegion().getKorean(), today);
+
+
 
         // 최종 DTO 조립
         return MulttaeDailyDTO.builder()
@@ -147,9 +171,29 @@ public class ApiMulttaeController {
                 .lunarAge(lunarAge)
                 .mulName(mulName)
                 .tideItems(tideItems)
-                .hourlyData(hourlyData)
+                .hourlyData(hourlyData).todayWindSpeed(recentSpeed)
+                .todayWindDir(windDirName)
                 .build();
     }
+
+    private String getWindDirName(String dirStr) {
+        if (dirStr == null) return "-";
+        try {
+            double degree = Double.parseDouble(dirStr);
+            String[] directions = {
+                    "북", "북북동", "북동", "동북동", "동",
+                    "동남동", "남동", "남남동", "남",
+                    "남남서", "남서", "서남서", "서",
+                    "서북서", "북서", "북북서"
+            };
+            int index = (int) Math.round(degree / 22.5) % 16;
+            return directions[index] + "풍";
+        } catch (Exception e) {
+            return dirStr;
+        }
+    }
+
+
 
     @GetMapping("/daily")
     @Operation(summary = "하루 요약 정보 조회")
@@ -211,4 +255,21 @@ public class ApiMulttaeController {
                 })
                 .toList();
     }
+
+
+
+    @GetMapping("/test-wind")
+    public List<WindDTO> testWind(@RequestParam String windStationCode, @RequestParam @DateTimeFormat(pattern = "yyyyMMdd") LocalDate date) {
+        return marineWeatherApiClient.getWindData(windStationCode, date.format(DateTimeFormatter.ofPattern("yyyyMMdd")));
+    }
+    @GetMapping("/test-wave")
+    @Operation(summary = "WaveStation 테스트용 파고 데이터 조회")
+    public List<WaveDTO> testWave(
+            @RequestParam String waveStationCode,
+            @RequestParam @DateTimeFormat(pattern = "yyyyMMdd") LocalDate date
+    ) {
+        String dateStr = date.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+        return marineWeatherApiClient.getWaveData(waveStationCode, dateStr);
+    }
+
 }

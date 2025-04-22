@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>물때 정보</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="/js/multtae.js"></script>
+</head>
+<body>
+<h2>오늘의 물때 정보</h2>
+
+<div id="regionSection">
+    <div id="regionButtons"></div>
+    <label>선택된 지역: <span id="selectedRegion">인천</span></label><br>
+    <select id="stationSelect"></select>
+</div>
+
+<div id="infoArea" style="margin-top:20px;">
+    <p>날짜: <span id="date"></span></p>
+    <p>물이름: <span id="mulName"></span> (<span id="lunarAge"></span>일)</p>
+    <p>일출: <span id="sunrise"></span>, 일몰: <span id="sunset"></span></p>
+    <p>풍속: <span id="windSpeed"></span> m/s</p>
+    <p>풍향: <span id="windDir"></span>cm</p>
+    <p>파고: <span id="wave"></span> m</p>
+    <p>기온: <span id="airTemp"></span> ℃</p>
+
+    <h3>조위 정보</h3>
+    <ul id="tideItems"></ul>
+
+    <h3>시간대별 기상 정보</h3>
+    <table border="1">
+        <thead>
+        <tr><th>시간</th><th>풍속</th><th>풍향</th><th>파고</th><th>기온</th><th>조위</th></tr>
+        </thead>
+        <tbody id="hourlyData"></tbody>
+    </table>
+</div>
+
+<script>
+    $(function () {
+        // 관측소 목록 불러오기
+        $.get("/api/multtae/stations", { region: "부산" }, function(data) {
+            data.forEach(station => {
+                $("#stationSelect").append(`<option value="${station.stationCode}">${station.stationName}</option>`);
+            });
+        });
+
+        $("#stationSelect").change(function () {
+            const code = $(this).val();
+            if (!code) return;
+
+            $.get("/api/multtae/today", { stationCode: code }, function (data) {
+                $("#date").text(data.date);
+                $("#mulName").text(data.mulName);
+                $("#lunarAge").text(data.lunarAge);
+                $("#sunrise").text(data.sunrise);
+                $("#sunset").text(data.sunset);
+                $("#windSpeed").text(data.todayWindSpeed ?? "-");
+                $("#windDir").text(data.todayWindDir ?? "-");
+                $("#wave").text(data.hourlyData[0].wave ?? "-");
+                $("#airTemp").text(data.hourlyData[0].air_temp ?? "-");
+
+                // 조위 정보
+                $("#tideItems").empty();
+                data.tideItems.forEach(item => {
+                    $("#tideItems").append(`<li>${item.hl_code} ${item.tph_time} (${item.tph_level})</li>`);
+                });
+
+                // 시간대별 기상 정보
+                $("#hourlyData").empty();
+                data.hourlyData.forEach(h => {
+                    $("#hourlyData").append(`
+                    <tr>
+                        <td>${h.time}</td>
+                        <td>${h.wind_speed ?? "-"}</td>
+                        <td>${h.wind_dir ?? "-"}</td>
+                        <td>${h.wave ?? "-"}</td>
+                        <td>${h.air_temp ?? "-"}</td>
+                        <td>${h.tide_level ?? "-"}</td>
+                    </tr>`);
+                });
+            });
+        });
+    });
+</script>
+</body>
+</html>

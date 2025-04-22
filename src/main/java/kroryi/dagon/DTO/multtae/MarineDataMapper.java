@@ -22,7 +22,7 @@ public class MarineDataMapper {
                     LocalTime targetTime = LocalTime.of(hour, 0);
                     return HourlyDataDTO.builder()
                             .time(hour + "시")
-                            .wave(getValue(waveList, targetTime, WaveDTO::getWave))
+                            .wave(getValue(waveList, targetTime, WaveDTO::getWave_height))
                             .wind_speed(getValue(windList, targetTime, WindDTO::getWind_speed))
                             .wind_dir(getValue(windList, targetTime, WindDTO::getWind_dir))
                             .air_temp(getValue(airTempList, targetTime, AirTempDTO::getAir_temp))
@@ -63,5 +63,19 @@ public class MarineDataMapper {
             }
         }
         return closest;
+    }
+
+    public static <T extends HasRecordTime, R> R getMostRecentValue(List<T> list, java.util.function.Function<T, R> extractor) {
+        if (list == null || list.isEmpty()) return null;
+
+        T latest = list.stream()
+                .max(Comparator.comparing(item -> {
+                    String timeStr = item.getRecord_time().substring(11).trim();
+                    if (timeStr.length() == 5) timeStr += ":00";
+                    return LocalTime.parse(timeStr);
+                }))
+                .orElse(null);
+
+        return latest != null ? extractor.apply(latest) : null;
     }
 }
