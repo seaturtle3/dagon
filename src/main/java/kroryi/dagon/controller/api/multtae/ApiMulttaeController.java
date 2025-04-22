@@ -240,8 +240,8 @@ public class ApiMulttaeController {
 
         return MulttaeDailySimpleDTO.builder()
                 .date(date)
-                .sunrise(sunMap.get("sunrise"))
-                .sunset(sunMap.get("sunset"))
+                .sunrise(formatSunTime(sunMap.get("sunrise")))
+                .sunset(formatSunTime(sunMap.get("sunset")))
                 .mulName(mulName)
                 .windDir(wind != null ? wind.getWind_dir() : null)
                 .windSpeed(wind != null ? wind.getWind_speed() : null)
@@ -268,8 +268,8 @@ public class ApiMulttaeController {
                     return MulttaeDailySimpleDTO.builder()
                             .date(date)
                             .mulName(mulName)
-                            .sunrise(sun.getOrDefault("sunrise", "-"))
-                            .sunset(sun.getOrDefault("sunset", "-"))
+                            .sunrise(formatSunTime(sun.getOrDefault("sunrise", "-")))
+                            .sunset(formatSunTime(sun.getOrDefault("sunset", "-")))
                             .windDir(w != null ? w.getWind_dir() : null)
                             .windSpeed(w != null ? w.getWind_speed() : null)
                             .build();

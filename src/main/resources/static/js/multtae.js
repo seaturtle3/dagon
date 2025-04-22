@@ -1,5 +1,6 @@
 let currentAjax = null;
 let latestStationCode = null;
+let tideChartInstance = null;
 
 function loadRegions() {
     $.get("/api/multtae/regions/with-station", function (regionMap) {
@@ -26,16 +27,14 @@ function loadRegions() {
 }
 
 function highlightActiveRegion(region) {
-    $(".region-btn").removeClass("active");
-    $(`.region-btn[data-region="${region}"]`).addClass("active");
+    $(".region-btn").removeClass("btn-dark active").addClass("btn-outline-dark");
+    $(`.region-btn[data-region="${region}"]`).removeClass("btn-outline-dark").addClass("btn-dark active");
 }
 
 function loadStations(region) {
     if (!region) return;
-
     $("#selectedRegion").text(region);
-    $("#stationSelect").empty();
-    $("#stationSelect").append(`<option disabled selected>불러오는 중...</option>`);
+    $("#stationSelect").empty().append(`<option disabled selected>불러오는 중...</option>`);
 
     $.get("/api/multtae/stations", { region }, function (data) {
         $("#stationSelect").empty();
@@ -52,20 +51,17 @@ function loadStations(region) {
 
 function loadStationData(stationCode) {
     if (!stationCode) return;
-
     latestStationCode = stationCode;
 
-    if (currentAjax) {
-        currentAjax.abort(); // ✅ 이전 요청 중단
-    }
+    if (currentAjax) currentAjax.abort();
 
     $("#loading").show();
 
     currentAjax = $.get("/api/multtae/today", { stationCode }, function (data) {
         if (stationCode !== latestStationCode) return;
-
         $("#loading").hide();
 
+        $("#stationName").text(data.stationName);
         $("#date").text(data.date);
         $("#mulName").text(data.mulName);
         $("#lunarAge").text(data.lunarAge);
@@ -93,6 +89,38 @@ function loadStationData(stationCode) {
                     <td>${h.tide_level ?? "-"}</td>
                 </tr>`);
         });
+
+        // ✅ tide_level 그래프 추가
+        const tideLabels = data.hourlyData.map(h => h.time);
+        const tideValues = data.hourlyData.map(h => h.tide_level);
+        if (tideChartInstance) tideChartInstance.destroy();
+        const ctx = document.getElementById("tideChart").getContext("2d");
+        tideChartInstance = new Chart(ctx, {
+            type: "line",
+            data: {
+                labels: tideLabels,
+                datasets: [{
+                    label: "조위 (cm)",
+                    data: tideValues,
+                    borderColor: "#0d6efd",
+                    backgroundColor: "rgba(13,110,253,0.2)",
+                    tension: 0.3,
+                    fill: true,
+                    pointRadius: 3
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: false,
+                        title: {
+                            display: true,
+                            text: "cm"
+                        }
+                    }
+                }
+            }
+        });
     }).fail(function (xhr, status) {
         if (status !== "abort") {
             alert("데이터 불러오기 실패");
@@ -100,7 +128,7 @@ function loadStationData(stationCode) {
         }
     });
 
-    loadWeekData(stationCode); // ✅ 주간 정보 로딩도 함께
+    loadWeekData(stationCode);
 }
 
 function loadWeekData(stationCode) {
@@ -111,8 +139,8 @@ function loadWeekData(stationCode) {
                 <tr>
                     <td>${d.date}</td>
                     <td>${d.mulName}</td>
-                    <td>${d.sunrise}</td>
-                    <td>${d.sunset}</td>
+                    <td>${formatTime(d.sunrise)}</td>
+                    <td>${formatTime(d.sunset)}</td>
                     <td>${d.windSpeed ?? "예보 예정"}</td>
                     <td>${d.windDir ?? "예보 예정"}</td>
                 </tr>
@@ -121,10 +149,14 @@ function loadWeekData(stationCode) {
     });
 }
 
+function formatTime(time) {
+    return (time && time.length === 4) ? time.slice(0, 2) + ":" + time.slice(2) : "-";
+}
+
 $(function () {
     loadRegions();
 
-    $(document).on("click", ".region-btn", function () {
+    $(document).on("click", ".region-btn:not(:disabled)", function () {
         const region = $(this).data("region");
         highlightActiveRegion(region);
         loadStations(region);
