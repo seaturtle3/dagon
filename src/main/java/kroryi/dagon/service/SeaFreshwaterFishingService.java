@@ -1,5 +1,6 @@
 package kroryi.dagon.service;
 
+import jakarta.persistence.criteria.Predicate;
 import kroryi.dagon.DTO.ProductDTO;
 import kroryi.dagon.DTO.ReservationDTO;
 import kroryi.dagon.entity.Product;
@@ -7,11 +8,13 @@ import kroryi.dagon.entity.Reservation;
 import kroryi.dagon.enums.MainType;
 import kroryi.dagon.enums.ProdRegion;
 import kroryi.dagon.enums.ReservationStatus;
+import kroryi.dagon.enums.SubType;
 import kroryi.dagon.repository.ProductRepository;
-import kroryi.dagon.repository.ReservationRepository;
+import kroryi.dagon.repository.SeaFreshwaterFishingRepository;
 import lombok.*;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -19,13 +22,14 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class SeaFreshwaterFishingService {
 
-    private final ReservationRepository reservationRepository;
+    private final SeaFreshwaterFishingRepository seaFreshwaterFishingRepository;
     private final ProductRepository productRepository;
 
-    public String getFindAll(){
-        return reservationRepository.findAll().toString();
+    public String getFindAll() {
+        return seaFreshwaterFishingRepository.findAll().toString();
     }
 
+    // 모든 상품을 지역과 메인타입으로 필터
     public List<ProductDTO> getAllProductsByRegionAndMainType(ProdRegion region, MainType mainType) {
         if (region == null) {
             return productRepository.findByMainType(mainType)
@@ -40,13 +44,20 @@ public class SeaFreshwaterFishingService {
         }
     }
 
-    public ProductDTO getProductById(Long prodId) {
-        Product product = productRepository.findById(prodId)
-                .orElseThrow(() -> new IllegalArgumentException("Product not found with id: " + prodId));
-
-        // Product를 ProductDTO로 변환하여 리턴
-        return convertToDTO(product);
+    // 필터 : 메인타입, 서브타입, 지역
+    public List<Product> getProductsByFilters(MainType mainType, SubType subType, ProdRegion region) {
+        if (subType == null && region == null) {
+            return productRepository.findByMainType(mainType);
+        } else if (subType == null) {
+            return productRepository.findByMainTypeAndProdRegion(mainType, region);
+        } else if (region == null) {
+            return productRepository.findByMainTypeAndSubType(mainType, subType);
+        } else {
+            return productRepository.findByMainTypeAndSubTypeAndProdRegion(mainType, subType, region);
+        }
     }
+
+
 
     public ProductDTO convertToDTO(Product product) {
         ProductDTO dto = new ProductDTO();
@@ -54,7 +65,6 @@ public class SeaFreshwaterFishingService {
         dto.setProdName(product.getProdName());
         dto.setProdRegion(product.getProdRegion());
         dto.setMainType(product.getMainType());
-        dto.setSubType(product.getSubType());
         dto.setMaxPerson(product.getMaxPerson());
         dto.setMinPerson(product.getMinPerson());
         dto.setWeight(product.getWeight());
@@ -62,13 +72,18 @@ public class SeaFreshwaterFishingService {
         dto.setProdDescription(product.getProdDescription());
         dto.setProdEvent(product.getProdEvent());
         dto.setProdNotice(product.getProdNotice());
+        // LocalDateTime -> LocalDate 변환
+        if (product.getCreatedAt() != null) {
+            dto.setCreatedAt(product.getCreatedAt().toLocalDate());  // LocalDateTime에서 LocalDate만 추출
+        }
+
         return dto;
     }
 
 
     public List<ReservationDTO> getReservationsByUserId(Long uid) {
-        List<Reservation> reservations = reservationRepository. findByUser_Uno(uid);
-        return reservations.stream().map(this::convertDTO).collect(Collectors.toList());
+        List<Reservation> seafreshwatergRepository = seaFreshwaterFishingRepository. findByUser_Uno(uid);
+        return seafreshwatergRepository.stream().map(this::convertDTO).collect(Collectors.toList());
     }
 
     private ReservationDTO convertDTO(Reservation reservation) {
@@ -86,7 +101,7 @@ public class SeaFreshwaterFishingService {
     }
 
     public boolean cancelReservationByUser(Long reservationId, Long uno) {
-        Reservation reservation = reservationRepository.findById(reservationId)
+        Reservation reservation = seaFreshwaterFishingRepository.findById(reservationId)
                 .orElseThrow(() -> new RuntimeException("예약을 찾을 수 없습니다."));
 
         // 해당 예약이 로그인한 사용자 소유인지 확인
@@ -96,7 +111,7 @@ public class SeaFreshwaterFishingService {
 
         // 예약 상태를 취소로 변경
         reservation.setReservationStatus(ReservationStatus.CANCELED);
-        reservationRepository.save(reservation);
+        seaFreshwaterFishingRepository.save(reservation);
 
         return true;
     }

@@ -6,7 +6,7 @@ import kroryi.dagon.entity.Reservation;
 import kroryi.dagon.entity.User;
 import kroryi.dagon.enums.SenderType;
 import kroryi.dagon.repository.NotificationRepository;
-import kroryi.dagon.repository.ReservationRepository;
+import kroryi.dagon.repository.SeaFreshwaterFishingRepository;
 import kroryi.dagon.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 
         private final NotificationRepository notificationRepository;
         private final UserRepository userRepository;
-        private final ReservationRepository reservationRepository;  // 예약 정보 처리
+        private final SeaFreshwaterFishingRepository seaFreshwaterFishingRepository;  // 예약 정보 처리
 
         public NotificationDTO createNotification(NotificationDTO dto) {
             // 유저 정보 받아오기
@@ -36,7 +36,7 @@ import java.util.stream.Collectors;
             // 예약 정보 받아오기
             Reservation reservation = null;
             if (dto.getReservationId() != null) {
-                reservation = reservationRepository.findById(dto.getReservationId())
+                reservation = seaFreshwaterFishingRepository.findById(dto.getReservationId())
                         .orElseThrow(() -> new RuntimeException("Reservation not found"));
             }
 

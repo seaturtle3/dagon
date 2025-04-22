@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:insert="fragments/common-head :: head">
+    <meta charset="UTF-8">
+    <title>조황정보</title>
+</head>
+<body>
+<div th:replace="fragments/header :: header"></div>
+
+<h1>조황 정보 리스트</h1>
+
+<table border="1">
+    <thead>
+    <tr>
+        <th>생성일</th>
+        <th>썸네일</th>
+        <th>조회수</th>
+        <th>배 이름</th>
+        <th>작성자</th>
+        <th>제목</th>
+        <th>내용</th>
+        <th>댓글</th>
+    </tr>
+    </thead>
+    <tbody>
+    <!-- 타임리프를 사용해 데이터 반복 출력 -->
+    <tr th:each="report : ${fishingReports}">
+        <td>
+        <span th:if="${report.fishingAt != null}"
+              th:text="${#temporals.format(report.fishingAt, 'yyyy-MM-dd HH:mm')}"></span>
+            <span th:unless="${report.fishingAt != null}">-</span>
+        </td>
+        <td><img th:src="${report.thumbnailUrl}" alt="썸네일" width="100"></td>
+        <td th:text="${report.views}">조회수</td>
+        <td th:text="${report.prodName}">배 이름</td>
+        <td th:text="${report.userName}">작성자</td>
+        <td th:text="${report.title}">제목</td>
+        <td th:text="${report.content}">내용</td>
+        <td th:text="${report.product}">상품</td>
+        <td>
+            <ul>
+                <li th:each="comment : ${report.comments}" th:text="${comment}">댓글</li>
+            </ul>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+<div style="margin-bottom: 20px;">
+    <a th:href="@{/fishing-report/form}">
+        <button type="button">글쓰기</button>
+    </a>
+</div>
+
+</body>
+</html>

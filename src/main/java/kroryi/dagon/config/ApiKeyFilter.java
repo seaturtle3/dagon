@@ -15,13 +15,10 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.util.List;
-
-import static org.aspectj.weaver.tools.cache.SimpleCacheFactory.path;
 
 @Component
 @Log4j2
@@ -95,10 +92,8 @@ public class ApiKeyFilter extends OncePerRequestFilter {
                 !path.startsWith("/api/") ||
                         (path.startsWith("/api/users/register") && method.equals("POST")) ||
                         (path.startsWith("/api/auth/login") && method.equals("POST")) ||
-                        (path.startsWith("/api/admin/login") && method.equals("POST")) ||
                         (path.startsWith("/api/auth/kakao") && method.equals("POST")) ||
                         (path.startsWith("/login")) ||
-                        (path.startsWith("admin/login")) ||
                         (path.startsWith("/js/")) ||
                         (path.startsWith("/web/users/") && method.equals("POST")) ||
 
@@ -147,12 +142,28 @@ public class ApiKeyFilter extends OncePerRequestFilter {
                         (path.equals("/register") && method.equals("POST")) ||
                         (path.equals("/admin/registration") && method.equals("GET")) ||
 
+                        // 상품 CRUD
+                        (path.matches("/api/product/create") && method.equals("POST")) ||
+                        (path.matches("/api/product/getAll") && method.equals("GET")) ||
+                        (path.matches("/api/product/get/.+") && method.equals("GET")) ||
+                        (path.matches("/api/product/update/.+") && method.equals("PUT")) ||
+                        (path.matches("/api/product/delete/.+") && method.equals("DELETE")) ||
+
+                        // 조황 CRUD
+                        (path.matches("/api/fishing-report/create") && method.equals("POST")) ||
+                        (path.matches("/api/fishing-report/get-all") && method.equals("GET")) ||
+                        (path.matches("/api/fishing-report/get/.+") && method.equals("GET")) ||
+                        (path.matches("/api/fishing-report/update/.+") && method.equals("PUT")) ||
+                        (path.matches("/api/fishing-report/delete/.+") && method.equals("DELETE")) ||
+                        // 조황정보 리스트 조회 (추가)
+                        (path.matches("/api/fishing-reports") && method.equals("GET")) ||
+
+
+
 
                         (path.startsWith("/api/users/me") && method.equals("GET")) ||
                         // GET - 이름으로 유저 개인정보  조회
                         (path.matches("/api/mypage/me") && method.equals("GET")) ;
-
-
 
 
 

@@ -16,19 +16,19 @@ public class ApiProductController {
     private final ProductService productService;
 
     @Operation(summary = "상품 등록", description = "새로운 상품 등록")
-    @PostMapping("/add")
+    @PostMapping("/create")
     public Long addProduct(@RequestBody ProductDTO productDTO) {
         return productService.addProduct(productDTO);
     }
 
     @Operation(summary = "모든 상품 조회", description = "모든 상품 조회")
-    @GetMapping("/all")
+    @GetMapping("/getAll")
     public List<ProductDTO> getAllProducts() {
         return productService.getAllProducts();
     }
 
     @Operation(summary = "상품 단건 조회", description = "ID로 상품 조회")
-    @GetMapping("/{id}")
+    @GetMapping("/get/{id}")
     public ProductDTO getProduct(@PathVariable Long id) {
         return productService.getProductById(id);
     }

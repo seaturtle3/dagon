@@ -6,8 +6,11 @@ import kroryi.dagon.enums.ProdRegion;
 import kroryi.dagon.enums.SubType;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,6 +18,7 @@ import java.util.List;
 @Setter
 @Entity
 @Table(name = "product")
+@ToString
 public class Product extends BaseTimeEntity {
 
     @Id
@@ -64,6 +68,11 @@ public class Product extends BaseTimeEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "uno", nullable = false)
     private Partner partner;
+
+    // 예약 가능한 날짜
+    @Column(name = "available_date")
+    private LocalDate availableDate;
+
 
     // 옵션
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
