@@ -41,49 +41,18 @@ public class SeaFreshwaterFishingService {
         }
     }
 
-    public ProductDTO getProductById(Long prodId) {
-        Product product = productRepository.findById(prodId)
-                .orElseThrow(() -> new IllegalArgumentException("Product not found with id: " + prodId));
-
-        // Product를 ProductDTO로 변환하여 리턴
-        return convertToDTO(product);
+    // 필터 : 메인타입, 서브타입, 지역
+    public List<Product> getProductsByFilters(MainType mainType, SubType subType, ProdRegion region) {
+        if (subType == null && region == null) {
+            return productRepository.findByMainType(mainType);
+        } else if (subType == null) {
+            return productRepository.findByMainTypeAndProdRegion(mainType, region);
+        } else if (region == null) {
+            return productRepository.findByMainTypeAndSubType(mainType, subType);
+        } else {
+            return productRepository.findByMainTypeAndSubTypeAndProdRegion(mainType, subType, region);
+        }
     }
-
-    public List<ProductDTO> getProductsByFilters(LocalDate date, MainType mainType, SubType subType, ProdRegion region, String fishType) {
-        return productRepository.findAll((root, query, builder) -> {
-                    Predicate predicate = builder.conjunction();  // 기본 조건을 결합
-
-                    // 날짜 필터링: 등록된 날짜가 주어진 날짜 이후인 것만 가져오기
-                    if (date != null) {
-                        predicate = builder.and(predicate, builder.greaterThanOrEqualTo(root.get("createdAt"), date));
-                    }
-
-                    // MainType 필터링
-                    if (mainType != null) {
-                        predicate = builder.and(predicate, builder.equal(root.get("mainType"), mainType));
-                    }
-
-                    // SubType 필터링: mainType에 맞는 subType만 필터링
-                    if (subType != null) {
-                        predicate = builder.and(predicate, builder.equal(root.get("subType"), subType));
-                    }
-
-                    // 지역(ProdRegion) 필터링
-                    if (region != null) {
-                        predicate = builder.and(predicate, builder.equal(root.get("prodRegion"), region));
-                    }
-
-                    // 어종(fishType) 필터링: prodName에 대한 LIKE 검색
-                    if (fishType != null && !fishType.isEmpty()) {
-                        predicate = builder.and(predicate, builder.like(root.get("prodName"), "%" + fishType + "%"));
-                    }
-
-                    return predicate;
-                }).stream()
-                .map(this::convertToDTO)  // Product를 DTO로 변환
-                .collect(Collectors.toList());  // 리스트로 반환
-    }
-
 
 
 

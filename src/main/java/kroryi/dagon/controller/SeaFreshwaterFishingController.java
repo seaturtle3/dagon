@@ -2,6 +2,7 @@ package kroryi.dagon.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
 import kroryi.dagon.DTO.ProductDTO;
+import kroryi.dagon.entity.Product;
 import kroryi.dagon.entity.ProductFishSpecies;
 import kroryi.dagon.enums.MainType;
 import kroryi.dagon.enums.ProdRegion;
@@ -56,7 +57,7 @@ public class SeaFreshwaterFishingController {
     }
 
     private MainType convertToMainType(String mainType) {
-        if (mainType == null || mainType.equals("")) {
+        if (mainType == null || mainType.equals("전체")) {
             return null;
         }
 
@@ -102,7 +103,6 @@ public class SeaFreshwaterFishingController {
 
         ProdRegion convertedProdRegion = convertToProdRegion(region);
         MainType convertedMainType = convertToMainType(mainType);
-        SubType convertedSubType = convertToSubType(subType);
 
         // URL에 따른 MainType 설정
         if (convertedMainType == null) {
@@ -113,19 +113,20 @@ public class SeaFreshwaterFishingController {
             }
         }
 
-        // 필터 조건을 모델에 추가
-        addSearchAttributes(date, people, region, mainType, subType, model);
+        SubType convertedSubType = null;
+        if (subType != null && !subType.equals("전체")) {
+            convertedSubType = convertToSubType(subType);
+        }
 
         // 필터링된 상품 목록을 모델에 추가
-        List<ProductDTO> products = seaFreshwaterFishingService.getProductsByFilters(
-                date, convertedMainType, convertedSubType, convertedProdRegion, fishType
+        List<Product> products = seaFreshwaterFishingService.getProductsByFilters(
+                convertedMainType, convertedSubType, convertedProdRegion
         );
 
-        log.info("Sea Fetched Products: {}", products);
-        log.info("Sea Filters applied - Region: {}, MainType: {}, SubType: {}, FishType: {}, AvailableDate: {}",
-                region, mainType, subType, fishType, date);
-
         model.addAttribute("products", products);
+
+        log.info("Fetched Products: {}", products);
+        log.info("Filtering Products with Region: {}, MainType: {}, SubType: {}", region, mainType, subType);
 
         return "fishing/sea";
     }
@@ -154,13 +155,9 @@ public class SeaFreshwaterFishingController {
         }
 
         addSearchAttributes(date, people, region, mainType, subType, model);  // 수정된 메서드 호출
-        List<ProductDTO> products = seaFreshwaterFishingService.getProductsByFilters(
-                date, convertedMainType, convertedSubType, convertedProdRegion, fishType
+        List<Product> products = seaFreshwaterFishingService.getProductsByFilters(
+                convertedMainType, convertedSubType, convertedProdRegion
         );  // subType도 추가
-
-        log.info("Freshwater Fetched Products: {}", products);
-        log.info("Freshwater Filters applied - Region: {}, MainType: {}, SubType: {}, FishType: {}, AvailableDate: {}",
-                region, mainType, subType, fishType, date);
 
         model.addAttribute("products", products);
 

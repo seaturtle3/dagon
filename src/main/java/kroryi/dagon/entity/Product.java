@@ -6,6 +6,7 @@ import kroryi.dagon.enums.ProdRegion;
 import kroryi.dagon.enums.SubType;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -17,6 +18,7 @@ import java.util.List;
 @Setter
 @Entity
 @Table(name = "product")
+@ToString
 public class Product extends BaseTimeEntity {
 
     @Id
