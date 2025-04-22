@@ -28,7 +28,8 @@ public class UsersDTO {
     private String role;
     private String levelPoint; // levelPoint 추가
     private String loginType;  // 로그인 타입 추가
-    private String createdAt;  // 생성일 추가 (BaseTimeEntity에서 자동 생성되는 값)
+    private String createdAt;
+    private boolean isActive;// 생성일 추가 (BaseTimeEntity에서 자동 생성되는 값)
 
 
     // User 객체를 받는 생성자 추가
@@ -51,6 +52,7 @@ public class UsersDTO {
         this.levelPoint = String.valueOf(user.getLevelPoint());
         this.loginType = user.getLoginType() != null ? user.getLoginType().name() : String.valueOf(LOCAL);
         this.createdAt = user.getCreatedAt() != null ? user.getCreatedAt().toString() : LocalDateTime.now().toString();
+        this.isActive = user.isActive();
     }
 
     // 전체 전화번호를 합치는 메서드

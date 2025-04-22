@@ -13,6 +13,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import kroryi.dagon.entity.User;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import java.time.LocalDateTime;
 
@@ -106,6 +107,7 @@ public class PartnerApplicationService {
         PartnerApplication app = partnerApplicationRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("신청 정보 없음"));
 
+        System.out.println("== 트랜잭션 상태: " + TransactionSynchronizationManager.isActualTransactionActive());
         app.setPStatus(ApplicationStatus.APPROVED);
         app.setPReviewedAt(LocalDateTime.now());
 
@@ -126,7 +128,12 @@ public class PartnerApplicationService {
         partner.setPInfo(app.getPInfo());
         partner.setLicense(app.getLicense());
 
+        System.out.println("uno: " + uno);
+        System.out.println("partner 존재 여부: " + (partner != null));
+        System.out.println("== 트랜잭션 상태: " + TransactionSynchronizationManager.isActualTransactionActive());
+
         partnerRepository.save(partner);
+        partnerRepository.flush(); // 강제 커밋
     }
 
     @Transactional

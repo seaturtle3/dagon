@@ -9,75 +9,77 @@ import kroryi.dagon.repository.NotificationRepository;
 import kroryi.dagon.repository.ReservationRepository;
 import kroryi.dagon.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
-    @Service
-    @RequiredArgsConstructor
-    public class NotificationService {
+@Service
+@RequiredArgsConstructor
+public class NotificationService {
 
-        private final NotificationRepository notificationRepository;
-        private final UserRepository userRepository;
-        private final ReservationRepository reservationRepository;  // 예약 정보 처리
+    private final NotificationRepository notificationRepository;
+    private final UserRepository userRepository;
+    private final ReservationRepository reservationRepository;  // 예약 정보 처리
 
-        public NotificationDTO createNotification(NotificationDTO dto) {
-            // 유저 정보 받아오기
-            User receiver = userRepository.findById(dto.getReceiverId())
-                    .orElseThrow(() -> new RuntimeException("Receiver not found"));
+    public NotificationDTO createNotification(NotificationDTO dto) {
+        // 유저 정보 받아오기
+        User receiver = userRepository.findById(dto.getReceiverId())
+                .orElseThrow(() -> new RuntimeException("Receiver not found"));
 
-            User sender = null;
-            SenderType senderType = SenderType.fromString(String.valueOf(dto.getSenderType()));
+        User sender = null;
+        SenderType senderType = SenderType.fromString(String.valueOf(dto.getSenderType()));
 
-            // 발신자 처리 (생략)
+        // 발신자 처리 (생략)
 
-            // 예약 정보 받아오기
-            Reservation reservation = null;
-            if (dto.getReservationId() != null) {
-                reservation = reservationRepository.findById(dto.getReservationId())
-                        .orElseThrow(() -> new RuntimeException("Reservation not found"));
-            }
-
-            Notification notification = new Notification();
-            notification.setReceiver(receiver);  // 유저 정보 연결
-            notification.setSender(sender);      // 발신자 정보 연결
-            notification.setSenderType(senderType);
-            notification.setType(dto.getType());
-            notification.setTitle(dto.getTitle());
-            notification.setContent(dto.getContent());
-            notification.setCreatedAt(LocalDateTime.now());
-            notification.setReservation(reservation);  // 예약 정보 연결
-
-            Notification saved = notificationRepository.save(notification);
-            return convertToDTO(saved);
+        // 예약 정보 받아오기
+        Reservation reservation = null;
+        if (dto.getReservationId() != null) {
+            reservation = reservationRepository.findById(dto.getReservationId())
+                    .orElseThrow(() -> new RuntimeException("Reservation not found"));
         }
 
-        public NotificationDTO createSimpleNotification(NotificationDTO dto) {
-            User receiver = userRepository.findById(dto.getReceiverId())
-                    .orElseThrow(() -> new RuntimeException("Receiver not found"));
+        Notification notification = new Notification();
+        notification.setReceiver(receiver);  // 유저 정보 연결
+        notification.setSender(sender);      // 발신자 정보 연결
+        notification.setSenderType(senderType);
+        notification.setType(dto.getType());
+        notification.setTitle(dto.getTitle());
+        notification.setContent(dto.getContent());
+        notification.setCreatedAt(LocalDateTime.now());
+        notification.setReservation(reservation);  // 예약 정보 연결
 
-            User sender = null;
-            SenderType senderType = SenderType.fromString(String.valueOf(dto.getSenderType()));
+        Notification saved = notificationRepository.save(notification);
+        return convertToDTO(saved);
+    }
 
-            if (senderType == SenderType.ADMIN || senderType == SenderType.PARTNER) {
-                sender = userRepository.findById(dto.getSenderId())
-                        .orElseThrow(() -> new RuntimeException("Sender not found"));
-            }
+    public NotificationDTO createSimpleNotification(NotificationDTO dto) {
+        User receiver = userRepository.findById(dto.getReceiverId())
+                .orElseThrow(() -> new RuntimeException("Receiver not found"));
 
-            Notification notification = new Notification();
-            notification.setReceiver(receiver);
-            notification.setSender(sender);
-            notification.setSenderType(senderType);
-            notification.setType(dto.getType()); // NOTICE 또는 REPLY
-            notification.setTitle(dto.getTitle());
-            notification.setContent(dto.getContent());
-            notification.setCreatedAt(LocalDateTime.now());
+        User sender = null;
+        SenderType senderType = SenderType.fromString(String.valueOf(dto.getSenderType()));
 
-            Notification saved = notificationRepository.save(notification);
-            return convertToDTO(saved);
+        if (senderType == SenderType.ADMIN || senderType == SenderType.PARTNER) {
+            sender = userRepository.findById(dto.getSenderId())
+                    .orElseThrow(() -> new RuntimeException("Sender not found"));
         }
+
+        Notification notification = new Notification();
+        notification.setReceiver(receiver);
+        notification.setSender(sender);
+        notification.setSenderType(senderType);
+        notification.setType(dto.getType()); // NOTICE 또는 REPLY
+        notification.setTitle(dto.getTitle());
+        notification.setContent(dto.getContent());
+        notification.setCreatedAt(LocalDateTime.now());
+
+        Notification saved = notificationRepository.save(notification);
+        return convertToDTO(saved);
+    }
 
     public NotificationDTO getNotification(Long id) {
         Notification notification = notificationRepository.findById(id)
@@ -118,4 +120,48 @@ import java.util.stream.Collectors;
         dto.setCreatedAt(entity.getCreatedAt().toString());
         return dto;
     }
-}
+
+    public void sendAdminNotification(NotificationDTO dto) {
+        List<User> receivers;
+
+        if (dto.getReceiverId() != null) {
+            User receiver = userRepository.findById(dto.getReceiverId())
+                    .orElseThrow(() -> new RuntimeException("Receiver not found"));
+            receivers = List.of(receiver);
+        } else {
+            receivers = userRepository.findAll(); // 전체 발송
+        }
+
+        for (User receiver : receivers) {
+            Notification notification = new Notification();
+            notification.setReceiver(receiver);
+            notification.setSender(null); // 관리자 시스템 발송이므로 null
+            notification.setSenderType(SenderType.ADMIN);
+            notification.setType(dto.getType());
+            notification.setTitle(dto.getTitle());
+            notification.setContent(dto.getContent());
+            notification.setCreatedAt(LocalDateTime.now());
+            notification.setRead(false);
+
+            notificationRepository.save(notification);
+        }
+    }
+
+    public Page<NotificationDTO> getNotifications(Long uno, String type, Pageable pageable) {
+        Page<Notification> notifications;
+
+        if (uno != null && type != null) {
+            notifications = notificationRepository.findByReceiverUnoAndType(uno, type, pageable); // uno 사용
+        } else if (uno != null) {
+            notifications = notificationRepository.findByReceiverUno(uno, pageable); // uno 사용
+        } else if (type != null) {
+            notifications = notificationRepository.findByType(type, pageable);
+        } else {
+            notifications = notificationRepository.findAll(pageable);
+        }
+
+        return notifications.map(this::convertToDTO);
+    }
+
+    }
+

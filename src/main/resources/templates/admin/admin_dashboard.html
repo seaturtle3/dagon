@@ -13,6 +13,8 @@
         <div class="sidebar-item" id="dashboard-link">대시보드</div>
         <div class="sidebar-item" id="user-info-link">회원 정보</div>
         <div class="sidebar-item" id="partner-list-link">파트너 신청 목록</div>
+        <div class="sidebar-item" id="notification-link">알림</div>
+        <div class="sidebar-item" id="report-link">신고 목록</div>
     </div>
 
     <!-- 메인 콘텐츠 영역 -->
@@ -54,6 +56,7 @@
             </div>
         </div>
 
+
         <div id="partner-list" class="page ">
             <h1>파트너 신청 목록</h1>
 
@@ -94,6 +97,71 @@
         </div>
 
 
+        <!-- 알림 -->
+        <div id="notifications" class="page">
+            <h1>알림</h1>
+
+            <div id="search-container">
+
+            </div>
+            <div id="notification-form-container"></div>
+            <table>
+                <thead>
+                <tr>
+                    <th>유저번호</th>
+                    <th>제목</th>
+                    <th>내용</th>
+                    <th>보낸 사람</th>
+                    <th>유형</th>
+                    <th>날짜</th>
+                    <th>읽음 여부</th>
+                </tr>
+                </thead>
+                <tbody id="notifications-list">
+
+                </tbody>
+                <tbody id="notification-table-body">
+                <!-- 알림 데이터 삽입 영역 -->
+                </tbody>
+            </table>
+
+            <div id="notification-pagination" class="mt-4 flex justify-center"></div>
+        </div>
+        <!-- 신고 목록 -->
+        <div id="report-list" class="page">
+            <h1>신고 목록</h1>
+            <button onclick="openReportPopup()">신고하기</button>
+            <div class="search-container">
+                <label>검색 기준:</label>
+                <select id="report-search-type">
+                    <option value="uname">신고자 이름</option>
+                    <option value="reportedName">신고 당한 유저 이름</option>
+                </select>
+
+                <input type="text" id="report-search-keyword" placeholder="검색어 입력">
+
+                <button onclick="loadReportData(0)">검색</button>
+            </div>
+
+            <table>
+                <thead>
+                <tr>
+                    <th>신고 ID</th>
+                    <th>신고자 이름</th>
+                    <th>신고 당한 유저</th>
+                    <th>신고 내용</th>
+                    <th>활성화</th>
+                    <th>비활성화</th>
+                </tr>
+                </thead>
+                <tbody id="report-table-body">
+                <!-- 신고 목록 데이터가 여기에 삽입됩니다 -->
+                </tbody>
+            </table>
+
+            <div id="report-pagination" class="pagination"></div>
+        </div>
+
 
         <!-- 사용자 상세 정보 팝업 -->
         <div id="user-detail" class="popup hidden">
@@ -101,18 +169,24 @@
 
         </div>
     </div>
-    </div>
+</div>
 
+<script src="/js/admin/report.js"></script>
+<script src="/js/admin/searchNotifications.js"></script>
+<script src="/js/admin/notification.js"></script>
 <script src="/js/admin/partneradmin.js"></script>
 <script src="/js/admin/app.js"></script>
 <script src="/js/auth.js"></script>
+<script src="/js/reports-create.js"></script>
 
 <script>
     const pages = document.querySelectorAll('.page');
     const links = {
         'dashboard-link': 'dashboard',
         'user-info-link': 'user-info',
-        'partner-list-link': 'partner-list'
+        'partner-list-link': 'partner-list',
+        'notification-link': 'notifications',
+        'report-link' : 'report-list'
     };
 
     Object.keys(links).forEach(linkId => {
@@ -134,7 +208,6 @@
                 document.getElementById("approved-count").innerText = data.approvedPartners;
             });
     });
-
 
 
 </script>

@@ -66,8 +66,13 @@ public class User extends BaseTimeEntity {
     @Column(nullable = false)
     private LoginType loginType = LoginType.LOCAL;
 
+    @Column(name = "is_active", nullable = false)  // 이 부분을 추가
+    @ColumnDefault("true")
+    private boolean isActive = true;
+
     @Version
-    private Integer version;
+    @Column(nullable = false)
+    private Integer version = 0;
 
     public String getDisplayName() {
         return (nickname != null && !nickname.isBlank()) ? nickname : uname;
@@ -103,5 +108,10 @@ public class User extends BaseTimeEntity {
     // 알림
     @OneToMany(mappedBy = "receiver", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Notification> notifications;
+
+
+    public void setIsActive(boolean isActive) {
+        this.isActive = isActive;
+    }
 }
 
