@@ -10,6 +10,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
+import static kroryi.dagon.util.multtae.MarineDataFilterUtil.filterByHour;
 
 import java.net.URI;
 import java.util.List;
@@ -49,11 +50,8 @@ public class MarineWeatherApiClient {
             return List.of(); // 비어있는 리스트 반환
         }
 
-        List<WaveDTO> data = response.getResult().getData();
-        log.info("Wave API 응답 데이터: {}", data);
-        return data;
-
-
+        List<WaveDTO> filtered = filterByHour(response.getResult().getData());
+        return filtered;
     }
 
     public List<AirTempDTO> getAirTempData(String obsCode, String date) {
@@ -75,9 +73,8 @@ public class MarineWeatherApiClient {
             return List.of();
         }
 
-        List<AirTempDTO> data = response.getResult().getData();
-        log.info("AirTemp API 응답 데이터: {}", data); // ✅ 로그 추가
-        return data;
+        List<AirTempDTO> filtered = filterByHour(response.getResult().getData());
+        return filtered;
     }
 
     public List<WindDTO> getWindData(String obsCode, String date) {
@@ -100,9 +97,8 @@ public class MarineWeatherApiClient {
             return List.of();
         }
 
-        List<WindDTO> data = response.getResult().getData();
-        log.info("Wind API 응답 데이터: {}", data); // ✅ 로그 추가
-        return data;
+        List<WindDTO> filtered = filterByHour(response.getResult().getData());
+        return filtered;
     }
 
     public List<TideLevelDTO> getTideLevelData(String obsCode, String date) {
@@ -125,9 +121,8 @@ public class MarineWeatherApiClient {
             return List.of();
         }
 
-        List<TideLevelDTO> data = response.getResult().getData();
-        log.info("TideLevel API 응답 데이터: {}", data); // ✅ 로그 추가
-        return data;
+        List<TideLevelDTO> filtered = filterByHour(response.getResult().getData());
+        return filtered;
     }
 
 }
