@@ -82,7 +82,7 @@
     <div class="modal-dialog">
         <div class="modal-content">
 
-            <form action="/fishing/sea" method="get" onsubmit="updateSpan();">
+            <form action="/fishing/sea" method="get" onsubmit="handleApply();">
                 <div class="modal-header">
                     <h5 class="modal-title">세부항목 변경</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
@@ -98,7 +98,7 @@
 
                     <label>세부 장소 : </label>
                     <select class="form-control" name="subType" id="modal-subType">
-                        <option value="">전체</option>
+                        <option value="전체">전체</option>
                         <option th:each="subType : ${subTypes}"
                                 th:text="${subType.korean}">
                         </option>

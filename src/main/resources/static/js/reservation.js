@@ -3,16 +3,18 @@ window.addEventListener("DOMContentLoaded", () => {
     console.log("바다 페이지 로딩 완료")
 });
 
-// 모달에서 옵션 선택 후 화면에 출력되는 설정
-function updateSpan() {
+// 민물 선택했을 때 freshwater로 이동
+function handleApply() {
+    // 화면에 선택 값 반영
     const mainType = document.querySelector('input[name="waterType"]:checked').value;
-    const subType = document.getElementById("modal-subType").value;
+    const subType = document.getElementById("modal-subType").value || "전체";
     const date = document.getElementById("modal-date").value;
     const people = document.getElementById("modal-people").value;
     const region = document.getElementById("modal-region").value;
     const fishType = document.getElementById("modal-fishType").value;
     const today = new Date().toISOString().split("T")[0];
 
+    // 화면에 반영
     document.getElementById("selected-mainType").textContent = mainType === 'sea' ? '바다' : '민물';  // "바다" 또는 "민물" 표시
 
     const selectedSubTypeText = allSubTypes.find(item => item.value === subType)?.text || "전체";
@@ -22,21 +24,8 @@ function updateSpan() {
     document.getElementById("selected-people").textContent = people || 1;
     document.getElementById("selected-region").textContent = region || "전체";
     document.getElementById("selected-fish").textContent = fishType || "전체";
-}
 
-// 민물 선택했을 때 freshwater로 이동
-function handleApply() {
-    updateSpan(); // 화면에 선택 값 반영
-
-    const selectedRadio = document.querySelector('input[name="waterType"]:checked');
-    const mainType = selectedRadio ? selectedRadio.value : 'sea';
-
-    const subType = document.getElementById("modal-subType").value || "전체";
-    const date = document.getElementById("modal-date").value;
-    const people = document.getElementById("modal-people").value;
-    const region = document.getElementById("modal-region").value;
-    const fishType = document.getElementById("modal-fishType").value;
-
+    // URL 구성 및 리디렉션
     const url = `/fishing/${mainType}?mainType=${mainType}&subType=${subType}&date=${date}&people=${people}&region=${region}&fishType=${fishType}`;
     window.location.href = url;
 }
@@ -44,7 +33,7 @@ function handleApply() {
 function updateSpanFromURL() {
     const params = new URLSearchParams(window.location.search);
 
-    const subType = params.get("subType") || "";
+    const subType = params.get("subType") || "전체";
     const date = params.get("date") || new Date().toISOString().split("T")[0];
     const people = params.get("people") || 1;
     const region = params.get("region") || "전체";
@@ -111,22 +100,6 @@ function syncModalValues() {
     console.log(`type: ${mainType === 'freshwater' ? '민물' : '바다'}, subType: ${subType}, date: ${date}, people: ${people}, region: ${region}, fishType: ${fishType}`);
 }
 
-// 서브타입 값 업데이트 시 한글로 반영
-function updateSubTypeText() {
-    const subType = document.getElementById("modal-subType").value;
-    const selectedSubTypeText = allSubTypes.find(item => item.value === subType)?.text || "전체";
-    document.getElementById("selected-subType").textContent = selectedSubTypeText;
-}
-
-// 페이지 로딩 후에 모달 값 동기화 (서브타입, 날짜 등)
-document.addEventListener('DOMContentLoaded', function () {
-    syncModalValues(); // 모달 값 동기화 호출
-});
-
-// 모달의 서브타입이 변경될 때마다 한글로 업데이트
-document.getElementById('modal-subType').addEventListener('change', updateSubTypeText);
-
-
 // allSubTypes : 서버에서 직접 렌더링해서 뿌리자 (static 파일이면 직접 작성)
 const allSubTypes = [
     { value: 'BREAK_WATER', text: '방파제', mainType: 'SEA' },
@@ -175,7 +148,7 @@ document.addEventListener('DOMContentLoaded', function() {
 // 서브타입 옵션 업데이트
 function updateSubTypeOptions(selectedWaterType) {
     const select = document.getElementById('modal-subType');
-    select.innerHTML = '<option value="">전체</option>'; // 초기화
+    select.innerHTML = '<option value="전체">전체</option>'; // 초기화
 
     const targetMainType = selectedWaterType.toUpperCase() === 'SEA' ? 'SEA' : 'FRESHWATER';
 
@@ -197,7 +170,7 @@ function updateSubTypeOptions(selectedWaterType) {
     if (optionExists) {
         select.value = currentSubType;
         const selectedSubTypeText = allSubTypes.find(item => item.value === currentSubType)?.text || "전체";
-        document.getElementById("selected-subType").textContent = selectedSubTypeText;
+        // document.getElementById("selected-subType").textContent = selectedSubTypeText;
     } else {
         // 없으면 전체
         select.value = "";
