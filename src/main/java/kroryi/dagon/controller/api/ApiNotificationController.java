@@ -2,8 +2,15 @@ package kroryi.dagon.controller.api;
 
 import io.swagger.v3.oas.annotations.Operation;
 import kroryi.dagon.DTO.NotificationDTO;
+import kroryi.dagon.config.NotificationFilterRequest;
+import kroryi.dagon.entity.Notification;
 import kroryi.dagon.service.NotificationService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -58,4 +65,32 @@ public class ApiNotificationController {
         notificationService.deleteNotification(id);
         return ResponseEntity.noContent().build();
     }
+
+    @PostMapping("/admin-broadcast")
+    @Operation(summary = "관리자 알림 등록", description = "전체 유저 또는 특정 유저에게 알림 발송")
+    public ResponseEntity<String> broadcast(@RequestBody NotificationDTO dto) {
+        notificationService
+
+                .sendAdminNotification(dto);
+        return ResponseEntity.ok("알림이 성공적으로 전송되었습니다.");
+    }
+
+
+    @GetMapping
+    @Operation(summary = "알림 전체/검색 조회", description = "검색 조건에 따라 알림 리스트 조회 (페이징 포함)")
+    public ResponseEntity<Page<NotificationDTO>> getNotifications(
+            @RequestParam(required = false) Long uno,
+            @RequestParam(required = false) String type,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        if (type != null && (type.isBlank() || type.equals("전체"))) {
+            type = null; // 필터링 조건 제거
+        }
+
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
+        Page<NotificationDTO> notifications = notificationService.getNotifications(uno, type, pageable);
+        return ResponseEntity.ok(notifications);
+    }
 }
+

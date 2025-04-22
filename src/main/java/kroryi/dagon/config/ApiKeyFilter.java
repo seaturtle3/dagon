@@ -144,6 +144,8 @@ public class ApiKeyFilter extends OncePerRequestFilter {
 
                         (path.matches("/api/reservation/get") && method.equals("GET")) ||
 
+                        (path.matches("/api/reports/create") && method.equals("POST")) ||
+
                         (path.equals("/register") && method.equals("POST")) ||
                         (path.equals("/admin/registration") && method.equals("GET")) ||
 

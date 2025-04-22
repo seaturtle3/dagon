@@ -43,6 +43,10 @@ public class ApiAuthController {
 
         User user = optionalUser.get();
 
+        if (!user.isActive()) {
+            return new ResponseEntity<>("비활성화된 계정입니다. 로그인할 수 없습니다.", HttpStatus.FORBIDDEN);  // 비활성화된 유저는 로그인 불가
+        }
+
         // 입력된 비밀번호를 암호화하여 데이터베이스 비밀번호와 비교
         if (passwordEncoder.matches(loginRequestDTO.getUpw(), user.getUpw())) {
 

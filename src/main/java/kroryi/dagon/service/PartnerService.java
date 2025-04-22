@@ -1,9 +1,11 @@
 package kroryi.dagon.service;
 
 
+import jakarta.transaction.Transactional;
 import kroryi.dagon.DTO.PartnerApplicationDTO;;
 import kroryi.dagon.entity.PartnerApplication;
 import kroryi.dagon.entity.User;
+import kroryi.dagon.enums.ApplicationStatus;
 import kroryi.dagon.repository.PartnerApplicationRepository;
 import kroryi.dagon.repository.PartnerRepository;
 import kroryi.dagon.repository.UserRepository;
@@ -14,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 
@@ -26,6 +29,7 @@ public class PartnerService {
     private final PartnerApplicationRepository partnerApplicationRepository;
     private final UserRepository userRepository;
     private final PartnerRepository partnersRepository;
+
 
 
     // 파트너 신청 적용
@@ -100,4 +104,34 @@ public class PartnerService {
                 .findFirst()
                 .orElseThrow(() -> new RuntimeException("기본 파트너가 없습니다."));  // 기본 파트너가 없으면 예외 처리
     }
+
+
+
+    @Transactional
+    public void approve(Long id) {
+        PartnerApplication app = partnerApplicationRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("신청 정보 없음"));
+
+        app.setPStatus(ApplicationStatus.APPROVED);
+        app.setPReviewedAt(LocalDateTime.now());
+
+        Long uno = app.getUser().getUno();
+
+        Partner partner = partnersRepository.findById(uno).orElse(null);
+
+        if (partner == null) {
+            partner = new Partner();
+            partner.setUno(uno);
+            partner.setUser(app.getUser());
+        }
+
+        partner.setPname(app.getPname());
+        partner.setPAddress(app.getPAddress());
+        partner.setCeoName(app.getCeoName());
+        partner.setPInfo(app.getPInfo());
+        partner.setLicense(app.getLicense());
+
+        partnersRepository.save(partner);
+    }
 }
+
