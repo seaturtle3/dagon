@@ -1,6 +1,7 @@
 package kroryi.dagon.controller.board;
 
 import jakarta.validation.Valid;
+import kroryi.dagon.DTO.board.BoardSearchDTO;
 import kroryi.dagon.DTO.board.NoticeRequestDTO;
 import kroryi.dagon.entity.Notice;
 import kroryi.dagon.service.board.NoticeService;
@@ -24,8 +25,16 @@ public class NoticeController {
     @GetMapping
     public String readAll(@RequestParam(defaultValue = "0") int page,
                           @RequestParam(defaultValue = "10") int size,
+                          @RequestParam(required = false) String keyword,
+                          @RequestParam(required = false) String type,
                           Model model) {
-        Page<Notice> paged = noticeService.findAllPaged(PageRequest.of(page, size));
+
+        BoardSearchDTO searchDTO = new BoardSearchDTO();
+        searchDTO.setKeyword(keyword);
+        searchDTO.setType(type);
+
+        Page<Notice> paged = noticeService.searchNotices(searchDTO, PageRequest.of(page, size));
+
         if (page >= paged.getTotalPages() && paged.getTotalPages() > 0) {
             return "redirect:/notices?page=" + (paged.getTotalPages() - 1) + "&size=" + size;
         }
@@ -33,6 +42,8 @@ public class NoticeController {
         model.addAttribute("noticePage", paged);
         model.addAttribute("pagination", PaginationUtil.getPaginationData(paged));
         model.addAttribute("size", size);
+        model.addAttribute("keyword", keyword);
+        model.addAttribute("type", type);
         return "board/notice/list";
     }
 

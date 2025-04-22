@@ -1,18 +1,12 @@
-<div th:fragment="pagination(pagination, size)">
-    <nav>
-        <ul class="pagination">
-            <li th:classappend="${pagination.hasPrevious} ? '' : 'disabled'">
-                <a th:href="@{|?page=${pagination.currentPage - 1}&size=${size}|}">이전</a>
-            </li>
+<div th:fragment="pagination(pagination, size)" class="simple-pagination">
+    <a th:classappend="${pagination.hasPrevious} ? '' : 'disabled'"
+       th:href="@{|?page=${pagination.currentPage - 1}&size=${size}|}">이전</a>
 
-            <li th:each="i : ${#numbers.sequence(0, pagination.totalPages - 1)}"
-                th:classappend="${i == pagination.currentPage} ? 'active'">
-                <a th:href="@{|?page=${i}&size=${size}|}" th:text="${i + 1}">1</a>
-            </li>
+    <a th:each="i : ${#numbers.sequence(0, pagination.totalPages - 1)}"
+       th:href="@{|?page=${i}&size=${size}|}"
+       th:text="${i + 1}"
+       th:classappend="${i == pagination.currentPage} ? 'active'">1</a>
 
-            <li th:classappend="${pagination.hasNext} ? '' : 'disabled'">
-                <a th:href="@{|?page=${pagination.currentPage + 1}&size=${size}|}">다음</a>
-            </li>
-        </ul>
-    </nav>
+    <a th:classappend="${pagination.hasNext} ? '' : 'disabled'"
+       th:href="@{|?page=${pagination.currentPage + 1}&size=${size}|}">다음</a>
 </div>

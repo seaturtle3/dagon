@@ -1,6 +1,7 @@
 package kroryi.dagon.service.board;
 
 import jakarta.transaction.Transactional;
+import kroryi.dagon.DTO.board.BoardSearchDTO;
 import kroryi.dagon.DTO.board.NoticeRequestDTO;
 import kroryi.dagon.entity.Admin;
 import kroryi.dagon.entity.Notice;
@@ -84,6 +85,17 @@ public class NoticeService {
     public void increaseViews(Long id) {
         Notice notice = noticeRepository.findById(id).orElseThrow();
         notice.setViews(notice.getViews() + 1);
+    }
+
+    public Page<Notice> searchNotices(BoardSearchDTO dto, Pageable pageable) {
+        String keyword = dto.getKeyword();
+        String type = dto.getType();
+
+        if (keyword == null || keyword.isBlank()) {
+            return noticeRepository.findAllByOrderByIsTopDescCreatedAtDesc(pageable);
+        }
+
+        return noticeRepository.searchByKeyword(keyword, type, pageable);
     }
 
 }

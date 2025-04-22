@@ -3,56 +3,74 @@
 <head>
     <meta charset="UTF-8">
     <title>이벤트 목록</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" th:href="@{/css/common.css}">
-
-    <style>
-        .active {
-            font-weight: bold;
-            text-decoration: underline;
-        }
-    </style>
+    <link rel="stylesheet" th:href="@{/css/board.css}">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
 
-<h1>이벤트 목록</h1>
+<div class="container">
+    <h1 class="page-title">이벤트 목록</h1>
 
-<div th:replace="~{fragments/paging-options :: sizeSelector('/event', ${size}, ${pagination.currentPage})}"></div>
+    <div th:replace="~{fragments/paging-options :: sizeSelector('/event', ${size}, ${pagination.currentPage})}"></div>
+
+    <form method="get" th:action="@{/event}" class="mb-3">
+        <div class="row g-2 align-items-center">
+            <div class="col-auto">
+                <select class="form-select" name="type">
+                    <option value="title" th:selected="${type == 'title'}">제목</option>
+                    <option value="content" th:selected="${type == 'content'}">내용</option>
+                    <option value="title+content" th:selected="${type == 'title+content'}">제목+내용</option>
+                </select>
+            </div>
+            <div class="col-auto">
+                <input type="text" class="form-control" name="keyword" th:value="${keyword}" placeholder="검색어 입력">
+            </div>
+            <div class="col-auto">
+                <button type="submit" class="btn btn-outline-secondary">검색</button>
+            </div>
+        </div>
+        <!-- 검색할 때도 페이지 사이즈 유지 -->
+        <input type="hidden" name="size" th:value="${size}">
+    </form>
 
 
-<table border="1">
-    <thead>
-    <tr>
-        <th>TOP</th>
-        <th>번호</th>
-        <th>썸네일</th>
-        <th>제목</th>
-        <th>기간</th>
-        <th>상태</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr th:each="e, iterStat : ${eventPage.content}">
-        <td th:text="${e.isTop ? '✔' : ''}">✔</td>
-        <td th:text="${iterStat.count}">1</td>
+    <table class="board-table">
+        <thead>
+        <tr>
+            <th>TOP</th>
+            <th>번호</th>
+            <th>썸네일</th>
+            <th>제목</th>
+            <th>기간</th>
+            <th>상태</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="e, iterStat : ${eventPage.content}">
+            <td th:text="${e.isTop ? '✔' : ''}"></td>
+            <td th:text="${iterStat.count}"></td>
+            <td th:if="${e.thumbnailUrl != null}">
+                <img th:src="${e.thumbnailUrl}" alt="썸네일" width="100">
+            </td>
+            <td th:if="${e.thumbnailUrl == null}"></td>
+            <td>
+                <a th:href="@{'/event/' + ${e.eventId} + '?page=' + ${pagination.currentPage} + '&size=' + ${size}}"
+                   th:text="${e.title}">이벤트 제목</a>
+            </td>
+            <td th:text="${(e.startAt == null and e.endAt == null) ? '상시 이벤트' : e.startAt + ' ~ ' + e.endAt}">기간</td>
+            <td th:text="${e.eventStatus.korean}">진행중</td>
+        </tr>
+        </tbody>
+    </table>
 
-        <td th:if="${e.thumbnailUrl != null}">
-            <img th:src="${e.thumbnailUrl}" alt="썸네일" width="100">
-        </td>
+    <div class="button-group text-end mt-4">
+        <a class="btn btn-custom" th:href="@{'/event/create?page=' + ${pagination.currentPage} + '&size=' + ${size}}">이벤트 작성</a>
+    </div>
 
-        <td th:if="${e.thumbnailUrl == null}"></td>
-
-        <td>
-            <a th:href="@{'/event/' + ${e.eventId} + '?page=' + ${pagination.currentPage} + '&size=' + ${size}}"
-               th:text="${e.title}">이벤트 제목</a>
-        </td>
-        <td th:text="${(e.startAt == null and e.endAt == null) ? '상시 이벤트' : e.startAt + ' ~ ' + e.endAt}">기간</td>
-        <td th:text="${e.eventStatus.korean}">진행중</td>
-    </tr>
-    </tbody>
-</table>
-<a th:href="@{'/event/create?page=' + ${pagination.currentPage} + '&size=' + ${size}}">이벤트 작성</a>
-
-<div th:replace="~{fragments/pagination :: pagination(${pagination}, ${size})}"></div>
+    <div th:replace="~{fragments/pagination :: pagination(${pagination}, ${size})}"></div>
+</div>
 
 </body>
 </html>
