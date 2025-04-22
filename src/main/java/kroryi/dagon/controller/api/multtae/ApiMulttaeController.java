@@ -1,6 +1,7 @@
 package kroryi.dagon.controller.api.multtae;
 
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.annotation.PostConstruct;
 import kroryi.dagon.DTO.multtae.*;
 import kroryi.dagon.component.LunarApiClient;
 import kroryi.dagon.component.MarineWeatherApiClient;
@@ -54,6 +55,17 @@ public class ApiMulttaeController {
                         "stationName", station.getStationName()
                 ))
                 .toList();
+    }
+
+    @GetMapping("/regions/with-station")
+    @Operation(summary = "지역별 조위관측소 존재 여부")
+    public Map<String, Boolean> getRegionsWithStations() {
+        Map<String, Boolean> result = new LinkedHashMap<>();
+        for (ProdRegion region : ProdRegion.values()) {
+            boolean hasStation = tideStationRepository.existsByRegion(region);
+            result.put(region.getKorean(), hasStation);
+        }
+        return result;
     }
 
     @GetMapping("/regions")
@@ -158,22 +170,31 @@ public class ApiMulttaeController {
 
         // 일출/일몰 정보 조회
         Map<String, String> sunMap = sunriseCacheService.getSunInfo(station.getRegion().getKorean(), today);
+        String sunrise = formatSunTime(sunMap.get("sunrise"));
+        String sunset = formatSunTime(sunMap.get("sunset"));
 
-
+        log.info("🌅 요청 지역명: {}", station.getRegion().getKorean());
+        log.info("🌅 일출: {}, 일몰: {}", sunMap.get("sunrise"), sunMap.get("sunset"));
 
         // 최종 DTO 조립
         return MulttaeDailyDTO.builder()
                 .date(today)
                 .stationCode(stationCode)
                 .stationName(station.getStationName())
-                .sunrise(sunMap.get("sunrise"))
-                .sunset(sunMap.get("sunset"))
+                .sunrise(sunrise)
+                .sunset(sunset)
                 .lunarAge(lunarAge)
                 .mulName(mulName)
                 .tideItems(tideItems)
                 .hourlyData(hourlyData).todayWindSpeed(recentSpeed)
                 .todayWindDir(windDirName)
                 .build();
+    }
+    private String formatSunTime(String time) {
+        if (time == null) return "-";
+        time = time.trim(); // ✅ 공백 제거
+        if (time.length() != 4 || "0000".equals(time)) return "-";
+        return time.substring(0, 2) + ":" + time.substring(2);
     }
 
     private String getWindDirName(String dirStr) {
@@ -271,5 +292,6 @@ public class ApiMulttaeController {
         String dateStr = date.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
         return marineWeatherApiClient.getWaveData(waveStationCode, dateStr);
     }
+
 
 }

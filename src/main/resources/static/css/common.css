@@ -1,9 +1,81 @@
+:root {
+    --main-color: #333; /* ✅ 톤 다운된 기본 강조색 (검정 계열) */
+    --bg-light: #f8f9fa;
+    --text-dark: #212529;
+}
+/* 기본 텍스트 스타일 */
+body {
+    font-family: 'Noto Sans KR', sans-serif;
+    color: var(--text-dark);
+    background-color: #fff;
+}
 
+
+.container {
+    padding: 20px;
+}
+
+/* 제목 색상 강조 없애기 */
+h1, h2, h3, h4 {
+    color: inherit;
+    font-weight: 600;
+}
+/* ✅ 커스텀 버튼 스타일 (중립 회색톤) */
+.btn-custom {
+    background-color: #444;
+    color: #fff;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 4px;
+    transition: background-color 0.2s ease;
+}
+.btn-custom:hover {
+    background-color: #222;
+}
+
+/* 카드/박스 */
+.section-box {
+    border: 1px solid var(--border-color);
+    padding: 16px;
+    border-radius: 6px;
+    background-color: #fff;
+    margin-bottom: 20px;
+}
+
+/* 테이블 */
+table th {
+    background-color: var(--bg-light);
+    font-weight: 500;
+}
+table td, table th {
+    border: 1px solid var(--border-color);
+    padding: 8px;
+    text-align: center;
+}
+
+/* 링크 */
+a {
+    text-decoration: none;
+    color: inherit;
+}
+a:hover {
+    text-decoration: underline;
+}
+
+/* 입력 필드 */
+input, select, textarea {
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    padding: 6px;
+    font-size: 14px;
+}
+
+/* 페이지네이션 */
 .pagination {
     display: flex;
     list-style: none;
     padding: 0;
-    gap: 8px; /* 버튼 간 간격 */
+    gap: 8px;
 }
 .pagination li {
     display: inline;
