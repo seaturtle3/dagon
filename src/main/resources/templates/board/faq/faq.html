@@ -29,7 +29,7 @@
     <button th:onclick="'location.href=\'/faq/create?page=' + ${pagination.currentPage} + '&size=' + ${size} + '\''">FAQ 등록</button>
 </div>
 
-<div th:replace="~{fragments/paging_options :: sizeSelector('/faq', ${size}, ${pagination.currentPage})}"></div>
+<div th:replace="~{fragments/paging-options :: sizeSelector('/faq', ${size}, ${pagination.currentPage})}"></div>
 <hr>
 <!-- FAQ 목록 출력 -->
 <div th:each="faq : ${faqPage.content}">
