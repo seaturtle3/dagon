@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head th:insert="fragments/common_head :: head">
+<head th:insert="fragments/common-head :: head">
     <meta charset="UTF-8">
     <title>Title</title>
 </head>
@@ -8,12 +8,16 @@
 <div th:replace="fragments/header :: header"></div>
 
 <div class="d-flex justify-content-center my-5">
-    <h1>여기는 민물 예약페이지입니다.</h1>
+    <h1>여기는 바다 예약페이지입니다.</h1>
 </div>
 
 <div class="d-flex justify-content-center">
     <div class="form-control d-flex justify-content-between align-items-center"
          style="width:70%">
+        <span id="selected-mainType" hidden></span>
+        <div class="fw-bold fs-5">
+            <label>세부 장소 : </label>
+            <span id="selected-subType" th:text="${subType}"></span></div>
         <div class="fw-bold fs-5">
             <label>날짜 : </label>
             <span id="selected-date" th:text="${date}"></span>
@@ -63,7 +67,11 @@
             <td th:text="${product.prodDescription}">배 설명</td>
             <td th:text="${product.prodEvent}">이벤트</td>
             <td th:text="${product.createdAt}">등록일</td>
-            <td><button type="button">예약하기</button></td>
+            <td>
+                <button type="button">
+                    <a th:href="@{/reservation/{prodId}(prodId=${product.prodId})}">예약하기</a>
+                </button>
+            </td>
         </tr>
         </tbody>
     </table>
@@ -74,19 +82,27 @@
     <div class="modal-dialog">
         <div class="modal-content">
 
-            <form action="/fishing/freshwater" method="get" onsubmit="updateSpan();">
+            <form action="/fishing/sea" method="get" onsubmit="updateSpan();">
                 <div class="modal-header">
                     <h5 class="modal-title">세부항목 변경</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
                     <div class="btn-group w-100 mb-2" role="group">
-                        <input type="radio" class="btn-check" name="waterType" id="sea" value="sea">
+                        <input type="radio" class="btn-check" name="waterType" id="sea" value="sea" checked>
                         <label class="btn btn-outline-primary" for="sea">바다</label>
 
-                        <input type="radio" class="btn-check" name="waterType" id="freshwater" value="freshwater" checked>
+                        <input type="radio" class="btn-check" name="waterType" id="freshwater" value="freshwater">
                         <label class="btn btn-outline-primary" for="freshwater">민물</label>
                     </div>
+
+                    <label>세부 장소:</label>
+                    <select class="form-control" name="subType" id="modal-subType">
+                        <option value="">전체</option>
+                        <option th:each="subType : ${subTypes}"
+                                th:text="${subType.korean}">
+                        </option>
+                    </select>
 
                     <label>날짜 : </label>
                     <input type="date" class="form-control" name="date" id="modal-date"

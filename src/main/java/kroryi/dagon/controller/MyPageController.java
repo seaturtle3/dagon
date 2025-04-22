@@ -2,7 +2,6 @@ package kroryi.dagon.controller;
 
 
 import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,6 +18,6 @@ public class MyPageController {
 
 
 
-        return "user/my_page";
+        return "my-page";
     }
 }

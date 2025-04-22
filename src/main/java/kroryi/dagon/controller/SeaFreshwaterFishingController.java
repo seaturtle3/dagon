@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Controller
 @RequiredArgsConstructor
@@ -72,13 +71,11 @@ public class SeaFreshwaterFishingController {
         if (subType == null || subType.equals("전체")) {
             return null;
         }
-
-        for (SubType type : SubType.values()) {
-            if (type.getKorean().equals(subType)) {
-                return type;
-            }
+        try {
+            return SubType.valueOf(subType);  // 영어 enum name으로 변환
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("Unknown subType: " + subType);
         }
-        throw new IllegalArgumentException("Unknown subType: " + subType);
     }
 
 
@@ -86,10 +83,10 @@ public class SeaFreshwaterFishingController {
     private void addSearchAttributes(LocalDate date, Integer people, String region, String mainType, String subType,
                                      Model model) {
         model.addAttribute("mainType", mainType);
+        model.addAttribute("subType", subType);
         model.addAttribute("date", date);
         model.addAttribute("people", people);
         model.addAttribute("region", region);
-        model.addAttribute("subType", subType);
     }
 
     @GetMapping("/sea")
@@ -107,8 +104,8 @@ public class SeaFreshwaterFishingController {
         MainType convertedMainType = convertToMainType(mainType);
         SubType convertedSubType = convertToSubType(subType);
 
+        // URL에 따른 MainType 설정
         if (convertedMainType == null) {
-            // URL이 /fishing/sea라면 SEA, /fishing/freshwater라면 FRESHWATER로 강제 지정
             if (request.getRequestURI().contains("/sea")) {
                 convertedMainType = MainType.SEA;
             } else if (request.getRequestURI().contains("/freshwater")) {
@@ -116,16 +113,21 @@ public class SeaFreshwaterFishingController {
             }
         }
 
+        // 필터 조건을 모델에 추가
         addSearchAttributes(date, people, region, mainType, subType, model);
+
+        // 필터링된 상품 목록을 모델에 추가
         List<ProductDTO> products = seaFreshwaterFishingService.getProductsByFilters(
-                date != null ? date : null, convertedProdRegion, convertedMainType, convertedSubType, fishType);
+                date, convertedMainType, convertedSubType, convertedProdRegion, fishType
+        );
 
         log.info("Sea Fetched Products: {}", products);
         log.info("Sea Filters applied - Region: {}, MainType: {}, SubType: {}, FishType: {}, AvailableDate: {}",
                 region, mainType, subType, fishType, date);
 
         model.addAttribute("products", products);
-        return "menu/sea_fishing";
+
+        return "fishing/sea";
     }
 
     @GetMapping("/freshwater")
@@ -153,14 +155,16 @@ public class SeaFreshwaterFishingController {
 
         addSearchAttributes(date, people, region, mainType, subType, model);  // 수정된 메서드 호출
         List<ProductDTO> products = seaFreshwaterFishingService.getProductsByFilters(
-                date != null ? date : null, convertedProdRegion, convertedMainType, convertedSubType, fishType);  // subType도 추가
+                date, convertedMainType, convertedSubType, convertedProdRegion, fishType
+        );  // subType도 추가
 
         log.info("Freshwater Fetched Products: {}", products);
         log.info("Freshwater Filters applied - Region: {}, MainType: {}, SubType: {}, FishType: {}, AvailableDate: {}",
                 region, mainType, subType, fishType, date);
 
         model.addAttribute("products", products);
-        return "menu/freshwater_fishing";
+
+        return "fishing/freshwater";
     }
 
 }

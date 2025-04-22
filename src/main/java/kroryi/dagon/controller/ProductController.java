@@ -52,7 +52,7 @@ public class ProductController {
 
         log.info("GET regions: {}, {}, {}", regions(), mainType(), subType());
 
-        return "product/ProdRegistration";
+        return "product/form";
     }
 
     // 배 등록 처리
@@ -68,18 +68,18 @@ public class ProductController {
         log.info("POST Selected Region: {}, {}, {}", product.getProdRegion(), product.getMainType(), product.getSubType());
 
         productService.saveProduct(product); // 상품 저장
-        return "redirect:/product/register-list"; // 등록 후 리스트 페이지로 리다이렉트
+        return "redirect:/product/list"; // 등록 후 리스트 페이지로 리다이렉트
     }
 
     // 배 리스트 페이지
-    @GetMapping("/register-list")
+    @GetMapping("/list")
     public String showProductList(Model model) {
         List<ProductDTO> products = productService.getAllProducts();
         model.addAttribute("productList", products);
 
         log.info("List Get productList: {}", products);
 
-        return "product/ProdRegistrationList"; // 리스트 페이지 반환
+        return "product/list"; // 리스트 페이지 반환
     }
 
 

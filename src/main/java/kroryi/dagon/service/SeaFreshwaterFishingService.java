@@ -1,6 +1,5 @@
 package kroryi.dagon.service;
 
-import com.fasterxml.jackson.databind.util.ArrayBuilders;
 import jakarta.persistence.criteria.Predicate;
 import kroryi.dagon.DTO.ProductDTO;
 import kroryi.dagon.entity.Product;
@@ -10,11 +9,9 @@ import kroryi.dagon.enums.SubType;
 import kroryi.dagon.repository.ProductRepository;
 import kroryi.dagon.repository.SeaFreshwaterFishingRepository;
 import lombok.*;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -52,34 +49,41 @@ public class SeaFreshwaterFishingService {
         return convertToDTO(product);
     }
 
-    public List<ProductDTO> getProductsByFilters(LocalDate date, ProdRegion region, MainType mainType, SubType subType, String fishType) {
-        Specification<Product> spec = (root, query, cb) -> {
-            Predicate predicate = cb.conjunction();  // 기본 조건을 만들고
+    public List<ProductDTO> getProductsByFilters(LocalDate date, MainType mainType, SubType subType, ProdRegion region, String fishType) {
+        return productRepository.findAll((root, query, builder) -> {
+                    Predicate predicate = builder.conjunction();  // 기본 조건을 결합
 
-            if (date != null) {
-                predicate = cb.and(predicate, cb.equal(root.get("createdAt"), date));  // createdAt 조건
-            }
-            if (region != null) {
-                predicate = cb.and(predicate, cb.equal(root.get("prodRegion"), region));  // prodRegion 조건
-            }
-            if (mainType != null) {
-                predicate = cb.and(predicate, cb.equal(root.get("mainType"), mainType));  // mainType 조건
-            }
-            if (subType != null) {
-                predicate = cb.and(predicate, cb.equal(root.get("subType"), subType));  // subType 조건
-            }
-            if (fishType != null && !fishType.isEmpty()) {
-                predicate = cb.and(predicate, cb.like(root.get("prodName"), "%" + fishType + "%"));  // fishType 조건
-            }
+                    // 날짜 필터링: 등록된 날짜가 주어진 날짜 이후인 것만 가져오기
+                    if (date != null) {
+                        predicate = builder.and(predicate, builder.greaterThanOrEqualTo(root.get("createdAt"), date));
+                    }
 
-            return predicate;  // 모든 조건을 결합한 Predicate 반환
-        };
+                    // MainType 필터링
+                    if (mainType != null) {
+                        predicate = builder.and(predicate, builder.equal(root.get("mainType"), mainType));
+                    }
 
-        List<Product> products = productRepository.findAll(spec);  // 해당 조건에 맞는 결과를 찾음
-        return products.stream()
-                .map(ProductDTO::fromEntity)
-                .collect(Collectors.toList());
+                    // SubType 필터링: mainType에 맞는 subType만 필터링
+                    if (subType != null) {
+                        predicate = builder.and(predicate, builder.equal(root.get("subType"), subType));
+                    }
+
+                    // 지역(ProdRegion) 필터링
+                    if (region != null) {
+                        predicate = builder.and(predicate, builder.equal(root.get("prodRegion"), region));
+                    }
+
+                    // 어종(fishType) 필터링: prodName에 대한 LIKE 검색
+                    if (fishType != null && !fishType.isEmpty()) {
+                        predicate = builder.and(predicate, builder.like(root.get("prodName"), "%" + fishType + "%"));
+                    }
+
+                    return predicate;
+                }).stream()
+                .map(this::convertToDTO)  // Product를 DTO로 변환
+                .collect(Collectors.toList());  // 리스트로 반환
     }
+
 
 
 
