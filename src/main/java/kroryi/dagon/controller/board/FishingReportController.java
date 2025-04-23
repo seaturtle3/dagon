@@ -23,13 +23,13 @@ public class FishingReportController {
     public String getAllFishingReports(Model model) {
         List<FishingReportDTO> fishingReports = fishingReportService.getAllFishingReport();
         model.addAttribute("fishingReports", fishingReports);
-        return "board/fishReport/list";
+        return "board/fishingReport/list";
     }
 
     // 새로운 조황 정보 등록
     @GetMapping("/form")
     public String showFishingReportForm() {
-        return "board/fishReport/form";
+        return "board/fishingReport/form";
     }
 
     // 새로운 조황 정보 등록

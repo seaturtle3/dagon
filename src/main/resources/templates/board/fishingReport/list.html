@@ -7,7 +7,12 @@
 <body>
 <div th:replace="fragments/header :: header"></div>
 
-<h1>조황 정보 리스트</h1>
+<h1>조황정보/조행기 리스트</h1>
+
+<div class="mb-3">
+    <a th:href="@{/fishing-report/list}" class="btn btn-primary">조황정보</a>
+    <a th:href="@{/fishing-diary/list}" class="btn btn-outline-primary">조행기</a>
+</div>
 
 <table border="1">
     <thead>
@@ -37,7 +42,7 @@
         <td th:text="${report.title}">제목</td>
         <td th:text="${report.content}">내용</td>
         <td>
-            <ul>
+            <ul class="list-unstyled">
                 <li th:each="comment : ${report.comments}"
                     th:text="${comment.commentContent}">댓글</li>
             </ul>
