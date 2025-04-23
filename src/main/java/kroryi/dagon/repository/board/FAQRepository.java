@@ -14,35 +14,38 @@ public interface FAQRepository extends JpaRepository<FAQ, Long> {
     // 활성화된 FAQ만 가져오기 (사용자페이지용)
     Page<FAQ> findByIsActiveTrueOrderByDisplayOrderAsc(Pageable pageable);
 
-    @Query("SELECT f FROM FAQ f WHERE "
-            + "(:categoryId IS NULL OR f.category.id = :categoryId) AND "
-            + "(:keyword IS NULL OR f.question LIKE %:keyword%)")
+    @Query("""
+    SELECT f FROM FAQ f
+    WHERE (:categoryId IS NULL OR f.category.id = :categoryId)
+      AND (:keyword IS NULL OR f.question LIKE CONCAT('%', :keyword, '%'))
+""")
     Page<FAQ> searchByCategoryAndKeyword(
             @Param("categoryId") Long categoryId,
             @Param("keyword") String keyword,
             Pageable pageable
     );
 
+
     @Query("""
-        SELECT f FROM FAQ f
-        WHERE (:type = 'question' AND f.question LIKE %:keyword%)
-           OR (:type = 'answer' AND f.answer LIKE %:keyword%)
-           OR (:type = 'question+answer' AND (f.question LIKE %:keyword% OR f.answer LIKE %:keyword%))
-        ORDER BY f.displayOrder ASC
-    """)
+    SELECT f FROM FAQ f
+    WHERE (:type = 'question' AND f.question LIKE CONCAT('%', :keyword, '%'))
+       OR (:type = 'answer' AND f.answer LIKE CONCAT('%', :keyword, '%'))
+       OR (:type = 'question+answer' AND (f.question LIKE CONCAT('%', :keyword, '%') OR f.answer LIKE CONCAT('%', :keyword, '%')))
+    ORDER BY f.displayOrder ASC
+""")
     Page<FAQ> searchByKeyword(@Param("keyword") String keyword,
                               @Param("type") String type,
                               Pageable pageable);
 
     @Query("""
-        SELECT f FROM FAQ f
-        WHERE f.isActive = true AND (
-              (:type = 'question' AND f.question LIKE %:keyword%)
-           OR (:type = 'answer' AND f.answer LIKE %:keyword%)
-           OR (:type = 'question+answer' AND (f.question LIKE %:keyword% OR f.answer LIKE %:keyword%))
-        )
-        ORDER BY f.displayOrder ASC
-    """)
+    SELECT f FROM FAQ f
+    WHERE f.isActive = true AND (
+           (:type = 'question' AND f.question LIKE CONCAT('%', :keyword, '%'))
+        OR (:type = 'answer' AND f.answer LIKE CONCAT('%', :keyword, '%'))
+        OR (:type = 'question+answer' AND (f.question LIKE CONCAT('%', :keyword, '%') OR f.answer LIKE CONCAT('%', :keyword, '%')))
+    )
+    ORDER BY f.displayOrder ASC
+""")
     Page<FAQ> searchByKeywordAndActive(@Param("keyword") String keyword,
                                        @Param("type") String type,
                                        Pageable pageable);

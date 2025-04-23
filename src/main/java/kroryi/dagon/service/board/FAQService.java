@@ -43,16 +43,19 @@ public class FAQService {
 
     // 검색
     public Page<FAQ> searchPaged(BoardSearchDTO dto, Pageable pageable) {
-        if ((dto.getKeyword() == null || dto.getKeyword().isBlank())
-                && dto.getCategoryId() == null) {
+        boolean noKeyword = dto.getKeyword() == null || dto.getKeyword().isBlank();
+        boolean noCategory = dto.getCategoryId() == null;
+
+        if (noKeyword && noCategory) {
             return findAllPaged(pageable);
         }
 
-        return faqRepository.searchByCategoryAndKeyword(
-                dto.getCategoryId(),
-                dto.getKeyword(),
-                pageable
-        );
+        // ✅ type에 따라 분기
+        if (!noKeyword && (dto.getType() != null)) {
+            return faqRepository.searchByKeyword(dto.getKeyword(), dto.getType(), pageable);
+        }
+
+        return faqRepository.searchByCategoryAndKeyword(dto.getCategoryId(), dto.getKeyword(), pageable);
     }
 
     public Page<FAQ> searchActivePaged(BoardSearchDTO dto, Pageable pageable) {
