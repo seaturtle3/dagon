@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:insert="fragments/common-head :: head">
+    <meta charset="UTF-8">
+    <title>조황정보</title>
+</head>
+<body>
+<div th:replace="fragments/header :: header"></div>
+
+<h2>조황 정보 글 등록</h2>
+
+<form action="/fishing-report/form" method="POST">
+    <label for="fishingAt">조업 날짜:</label>
+    <input type="datetime-local" id="fishingAt" name="fishingAt" required><br><br>
+
+    <label for="views">조회수:</label>
+    <input type="number" id="views" name="views" value="0" required><br><br>
+
+    <label for="thumbnailUrl">썸네일 URL:</label>
+    <input type="text" id="thumbnailUrl" name="thumbnailUrl" required><br><br>
+
+    <label for="title">제목:</label>
+    <input type="text" id="title" name="title" required><br><br>
+
+    <label for="content">내용:</label>
+    <textarea id="content" name="content" required></textarea><br><br>
+
+    <button type="submit">등록</button>
+</form>
+
+
+
+
+</body>
+</html>

@@ -23,6 +23,16 @@ public class FishingReportDTO {
     private User user;
     private Product product;
     private List<FishingReportComment> comments;
+    private String prodName;
+    private String userName;
+
+    public Long getUserId() {
+        return user != null ? Long.valueOf(user.getUid()) : null;  // user가 null이 아닐 경우 user.getUid()를 반환
+    }
+
+    public Long getProdId() {
+        return product != null ? product.getProdId() : null;
+    }
 
     public FishingReportDTO(FishingReport fishingReport) {
         this.frId = fishingReport.getFrId();
@@ -35,6 +45,10 @@ public class FishingReportDTO {
         this.user = fishingReport.getUser();
         this.product = fishingReport.getProduct();
         this.comments = fishingReport.getComments();
+        this.prodName = fishingReport.getProduct().getProdName();  // ✅ 이렇게
+        this.userName = fishingReport.getUser().getUname();  // ✅ 이렇게
     }
+
+
 }
 

@@ -18,10 +18,8 @@ document.getElementById('pointCheckBtn').addEventListener('click', async () => {
             const data = await response.json();
             // 값 채우기
             document.getElementById('pointAmount').textContent = data.point.toLocaleString();
-
             // 모든 섹션 숨기기
             hideAllSections();
-
             // 포인트 섹션 보이기
             document.getElementById('pointSection').classList.remove('hidden');
         } else {

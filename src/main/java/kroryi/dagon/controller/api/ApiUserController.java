@@ -25,7 +25,7 @@ public class ApiUserController {
     @GetMapping("/me")
     @Operation(summary = "로그인 ", description = "로그인")
     public ResponseEntity<?> getCurrentUser(@RequestHeader("Authorization") String authorizationHeader) {
-        // 1. Authorization 헤더에서 JWT 토큰 추출
+        // 1. JWT 추출
         String token = null;
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
             token = authorizationHeader.substring(7);
@@ -35,35 +35,30 @@ public class ApiUserController {
             return new ResponseEntity<>("JWT 토큰이 없습니다.", HttpStatus.UNAUTHORIZED);
         }
 
-        // 2. JWT 토큰 유효성 검증 및 사용자 정보 추출 (JwtUtil에 관련 메서드 필요)
-        String uid = jwtUtil.getUidFromToken(token); // JwtUtil에 구현 필요
-
+        // 2. 토큰 파싱
+        String uid = jwtUtil.getUidFromToken(token);
         log.info("uid---->: " + uid);
 
         if (uid == null) {
             return new ResponseEntity<>("유효하지 않은 JWT 토큰입니다.", HttpStatus.UNAUTHORIZED);
         }
 
-        String uids = uid.substring(uid.indexOf("uid=") + 4, uid.indexOf(", upw="));
-
-
-        // 3. 데이터베이스에서 사용자 정보 조회
-        Optional<User> optionalUser = userRepository.findByUid(uids);
+        // 3. 사용자 조회
+        Optional<User> optionalUser = userRepository.findByUid(uid);
 
         if (optionalUser.isEmpty()) {
             return new ResponseEntity<>("사용자 정보를 찾을 수 없습니다.", HttpStatus.NOT_FOUND);
         }
 
         User user = optionalUser.get();
-
         log.info("user-----> {}", user);
 
-        // 4. 유저 번호와 닉네임을 JSON 형태로 응답
+        // 4. 응답
         return ResponseEntity.ok(new UserInfoResponseDTO(user.getUno(), user.getDisplayName()));
     }
 
-    // 응답 DTO
     record UserInfoResponseDTO(Long uno, String displayName) {}
+
 
 
     @GetMapping("/find-id")

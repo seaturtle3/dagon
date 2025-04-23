@@ -302,6 +302,7 @@
         document.getElementById('pointSection').classList.add('hidden');
         document.getElementById('deleteAccountSection').classList.add('hidden');
         document.getElementById('notificationSection').classList.add('hidden');
+        document.getElementById('reservationStatusSection').classList.add('hidden');
     }
 
     // 수정 취소
@@ -485,6 +486,138 @@
         document.getElementById("userLevelBadge").textContent = levelText;
         document.getElementById("userLevelBadge").className = `text-xl font-bold ${levelClass}`;
     }
+
+    document.addEventListener("DOMContentLoaded", () => {
+        const reservationBtn = document.getElementById("reservationStatusBtn");
+        const reservationSection = document.getElementById("reservationStatusSection");
+        const reservationList = document.getElementById("reservationList");
+
+        reservationBtn.addEventListener("click", () => {
+            hideAllSections();
+            fetchReservations();
+            reservationSection.classList.remove("hidden");
+        });
+    });
+
+    function hideReservationSection() {
+        hideAllSections();
+        document.getElementById("reservationStatusSection").classList.add("hidden");
+    }
+
+    function fetchReservations() {
+        const token = getAuthToken();
+
+        if (!token) {
+            console.error("로그인 상태가 아닙니다.");
+            return;
+        }
+        console.log(token); // token 값을 확인하여 유효한지 확인
+
+        fetch(`/api/reservation/get`, {
+            method: "GET",
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`// 토큰 인증
+
+            }
+        })
+
+            .then(response => {
+                if (!response.ok) {
+                    // 서버에서 500 오류가 발생한 경우
+                    return response.text().then(text => {
+                        throw new Error(`서버 오류: ${text}`);
+                    });
+                }
+                return response.json(); // 응답이 정상인 경우 JSON으로 변환
+            })
+            .then(data => {
+                renderReservations(data);
+            })
+            .catch(error => {
+                console.error("예약 불러오기 실패:", error);
+                alert("예약 데이터를 불러오는 데 실패했습니다. 다시 시도해주세요.");
+            });
+    }
+
+    function renderReservations(reservations) {
+        const list = document.getElementById("reservationList");
+        list.innerHTML = "";
+
+        if (reservations.length === 0) {
+            list.innerHTML = "<p class='text-gray-500'>예약 내역이 없습니다.</p>";
+            return;
+        }
+
+        reservations.forEach(res => {
+            const item = document.createElement("div");
+            item.className = "p-4 border rounded shadow hover:bg-gray-50 cursor-pointer";
+            item.innerHTML = `
+    <p><strong>상품명:</strong> ${res.prod_name}</p>
+    <p><strong>출조일:</strong> ${new Date(res.fishingAt).toLocaleDateString()}</p>
+    <p><strong>인원:</strong> ${res.numPerson}명</p>
+    <p><strong>상태:</strong> ${res.reservationStatus}</p>
+    ${res.reservationStatus !== "CANCELED" ? `
+        <button class="mt-2 px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600"
+                onclick="cancelReservation(${res.reservationId})">
+            예약 취소
+        </button>` : `<span class="text-gray-400">[취소됨]</span>`}
+`;
+            item.addEventListener("click", () => showReservationDetail(res));
+            list.appendChild(item);
+        });
+    }
+
+    function showReservationDetail(reservation) {
+        const modal = document.getElementById("reservationDetailModal");
+        const content = document.getElementById("reservationDetailContent");
+        content.innerHTML = `
+        <p><strong>상품명:</strong> ${reservation.prod_name}</p>
+        <p><strong>옵션:</strong> ${reservation.optionName}</p>
+        <p><strong>출조일:</strong> ${new Date(reservation.fishingAt).toLocaleString()}</p>
+        <p><strong>예약 상태:</strong> ${reservation.reservationStatus}</p>
+        <p><strong>결제 수단:</strong> ${reservation.paymentsMethod}</p>
+        <p><strong>결제 시간:</strong> ${reservation.paidAt ? new Date(reservation.paidAt).toLocaleString() : '결제 안됨'}</p>
+        <p><strong>예약일:</strong> ${new Date(reservation.createdAt).toLocaleString()}</p>
+    `;
+        modal.classList.remove("hidden");
+    }
+
+    function cancelReservation(reservationId) {
+        const token = getAuthToken();
+
+        if (!confirm("정말 이 예약을 취소하시겠습니까?")) return;
+
+        fetch(`/api/reservation/cancel/${reservationId}`, {
+            method: "DELETE",
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            }
+        })
+            .then(response => {
+                if (!response.ok) {
+                    return response.text().then(text => {
+                        throw new Error(`취소 실패: ${text}`);
+                    });
+                }
+                return response.text();
+            })
+            .then(msg => {
+                alert(msg);
+                fetchReservations(); // 목록 새로고침
+            })
+            .catch(err => {
+                console.error("예약 취소 오류:", err);
+                alert("예약 취소에 실패했습니다.");
+            });
+    }
+
+    function closeReservationDetail() {
+
+        document.getElementById("reservationDetailModal").classList.add("hidden");
+    }
+
 
     // 로그인 토큰 가져오기 (사용자 정의 함수)
     function getAuthToken() {

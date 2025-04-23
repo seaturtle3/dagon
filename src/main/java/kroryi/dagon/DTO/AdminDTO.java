@@ -9,4 +9,6 @@ public class AdminDTO {
     private String aid;
     private String apw;
     private String aname;
+    private String role;
+
 }

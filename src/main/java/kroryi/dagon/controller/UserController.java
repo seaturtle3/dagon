@@ -27,5 +27,10 @@ public class UserController {
         session.invalidate();  // 세션 무효화
         return "user/login";
     }
+
+    @GetMapping("/find-id")
+    public String findId(){
+        return "find-id";
+    }
 }
 

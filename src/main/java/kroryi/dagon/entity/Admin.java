@@ -23,6 +23,9 @@ public class Admin {
     @Column(name = "aname")
     private String aname;
 
+    @Column(name = "role")
+    private String role;
+
     // 공지사항
     @OneToMany(mappedBy = "admin", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
