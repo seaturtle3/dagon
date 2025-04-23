@@ -1,13 +1,12 @@
 package kroryi.dagon.enums;
 
-public enum UserType {
-    USER("일반회원"),
+public enum ReceiverType {
     PARTNER("파트너"),
     ADMIN("관리자");
 
     private final String korean;
 
-    UserType(String korean) {
+    ReceiverType(String korean) {
         this.korean = korean;
     }
 

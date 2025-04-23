@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${inquiry.title}"></title>
+    <style>
+        .bottom-buttons {
+            margin-top: 25px;
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .bottom-buttons button {
+            padding: 12px 24px;
+            color: black;
+            border: none;
+            border-radius: 30px;
+            font-size: 15px;
+            font-weight: 500;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(255, 255, 255, 0.2);
+            transition: all 0.2s ease;
+        }
+
+        .bottom-buttons button:hover {
+            background-color: #007BFF;
+            color: white;
+        }
+
+        bottom-buttons button.selected {
+            background-color: #007BFF;
+            color: white;
+        }
+
+        /* 기본 레이아웃 */
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f6f8;
+        }
+
+        /* 헤더 */
+        h2 {
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        /* 리스트 박스 */
+        .catch-item {
+            background-color: white;
+            display: flex;
+            flex-direction: row;
+            align-items: flex-start;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            padding: 16px;
+            margin-bottom: 16px;
+            transition: transform 0.2s;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .catch-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        /* 이미지 */
+        .catch-image {
+            width: 180px;
+            height: 120px;
+            border-radius: 8px;
+            object-fit: cover;
+            margin-right: 16px;
+        }
+
+        /* 텍스트 영역 */
+        .catch-info {
+            flex: 1;
+        }
+
+        .catch-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin: 4px 0;
+            color: #222;
+        }
+
+        .catch-desc {
+            font-size: 14px;
+            color: #666;
+            margin: 4px 0 6px 0;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .catch-meta {
+            font-size: 12px;
+            color: #999;
+        }
+
+        .catch-meta span {
+            margin-right: 10px;
+        }
+
+        /* 날짜, 태그 스타일 등 */
+        .catch-tag {
+            font-size: 12px;
+            background-color: #edf2ff;
+            color: #3b6ef1;
+            padding: 2px 8px;
+            border-radius: 8px;
+            margin-left: 5px;
+        }
+
+        /* 반응형 */
+        @media (max-width: 768px) {
+            .catch-item {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .catch-image {
+                width: 100%;
+                height: auto;
+                margin-bottom: 10px;
+            }
+
+            .catch-info {
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+<h2>1:1 문의</h2>
+<hr>
+
+<form th:action="@{/inquiry}" th:object="${inquiry}" method="post">
+
+    <label>작성자 유형</label>
+    <select th:field="*{writerType}">
+        <option disabled selected>작성자 유형</option>
+        <option th:each="type : ${writerTypes}"
+                th:value="${type}"
+                th:text="${type.korean}"></option>
+    </select>
+    <br>
+
+    <label>문의 유형</label>
+    <select th:field="*{inquiryType}">
+        <option disabled selected>문의 유형</option>
+        <option th:each="type : ${inquiryTypes}"
+                th:value="${type}"
+                th:text="${type.korean}"></option>
+    </select>
+    <br>
+
+    <label>작성자</label>
+    <input type="text" th:field="*{writer}" required/>
+    <br>
+
+    <label>연락처</label>
+    <input type="text" th:field="*{contact}" required/>
+    <br>
+
+    <label>제목</label>
+    <input type="text" th:field="*{title}" required/>
+    <br>
+
+    <label>내용</label>
+    <textarea th:field="*{content}" required></textarea>
+    <br>
+
+    <button type="submit">문의하기</button>
+</form>
+
+<p th:if="${param.success}">문의가 성공적으로 접수되었습니다.</p>
+</body>
+</html>
