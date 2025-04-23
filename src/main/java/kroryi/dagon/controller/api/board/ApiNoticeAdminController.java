@@ -8,6 +8,7 @@ import kroryi.dagon.entity.Notice;
 import kroryi.dagon.service.board.NoticeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,13 +21,15 @@ public class ApiNoticeAdminController {
 
     @Operation(summary = "공지사항 등록", description = "관리자가 새 공지사항 등록")
     @PostMapping
-    public ResponseEntity<?> create(@Valid @RequestBody NoticeRequestDTO dto, BindingResult result) {
+    public ResponseEntity<?> create(@Valid @RequestBody NoticeRequestDTO dto,
+                                    BindingResult result,
+                                    Authentication auth) {
         if (result.hasErrors()) {
             return ResponseEntity.badRequest().body(result.getAllErrors());
         }
 
-        String adminId = "admin001"; // 테스트용
-        Notice notice = noticeService.createNotice(dto, adminId);
+        String aid = auth.getName();
+        Notice notice = noticeService.createNotice(dto, aid);
 
         return ResponseEntity.ok(NoticeResponseDTO.from(notice));
     }

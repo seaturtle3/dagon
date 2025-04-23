@@ -24,6 +24,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -116,5 +117,10 @@ public class AdminService {
         user.getNotifications().clear();
 
         userRepository.delete(user);  // 유저 삭제
+    }
+
+    // 임시 수동 로그인
+    public Optional<Admin> findByAid(String aid) {
+        return apiAdminRepository.findById(aid);
     }
 }

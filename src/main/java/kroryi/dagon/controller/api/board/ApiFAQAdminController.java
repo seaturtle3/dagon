@@ -10,9 +10,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -37,12 +36,16 @@ public class ApiFAQAdminController {
         return FAQResponseDTO.from(faqService.findById(id));
     }
 
+
     @Operation(summary = "FAQ 등록", description = "새로운 FAQ 등록")
     @PostMapping
-    public ResponseEntity<FAQResponseDTO> create(@Valid FAQRequestDTO dto) {
-        FAQ faq = faqService.createFAQ(dto, "admin001"); // 관리자 ID는 테스트용
+    public ResponseEntity<FAQResponseDTO> create(@Valid @RequestBody FAQRequestDTO dto,
+                                                 Authentication auth) {
+        String aid = auth.getName(); // 로그인한 관리자 ID
+        FAQ faq = faqService.createFAQ(dto, aid);
         return ResponseEntity.ok(FAQResponseDTO.from(faq));
     }
+
 
     @Operation(summary = "FAQ 수정", description = "기존 FAQ 내용 수정")
     @PostMapping("/{id}")

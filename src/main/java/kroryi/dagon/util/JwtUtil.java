@@ -91,5 +91,21 @@ public class JwtUtil {
         }
     }
 
+
+    public String generateAdminToken(String aid, String aname) {
+        Date now = new Date();
+        Date expiryDate = new Date(now.getTime() + expirationTime);
+
+        return Jwts.builder()
+                .setSubject(aid)
+                .claim("aid", aid)
+                .claim("aname", aname)
+                .claim("role", "admin")
+                .setIssuedAt(now)
+                .setExpiration(expiryDate)
+                .signWith(secretKey, SignatureAlgorithm.HS256)
+                .compact();
+    }
+
 }
 

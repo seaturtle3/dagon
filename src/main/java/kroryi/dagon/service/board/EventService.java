@@ -9,6 +9,7 @@ import kroryi.dagon.repository.AdminRepository;
 import kroryi.dagon.repository.board.EventRepository;
 import kroryi.dagon.util.ImageFileUtil;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -17,7 +18,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
-
+@Log4j2
 @Service
 @RequiredArgsConstructor
 public class EventService {
@@ -56,17 +57,17 @@ public class EventService {
     }
 
     @Transactional
-    public Event updateEvent(Long id, EventRequestDTO dto) {
+    public Event updateEvent(Long id, EventRequestDTO dto, String adminId) {
         Event event = eventRepository.findById(id).orElseThrow();
 
         event.setTitle(dto.getTitle());
         event.setContent(dto.getContent());
-        event.setThumbnailUrl(dto.getThumbnailUrl());
         event.setStartAt(dto.getStartAt());
         event.setEndAt(dto.getEndAt());
-        event.setIsTop(dto.getIsTop() != null && dto.getIsTop());
-        event.setModifyAt(LocalDateTime.now());
-        event.updateEventStatus(LocalDate.now());
+        event.setIsTop(dto.getIsTop());
+
+        // 필요 시 수정자 정보 남기기 (ex. log용)
+        log.info("이벤트 수정 - 관리자: {}", adminId);
 
         return eventRepository.save(event);
     }

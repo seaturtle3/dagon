@@ -41,27 +41,39 @@ public class ApiKeyFilter extends OncePerRequestFilter {
         String authHeader = request.getHeader("Authorization");
         log.info("------------------- {}", authHeader);
 
+
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             String jwt = authHeader.substring(7);
 
             try {
-                Claims claims = jwtTokenUtil.parseToken(jwt); // ← 여기서 클레임 꺼냄
+                Claims claims = jwtTokenUtil.parseToken(jwt); // JWT 파싱
 
-                Long uno = Long.valueOf(claims.get("uno", String.class)); // JWT에 uno 들어 있어야 함
-                String uname = claims.get("uname", String.class);
+                String role = claims.get("role", String.class);
+//                String uid = claims.get("uid", String.class); // admin이면 aid, user면 uid
+                String uid = claims.getSubject(); // ✅ sub 필드에서 꺼냄
+                String uname = claims.get("uname", String.class); // 이름
 
-                // CustomUserDetails 생성
-                CustomUserDetails userDetails = new CustomUserDetails(
-                        uno,
-                        uname,
-                        "", // 비밀번호는 필요 없으면 빈 문자열로
-                        List.of(new SimpleGrantedAuthority("ROLE_PARTNER")) // 또는 적절한 권한
+                if (role == null || uid == null) {
+                    response.setStatus(HttpStatus.UNAUTHORIZED.value());
+                    response.getWriter().write("Invalid JWT: missing role or uid");
+                    return;
+                }
+
+                // 권한 설정
+                List<SimpleGrantedAuthority> authorities = List.of(
+                        new SimpleGrantedAuthority("ROLE_" + role.toUpperCase())
                 );
 
-                // 인증 객체 생성 및 SecurityContext 등록
-                UsernamePasswordAuthenticationToken authentication =
-                        new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                // 인증 객체 생성
+                CustomUserDetails userDetails = new CustomUserDetails(
+                        0L,        // uno는 admin에게는 의미 없음
+                        uid,       // aid 또는 uid
+                        "",
+                        authorities
+                );
 
+                UsernamePasswordAuthenticationToken authentication =
+                        new UsernamePasswordAuthenticationToken(userDetails, null, authorities);
                 SecurityContextHolder.getContext().setAuthentication(authentication);
 
                 filterChain.doFilter(request, response);
@@ -77,7 +89,6 @@ public class ApiKeyFilter extends OncePerRequestFilter {
         response.setStatus(HttpStatus.UNAUTHORIZED.value());
         response.getWriter().write("Unauthorized: Missing or invalid Bearer token");
     }
-
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
         String path = request.getRequestURI();
@@ -97,6 +108,8 @@ public class ApiKeyFilter extends OncePerRequestFilter {
                         (path.startsWith("/js/")) ||
                         (path.startsWith("/web/users/") && method.equals("POST")) ||
 
+                        // 관리자 로그인 예외 허용
+                        (path.startsWith("/api/admin/login") && method.equals("POST"))||
 
                         // 물때/api/admin/station
                         (path.startsWith("/api/multtae/") && method.equals("GET")) ||
@@ -104,18 +117,18 @@ public class ApiKeyFilter extends OncePerRequestFilter {
 
                         // 공지사항 admin/notices 추후 삭제
                         (path.startsWith("/api/notices") && method.equals("GET")) ||
-                        (path.startsWith("/api/admin/notices") && method.equals("POST")) ||
-                        (path.startsWith("/api/admin/notices") && method.equals("DELETE")) ||
+//                        (path.startsWith("/api/admin/notices") && method.equals("POST")) ||
+//                        (path.startsWith("/api/admin/notices") && method.equals("DELETE")) ||
 
                         // 이벤트 admin/event 추후 삭제
                         (path.startsWith("/api/event") && method.equals("GET")) ||
-                        (path.startsWith("/api/admin/event") && method.equals("POST")) ||
-                        (path.startsWith("/api/admin/event") && method.equals("DELETE")) ||
+//                        (path.startsWith("/api/admin/event") && method.equals("POST")) ||
+//                        (path.startsWith("/api/admin/event") && method.equals("DELETE")) ||
 
                         // 자주하는질문 /admin/faq 추후 삭제
                         (path.startsWith("/api/faq") && method.equals("GET")) ||
-                        (path.startsWith("/api/admin/faq") && method.equals("POST")) ||
-                        (path.startsWith("/api/admin/faq") && method.equals("DELETE")) ||
+//                        (path.startsWith("/api/admin/faq") && method.equals("POST")) ||
+//                        (path.startsWith("/api/admin/faq") && method.equals("DELETE")) ||
 
                         // 이미지테스트 /api/admin/image 추후 삭제
                         (path.startsWith("/api/admin/image") && method.equals("POST")) ||

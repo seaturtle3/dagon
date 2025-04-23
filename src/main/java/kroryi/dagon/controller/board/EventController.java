@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -79,14 +80,19 @@ public class EventController {
                          BindingResult result,
                          @RequestParam(defaultValue = "0") int page,
                          @RequestParam(defaultValue = "10") int size,
-                         Model model) {
+                         Model model,
+                         Authentication auth) {  // ✅ 추가
+
         if (result.hasErrors()) {
             model.addAttribute("formAction", "/event?page=" + page + "&size=" + size);
             model.addAttribute("page", page);
             model.addAttribute("size", size);
             return "board/event/form";
         }
-        eventService.createEvent(dto, "admin001");
+
+        String adminId = auth.getName(); // ✅ 현재 로그인한 관리자 ID
+        eventService.createEvent(dto, adminId);
+
         return "redirect:/event?page=" + page + "&size=" + size;
     }
 
@@ -118,8 +124,12 @@ public class EventController {
     public String update(@PathVariable Long id,
                          @ModelAttribute EventRequestDTO dto,
                          @RequestParam(defaultValue = "0") int page,
-                         @RequestParam(defaultValue = "10") int size) {
-        eventService.updateEvent(id, dto);
+                         @RequestParam(defaultValue = "10") int size,
+                         Authentication auth) {  // ✅ 추가
+
+        String adminId = auth.getName(); // ✅ 현재 로그인한 관리자 ID
+        eventService.updateEvent(id, dto, adminId);
+
         return "redirect:/event?page=" + page + "&size=" + size;
     }
 
