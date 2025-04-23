@@ -60,6 +60,7 @@ public class InquiryController {
             response.put("success", false);
         }
 
+
         return response;
     }
 
