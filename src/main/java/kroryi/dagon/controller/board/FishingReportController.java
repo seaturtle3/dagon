@@ -32,10 +32,11 @@ public class FishingReportController {
         return "board/fishReport/form";
     }
 
+    // 새로운 조황 정보 등록
     @PostMapping("/form")
     public String createFishingReport(FishingReportDTO fishingReportDTO) {
         fishingReportService.createFishingReport(fishingReportDTO);
-        return "redirect:/fish-report/list"; // 등록 후 목록 페이지로 리다이렉트
+        return "redirect:/fishing-report/list"; // 등록 후 목록 페이지로 리다이렉트
     }
 }
 
