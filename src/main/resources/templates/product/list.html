@@ -28,9 +28,7 @@
         </tr>
         </thead>
         <tbody>
-        <tr th:each="product : ${productList}"
-            th:onclick="|location.href='@{/fishingReport/list/{id=${product.prodId})}'|"
-            style="cursor:pointer">
+        <tr th:each="product : ${productList}">
             <td th:text="${product.prodName}">배 이름</td>
             <td th:text="${product.prodRegion}">지역</td>
             <td th:text="${product.mainType}">바다/민물 유형</td>

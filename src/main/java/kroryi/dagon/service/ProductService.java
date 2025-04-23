@@ -132,4 +132,9 @@ public class ProductService {
         productRepository.save(product);
     }
 
+    public Product findById(Long id) {
+        return productRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("해당 배가 없습니다. id=" + id));
+    }
+
 }

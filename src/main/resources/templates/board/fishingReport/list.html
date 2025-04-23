@@ -7,7 +7,7 @@
 <body>
 <div th:replace="fragments/header :: header"></div>
 
-<h1>조황정보/조행기 리스트</h1>
+<h1>조황/조행기 리스트</h1>
 
 <div class="mb-3">
     <a th:href="@{/fishing-report/list}" class="btn btn-primary">조황정보</a>
@@ -51,11 +51,11 @@
     </tbody>
 </table>
 
-<div style="margin-bottom: 20px;">
-    <a th:href="@{/fishing-report/form}">
-        <button type="button">글쓰기</button>
-    </a>
-</div>
+<form action="/fishing-report/form" method="get">
+    <input type="hidden" name="prodId" value="1"> <!-- 예시로 prodId 값을 1로 설정 -->
+    <button type="submit">글쓰기</button>
+</form>
+
 
 </body>
 </html>

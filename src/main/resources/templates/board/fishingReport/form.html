@@ -7,9 +7,11 @@
 <body>
 <div th:replace="fragments/header :: header"></div>
 
-<h2>조황 정보 글 등록</h2>
+<h2>조황 글 등록</h2>
 
 <form action="/fishing-report/form" method="POST">
+    <input type="hidden" name="prodId" th:value="${product}" />
+
     <label for="fishingAt">조업 날짜:</label>
     <input type="datetime-local" id="fishingAt" name="fishingAt" required><br><br>
 
@@ -27,9 +29,6 @@
 
     <button type="submit">등록</button>
 </form>
-
-
-
 
 </body>
 </html>
