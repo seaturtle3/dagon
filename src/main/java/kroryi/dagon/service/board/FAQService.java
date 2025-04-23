@@ -1,5 +1,6 @@
 package kroryi.dagon.service.board;
 
+import kroryi.dagon.DTO.board.BoardSearchDTO;
 import kroryi.dagon.DTO.board.FAQRequestDTO;
 import kroryi.dagon.entity.Admin;
 import kroryi.dagon.entity.FAQ;
@@ -33,6 +34,22 @@ public class FAQService {
     // 단건 조회
     public FAQ findById(Long id) {
         return faqRepository.findById(id).orElse(null);
+    }
+
+
+    // 검색
+    public Page<FAQ> searchPaged(BoardSearchDTO dto, Pageable pageable) {
+        if (dto.getKeyword() == null || dto.getKeyword().isBlank()) {
+            return findAllPaged(pageable);
+        }
+        return faqRepository.searchByKeyword(dto.getKeyword(), dto.getType(), pageable);
+    }
+
+    public Page<FAQ> searchActivePaged(BoardSearchDTO dto, Pageable pageable) {
+        if (dto.getKeyword() == null || dto.getKeyword().isBlank()) {
+            return findActivePaged(pageable);
+        }
+        return faqRepository.searchByKeywordAndActive(dto.getKeyword(), dto.getType(), pageable);
     }
 
     // 등록

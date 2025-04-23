@@ -25,14 +25,18 @@
 <body>
 
 <div class="container">
-    <h1 class="page-title">자주 묻는 질문</h1>
+    <h1 class="page-title">
+        <a th:href="@{/faq}" style="text-decoration: none; color: inherit;">자주 묻는 질문</a>
+    </h1>
 
     <div th:if="${isAdmin}" class="button-group text-end mb-2">
         <a class="btn btn-custom"
            th:href="@{'/faq/create?page=' + ${pagination.currentPage} + '&size=' + ${size}}">FAQ 등록</a>
     </div>
+    <div th:replace="~{fragments/paging-options :: sizeSelector('/faq', ${size}, ${pagination.currentPage}, ${keyword}, ${type})}"></div>
 
-    <div th:replace="~{fragments/paging-options :: sizeSelector('/faq', ${size}, ${pagination.currentPage})}"></div>
+    <!--  검색  -->
+    <div th:replace="~{fragments/search-form-faq :: searchForm('/faq', ${type}, ${keyword}, ${size})}"></div>
 
     <div th:each="faq : ${faqPage.content}" class="section-box">
         <!-- 질문 -->
@@ -55,7 +59,7 @@
         </div>
     </div>
 
-    <div th:replace="~{fragments/pagination :: pagination(${pagination}, ${size})}"></div>
+    <div th:replace="~{fragments/pagination :: pagination(${pagination}, ${size}, ${keyword}, ${type})}"></div>
 </div>
 
 </body>

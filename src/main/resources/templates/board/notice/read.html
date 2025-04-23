@@ -9,6 +9,10 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
+<div class="container">
+    <h1 class="page-title">
+        <a th:href="@{/notices}" style="text-decoration: none; color: inherit;">공지사항</a>
+    </h1>
 <div class="container section-box">
     <h1 class="page-title" th:text="${notice.title}">공지사항</h1>
 
@@ -26,6 +30,7 @@
             <button type="submit" class="btn btn-danger">삭제</button>
         </form>
     </div>
+</div>
 </div>
 </body>
 </html>

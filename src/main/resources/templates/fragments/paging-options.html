@@ -1,4 +1,4 @@
-<div th:fragment="sizeSelector(currentPath, size, currentPage)" class="page-size-selector">
+<div th:fragment="sizeSelector(currentPath, size, currentPage, keyword, type)" class="page-size-selector">
     <form method="get" th:action="@{${currentPath}}" class="d-flex align-items-center" style="gap: 8px;">
         <label for="size" class="form-label mb-0">한 페이지 글 수</label>
         <select name="size" id="size" class="form-select form-select-sm w-auto" onchange="this.form.submit()">
@@ -7,5 +7,7 @@
             <option th:value="20" th:selected="${size.toString().equals('20')}">20개</option>
         </select>
         <input type="hidden" name="page" th:value="${currentPage}">
+        <input type="hidden" name="keyword" th:value="${keyword}">
+        <input type="hidden" name="type" th:value="${type}">
     </form>
 </div>

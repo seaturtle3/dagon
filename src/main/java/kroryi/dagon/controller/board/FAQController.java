@@ -1,5 +1,6 @@
 package kroryi.dagon.controller.board;
 
+import kroryi.dagon.DTO.board.BoardSearchDTO;
 import kroryi.dagon.DTO.board.FAQRequestDTO;
 import kroryi.dagon.entity.FAQ;
 import kroryi.dagon.service.board.FAQService;
@@ -20,27 +21,31 @@ public class FAQController {
     @GetMapping
     public String readAll(Model model,
                           @RequestParam(defaultValue = "0") int page,
-                          @RequestParam(defaultValue = "10") int size) {
+                          @RequestParam(defaultValue = "10") int size,
+                          @RequestParam(required = false) String keyword,
+                          @RequestParam(required = false) String type) {
 
         boolean isAdmin = true;
 
-        Page<FAQ> pageForCount = isAdmin
-                ? faqService.findAllPaged(PageRequest.of(0, size))
-                : faqService.findActivePaged(PageRequest.of(0, size));
+        BoardSearchDTO searchDTO = new BoardSearchDTO();
+        searchDTO.setKeyword(keyword);
+        searchDTO.setType(type);
 
-        int totalPages = pageForCount.getTotalPages();
+        Page<FAQ> faqPage = isAdmin
+                ? faqService.searchPaged(searchDTO, PageRequest.of(page, size))
+                : faqService.searchActivePaged(searchDTO, PageRequest.of(page, size));
+
+        int totalPages = faqPage.getTotalPages();
         if (page >= totalPages && totalPages > 0) {
             return "redirect:/faq?page=" + (totalPages - 1) + "&size=" + size;
         }
-
-        Page<FAQ> faqPage = isAdmin
-                ? faqService.findAllPaged(PageRequest.of(page, size))
-                : faqService.findActivePaged(PageRequest.of(page, size));
 
         model.addAttribute("faqPage", faqPage);
         model.addAttribute("pagination", PaginationUtil.getPaginationData(faqPage));
         model.addAttribute("size", size);
         model.addAttribute("isAdmin", isAdmin);
+        model.addAttribute("type", type);
+        model.addAttribute("keyword", keyword);
         return "board/faq/faq";
     }
 
