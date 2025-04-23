@@ -25,8 +25,15 @@ public class Inquiry {
     private String contact;
     private String title;
     private String content;
+    private LocalDateTime createdDate;
 
-     @Enumerated(EnumType.STRING)
+    @PrePersist
+    protected void onCreate() {
+        this.createdDate = LocalDateTime.now();
+    }
+
+
+    @Enumerated(EnumType.STRING)
     @Column(name = "question_type", nullable = false)
     private InquiryType inquiryType;
 

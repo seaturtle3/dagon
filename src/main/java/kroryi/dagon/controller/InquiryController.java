@@ -32,7 +32,7 @@ public class InquiryController {
         model.addAttribute("inquiryTypes", InquiryType.values());
 
         // inquiry.html을 반환하여 해당 페이지를 렌더링
-        return "inquiry"; // 여기서 "inquiry"는 inquiry.html을 의미합니다.
+        return "question/inquiry"; // 여기서 "inquiry"는 inquiry.html을 의미합니다.
     }
 
 
@@ -95,17 +95,22 @@ public class InquiryController {
     public String showInquiries(Model model) {
         List<Inquiry> all = inquiryService.findAll();
 
+        // 안전한 Enum 비교
         List<Inquiry> toPartners = all.stream()
-                .filter(i -> "PARTNER".equals(i.getReceiverType()))
+                .filter(i -> ReceiverType.PARTNER.equals(i.getReceiverType()))
                 .collect(Collectors.toList());
 
         List<Inquiry> toAdmins = all.stream()
-                .filter(i -> "ADMIN".equals(i.getReceiverType()))
+                .filter(i -> ReceiverType.ADMIN.equals(i.getReceiverType()))
                 .collect(Collectors.toList());
 
+        // 로그로 값 확인
+        System.out.println("=== 전체 문의 수: " + all.size() + " ===");
+        toPartners.forEach(i -> System.out.println("→ [PARTNER] " + i.getTitle()));
+        toAdmins.forEach(i -> System.out.println("→ [ADMIN] " + i.getTitle()));
 
         model.addAttribute("toPartners", toPartners);
         model.addAttribute("toAdmins", toAdmins);
-        return "inquiry/list"; // 이건 Thymeleaf 템플릿 파일 이름
+        return "question/list";
     }
 }

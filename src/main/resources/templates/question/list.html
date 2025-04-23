@@ -1,86 +1,89 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>1:1 문의하기</title>
+    <title>문의 목록</title>
     <style>
-        #boardList {
-            display: none;
-            margin-top: 20px;
-            padding: 10px;
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        table, th, td {
             border: 1px solid #ccc;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        .header {
+            font-size: 1.5em;
+            margin-bottom: 20px;
         }
     </style>
 </head>
 <body>
 
-<h2>1:1 문의</h2>
-<hr>
+<div class="header">문의 목록</div>
 
-<form id="inquiryForm" th:object="${inquiry}">
-    <label>작성자 유형</label>
-    <select th:field="*{writerType}">
-        <option disabled selected value="">작성자 유형</option>
-        <option th:each="type : ${writerTypes}"
-                th:value="${type}"
-                th:text="${type.korean}"></option>
-    </select>
-    <br>
+<h3>파트너로 보낸 문의</h3>
+<table>
+    <thead>
+    <tr>
+        <th>작성자</th>
+        <th>제목</th>
+        <th>연락처</th>
+        <th>내용</th>
+        <th>작성일</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="inquiry : ${toPartners}">
+        <td th:text="${inquiry.writer}"></td>
+        <td th:text="${inquiry.title}"></td>
+        <td th:text="${inquiry.contact}"></td>
+        <td th:text="${inquiry.content}"></td>
+        <td th:text="${#dates.format(inquiry.createdDate, 'yyyy-MM-dd HH:mm')}"></td>
+    </tr>
+    <!-- 문의 데이터가 없을 경우 -->
+    <tr th:if="${#lists.isEmpty(toPartners)}">
+        <td colspan="5">파트너로 보낸 문의가 없습니다.</td>
+    </tr>
+    </tbody>
+</table>
 
-    <label>문의 유형</label>
-    <select th:field="*{inquiryType}">
-        <option disabled selected value="">문의 유형</option>
-        <option th:each="type : ${inquiryTypes}"
-                th:value="${type}"
-                th:text="${type.korean}"></option>
-    </select>
-    <br>
+<h3>관리자로 보낸 문의</h3>
+<table>
+    <thead>
+    <tr>
+        <th>작성자</th>
+        <th>제목</th>
+        <th>연락처</th>
+        <th>내용</th>
+        <th>작성일</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="inquiry : ${toAdmins}">
+        <td th:text="${inquiry.writer}"></td>
+        <td th:text="${inquiry.title}"></td>
+        <td th:text="${inquiry.contact}"></td>
+        <td th:text="${inquiry.content}"></td>
+        <td th:text="${#dates.format(inquiry.createdDate, 'yyyy-MM-dd HH:mm')}"></td>
+    </tr>
 
-    <label>받는 사람</label>
-    <select th:field="*{receiverType}">
-        <option disabled selected value="">받는 사람</option>
-        <option value="PARTNER">파트너</option>
-        <option value="ADMIN">관리자</option>
-    </select>
-    <br>
-
-    <label>작성자</label>
-    <input type="text" th:field="*{writer}" required/>
-    <br>
-
-    <label>연락처</label>
-    <input type="text" th:field="*{contact}" required/>
-    <br>
-
-    <label>제목</label>
-    <input type="text" th:field="*{title}" required/>
-    <br>
-
-    <label>내용</label>
-    <textarea th:field="*{content}" required></textarea>
-    <br>
-
-    <button type="button" onclick="submitInquiry()">문의하기</button>
-</form>
-
-<!-- 문의 완료 후 표시될 Board List -->
-<div id="boardList">
-    <h3>Board List</h3>
-    <ul>
-        <li>문의 제목 예시 1</li>
-        <li>문의 제목 예시 2</li>
-        <li>문의 제목 예시 3</li>
-    </ul>
-</div>
-
-<script>
-    function submitInquiry() {
-        // 여기에 서버로의 실제 요청(fetch/post 등)을 추가할 수도 있음
-        // 예시로 폼이 성공적으로 제출됐다고 가정하고 boardList를 표시
-        document.getElementById("boardList").style.display = "block";
-    }
-</script>
-
+    <!-- 문의 데이터가 없을 경우 -->
+    <tr th:if="${#lists.isEmpty(toAdmins)}">
+        <td colspan="5">관리자로 보낸 문의가 없습니다.</td>
+    </tr>
+    </tbody>
+</table>
 
 </body>
 </html>
