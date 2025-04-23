@@ -3,6 +3,8 @@ package kroryi.dagon.controller.board;
 import kroryi.dagon.DTO.board.BoardSearchDTO;
 import kroryi.dagon.DTO.board.FAQRequestDTO;
 import kroryi.dagon.entity.FAQ;
+import kroryi.dagon.entity.FAQCategory;
+import kroryi.dagon.service.board.FAQCategoryService;
 import kroryi.dagon.service.board.FAQService;
 import kroryi.dagon.util.PaginationUtil;
 import lombok.RequiredArgsConstructor;
@@ -17,19 +19,23 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/faq")
 public class FAQController {
     private final FAQService faqService;
+    private final FAQCategoryService faqCategoryService;
 
     @GetMapping
     public String readAll(Model model,
                           @RequestParam(defaultValue = "0") int page,
                           @RequestParam(defaultValue = "10") int size,
                           @RequestParam(required = false) String keyword,
-                          @RequestParam(required = false) String type) {
+                          @RequestParam(required = false) String type,
+                          @RequestParam(required = false) Long categoryId) {
 
         boolean isAdmin = true;
 
         BoardSearchDTO searchDTO = new BoardSearchDTO();
         searchDTO.setKeyword(keyword);
         searchDTO.setType(type);
+        searchDTO.setCategoryId(categoryId);
+
 
         Page<FAQ> faqPage = isAdmin
                 ? faqService.searchPaged(searchDTO, PageRequest.of(page, size))
@@ -46,6 +52,7 @@ public class FAQController {
         model.addAttribute("isAdmin", isAdmin);
         model.addAttribute("type", type);
         model.addAttribute("keyword", keyword);
+        model.addAttribute("categories", faqCategoryService.findAll());
         return "board/faq/faq";
     }
 
@@ -54,10 +61,14 @@ public class FAQController {
     public String createForm(Model model,
                              @RequestParam(defaultValue = "0") int page,
                              @RequestParam(defaultValue = "10") int size) {
-        model.addAttribute("faq", new FAQRequestDTO());
-        model.addAttribute("formAction", "/faq?page=" + page + "&size=" + size);
+
+        FAQRequestDTO dto = new FAQRequestDTO();
+        dto.setIsActive(true);
+        model.addAttribute("faq", dto);
+        model.addAttribute("formAction", "/faq");
         model.addAttribute("page", page);
         model.addAttribute("size", size);
+        model.addAttribute("categories", faqCategoryService.findAll());
         return "board/faq/form";
     }
 
@@ -79,6 +90,7 @@ public class FAQController {
         model.addAttribute("formAction", "/faq/" + id + "?page=" + page + "&size=" + size);
         model.addAttribute("page", page);
         model.addAttribute("size", size);
+        model.addAttribute("categories", faqCategoryService.findAll());
         return "board/faq/form";
     }
 

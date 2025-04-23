@@ -21,6 +21,18 @@
         <input type="hidden" name="size" th:value="${size}">
 
         <div class="form-group">
+            <label>카테고리</label>
+            <select th:field="*{categoryId}" class="form-select">
+                <option value="" disabled>카테고리를 선택하세요</option>
+                <option th:each="c : ${categories}"
+                        th:value="${c.id}"
+                        th:text="${c.name}"
+                        th:selected="${faq.categoryId} == ${c.id}">
+                </option>
+            </select>
+        </div>
+
+        <div class="form-group">
             <label>질문</label>
             <input type="text" th:field="*{question}" placeholder="질문을 입력하세요" required>
         </div>
@@ -32,7 +44,7 @@
 
         <div class="form-group">
             <label>노출 여부</label>
-            <input type="checkbox" th:field="*{isActive}">
+            <input type="checkbox" th:field="*{isActive}" th:checked="${faq.isActive == null or faq.isActive}">
         </div>
 
         <div class="form-group">

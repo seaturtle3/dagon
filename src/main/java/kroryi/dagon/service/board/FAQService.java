@@ -4,7 +4,9 @@ import kroryi.dagon.DTO.board.BoardSearchDTO;
 import kroryi.dagon.DTO.board.FAQRequestDTO;
 import kroryi.dagon.entity.Admin;
 import kroryi.dagon.entity.FAQ;
+import kroryi.dagon.entity.FAQCategory;
 import kroryi.dagon.repository.AdminRepository;
+import kroryi.dagon.repository.board.FAQCategoryRepository;
 import kroryi.dagon.repository.board.FAQRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -19,6 +21,8 @@ import java.util.List;
 public class FAQService {
     private final FAQRepository faqRepository;
     private final AdminRepository adminRepository;
+    private final FAQCategoryRepository faqCategoryRepository;
+
 
     // 전체 FAQ 조회 (관리자용)
     public Page<FAQ> findAllPaged(Pageable pageable) {
@@ -39,10 +43,16 @@ public class FAQService {
 
     // 검색
     public Page<FAQ> searchPaged(BoardSearchDTO dto, Pageable pageable) {
-        if (dto.getKeyword() == null || dto.getKeyword().isBlank()) {
+        if ((dto.getKeyword() == null || dto.getKeyword().isBlank())
+                && dto.getCategoryId() == null) {
             return findAllPaged(pageable);
         }
-        return faqRepository.searchByKeyword(dto.getKeyword(), dto.getType(), pageable);
+
+        return faqRepository.searchByCategoryAndKeyword(
+                dto.getCategoryId(),
+                dto.getKeyword(),
+                pageable
+        );
     }
 
     public Page<FAQ> searchActivePaged(BoardSearchDTO dto, Pageable pageable) {
@@ -56,8 +66,10 @@ public class FAQService {
     @Transactional
     public FAQ createFAQ(FAQRequestDTO dto, String adminId) {
         Admin admin = adminRepository.findById(adminId).orElseThrow();
+        FAQCategory category = faqCategoryRepository.findById(dto.getCategoryId()).orElseThrow();
 
         FAQ faq = new FAQ();
+        faq.setCategory(category);
         faq.setQuestion(dto.getQuestion());
         faq.setAnswer(dto.getAnswer());
         faq.setDisplayOrder(dto.getDisplayOrder());
@@ -71,7 +83,9 @@ public class FAQService {
     @Transactional
     public FAQ updateFAQ(Long id, FAQRequestDTO dto) {
         FAQ faq = faqRepository.findById(id).orElseThrow();
+        FAQCategory category = faqCategoryRepository.findById(dto.getCategoryId()).orElseThrow();
 
+        faq.setCategory(category);
         faq.setQuestion(dto.getQuestion());
         faq.setAnswer(dto.getAnswer());
         faq.setDisplayOrder(dto.getDisplayOrder());

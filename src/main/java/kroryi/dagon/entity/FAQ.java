@@ -42,6 +42,10 @@ public class FAQ extends BaseTimeEntity{
         this.modifyAt = LocalDateTime.now();
     }
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "category_id", nullable = false)
+    private FAQCategory category;
+
     // 관리자 (프론트에 안보여도 됨)
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "aid", nullable = false)

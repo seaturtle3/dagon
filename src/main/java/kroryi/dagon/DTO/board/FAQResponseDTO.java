@@ -1,6 +1,7 @@
 package kroryi.dagon.DTO.board;
 
 import kroryi.dagon.entity.FAQ;
+import kroryi.dagon.entity.FAQCategory;
 import lombok.Builder;
 import lombok.Data;
 
@@ -18,6 +19,9 @@ public class FAQResponseDTO {
     private LocalDateTime createdAt;
     private LocalDateTime modifyAt;
 
+    private Long categoryId;
+    private String categoryName;
+
     public static FAQResponseDTO from(FAQ faq) {
         return FAQResponseDTO.builder()
                 .faqId(faq.getFaqId())
@@ -28,6 +32,8 @@ public class FAQResponseDTO {
                 .adminName(faq.getAdmin().getAname())
                 .createdAt(faq.getCreatedAt())
                 .modifyAt(faq.getModifyAt())
+                .categoryId(faq.getCategory().getId())
+                .categoryName(faq.getCategory().getName())
                 .build();
     }
 }

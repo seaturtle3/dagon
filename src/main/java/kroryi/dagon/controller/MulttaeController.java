@@ -12,7 +12,7 @@ public class MulttaeController {
 
     @GetMapping("/multtae")
     public String showMulttaePage() {
-        return "menu/multtae";
+        return "board/multtae";
     }
 
 
