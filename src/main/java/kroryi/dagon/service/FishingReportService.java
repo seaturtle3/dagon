@@ -32,10 +32,17 @@ public class FishingReportService {
         fishingReport.setViews(fishingReportDTO.getViews());
         fishingReport.setComments(fishingReportDTO.getComments());
 
-        User user = userRepository.findById(fishingReportDTO.getUserId())
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+        // 실제 로그인 후 유저 ID, 예약 상품 ID
+//        User user = userRepository.findById(fishingReportDTO.getUserId())
+//                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+//
+//        Product product = productRepository.findById(fishingReportDTO.getProdId())
+//                .orElseThrow(() -> new IllegalArgumentException("Product not found"));
 
-        Product product = productRepository.findById(fishingReportDTO.getProdId())
+        // 임시 고정된 user, product
+        User user = userRepository.findById(1L)
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+        Product product = productRepository.findById(1L)
                 .orElseThrow(() -> new IllegalArgumentException("Product not found"));
 
         fishingReport.setUser(user);
@@ -47,7 +54,7 @@ public class FishingReportService {
     }
 
     public List<FishingReportDTO> getAllFishingReport() {
-        List<FishingReport> fishingReports = fishingReportRepository.findAll();
+        List<FishingReport> fishingReports = fishingReportRepository.findAllWithComments();
         return fishingReports.stream()
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());

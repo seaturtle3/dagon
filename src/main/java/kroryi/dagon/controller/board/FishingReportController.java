@@ -23,19 +23,20 @@ public class FishingReportController {
     public String getAllFishingReports(Model model) {
         List<FishingReportDTO> fishingReports = fishingReportService.getAllFishingReport();
         model.addAttribute("fishingReports", fishingReports);
-        return "board/fishReport/list";
+        return "board/fishingReport/list";
     }
 
     // 새로운 조황 정보 등록
     @GetMapping("/form")
     public String showFishingReportForm() {
-        return "board/fishReport/form";
+        return "board/fishingReport/form";
     }
 
+    // 새로운 조황 정보 등록
     @PostMapping("/form")
     public String createFishingReport(FishingReportDTO fishingReportDTO) {
         fishingReportService.createFishingReport(fishingReportDTO);
-        return "redirect:/fish-report/list"; // 등록 후 목록 페이지로 리다이렉트
+        return "redirect:/fishing-report/list"; // 등록 후 목록 페이지로 리다이렉트
     }
 }
 
