@@ -50,9 +50,7 @@ public class FishingReportController {
     @PostMapping("/form")
     public String createFishingReport(@RequestParam(required = false) Long prodId, Model model,
                                       FishingReportDTO fishingReportDTO) {
-
         Product product = productService.findById(prodId);
-
         fishingReportDTO.setProduct(product);
         fishingReportService.createFishingReport(fishingReportDTO);
         log.info("product id: {}", product);

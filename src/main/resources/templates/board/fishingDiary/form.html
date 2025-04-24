@@ -9,7 +9,11 @@
 
 <h2>조황 글 등록</h2>
 
-<form action="/fishing-diary/form" method="POST">
+<div>
+    <h3>선택된 제품 ID: <span th:text="${prodId}"></span></h3>
+</div>
+
+<form th:action="@{/fishing-diary/form(prodId=${product.prodId})}" method="post">
     <input type="hidden" name="prodId" th:value="${product}" />
 
     <label for="fishingAt">조업 날짜:</label>

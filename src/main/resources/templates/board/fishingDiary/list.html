@@ -10,8 +10,8 @@
 <h1>조행기 리스트</h1>
 
 <div class="mb-3">
-    <a th:href="@{/fishing-report/list/{prodId}(prodId=${prodId})}" class="btn btn-primary">조황정보</a>
-    <a th:href="@{/fishing-diary/list/{prodId}(prodId=${prodId})}" class="btn btn-outline-primary">조행기</a>
+    <a th:href="@{/fishing-report/list/{prodId}(prodId=${prodId})}" class="btn btn-outline-primary">조황(파트너)</a>
+    <a th:href="@{/fishing-diary/list/{prodId}(prodId=${prodId})}" class="btn btn-primary">조행기</a>
 </div>
 
 <table border="1">
@@ -29,21 +29,21 @@
     </thead>
     <tbody>
     <!-- 타임리프를 사용해 데이터 반복 출력 -->
-    <tr th:each="report : ${fishingReports}">
+    <tr th:each="diary : ${fishingDiaries}">
         <td>
-        <span th:if="${report.fishingAt != null}"
-              th:text="${#temporals.format(report.fishingAt, 'yyyy-MM-dd HH:mm')}"></span>
-            <span th:unless="${report.fishingAt != null}">-</span>
+        <span th:if="${diary.fishingAt != null}"
+              th:text="${#temporals.format(diary.fishingAt, 'yyyy-MM-dd HH:mm')}"></span>
+            <span th:unless="${diary.fishingAt != null}">-</span>
         </td>
-        <td><img th:src="${report.thumbnailUrl}" alt="썸네일" width="100"></td>
-        <td th:text="${report.views}">조회수</td>
-        <td th:text="${report.prodName}">배 이름</td>
-        <td th:text="${report.userName}">작성자</td>
-        <td th:text="${report.title}">제목</td>
-        <td th:text="${report.content}">내용</td>
+        <td><img th:src="${diary.thumbnailUrl}" alt="썸네일" width="100"></td>
+        <td th:text="${diary.views}">조회수</td>
+        <td th:text="${diary.prodName}">배 이름</td>
+        <td th:text="${diary.userName}">작성자</td>
+        <td th:text="${diary.title}">제목</td>
+        <td th:text="${diary.content}">내용</td>
         <td>
             <ul class="list-unstyled">
-                <li th:each="comment : ${report.comments}"
+                <li th:each="comment : ${diary.comments}"
                     th:text="${comment.commentContent}">댓글</li>
             </ul>
         </td>
@@ -51,7 +51,7 @@
     </tbody>
 </table>
 
-<form th:action="@{/fishing-report/form(prodId=${prodId})}" method="get">
+<form th:action="@{/fishing-diary/form(prodId=${prodId})}" method="get">
     <input type="hidden" name="prodId" th:value="${prodId}"> <!-- 예시로 prodId 값을 1로 설정 -->
     <button type="submit">글쓰기</button>
 </form>

@@ -2,9 +2,7 @@ package kroryi.dagon.service;
 
 import kroryi.dagon.DTO.board.FishingReportDTO;
 import kroryi.dagon.entity.FishingReport;
-import kroryi.dagon.entity.Product;
 import kroryi.dagon.entity.User;
-import kroryi.dagon.repository.ProductRepository;
 import kroryi.dagon.repository.UserRepository;
 import kroryi.dagon.repository.board.FishingReportRepository;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +18,6 @@ public class FishingReportService {
 
     private final FishingReportRepository fishingReportRepository;
     private final UserRepository userRepository;
-    private final ProductRepository productRepository;
 
     // ProdId 찾기
     public List<FishingReportDTO> getFishingReportsByProdId(Long prodId) {
@@ -48,10 +45,9 @@ public class FishingReportService {
         // 임시 고정된 user
         User user = userRepository.findById(1L)
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
-
         fishingReport.setUser(user);
-        fishingReport = fishingReportRepository.save(fishingReport);
 
+        fishingReport = fishingReportRepository.save(fishingReport);
         return new FishingReportDTO(fishingReport);
     }
 
@@ -62,13 +58,13 @@ public class FishingReportService {
                 .collect(Collectors.toList());
     }
 
-    public FishingReport getFishingReport(@PathVariable Long frId) {
-        return fishingReportRepository.findById(frId)
+    public FishingReport getFishingReport(@PathVariable Long fdId) {
+        return fishingReportRepository.findById(fdId)
                 .orElseThrow(() -> new RuntimeException("조황정보를 찾을 수 없습니다."));
     }
 
-    public Long updateFishingReport(Long frId, FishingReportDTO fishingReportDTO) {
-        FishingReport fishingReport = fishingReportRepository.findById(frId)
+    public Long updateFishingReport(Long fdId, FishingReportDTO fishingReportDTO) {
+        FishingReport fishingReport = fishingReportRepository.findById(fdId)
                 .orElseThrow(() -> new RuntimeException("조황정보 없음"));
 
         fishingReport.setTitle(fishingReportDTO.getTitle());
@@ -86,8 +82,8 @@ public class FishingReportService {
         return fishingReport.getFrId();
     }
 
-    public void deleteFishingReport(Long frId) {
-        fishingReportRepository.deleteById(frId);
+    public void deleteFishingReport(Long fdId) {
+        fishingReportRepository.deleteById(fdId);
     }
 
 
