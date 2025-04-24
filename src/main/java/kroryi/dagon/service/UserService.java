@@ -4,8 +4,11 @@ import kroryi.dagon.DTO.UsersDTO;
 import kroryi.dagon.entity.User;
 import kroryi.dagon.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Service
@@ -39,3 +42,9 @@ public class UserService {
         return null;
     }
 }
+
+
+
+
+
+

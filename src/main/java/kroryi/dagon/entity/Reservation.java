@@ -21,8 +21,9 @@ public class Reservation extends BaseTimeEntity {
     private Long reservationId;
 
     // 예약자 정보
-    @Column(name = "uid", nullable = false)
-    private Long uid;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "uid", nullable = false)
+    private User user;
 
     // 상품연결
     @ManyToOne(fetch = FetchType.LAZY)

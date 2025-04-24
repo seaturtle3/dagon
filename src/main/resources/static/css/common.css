@@ -1,0 +1,175 @@
+:root {
+    --main-color: #333; /* ✅ 톤 다운된 기본 강조색 (검정 계열) */
+    --bg-light: #f8f9fa;
+    --text-dark: #212529;
+}
+
+/* reset.css - 기본 요소 초기화 */
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed,
+figure, figcaption, footer, header, hgroup,
+main, menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    font-size: 100%;
+    font: inherit;
+    vertical-align: baseline;
+}
+
+/* HTML5 display-role reset for older browsers */
+article, aside, details, figcaption, figure,
+footer, header, hgroup, main, menu, nav, section {
+    display: block;
+}
+
+/* 기본 box-sizing과 정렬 */
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
+/* 기본 글꼴 및 줄 간격 */
+body {
+    line-height: 1.5;
+    font-family: 'Noto Sans KR', sans-serif;
+    background-color: #fff;
+    color: #111;
+}
+
+/* 목록 점 제거 */
+ol, ul {
+    list-style: none;
+}
+
+/* 링크 초기화 */
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+/* 테이블 초기화 */
+table {
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+/* ------------- reset end --------------- */
+
+/* 기본 텍스트 스타일 */
+body {
+    font-family: 'Noto Sans KR', sans-serif;
+    color: var(--text-dark);
+    background-color: #fff;
+}
+
+
+.container {
+    padding: 20px;
+}
+
+/* 제목 색상 강조 없애기 */
+h1, h2, h3, h4 {
+    color: inherit;
+    font-weight: 600;
+}
+.btn-custom {
+    --bs-btn-color: #fff;
+    --bs-btn-bg: #333;
+    --bs-btn-hover-bg: #111;
+    --bs-btn-border-color: #333;
+    --bs-btn-hover-border-color: #111;
+    --bs-btn-hover-color: #fff;
+
+    background-color: var(--bs-btn-bg);
+    color: var(--bs-btn-color);
+    border: 1px solid var(--bs-btn-border-color);
+}
+.btn-custom:hover {
+    background-color: #111;
+    border-color: #111;
+}
+
+/* 카드/박스 */
+
+.section-box {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 20px;
+    background-color: #fff;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05); /* 약한 그림자 추가 */
+}
+/* 테이블 */
+table th {
+    background-color: var(--bg-light);
+    font-weight: 500;
+}
+table td, table th {
+    border: 1px solid var(--border-color);
+    padding: 8px;
+    text-align: center;
+}
+
+/* 링크 */
+a {
+    text-decoration: none;
+    color: inherit;
+}
+a:hover {
+    text-decoration: underline;
+}
+
+/* 입력 필드 */
+input, select, textarea {
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    padding: 6px;
+    font-size: 14px;
+}
+
+/* 페이지 크기 셀렉터 */
+.page-size-selector {
+    margin-bottom: 16px;
+    font-size: 14px;
+}
+.page-size-selector select {
+    padding: 4px 20px 4px 8px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+
+}
+.page-size-selector select.form-select {
+    background-position: right 0.2rem center;
+}
+
+/* 간단한 페이지네이션 */
+.simple-pagination {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    margin-top: 20px;
+}
+.simple-pagination a {
+    padding: 6px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    color: #333;
+}
+.simple-pagination a.active {
+    background-color: #333;
+    color: white;
+    font-weight: bold;
+}
+.simple-pagination a.disabled {
+    pointer-events: none;
+    color: #999;
+    border-color: #eee;
+}

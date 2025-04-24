@@ -2,7 +2,7 @@ package kroryi.dagon.controller.api;
 
 import jakarta.persistence.EntityNotFoundException;
 import kroryi.dagon.DTO.PartnerApplicationDTO;
-import kroryi.dagon.compoent.CustomUserDetails;
+import kroryi.dagon.component.CustomUserDetails;
 import kroryi.dagon.service.PartnerApplicationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -11,6 +11,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -80,9 +82,10 @@ public class ApiPartnerApplicationController {
     @PostMapping("/{id}/reject")
     public ResponseEntity<Void> rejectApplication(
             @PathVariable Long id,
-            @RequestParam String reason
+            @RequestBody Map<String, String> requestBody // JSON 데이터를 받기 위해 Map 사용
     ) {
         try {
+            String reason = requestBody.get("reason"); // JSON에서 reason 값을 추출
             partnerApplicationService.reject(id, reason);
             return ResponseEntity.ok().build();
         } catch (RuntimeException e) {

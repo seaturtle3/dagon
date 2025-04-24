@@ -24,7 +24,4 @@ public class WaveStation {
     @Column(name = "longitude")
     private Double longitude;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "region")
-    private ProdRegion region;
 }

@@ -9,7 +9,7 @@ import kroryi.dagon.repository.PartnerRepository;
 import kroryi.dagon.repository.UserRepository;
 import kroryi.dagon.DTO.PartnerDTO;
 import kroryi.dagon.entity.Partner;
-import kroryi.dagon.repository.PartnersRepository;
+import kroryi.dagon.repository.PartnerRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
@@ -25,7 +25,7 @@ public class PartnerService {
 
     private final PartnerApplicationRepository partnerApplicationRepository;
     private final UserRepository userRepository;
-    private final PartnersRepository partnersRepository;
+    private final PartnerRepository partnersRepository;
 
 
     // 파트너 신청 적용
@@ -52,6 +52,36 @@ public class PartnerService {
                 .toList();
     }
 
+    public PartnerDTO getPartnerById(Long id) {
+        Partner partner = partnersRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("파트너를 찾을 수 없습니다."));
+        return convertToDTO(partner);
+    }
+
+
+    public PartnerDTO updatePartner(long id, PartnerDTO partnerDTO) {
+        Partner partner = partnersRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("파트너를 찾을 수 없습니다."));
+
+        // 업데이트할 값 세팅
+        partner.setPname(partnerDTO.getPname());
+        partner.setPAddress(partnerDTO.getPAddress());
+        partner.setCeoName(partnerDTO.getCeoName());
+        partner.setPInfo(partnerDTO.getPInfo());
+        partner.setLicense(partnerDTO.getLicense());
+        partner.setLicenseImg(partnerDTO.getLicenseImg());
+
+        Partner updatedPartner = partnersRepository.save(partner);
+        return convertToDTO(updatedPartner);
+    }
+
+    public void deletePartner(long id) {
+        Partner partner = partnersRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("파트너를 찾을 수 없습니다."));
+
+        partnersRepository.delete(partner);
+    }
+
     private PartnerDTO convertToDTO(Partner partner) {
         PartnerDTO dto = new PartnerDTO();
         dto.setUno(partner.getUno());
@@ -71,4 +101,3 @@ public class PartnerService {
                 .orElseThrow(() -> new RuntimeException("기본 파트너가 없습니다."));  // 기본 파트너가 없으면 예외 처리
     }
 }
-

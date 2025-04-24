@@ -6,12 +6,13 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
 @Getter
 @Setter
-@Table(name = "")
+@Table(name = "event")
 public class Event extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,14 +22,18 @@ public class Event extends BaseTimeEntity {
     @Column(name = "title", nullable = false)
     private String title;
 
+    @Lob
     @Column(name = "content", nullable = false)
     private String content;
 
+    @Column(length = 512)
+    private String thumbnailUrl;
+
     @Column(name = "start_at")
-    private LocalDateTime startAt;
+    private LocalDate startAt;
 
     @Column(name = "end_at")
-    private LocalDateTime endAt;
+    private LocalDate endAt;
 
     @Column(name = "modify_at")
     private LocalDateTime modifyAt;
@@ -40,6 +45,10 @@ public class Event extends BaseTimeEntity {
     @Column(name = "views", nullable = false)
     @ColumnDefault("0")
     private int views = 0;
+
+    @Column(name = "is_top", nullable = false)
+    @ColumnDefault("false")
+    private Boolean isTop = false;
 
     // 매핑
 
@@ -56,12 +65,12 @@ public class Event extends BaseTimeEntity {
      * - 현재 시간이 종료일 이후이면: 종료
      * - 그 외(시작일 ~ 종료일 사이): 진행 중
      */
-    public void updateEventStatus(LocalDateTime now) {
+    public void updateEventStatus(LocalDate today) {
         if (startAt == null && endAt == null) {
             this.eventStatus = EventStatus.ONGOING; // 상시이벤트:진행중
-        } else if (startAt != null && now.isBefore(startAt)) {
+        } else if (startAt != null && today.isBefore(startAt)) {
             this.eventStatus = EventStatus.SCHEDULED; // 시작전:진행예정
-        } else if (endAt != null && now.isAfter(endAt)) {
+        } else if (endAt != null && today.isAfter(endAt)) {
             this.eventStatus = EventStatus.COMPLETED; // 종료:종료
         } else {
             this.eventStatus = EventStatus.ONGOING; // 진행중:진행중

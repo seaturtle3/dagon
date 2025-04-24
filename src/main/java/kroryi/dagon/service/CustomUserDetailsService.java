@@ -1,6 +1,6 @@
 package kroryi.dagon.service;
 
-import kroryi.dagon.compoent.CustomUserDetails;
+import kroryi.dagon.component.CustomUserDetails;
 import kroryi.dagon.entity.User;
 import kroryi.dagon.repository.MyPageRepository;
 import lombok.RequiredArgsConstructor;

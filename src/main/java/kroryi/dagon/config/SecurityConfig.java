@@ -1,10 +1,14 @@
 package kroryi.dagon.config;
 
+import kroryi.dagon.handler.CustomSocialLoginSuccessHandler;
 import kroryi.dagon.service.ApiKeyService;
 import kroryi.dagon.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -13,6 +17,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
@@ -44,8 +49,13 @@ public class SecurityConfig {
                                 "/css/**",
                                 "/js/**",
                                 "/img/**",
-                                "/api/auth/login"
+                                "/api/auth/login",
+                                "/api/users/me",
+                                "/admin/login",
+                                "/register",
+                                "/admin/registration"
                         ).permitAll()
+                        .requestMatchers("/login/oauth2/code/kakao").permitAll()
                         .anyRequest().authenticated()
                 )
                 .formLogin(formLogin -> { // 기존 폼 로그인 설정 유지
@@ -55,6 +65,9 @@ public class SecurityConfig {
                             .failureUrl("/login?error")
                             .permitAll();
                 })
+                .oauth2Login(
+                        (login)->login.loginPage("/login")
+                                .successHandler(socialLoginSuccessHandler()))
                 .logout(logout -> logout
                         .logoutSuccessUrl("/login?logout")
                         .permitAll()
@@ -70,19 +83,16 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
+
+
     @Bean
-    public UserDetailsService userDetailsService() {
-        return userDetailsService;
+    public AuthenticationSuccessHandler socialLoginSuccessHandler() {
+        return new CustomSocialLoginSuccessHandler(passwordEncoder());
     }
 
-//    @Bean
-//    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-//        http
-//                .csrf(csrf -> csrf.disable()) // csrf 비활성화
-//                .authorizeHttpRequests(auth -> auth
-//                        .anyRequest().permitAll()
-//                );
-//
-//        return http.build();
-//    }
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
+        return configuration.getAuthenticationManager(); // ✅ 최신 방식
+    }
+
 }

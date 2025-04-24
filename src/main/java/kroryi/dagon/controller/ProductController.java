@@ -9,6 +9,7 @@ import kroryi.dagon.enums.SubType;
 import kroryi.dagon.service.PartnerService;
 import kroryi.dagon.service.ProductService;
 import lombok.RequiredArgsConstructor;
+import lombok.ToString;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -50,13 +51,10 @@ public class ProductController {
         model.addAttribute("mainType", mainType());
         model.addAttribute("subType", subType());
 
-        log.info("GET regions: {}, {}, {}", regions(), mainType(), subType());
-
-        return "product/ProdRegistration";
+        return "product/form";
     }
 
     // 배 등록 처리
-    // ProductController.java
     @PostMapping("/register")
     public String registerProduct(@ModelAttribute("product") Product product) {
         // 파트너가 없으면 기본 파트너 설정
@@ -64,22 +62,21 @@ public class ProductController {
             Partner defaultPartner = partnerService.getDefaultPartner();  // 기본 파트너 가져오기
             product.setPartner(defaultPartner);  // 상품에 파트너 자동 설정
         }
-
-        log.info("POST Selected Region: {}, {}, {}", product.getProdRegion(), product.getMainType(), product.getSubType());
+        log.info("등록받은 Product 데이터: {}", product);
 
         productService.saveProduct(product); // 상품 저장
-        return "redirect:/product/register-list"; // 등록 후 리스트 페이지로 리다이렉트
+        return "redirect:/product/list"; // 등록 후 리스트 페이지로 리다이렉트
     }
 
     // 배 리스트 페이지
-    @GetMapping("/register-list")
+    @GetMapping("/list")
     public String showProductList(Model model) {
         List<ProductDTO> products = productService.getAllProducts();
         model.addAttribute("productList", products);
 
         log.info("List Get productList: {}", products);
 
-        return "product/ProdRegistrationList"; // 리스트 페이지 반환
+        return "product/list"; // 리스트 페이지 반환
     }
 
 

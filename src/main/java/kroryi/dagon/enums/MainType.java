@@ -6,8 +6,8 @@ public enum MainType {
 
     private final String korean;
 
-    MainType(String korean) {
-        this.korean = korean;
+    MainType(String koreanName) {
+        this.korean = koreanName;
     }
 
     public String getKorean() {
