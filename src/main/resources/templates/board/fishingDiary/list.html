@@ -2,60 +2,66 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head th:insert="fragments/common-head :: head">
     <meta charset="UTF-8">
-    <title>조황정보</title>
+    <title>조행기 리스트</title>
 </head>
 <body>
 <div th:replace="fragments/header :: header"></div>
 
-<h1>조행기 리스트</h1>
+<div class="container mt-5">
+    <h1 class="mb-4">조행기 리스트</h1>
 
-<div class="mb-3">
-    <a th:href="@{/fishing-report/list/{prodId}(prodId=${prodId})}" class="btn btn-outline-primary">조황(파트너)</a>
-    <a th:href="@{/fishing-diary/list/{prodId}(prodId=${prodId})}" class="btn btn-primary">조행기</a>
+    <!-- 탭 버튼 -->
+    <div class="mb-4">
+        <a th:href="@{/fishing-report/list/{prodId}(prodId=${prodId})}" class="btn btn-outline-primary me-2">조황(파트너)</a>
+        <a th:href="@{/fishing-diary/list/{prodId}(prodId=${prodId})}" class="btn btn-primary">조행기</a>
+    </div>
+
+    <!-- 테이블 -->
+    <div class="table-responsive">
+        <table class="table table-bordered text-center align-middle">
+            <thead class="table-light">
+            <tr>
+                <th>생성일</th>
+                <th>썸네일</th>
+                <th>조회수</th>
+                <th>배 이름</th>
+                <th>작성자</th>
+                <th>제목</th>
+                <th>내용</th>
+                <th>댓글</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="diary : ${fishingDiaries}">
+                <td>
+                    <span th:if="${diary.fishingAt != null}"
+                          th:text="${#temporals.format(diary.fishingAt, 'yyyy-MM-dd HH:mm')}"></span>
+                    <span th:unless="${diary.fishingAt != null}">-</span>
+                </td>
+                <td>
+                    <img th:src="${diary.thumbnailUrl}" alt="썸네일" class="img-thumbnail" style="width: 100px;">
+                </td>
+                <td th:text="${diary.views}">조회수</td>
+                <td th:text="${diary.prodName}">배 이름</td>
+                <td th:text="${diary.userName}">작성자</td>
+                <td th:text="${diary.title}">제목</td>
+                <td th:text="${diary.content}">내용</td>
+                <td>
+                    <ul class="list-unstyled mb-0">
+                        <li th:each="comment : ${diary.comments}"
+                            th:text="${comment.commentContent}">댓글</li>
+                    </ul>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- 글쓰기 버튼 -->
+    <form th:action="@{/fishing-diary/form(prodId=${prodId})}" method="get" class="mt-4">
+        <input type="hidden" name="prodId" th:value="${prodId}" />
+        <button type="submit" class="btn btn-success">글쓰기</button>
+    </form>
 </div>
-
-<table border="1">
-    <thead>
-    <tr>
-        <th>생성일</th>
-        <th>썸네일</th>
-        <th>조회수</th>
-        <th>배 이름</th>
-        <th>작성자</th>
-        <th>제목</th>
-        <th>내용</th>
-        <th>댓글</th>
-    </tr>
-    </thead>
-    <tbody>
-    <!-- 타임리프를 사용해 데이터 반복 출력 -->
-    <tr th:each="diary : ${fishingDiaries}">
-        <td>
-        <span th:if="${diary.fishingAt != null}"
-              th:text="${#temporals.format(diary.fishingAt, 'yyyy-MM-dd HH:mm')}"></span>
-            <span th:unless="${diary.fishingAt != null}">-</span>
-        </td>
-        <td><img th:src="${diary.thumbnailUrl}" alt="썸네일" width="100"></td>
-        <td th:text="${diary.views}">조회수</td>
-        <td th:text="${diary.prodName}">배 이름</td>
-        <td th:text="${diary.userName}">작성자</td>
-        <td th:text="${diary.title}">제목</td>
-        <td th:text="${diary.content}">내용</td>
-        <td>
-            <ul class="list-unstyled">
-                <li th:each="comment : ${diary.comments}"
-                    th:text="${comment.commentContent}">댓글</li>
-            </ul>
-        </td>
-    </tr>
-    </tbody>
-</table>
-
-<form th:action="@{/fishing-diary/form(prodId=${prodId})}" method="get">
-    <input type="hidden" name="prodId" th:value="${prodId}"> <!-- 예시로 prodId 값을 1로 설정 -->
-    <button type="submit">글쓰기</button>
-</form>
-
-
 </body>
 </html>
