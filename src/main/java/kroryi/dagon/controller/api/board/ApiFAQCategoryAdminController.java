@@ -7,14 +7,16 @@ import kroryi.dagon.entity.FAQCategory;
 import kroryi.dagon.service.board.FAQCategoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
+@PreAuthorize("hasRole('ADMIN')")
 @RequestMapping("/api/admin/faq-categories")
-@Tag(name = "FAQ 카테고리 관리", description = "FAQ 카테고리 등록, 수정, 삭제, 목록 API")
+
 public class ApiFAQCategoryAdminController {
 
     private final FAQCategoryService faqCategoryService;
