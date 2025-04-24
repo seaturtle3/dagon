@@ -6,7 +6,8 @@ import kroryi.dagon.entity.Reservation;
 import kroryi.dagon.entity.User;
 import kroryi.dagon.enums.SenderType;
 import kroryi.dagon.repository.NotificationRepository;
-import kroryi.dagon.repository.ReservationRepository;
+
+import kroryi.dagon.repository.SeaFreshwaterFishingRepository;
 import kroryi.dagon.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -23,7 +24,7 @@ public class NotificationService {
 
     private final NotificationRepository notificationRepository;
     private final UserRepository userRepository;
-    private final ReservationRepository reservationRepository;  // 예약 정보 처리
+    private final SeaFreshwaterFishingRepository reservationRepository;  // 예약 정보 처리
 
     public NotificationDTO createNotification(NotificationDTO dto) {
         // 유저 정보 받아오기

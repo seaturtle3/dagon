@@ -1,6 +1,7 @@
 package kroryi.dagon.service.board;
 
 import jakarta.transaction.Transactional;
+import kroryi.dagon.DTO.board.BoardSearchDTO;
 import kroryi.dagon.DTO.board.EventRequestDTO;
 import kroryi.dagon.entity.Admin;
 import kroryi.dagon.entity.Event;
@@ -92,5 +93,17 @@ public class EventService {
     public void increaseViews(Long id) {
         Event event = eventRepository.findById(id).orElseThrow();
         event.setViews(event.getViews() + 1);
+    }
+
+
+    public Page<Event> searchEvents(BoardSearchDTO dto, Pageable pageable) {
+        String keyword = dto.getKeyword();
+        String type = dto.getType();
+
+        if (keyword == null || keyword.isBlank()) {
+            return eventRepository.findAllByOrderByIsTopDescCreatedAtDesc(pageable);
+        }
+
+        return eventRepository.searchByKeyword(keyword, type, pageable);
     }
 }

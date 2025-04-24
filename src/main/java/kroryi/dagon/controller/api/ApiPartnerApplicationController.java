@@ -2,7 +2,6 @@ package kroryi.dagon.controller.api;
 
 import jakarta.persistence.EntityNotFoundException;
 import kroryi.dagon.DTO.PartnerApplicationDTO;
-
 import kroryi.dagon.component.CustomUserDetails;
 import kroryi.dagon.service.PartnerApplicationService;
 import lombok.RequiredArgsConstructor;

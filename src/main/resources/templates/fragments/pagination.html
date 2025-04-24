@@ -1,0 +1,12 @@
+<div th:fragment="pagination(pagination, size, keyword, type)" class="simple-pagination">
+    <a th:classappend="${pagination.hasPrevious} ? '' : 'disabled'"
+       th:href="@{|?page=${pagination.currentPage - 1}&size=${size}${keyword != null ? '&keyword=' + keyword : ''}${type != null ? '&type=' + type : ''}|}">이전</a>
+
+    <a th:each="i : ${#numbers.sequence(0, pagination.totalPages - 1)}"
+       th:href="@{|?page=${i}&size=${size}${keyword != null ? '&keyword=' + keyword : ''}${type != null ? '&type=' + type : ''}|}"
+       th:text="${i + 1}"
+       th:classappend="${i == pagination.currentPage} ? 'active'">1</a>
+
+    <a th:classappend="${pagination.hasNext} ? '' : 'disabled'"
+       th:href="@{|?page=${pagination.currentPage + 1}&size=${size}${keyword != null ? '&keyword=' + keyword : ''}${type != null ? '&type=' + type : ''}|}">다음</a>
+</div>

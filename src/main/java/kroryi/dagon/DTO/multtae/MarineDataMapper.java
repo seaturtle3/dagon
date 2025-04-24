@@ -17,32 +17,27 @@ public class MarineDataMapper {
             List<AirTempDTO> airTempList,
             List<TideLevelDTO> tideLevelList
     ) {
-        List<HourlyDataDTO> result = new ArrayList<>();
-
-        for (Integer hour : TARGET_HOURS) {
-            LocalTime targetTime = LocalTime.of(hour, 0);
-
-            WaveDTO wave = findClosest(waveList, targetTime);
-            WindDTO wind = findClosest(windList, targetTime);
-            AirTempDTO air = findClosest(airTempList, targetTime);
-            TideLevelDTO tide = findClosest(tideLevelList, targetTime);
-
-            HourlyDataDTO dto = HourlyDataDTO.builder()
-                    .time(hour + "시")
-                    .wave(wave != null ? wave.getWave() : null)
-                    .wind_speed(wind != null ? wind.getWind_speed() : null)
-                    .wind_dir(wind != null ? wind.getWind_dir() : null)
-                    .air_temp(air != null ? air.getAir_temp() : null)
-                    .tide_level(tide != null ? tide.getTide_level() : null)
-                    .build();
-
-            result.add(dto);
-        }
-
-        return result;
+        return TARGET_HOURS.stream()
+                .map(hour -> {
+                    LocalTime targetTime = LocalTime.of(hour, 0);
+                    return HourlyDataDTO.builder()
+                            .time(hour + "시")
+                            .wave(getValue(waveList, targetTime, WaveDTO::getWave_height))
+                            .wind_speed(getValue(windList, targetTime, WindDTO::getWind_speed))
+                            .wind_dir(getValue(windList, targetTime, WindDTO::getWind_dir))
+                            .air_temp(getValue(airTempList, targetTime, AirTempDTO::getAir_temp))
+                            .tide_level(getValue(tideLevelList, targetTime, TideLevelDTO::getTide_level))
+                            .build();
+                })
+                .toList();
     }
 
-    private static <T extends HasRecordTime> T findClosest(List<T> list, LocalTime target) {
+    private static <T extends HasRecordTime, R> R getValue(List<T> list, LocalTime target, java.util.function.Function<T, R> extractor) {
+        T item = findClosest(list, target);
+        return item != null ? extractor.apply(item) : null;
+    }
+
+    public static <T extends HasRecordTime> T findClosest(List<T> list, LocalTime target) {
         if (list == null || list.isEmpty()) return null;
 
         T closest = null;
@@ -52,8 +47,11 @@ public class MarineDataMapper {
             try {
                 String recordTime = item.getRecord_time();
 
-                String timeStr = recordTime.substring(11, 19);
-                LocalTime itemTime = LocalTime.parse(timeStr); // LocalTime으로 변환
+                // "HH:mm" 또는 "HH:mm:ss" 추출
+                String timeStr = recordTime.substring(11).trim(); // 11부터 끝까지 자름
+                if (timeStr.length() == 5) timeStr += ":00";      // "HH:mm" → "HH:mm:00"
+
+                LocalTime itemTime = LocalTime.parse(timeStr);    // LocalTime으로 변환
                 long diff = Math.abs(itemTime.toSecondOfDay() - target.toSecondOfDay());
 
                 if (diff < minDiff) {
@@ -64,7 +62,20 @@ public class MarineDataMapper {
                 log.warn("시간 파싱 실패: {}", item.getRecord_time());
             }
         }
-
         return closest;
+    }
+
+    public static <T extends HasRecordTime, R> R getMostRecentValue(List<T> list, java.util.function.Function<T, R> extractor) {
+        if (list == null || list.isEmpty()) return null;
+
+        T latest = list.stream()
+                .max(Comparator.comparing(item -> {
+                    String timeStr = item.getRecord_time().substring(11).trim();
+                    if (timeStr.length() == 5) timeStr += ":00";
+                    return LocalTime.parse(timeStr);
+                }))
+                .orElse(null);
+
+        return latest != null ? extractor.apply(latest) : null;
     }
 }
