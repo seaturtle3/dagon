@@ -21,41 +21,43 @@ public class FishingReportController {
 
     private final FishingReportService fishingReportService;
     private final ProductService productService;
-    private final ProductRepository productRepository;
 
-    // 모든 조황 정보 조회
-    @GetMapping("/list")
-    public String getAllFishingReports(Model model) {
-        List<FishingReportDTO> fishingReports = fishingReportService.getAllFishingReport();
+    // 조황 특정 prodId 조회
+    @GetMapping("/list/{prodId}")
+    public String getFishingReportsByProdId(@PathVariable Long prodId, Model model) {
+        List<FishingReportDTO> fishingReports = fishingReportService.getFishingReportsByProdId(prodId);
         model.addAttribute("fishingReports", fishingReports);
+        model.addAttribute("prodId", prodId);
+        log.info("-------------------특정 prodId: " + prodId);
+        log.info("---------------------Fishing Reports: {}", fishingReports);  // 반환된 데이터 확인
         return "board/fishingReport/list";
     }
 
-    // 조황 등록 페이지
+
+    // 조황 폼
     @GetMapping("/form")
     public String showFishingReportForm(@RequestParam(required = false) Long prodId, Model model) {
         if (prodId == null) {
-            // prodId가 없으면 적절한 처리를 추가 (예: 에러 페이지나 리다이렉트)
-            return "redirect:/fishing-report/list";
+            throw new IllegalArgumentException("prodId is required");
         }
         Product product = productService.findById(prodId);
         model.addAttribute("product", product);
+        model.addAttribute("prodId", prodId);
         return "board/fishingReport/form";
     }
 
-    // 조황 등록 전송
+    // 조황 폼 전송
     @PostMapping("/form")
     public String createFishingReport(@RequestParam(required = false) Long prodId, Model model,
                                       FishingReportDTO fishingReportDTO) {
-        if (prodId == null) {
-            // prodId가 없으면 적절한 처리를 추가 (예: 에러 페이지나 리다이렉트)
-            return "redirect:/fishing-report/list";
-        }
-        Product product = productService.findById(prodId);
-        model.addAttribute("product", product);
 
+        Product product = productService.findById(prodId);
+
+        fishingReportDTO.setProduct(product);
         fishingReportService.createFishingReport(fishingReportDTO);
-        return "redirect:/fishing-report/list"; // 등록 후 목록 페이지로 리다이렉트
+        log.info("product id: {}", product);
+        log.info("-----------------------Redirecting to /fishing-report/list/{}", prodId);
+        return "redirect:/fishing-report/list/" + prodId;
     }
 
 }

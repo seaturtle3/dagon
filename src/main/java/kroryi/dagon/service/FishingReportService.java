@@ -22,6 +22,14 @@ public class FishingReportService {
     private final UserRepository userRepository;
     private final ProductRepository productRepository;
 
+    // ProdId 찾기
+    public List<FishingReportDTO> getFishingReportsByProdId(Long prodId) {
+        List<FishingReport> reports = fishingReportRepository.findByProductProdId(prodId);
+        return reports.stream()
+                .map(FishingReportDTO::new)
+                .collect(Collectors.toList());
+    }
+
     public FishingReportDTO createFishingReport(FishingReportDTO fishingReportDTO) {
         FishingReport fishingReport = new FishingReport();
         fishingReport.setTitle(fishingReportDTO.getTitle());
@@ -30,24 +38,18 @@ public class FishingReportService {
         fishingReport.setFishingAt(fishingReportDTO.getFishingAt());
         fishingReport.setModifyAt(fishingReportDTO.getModifyAt());
         fishingReport.setViews(fishingReportDTO.getViews());
+        fishingReport.setProduct(fishingReportDTO.getProduct());
         fishingReport.setComments(fishingReportDTO.getComments());
 
         // 실제 로그인 후 유저 ID, 예약 상품 ID
 //        User user = userRepository.findById(fishingReportDTO.getUserId())
 //                .orElseThrow(() -> new IllegalArgumentException("User not found"));
-//
-//        Product product = productRepository.findById(fishingReportDTO.getProdId())
-//                .orElseThrow(() -> new IllegalArgumentException("Product not found"));
 
-        // 임시 고정된 user, product
+        // 임시 고정된 user
         User user = userRepository.findById(1L)
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
-        Product product = productRepository.findById(1L)
-                .orElseThrow(() -> new IllegalArgumentException("Product not found"));
 
         fishingReport.setUser(user);
-        fishingReport.setProduct(product);
-
         fishingReport = fishingReportRepository.save(fishingReport);
 
         return new FishingReportDTO(fishingReport);
