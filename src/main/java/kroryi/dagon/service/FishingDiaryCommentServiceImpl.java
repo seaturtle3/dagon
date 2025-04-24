@@ -6,8 +6,8 @@ import kroryi.dagon.entity.FishingDiary;
 import kroryi.dagon.entity.FishingDiaryComment;
 import kroryi.dagon.entity.User;
 import kroryi.dagon.repository.FishingDiaryCommentRepository;
-import kroryi.dagon.repository.FishingDiaryRepository;
 import kroryi.dagon.repository.UserRepository;
+import kroryi.dagon.repository.board.FishingDiaryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
