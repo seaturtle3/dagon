@@ -2,8 +2,10 @@ package kroryi.dagon.service;
 
 import jakarta.transaction.Transactional;
 import kroryi.dagon.repository.board.NoticeRepository;
+import kroryi.dagon.service.board.ImageContentProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -21,32 +23,27 @@ import java.util.stream.Stream;
 @Log4j2
 public class ImageCleanupService {
 
-    private final NoticeRepository noticeRepository;
+    private final List<ImageContentProvider> contentProviders;
 
-    private static final String BASE_DIR = "C:/Users/edu007/IdeaProjects/dagon/uploads";
+    @Value("${app.board.file.upload-dir}")
+    private String baseDir;
+
     private static final Pattern IMG_SRC_PATTERN = Pattern.compile("<img[^>]*src=[\"'](/images/[^\"']+)[\"']");
 
-    /**
-     * 주기적으로 실행
-     */
-    @Scheduled(cron = "0 0 2 * * *") //
-    @Transactional
+    @Scheduled(cron = "0 0 2 * * *") // 새벽 2시 실행
     public void cleanUnusedImages() throws IOException {
         log.info("이미지 정리 시작");
 
-        // 1. 게시글에서 사용 중인 이미지 경로 수집
-        List<String> usedPaths = noticeRepository.findAll().stream()
-                .flatMap(n -> extractImagePaths(n.getContent()).stream())
-                .collect(Collectors.toList());
+        Set<String> usedPaths = contentProviders.stream()
+                .flatMap(provider -> provider.getAllContents().stream())
+                .flatMap(content -> extractImagePaths(content).stream())
+                .collect(Collectors.toSet());
 
-        // 2. 실제 파일 시스템에서 모든 이미지 파일 찾기
-        try (Stream<Path> files = Files.walk(Paths.get(BASE_DIR))) {
+        try (Stream<Path> files = Files.walk(Paths.get(baseDir))) {
             files.filter(Files::isRegularFile).forEach(file -> {
-                String relativePath = BASE_DIR.replace("\\", "/");
                 String filePath = file.toString().replace("\\", "/");
-                String imageUrl = filePath.replace(relativePath, "/images");
+                String imageUrl = filePath.replace(baseDir.replace("\\", "/"), "/images");
 
-                // 3. 게시글에서 참조하지 않으면 삭제
                 if (!usedPaths.contains(imageUrl)) {
                     try {
                         Files.delete(file);
@@ -62,9 +59,9 @@ public class ImageCleanupService {
     }
 
     private Set<String> extractImagePaths(String html) {
-        Matcher matcher = IMG_SRC_PATTERN.matcher(html);
+        Matcher matcher = IMG_SRC_PATTERN.matcher(html == null ? "" : html);
         return matcher.results()
-                .map(m -> m.group(1)) // /images/2025/04/18/abc.jpg
+                .map(m -> m.group(1))
                 .collect(Collectors.toSet());
     }
 }

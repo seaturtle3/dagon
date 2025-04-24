@@ -74,4 +74,5 @@ public class ImageUploadController {
             return ResponseEntity.notFound().build();
         }
     }
+
 }

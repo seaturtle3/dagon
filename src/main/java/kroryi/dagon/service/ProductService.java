@@ -5,7 +5,7 @@ import kroryi.dagon.entity.Partner;
 import kroryi.dagon.entity.Product;
 import kroryi.dagon.entity.ProductOption;
 import kroryi.dagon.repository.ProductRepository;
-import kroryi.dagon.repository.ReservationRepository;
+import kroryi.dagon.repository.SeaFreshwaterFishingRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,7 +19,7 @@ public class ProductService {
 
     private final ProductRepository productRepository;
     private final PartnerService partnerService;
-    private final ReservationRepository reservationRepository;
+    private final SeaFreshwaterFishingRepository seaFreshwaterFishingRepository;
 
     @Transactional
     public Long addProduct(ProductDTO productDTO) {
@@ -79,7 +79,7 @@ public class ProductService {
 
         // product 안에 옵션들 돌면서 예약 체크
         for (ProductOption option : product.getOptions()) {
-            if (reservationRepository.existsByProductOption_OptId(option.getOptId())) {
+            if (seaFreshwaterFishingRepository.existsByProductOption_OptId(option.getOptId())) {
                 throw new IllegalStateException("예약된 상품은 삭제할 수 없습니다.");
             }
         }
@@ -101,6 +101,7 @@ public class ProductService {
         dto.setProdDescription(product.getProdDescription());
         dto.setProdEvent(product.getProdEvent());
         dto.setProdNotice(product.getProdNotice());
+        dto.setCreatedAt(product.getCreatedDate());
         return dto;
     }
 
@@ -118,6 +119,7 @@ public class ProductService {
         product.setProdDescription(dto.getProdDescription());
         product.setProdEvent(dto.getProdEvent());
         product.setProdNotice(dto.getProdNotice());
+
         return product;
     }
 

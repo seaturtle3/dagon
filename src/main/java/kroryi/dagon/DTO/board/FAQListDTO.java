@@ -12,12 +12,17 @@ public class FAQListDTO {
     private Boolean isActive;
     private Integer displayOrder;
 
+    private Long categoryId;
+    private String categoryName;
+
     public static FAQListDTO from(FAQ faq) {
         return FAQListDTO.builder()
                 .faqId(faq.getFaqId())
                 .question(faq.getQuestion())
                 .isActive(faq.getIsActive())
                 .displayOrder(faq.getDisplayOrder())
+                .categoryId(faq.getCategory().getId())
+                .categoryName(faq.getCategory().getName())
                 .build();
     }
 }
