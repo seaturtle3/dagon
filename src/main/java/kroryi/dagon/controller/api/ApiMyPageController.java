@@ -2,6 +2,7 @@ package kroryi.dagon.controller.api;
 
 import io.swagger.v3.oas.annotations.Operation;
 import kroryi.dagon.DTO.PasswordFormDTO;
+import kroryi.dagon.DTO.ReservationDTO;
 import kroryi.dagon.DTO.UsersDTO;
 import kroryi.dagon.component.CustomUserDetails;
 import kroryi.dagon.entity.User;
@@ -14,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
 
 import java.util.Map;
 
@@ -111,6 +113,7 @@ public class ApiMyPageController {
             return ResponseEntity.badRequest().body(Map.of("error", "회원 탈퇴에 실패했습니다."));
         }
     }
+
 }
 
 

@@ -1,0 +1,18 @@
+<div th:fragment="searchForm(currentPath, type, keyword, size)" class="mb-3">
+    <form method="get" th:action="@{${currentPath}}" class="row g-2 align-items-center">
+        <div class="col-auto">
+            <select class="form-select" name="type">
+                <option value="question" th:selected="${type == 'question'}">질문</option>
+                <option value="answer" th:selected="${type == 'answer'}">답변</option>
+                <option value="question+answer" th:selected="${type == 'question+answer'}">질문+답변</option>
+            </select>
+        </div>
+        <div class="col-auto">
+            <input type="text" class="form-control" name="keyword" th:value="${keyword}" placeholder="검색어 입력">
+        </div>
+        <div class="col-auto">
+            <button type="submit" class="btn btn-outline-secondary">검색</button>
+        </div>
+        <input type="hidden" name="size" th:value="${size}">
+    </form>
+</div>

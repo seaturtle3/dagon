@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>문의 목록</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        table, th, td {
+            border: 1px solid #ccc;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        .header {
+            font-size: 1.5em;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="header">문의 목록</div>
+
+<h3>파트너로 보낸 문의</h3>
+<table>
+    <thead>
+    <tr>
+        <th>작성자</th>
+        <th>제목</th>
+        <th>연락처</th>
+        <th>내용</th>
+        <th>작성일</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="inquiry : ${toPartners}">
+        <td th:text="${inquiry.writer}"></td>
+        <td th:text="${inquiry.title}"></td>
+        <td th:text="${inquiry.contact}"></td>
+        <td th:text="${inquiry.content}"></td>
+        <td th:text="${inquiry.createdAt}"></td>
+        <td th:text="${inquiry.updatedAt}"></td>
+    </tr>
+    <!-- 문의 데이터가 없을 경우 -->
+    <tr th:if="${#lists.isEmpty(toPartners)}">
+        <td colspan="5">파트너로 보낸 문의가 없습니다.</td>
+    </tr>
+    </tbody>
+</table>
+
+<h3>관리자로 보낸 문의</h3>
+<table>
+    <thead>
+    <tr>
+        <th>작성자</th>
+        <th>제목</th>
+        <th>연락처</th>
+        <th>내용</th>
+        <th>작성일</th>
+        <th>수정일</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="inquiry : ${toAdmins}">
+        <td th:text="${inquiry.writer}"></td>
+        <td th:text="${inquiry.title}"></td>
+        <td th:text="${inquiry.contact}"></td>
+        <td th:text="${inquiry.content}"></td>
+        <td th:text="${inquiry.createdAt}"></td>
+        <td th:text="${inquiry.updatedAt}"></td>
+    </tr>
+
+    <!-- 문의 데이터가 없을 경우 -->
+    <tr th:if="${#lists.isEmpty(toAdmins)}">
+        <td colspan="5">관리자로 보낸 문의가 없습니다.</td>
+    </tr>
+    </tbody>
+</table>
+
+</body>
+</html>

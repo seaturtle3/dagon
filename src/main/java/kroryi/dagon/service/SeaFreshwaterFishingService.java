@@ -2,9 +2,12 @@ package kroryi.dagon.service;
 
 import jakarta.persistence.criteria.Predicate;
 import kroryi.dagon.DTO.ProductDTO;
+import kroryi.dagon.DTO.ReservationDTO;
 import kroryi.dagon.entity.Product;
+import kroryi.dagon.entity.Reservation;
 import kroryi.dagon.enums.MainType;
 import kroryi.dagon.enums.ProdRegion;
+import kroryi.dagon.enums.ReservationStatus;
 import kroryi.dagon.enums.SubType;
 import kroryi.dagon.repository.ProductRepository;
 import kroryi.dagon.repository.SeaFreshwaterFishingRepository;
@@ -78,4 +81,38 @@ public class SeaFreshwaterFishingService {
     }
 
 
+    public List<ReservationDTO> getReservationsByUserId(Long uid) {
+        List<Reservation> seafreshwatergRepository = seaFreshwaterFishingRepository. findByUser_Uno(uid);
+        return seafreshwatergRepository.stream().map(this::convertDTO).collect(Collectors.toList());
+    }
+
+    private ReservationDTO convertDTO(Reservation reservation) {
+        return ReservationDTO.builder()
+                .reservationId(reservation.getReservationId())
+                .productName(reservation.getProduct().getProdName())
+                .optionName(reservation.getProductOption().getOptName())
+                .fishingAt(reservation.getFishingAt())
+                .numPerson(reservation.getNumPerson())
+                .reservationStatus(reservation.getReservationStatus())
+                .paymentsMethod(reservation.getPaymentsMethod())
+                .paidAt(reservation.getPaidAt())
+                .createdAt(reservation.getCreatedAt())
+                .build();
+    }
+
+    public boolean cancelReservationByUser(Long reservationId, Long uno) {
+        Reservation reservation = seaFreshwaterFishingRepository.findById(reservationId)
+                .orElseThrow(() -> new RuntimeException("예약을 찾을 수 없습니다."));
+
+        // 해당 예약이 로그인한 사용자 소유인지 확인
+        if (!reservation.getUser().getUno().equals(uno)) {
+            return false; // 본인의 예약이 아님
+        }
+
+        // 예약 상태를 취소로 변경
+        reservation.setReservationStatus(ReservationStatus.CANCELED);
+        seaFreshwaterFishingRepository.save(reservation);
+
+        return true;
+    }
 }

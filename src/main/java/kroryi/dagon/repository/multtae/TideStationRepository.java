@@ -8,4 +8,5 @@ import java.util.List;
 
 public interface TideStationRepository extends JpaRepository<TideStation, String> {
     List<TideStation> findByRegionOrderByStationNameAsc(ProdRegion region);
+    boolean existsByRegion(ProdRegion region);
 }

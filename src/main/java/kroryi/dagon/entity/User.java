@@ -66,6 +66,8 @@ public class User extends BaseTimeEntity {
     @Column(nullable = false)
     private LoginType loginType = LoginType.LOCAL;
 
+    @Version
+    private Integer version;
 
     public String getDisplayName() {
         return (nickname != null && !nickname.isBlank()) ? nickname : uname;
@@ -78,7 +80,7 @@ public class User extends BaseTimeEntity {
     private List<PartnerApplication> partnerApplications;
 
     // 승인 파트너
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     @ToString.Exclude
     private Partner partner;
 

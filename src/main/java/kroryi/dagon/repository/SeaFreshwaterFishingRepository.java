@@ -14,5 +14,6 @@ import java.util.List;
 @Repository
 public interface SeaFreshwaterFishingRepository extends JpaRepository<Reservation, Long> {
     List<Reservation> findAll();
+    List<Reservation>  findByUser_Uno(Long uno);
     boolean existsByProductOption_OptId(Long optId);
 }

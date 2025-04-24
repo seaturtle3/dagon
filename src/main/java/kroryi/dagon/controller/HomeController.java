@@ -1,7 +1,6 @@
 package kroryi.dagon.controller;
 
 import kroryi.dagon.entity.ProductFishSpecies;
-import kroryi.dagon.enums.MainType;
 import kroryi.dagon.enums.ProdRegion;
 import kroryi.dagon.enums.SubType;
 import kroryi.dagon.repository.FishSpeciesRepository;

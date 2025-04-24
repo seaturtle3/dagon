@@ -97,12 +97,29 @@ public class ApiKeyFilter extends OncePerRequestFilter {
                         (path.startsWith("/js/")) ||
                         (path.startsWith("/web/users/") && method.equals("POST")) ||
 
+
+                        // 물때/api/admin/station
                         (path.startsWith("/api/multtae/") && method.equals("GET")) ||
+                        (path.startsWith("/api/admin/station") && method.equals("POST")) ||
 
                         // 공지사항 admin/notices 추후 삭제
                         (path.startsWith("/api/notices") && method.equals("GET")) ||
                         (path.startsWith("/api/admin/notices") && method.equals("POST")) ||
                         (path.startsWith("/api/admin/notices") && method.equals("DELETE")) ||
+
+                        // 이벤트 admin/event 추후 삭제
+                        (path.startsWith("/api/event") && method.equals("GET")) ||
+                        (path.startsWith("/api/admin/event") && method.equals("POST")) ||
+                        (path.startsWith("/api/admin/event") && method.equals("DELETE")) ||
+
+                        // 자주하는질문 /admin/faq 추후 삭제
+                        (path.startsWith("/api/faq") && method.equals("GET")) ||
+                        (path.startsWith("/api/admin/faq") && method.equals("POST")) ||
+                        (path.startsWith("/api/admin/faq") && method.equals("DELETE")) ||
+
+                        // 이미지테스트 /api/admin/image 추후 삭제
+                        (path.startsWith("/api/admin/image") && method.equals("POST")) ||
+
 
                         // 알림 생성 로직
                         (path.startsWith("/api/notifications") && method.equals("POST")) ||
@@ -125,6 +142,13 @@ public class ApiKeyFilter extends OncePerRequestFilter {
 
                         (path.matches("/api/admin") && method.equals("GET")) ||
 
+                        (path.matches("/api/reservation/all") && method.equals("GET")) ||
+
+                        (path.matches("/api/reservation/get") && method.equals("GET")) ||
+
+                        (path.equals("/register") && method.equals("POST")) ||
+                        (path.equals("/admin/registration") && method.equals("GET")) ||
+
                         // 상품 CRUD
                         (path.matches("/api/product/create") && method.equals("POST")) ||
                         (path.matches("/api/product/getAll") && method.equals("GET")) ||
@@ -143,10 +167,9 @@ public class ApiKeyFilter extends OncePerRequestFilter {
 
 
 
-
                         (path.startsWith("/api/users/me") && method.equals("GET")) ||
                         // GET - 이름으로 유저 개인정보  조회
-                        (path.matches("/api/mypage/me") && method.equals("GET")) ;
+                        (path.matches("/api/mypage/me") && method.equals("GET"));
 
 
 
