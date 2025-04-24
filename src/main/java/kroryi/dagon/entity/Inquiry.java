@@ -25,11 +25,13 @@ public class Inquiry {
     private String contact;
     private String title;
     private String content;
-    private LocalDateTime createdDate;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 
     @PrePersist
     protected void onCreate() {
-        this.createdDate = LocalDateTime.now();
+        this.createdAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
     }
 
 

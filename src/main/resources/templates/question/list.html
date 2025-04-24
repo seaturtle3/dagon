@@ -49,7 +49,8 @@
         <td th:text="${inquiry.title}"></td>
         <td th:text="${inquiry.contact}"></td>
         <td th:text="${inquiry.content}"></td>
-        <td th:text="${#dates.format(inquiry.createdDate, 'yyyy-MM-dd HH:mm')}"></td>
+        <td th:text="${inquiry.createdAt}"></td>
+        <td th:text="${inquiry.updatedAt}"></td>
     </tr>
     <!-- 문의 데이터가 없을 경우 -->
     <tr th:if="${#lists.isEmpty(toPartners)}">
@@ -67,6 +68,7 @@
         <th>연락처</th>
         <th>내용</th>
         <th>작성일</th>
+        <th>수정일</th>
     </tr>
     </thead>
     <tbody>
@@ -75,7 +77,8 @@
         <td th:text="${inquiry.title}"></td>
         <td th:text="${inquiry.contact}"></td>
         <td th:text="${inquiry.content}"></td>
-        <td th:text="${#dates.format(inquiry.createdDate, 'yyyy-MM-dd HH:mm')}"></td>
+        <td th:text="${inquiry.createdAt}"></td>
+        <td th:text="${inquiry.updatedAt}"></td>
     </tr>
 
     <!-- 문의 데이터가 없을 경우 -->

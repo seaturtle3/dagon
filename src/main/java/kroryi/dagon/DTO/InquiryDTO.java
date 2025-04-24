@@ -3,6 +3,8 @@ package kroryi.dagon.DTO;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
+
 @Getter
 @Setter
 
@@ -14,6 +16,8 @@ public class InquiryDTO {
     private String contact;
     private String title;
     private String content;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 
 //    // Getters and setters
 //    public String getWriterType() { return userType; }

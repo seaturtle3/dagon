@@ -1,9 +1,8 @@
 package kroryi.dagon.enums;
 
 public enum WriterType {
-    ADMIN("관리자"),
-    PARTNER("협력사"),
-    USER("사용자");
+    PARTNER("파트너"),
+    USER("일반회원");
 
     private final String korean;
 
