@@ -55,16 +55,15 @@ public class SecurityConfig {
                                 "/favicon.ico",
                                 "/css/**", "/js/**", "/img/**"
                         ).permitAll()
-
                         // 로그인/회원가입 허용
                         .requestMatchers(
+                                "/",
                                 "/login", "/admin/login", "/register", "/web/users/register",
                                 "/api/auth/login", "/api/users/me",
-                                "/login/oauth2/code/kakao"
+                                "/api/admin/login","/admin/dashboard",
+                                "/login/oauth2/code/kakao",
+                                "/api/admin/notices/**"
                         ).permitAll()
-
-                        // ✅ 관리자 API는 인증 필요
-                        .requestMatchers("/api/admin/**").authenticated()
 
                         // ✅ 사용자 웹 경로 허용
                         .requestMatchers(
@@ -77,6 +76,9 @@ public class SecurityConfig {
                                 "/partner/**",
                                 "/community/**"
                         ).permitAll()
+
+                        // ✅ 관리자 API는 인증 필요
+//                        .requestMatchers("/api/admin/**").authenticated()
 
                         // 나머지는 인증 필요
                         .anyRequest().authenticated()
