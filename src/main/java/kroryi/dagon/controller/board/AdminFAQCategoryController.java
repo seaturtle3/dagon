@@ -23,26 +23,20 @@ public class AdminFAQCategoryController {
     }
 
     @PostMapping
-    public String save(@ModelAttribute("categoryForm") FAQCategoryRequestDTO dto) {
-        if (dto.getId() == null) {
-            faqCategoryService.save(new FAQCategory(dto.getName(), dto.getDisplayOrder()));
-        } else {
-            FAQCategory category = faqCategoryService.findById(dto.getId());
-            category.setName(dto.getName());
-            category.setDisplayOrder(dto.getDisplayOrder());
-            faqCategoryService.save(category);
-        }
+    public String create(@ModelAttribute("categoryForm") FAQCategoryRequestDTO dto) {
+        faqCategoryService.save(new FAQCategory(dto.getName(), dto.getDisplayOrder()));
         return "redirect:/admin/faq-categories";
     }
 
-    @GetMapping("/edit/{id}")
-    public String edit(@PathVariable Long id, Model model) {
+    @PostMapping("/edit/{id}")
+    public String update(@PathVariable Long id,
+                         @ModelAttribute("categoryForm") FAQCategoryRequestDTO dto) {
         FAQCategory category = faqCategoryService.findById(id);
-        model.addAttribute("categories", faqCategoryService.findAll());
-        model.addAttribute("categoryForm", new FAQCategoryRequestDTO(category.getId(), category.getName(), category.getDisplayOrder()));
-        return "admin/faq/category-form";
+        category.setName(dto.getName());
+        category.setDisplayOrder(dto.getDisplayOrder());
+        faqCategoryService.save(category);
+        return "redirect:/admin/faq-categories";
     }
-
     @GetMapping("/delete/{id}")
     public String delete(@PathVariable Long id) {
         faqCategoryService.delete(id);

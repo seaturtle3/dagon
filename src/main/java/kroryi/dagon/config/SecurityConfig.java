@@ -61,8 +61,7 @@ public class SecurityConfig {
                                 "/login", "/admin/login", "/register", "/web/users/register",
                                 "/api/auth/login", "/api/users/me",
                                 "/api/admin/login","/admin/dashboard",
-                                "/login/oauth2/code/kakao",
-                                "/api/admin/notices/**"
+                                "/login/oauth2/code/kakao"
                         ).permitAll()
 
                         // ✅ 사용자 웹 경로 허용
@@ -71,6 +70,7 @@ public class SecurityConfig {
                                 "/logout",
                                 "/notices/**",
                                 "/faq/**",
+                                "/faq/**",
                                 "/event/**",
                                 "/mypage/**",
                                 "/partner/**",
@@ -78,7 +78,7 @@ public class SecurityConfig {
                         ).permitAll()
 
                         // ✅ 관리자 API는 인증 필요
-//                        .requestMatchers("/api/admin/**").authenticated()
+                        .requestMatchers("/api/admin/**").authenticated()
 
                         // 나머지는 인증 필요
                         .anyRequest().authenticated()

@@ -100,110 +100,76 @@ public class ApiKeyFilter extends OncePerRequestFilter {
         log.info("Request Path = {}", path);
         log.info("Method = {}", method);
 
-        return
-                // ✅ Swagger 관련
-                path.startsWith("/swagger-ui") ||
-                        path.equals("/api-docs") ||
-                        path.equals("/api-docs/swagger-config") ||
-                        path.startsWith("/swagger-resources") ||
-                        path.startsWith("/webjars") ||
-                        path.equals("/favicon.ico") ||
+        // 정적 리소스 및 Swagger
+        if (path.startsWith("/swagger-ui") ||
+                path.startsWith("/swagger-resources") ||
+                path.startsWith("/webjars") ||
+                path.equals("/api-docs") ||
+                path.equals("/api-docs/swagger-config") ||
+                path.equals("/favicon.ico") ||
+                path.startsWith("/css/") || path.startsWith("/js/") || path.startsWith("/img/")) {
+            return true;
+        }
 
-                        // ✅ 정적 리소스
-                        path.startsWith("/css/") ||
-                        path.startsWith("/js/") ||
-                        path.startsWith("/img/") ||
+        // 로그인, 회원가입 관련
+        if (path.equals("/login") || path.equals("/admin/login") || path.equals("/register") ||
+                path.startsWith("/login/oauth2") ||
+                (path.equals("/api/auth/login") && method.equals("POST")) ||
+                (path.equals("/api/users/register") && method.equals("POST")) ||
+                (path.startsWith("/web/users/") && method.equals("POST"))) {
+            return true;
+        }
 
-                        // ✅ 로그인 관련
-                        path.startsWith("/admin/login") ||
-                        path.startsWith("/login") ||
-                        path.startsWith("/register") ||
-                        path.startsWith("/api/auth/login") ||
-                        path.startsWith("/api/users/me") ||
+        // 공개 API 허용 목록
+        if ((path.equals("/api/users/me") && method.equals("GET")) ||
+                (path.equals("/api/mypage/me") && method.equals("GET")) ||
+                (path.startsWith("/api/multtae/") && method.equals("GET")) ||
+                (path.equals("/api/admin/station") && method.equals("POST")) ||
+                (path.equals("/admin/registration") && method.equals("GET"))) {
+            return true;
+        }
 
-                        (path.startsWith("/api/users/register") && method.equals("POST")) ||
-                        (path.startsWith("/api/auth/login") && method.equals("POST")) ||
-                        (path.startsWith("/api/auth/kakao") && method.equals("POST")) ||
-                        (path.startsWith("/web/users/") && method.equals("POST")) ||
+        // 공지사항/FAQ/이벤트 조회 API는 허용 (읽기 전용)admin/faq-categories
+        if ((path.startsWith("/api/notices") || path.startsWith("/api/event") || path.startsWith("/api/faq")) &&
+                method.equals("GET")) {
+            return true;
+        }
 
+        // 알림 API 허용 목록
+        if ((path.startsWith("/api/notifications") && method.equals("POST")) ||
+                (path.matches("/api/notifications/.*/read") && method.equals("PUT")) ||
+                (path.matches("/api/notifications/.+") && (method.equals("GET") || method.equals("DELETE"))) ||
+                (path.matches("/api/notifications/user/.+") && method.equals("GET"))) {
+            return true;
+        }
 
-                        // 관리자 로그인 예외 허용
-                        (path.startsWith("/api/admin/login") && method.equals("POST")) ||
+        // 상품 조회/생성 허용
+        if ((path.matches("/api/product/getAll") && method.equals("GET")) ||
+                (path.matches("/api/product/get/.+") && method.equals("GET")) ||
+                (path.matches("/api/product/create") && method.equals("POST"))) {
+            return true;
+        }
 
-                        // 물때/api/admin/station
-                        (path.startsWith("/api/multtae/") && method.equals("GET")) ||
-                        (path.startsWith("/api/admin/station") && method.equals("POST")) ||
+        // 조황 정보 조회/등록 허용
+        if ((path.matches("/api/fishing-report/get-all") && method.equals("GET")) ||
+                (path.matches("/api/fishing-report/get/.+") && method.equals("GET")) ||
+                (path.matches("/api/fishing-reports") && method.equals("GET")) ||
+                (path.matches("/api/fishing-report/create") && method.equals("POST"))) {
+            return true;
+        }
 
-                        // 공지사항 admin/notices 추후 삭제
-                        (path.startsWith("/api/notices") && method.equals("GET")) ||
-//                        (path.equals("/api/admin/notices") && method.equals("POST")) ||
-//                        (path.startsWith("/api/admin/notices") && method.equals("DELETE")) ||
+        // 예약 전체 조회
+        if ((path.equals("/api/reservation/all") && method.equals("GET")) ||
+                (path.equals("/api/reservation/get") && method.equals("GET"))) {
+            return true;
+        }
 
-                        // 이벤트 admin/event 추후 삭제
-                        (path.startsWith("/api/event") && method.equals("GET")) ||
-//                        (path.startsWith("/api/admin/event") && method.equals("POST")) ||
-//                        (path.startsWith("/api/admin/event") && method.equals("DELETE")) ||
+        // 관리자 회원가입 관련
+        if (path.equals("/api/admin/register") && method.equals("POST")) {
+            return true;
+        }
 
-                        // 자주하는질문 /admin/faq 추후 삭제
-                        (path.startsWith("/api/faq") && method.equals("GET")) ||
-//                        (path.startsWith("/api/admin/faq") && method.equals("POST")) ||
-//                        (path.startsWith("/api/admin/faq") && method.equals("DELETE")) ||
-
-                        // 이미지테스트 /api/admin/image 추후 삭제
-                        (path.startsWith("/api/admin/image") && method.equals("POST")) ||
-
-
-                        // 알림 생성 로직
-                        (path.startsWith("/api/notifications") && method.equals("POST")) ||
-                        // PUT - 알림 읽음 처리
-                        (path.matches("/api/notifications/.*/read") && method.equals("PUT")) ||
-                        // GET - 특정 알림 조회
-                        (path.matches("/api/notifications/.+") && method.equals("GET")) ||
-                        // DELETE - 특정 알림 삭제
-                        (path.matches("/api/notifications/.+") && method.equals("DELETE")) ||
-                        // GET - 특정 유저의 알림 조회
-                        (path.matches("/api/notifications/user/.+") && method.equals("GET")) ||
-                        // GET - 이름 전화번호 유저 아이디 조회
-                        (path.matches("/api/admin/register") && method.equals("POST")) ||
-                        // GET - 특정 유저 수정
-                        (path.matches("/api/admin/.+") && method.equals("PUT")) ||
-                        // DELETE - 특정 유저 아이디 삭제
-                        (path.matches("/api/admin/.+") && method.equals("DELETE")) ||
-                        // GET - 특정 유저  상세조회
-                        (path.matches("/api/admin/.+") && method.equals("GET")) ||
-
-                        (path.matches("/api/admin") && method.equals("GET")) ||
-
-                        (path.matches("/api/reservation/all") && method.equals("GET")) ||
-
-                        (path.matches("/api/reservation/get") && method.equals("GET")) ||
-
-                        (path.equals("/admin/registration") && method.equals("GET")) ||
-
-                        // 상품 CRUD
-                        (path.matches("/api/product/create") && method.equals("POST")) ||
-                        (path.matches("/api/product/getAll") && method.equals("GET")) ||
-                        (path.matches("/api/product/get/.+") && method.equals("GET")) ||
-                        (path.matches("/api/product/update/.+") && method.equals("PUT")) ||
-                        (path.matches("/api/product/delete/.+") && method.equals("DELETE")) ||
-
-                        // 조황 CRUD
-                        (path.matches("/api/fishing-report/create") && method.equals("POST")) ||
-                        (path.matches("/api/fishing-report/get-all") && method.equals("GET")) ||
-                        (path.matches("/api/fishing-report/get/.+") && method.equals("GET")) ||
-                        (path.matches("/api/fishing-report/update/.+") && method.equals("PUT")) ||
-                        (path.matches("/api/fishing-report/delete/.+") && method.equals("DELETE")) ||
-                        // 조황정보 리스트 조회 (추가)
-                        (path.matches("/api/fishing-reports") && method.equals("GET")) ||
-
-
-                        (path.startsWith("/api/users/me") && method.equals("GET")) ||
-                        // GET - 이름으로 유저 개인정보  조회
-                        (path.matches("/api/mypage/me") && method.equals("GET")) ||
-                        // api가 아니면 모두 통과
-                        !path.startsWith("/api/")
-
-                ;
-
+        // api가 아닌 경로는 필터 적용하지 않음
+        return !path.startsWith("/api/");
     }
 }

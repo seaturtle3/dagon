@@ -7,7 +7,6 @@ import lombok.Data;
 @Data
 public class FAQRequestDTO {
 
-    private Long faqId;
     @NotBlank(message = "질문을 입력")
     private String question;
 
@@ -22,7 +21,6 @@ public class FAQRequestDTO {
 
     public static FAQRequestDTO from(FAQ faq) {
         FAQRequestDTO dto = new FAQRequestDTO();
-        dto.setFaqId(faq.getFaqId());
         dto.setCategoryId(faq.getCategory().getId());
         dto.setQuestion(faq.getQuestion());
         dto.setAnswer(faq.getAnswer());
