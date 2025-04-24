@@ -53,7 +53,7 @@ public class SecurityConfig {
                                 "/swagger-resources/**",
                                 "/webjars/**",
                                 "/favicon.ico",
-                                "/css/**", "/js/**", "/img/**"
+                                "/css/**", "/js/**", "/img/**", "/multtae","/api/multtae/**"
                         ).permitAll()
                         // 로그인/회원가입 허용
                         .requestMatchers(

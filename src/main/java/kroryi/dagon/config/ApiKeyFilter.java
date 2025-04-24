@@ -123,7 +123,8 @@ public class ApiKeyFilter extends OncePerRequestFilter {
         // 공개 API 허용 목록
         if ((path.equals("/api/users/me") && method.equals("GET")) ||
                 (path.equals("/api/mypage/me") && method.equals("GET")) ||
-                (path.startsWith("/api/multtae/") && method.equals("GET")) ||
+                (path.startsWith("/api/multtae") && method.equals("GET")) ||
+                (path.equals("/multtae") || path.startsWith("/multtae/")) ||
                 (path.equals("/api/admin/station") && method.equals("POST")) ||
                 (path.equals("/admin/registration") && method.equals("GET"))) {
             return true;
