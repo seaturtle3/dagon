@@ -35,7 +35,7 @@
 
         <div class="button-group text-end">
             <button type="submit" class="btn btn-custom" th:text="${noticeId != null} ? '수정 완료' : '등록'">등록</button>
-            <a th:href="@{'/notices?page=' + ${page} + '&size=' + ${size}}" class="btn btn-secondary">목록으로</a>
+            <a th:href="@{'/admin/dashboard'}" class="btn btn-secondary">목록으로</a>
         </div>
     </form>
 </div>

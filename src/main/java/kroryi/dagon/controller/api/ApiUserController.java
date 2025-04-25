@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import kroryi.dagon.DTO.LoginRequestDTO;
 import kroryi.dagon.entity.User;
 import kroryi.dagon.repository.UserRepository;
+import kroryi.dagon.service.UserService;
 import kroryi.dagon.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -20,6 +21,7 @@ import java.util.Optional;
 public class ApiUserController {
 
     private final UserRepository userRepository;
+    private final UserService userService;
     private final JwtUtil jwtUtil;
 
     @GetMapping("/me")
@@ -53,7 +55,11 @@ public class ApiUserController {
         User user = optionalUser.get();
         log.info("user-----> {}", user);
 
-        // 4. 응답
+
+        // 4. 유저가 비활성화 상태인 경우 로그인 거부
+
+
+        // 5. 응답
         return ResponseEntity.ok(new UserInfoResponseDTO(user.getUno(), user.getDisplayName()));
     }
 
@@ -79,4 +85,30 @@ public class ApiUserController {
 
     // 응답 DTO
     record UserIdResponseDTO(String uid) {}
+
+    @PutMapping("/{uno}/deactivate")
+    @Operation(summary = "유저 계정 비활성화", description = "유저 계정을 비활성화합니다.")
+    public ResponseEntity<String> deactivateUser(@PathVariable Long uno) {
+        log.info("유저 계정 비활성화 요청: uno = {}", uno);
+        try {
+            userService.deactivateUser(uno);
+            return ResponseEntity.ok("유저 계정이 비활성화되었습니다.");
+        } catch (RuntimeException e) {
+            log.error("유저 비활성화 실패: uno = {}", uno, e);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+    }
+
+    @PutMapping("/{uno}/reactivate")
+    @Operation(summary = "유저 계정 활성화", description = "비활성화된 유저 계정을 다시 활성화합니다.")
+    public ResponseEntity<String> reactivateUser(@PathVariable Long uno) {
+        log.info("유저 계정 활성화 요청: uno = {}", uno);
+        try {
+            userService.reactivateUser(uno);
+            return ResponseEntity.ok("유저 계정이 활성화되었습니다.");
+        } catch (RuntimeException e) {
+            log.error("유저 활성화 실패: uno = {}", uno, e);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+    }
 }

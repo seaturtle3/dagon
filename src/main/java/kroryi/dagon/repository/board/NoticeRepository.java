@@ -22,4 +22,6 @@ public interface NoticeRepository extends JpaRepository<Notice, Long> {
                                  Pageable pageable);
 
     Page<Notice> findAllByOrderByIsTopDescCreatedAtDesc(Pageable pageable);
+
+
 }
