@@ -10,7 +10,7 @@ import java.util.List;
 @Repository
 public interface FishingDiaryRepository extends JpaRepository<FishingDiary, Long> {
 
-    @Query("SELECT fr FROM FishingReport fr LEFT JOIN FETCH fr.comments")
+    @Query("SELECT fr FROM FishingDiary fr LEFT JOIN FETCH fr.comments")
     List<FishingDiary> findAllWithComments();
 
     List<FishingDiary> findByProductProdId(Long prodId);

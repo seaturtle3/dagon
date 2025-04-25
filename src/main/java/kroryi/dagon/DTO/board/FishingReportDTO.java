@@ -1,5 +1,6 @@
 package kroryi.dagon.DTO.board;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import kroryi.dagon.entity.FishingReport;
 import kroryi.dagon.entity.FishingReportComment;
 import kroryi.dagon.entity.Product;
@@ -20,15 +21,15 @@ public class FishingReportDTO {
     private LocalDateTime fishingAt;
     private LocalDateTime modifyAt;
     private int views;
+
+    @Schema(hidden = true)
     private User user;
+
+    @Schema(hidden = true)
     private Product product;
     private List<FishingReportComment> comments;
     private String prodName;
     private String userName;
-
-    public Long getUserId() {
-        return user != null ? Long.valueOf(user.getUid()) : null;  // user가 null이 아닐 경우 user.getUid()를 반환
-    }
 
     public Long getProdId() {
         return product != null ? product.getProdId() : null;
