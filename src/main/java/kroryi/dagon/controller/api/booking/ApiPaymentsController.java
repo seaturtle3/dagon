@@ -4,6 +4,7 @@ import com.siot.IamportRestClient.IamportClient;
 import com.siot.IamportRestClient.exception.IamportResponseException;
 import com.siot.IamportRestClient.response.IamportResponse;
 import com.siot.IamportRestClient.response.Payment;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import kroryi.dagon.service.PaymentsService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -18,6 +19,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 @RestController
+@Tag(name = "3-3. Payments(Iamport)", description = "아임포트 결제 검증 API")
 @RequestMapping("/api/payments")
 @RequiredArgsConstructor
 @Log4j2

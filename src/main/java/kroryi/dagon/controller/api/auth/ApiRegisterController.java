@@ -1,6 +1,7 @@
 package kroryi.dagon.controller.api.auth;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import kroryi.dagon.DTO.UsersDTO;
 import kroryi.dagon.service.RegisterService;
 import lombok.extern.log4j.Log4j2;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 @Log4j2
 @RestController
 @RequestMapping("/api/users") // 변경: 끝에 '/' 제거
+@Tag(name = "1-5. Register", description = "사용자 회원가입 API")
 public class ApiRegisterController {
 
     @Autowired

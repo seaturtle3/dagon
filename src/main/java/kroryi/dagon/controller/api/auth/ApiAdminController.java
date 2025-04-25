@@ -1,6 +1,7 @@
 package kroryi.dagon.controller.api.auth;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import kroryi.dagon.DTO.AdminDTO;
 import kroryi.dagon.DTO.UsersDTO;
 import kroryi.dagon.service.AdminService;
@@ -26,6 +27,7 @@ import java.util.Map;
 @RequestMapping("/api/admin")
 @RequiredArgsConstructor
 @Log4j2
+@Tag(name = "1-2. Admin", description = "관리자 인증 및 사용자 관리 API")
 public class ApiAdminController {
 
     private final AdminService adminService;

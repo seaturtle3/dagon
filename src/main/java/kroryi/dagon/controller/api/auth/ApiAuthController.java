@@ -1,6 +1,7 @@
 package kroryi.dagon.controller.api.auth;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import kroryi.dagon.DTO.AuthResponseDTO;
 import kroryi.dagon.DTO.LoginRequestDTO;
 import kroryi.dagon.entity.User;
@@ -22,6 +23,7 @@ import java.util.Optional;
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
 @Log4j2
+@Tag(name = "1-3. Auth", description = "사용자 로그인 API")
 public class ApiAuthController {
 
     private final UserRepository userRepository;
