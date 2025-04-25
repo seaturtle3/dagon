@@ -85,7 +85,7 @@ public class NoticeController {
             return "board/notice/form";
         }
         noticeService.createNotice(dto, "admin001");
-        return "redirect:/notices?page=" + page + "&size=" + size;
+        return "redirect:/admin/dashboard";  // ✅ 변경됨
     }
 
     // 수정 폼
@@ -115,7 +115,7 @@ public class NoticeController {
                          @RequestParam(defaultValue = "0") int page,
                          @RequestParam(defaultValue = "10") int size) {
         noticeService.updateNotice(id, dto);
-        return "redirect:/notices?page=" + page + "&size=" + size;
+        return "redirect:/admin/dashboard";  // ✅ 변경됨
     }
 
     // 삭제 처리
@@ -124,6 +124,6 @@ public class NoticeController {
                          @RequestParam(defaultValue = "0") int page,
                          @RequestParam(defaultValue = "10") int size) {
         noticeService.deleteNotice(id);
-        return "redirect:/notices?page=" + page + "&size=" + size;
+        return "redirect:/admin/dashboard";  // ✅ 변경됨
     }
 }

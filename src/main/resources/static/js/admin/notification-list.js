@@ -8,6 +8,7 @@ function Notifications() {
     const url = `/api/notices?type=${encodeURIComponent(searchType)}&keyword=${encodeURIComponent(searchKeyword)}`;
     console.log('요청 URL:', url);
 
+
     fetch(url, {
         headers: {
             "Authorization": "Bearer " + localStorage.getItem("authToken")
@@ -29,7 +30,7 @@ function Notifications() {
 }
 
 function renderNotificationList(notices) {
-    const tableBody = document.getElementById('notices-table').querySelector('tbody');
+    const tableBody = document.getElementById('notice-table').querySelector('tbody');
     console.log("테이블 바디:", tableBody);  // tableBody가 제대로 선택되었는지 확인
 
     tableBody.innerHTML = '';
@@ -42,7 +43,7 @@ function renderNotificationList(notices) {
     notices.forEach((notice, index) => {
         const row = document.createElement('tr');
         row.innerHTML = `
-            <td>${notice.isTop ? "✔" : ""}</td>
+            <td>${notice.isTop === true ? "✔" : ""}</td>
             <td>${index + 1}</td>
             <td><a href="/notices/${notice.noticeId}">${notice.title}</a></td>
             <td>${new Date(notice.createdAt).toLocaleDateString()}</td>
@@ -84,7 +85,7 @@ function setupPagination(data) {
 }
 
 function loadNotificationData(page) {
-    const searchKeyword = document.getElementById('notice-search-keyword').value;
+    const searchKeyword = document.getElementById('notice-search-keyword').value.trim();
 
     fetch(`/api/notices?page=${page}&keyword=${searchKeyword}`, {
         headers: {
