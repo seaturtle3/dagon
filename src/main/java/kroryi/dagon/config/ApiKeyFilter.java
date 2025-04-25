@@ -165,6 +165,14 @@ public class ApiKeyFilter extends OncePerRequestFilter {
                         // 조황정보 리스트 조회 (추가)
                         (path.matches("/api/fishing-reports") && method.equals("GET")) ||
 
+                        // 조행기 CRUD
+                        (path.matches("/api/fishing-diary/create") && method.equals("POST")) ||
+                        (path.matches("/api/fishing-diary/get-all") && method.equals("GET")) ||
+                        (path.matches("/api/fishing-diary/get/.+") && method.equals("GET")) ||
+                        (path.matches("/api/fishing-diary/update/.+") && method.equals("PUT")) ||
+                        (path.matches("/api/fishing-diary/delete/.+") && method.equals("DELETE")) ||
+                        // 조황정보 리스트 조회 (추가)
+                        (path.matches("/api/fishing-diary") && method.equals("GET")) ||
 
 
                         (path.startsWith("/api/users/me") && method.equals("GET")) ||

@@ -62,8 +62,8 @@ public class FishingDiaryService {
                 .collect(Collectors.toList());
     }
 
-    public FishingDiary getFishingDiary(@PathVariable Long fdId) {
-        return fishingDiaryRepository.findById(fdId)
+    public FishingDiary getFishingDiary(@PathVariable Long id) {
+        return fishingDiaryRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("조황정보를 찾을 수 없습니다."));
     }
 

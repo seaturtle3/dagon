@@ -33,15 +33,15 @@ public class ApiFishingDiaryController {
 
     @Operation(summary = "조행기 ID 조회")
     @GetMapping("/get/{id}")
-    public FishingDiary getFishingDiary(@PathVariable Long fdId) {
-        return fishingDiaryService.getFishingDiary(fdId);
+    public FishingDiary getFishingDiary(@PathVariable Long id) {
+        return fishingDiaryService.getFishingDiary(id);
     }
 
     @Operation(summary = "조행기 수정")
     @PutMapping("/update/{id}")
-    public Long updateFishingDiary(@PathVariable("id") Long fdId,
+    public Long updateFishingDiary(@PathVariable Long id,
                                    @RequestBody FishingDiaryDTO fishingDiaryDTO) {
-        return fishingDiaryService.updateFishingDiary(fdId, fishingDiaryDTO);
+        return fishingDiaryService.updateFishingDiary(id, fishingDiaryDTO);
     }
 
     @Operation(summary = "조행기 삭제")
