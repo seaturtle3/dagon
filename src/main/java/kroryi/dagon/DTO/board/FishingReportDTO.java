@@ -31,10 +31,6 @@ public class FishingReportDTO {
     private String prodName;
     private String userName;
 
-    public Long getUserId() {
-        return user != null ? Long.valueOf(user.getUid()) : null;  // user가 null이 아닐 경우 user.getUid()를 반환
-    }
-
     public Long getProdId() {
         return product != null ? product.getProdId() : null;
     }
