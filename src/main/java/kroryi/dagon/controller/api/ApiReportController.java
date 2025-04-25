@@ -26,6 +26,7 @@ public class ApiReportController {
 
     // 신고 목록 조회 (페이징 및 검색)
     @GetMapping
+    @Operation(summary = "신고 목록조회", description = "사용자 신고 접수 API")
     public ResponseEntity<Page<ReportDTO>> getReports(
             @RequestParam(required = false) String nickname,
             @RequestParam(defaultValue = "0") int page,
