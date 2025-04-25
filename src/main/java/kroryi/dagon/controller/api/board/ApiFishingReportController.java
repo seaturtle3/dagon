@@ -1,6 +1,7 @@
 package kroryi.dagon.controller.api.board;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import kroryi.dagon.DTO.board.FishingReportDTO;
 import kroryi.dagon.entity.FishingReport;
 import kroryi.dagon.service.FishingReportService;
@@ -11,6 +12,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
+@Tag(name = "4-8. FishingReport", description = "조황정보 게시판 API")
 @RequestMapping("/api/fishing-report")
 public class ApiFishingReportController {
 

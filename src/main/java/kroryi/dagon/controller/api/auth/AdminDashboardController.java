@@ -1,5 +1,6 @@
 package kroryi.dagon.controller.api.auth;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import kroryi.dagon.service.AdminDashboardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +14,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/admin/")
 @RequiredArgsConstructor
+@Tag(name = "1-1. AdminDashboard", description = "관리자 대시보드 통계 API")
 public class AdminDashboardController {
 
 

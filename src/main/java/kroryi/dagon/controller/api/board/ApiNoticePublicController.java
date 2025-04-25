@@ -1,6 +1,7 @@
 package kroryi.dagon.controller.api.board;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import kroryi.dagon.DTO.board.NoticeResponseDTO;
 import kroryi.dagon.entity.Notice;
 import kroryi.dagon.service.board.NoticeService;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
+@Tag(name = "4-10. Notice", description = "공지사항 사용자 조회 API")
 @RequestMapping("/api/notices")
 public class ApiNoticePublicController {
 

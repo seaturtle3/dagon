@@ -1,6 +1,7 @@
-package kroryi.dagon.controller.api.action;
+package kroryi.dagon.controller.api.etc;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import kroryi.dagon.DTO.NotificationDTO;
 import kroryi.dagon.service.NotificationService;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +16,8 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
+@Tag(name = "5-3. Notification", description = "예약/관리자 알림 API")
+
 @RequestMapping("/api/notifications")
 public class ApiNotificationController {
 

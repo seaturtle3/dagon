@@ -1,6 +1,7 @@
 package kroryi.dagon.controller.api.product;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import kroryi.dagon.entity.ProductFishSpecies;
 import kroryi.dagon.enums.MainType;
 import kroryi.dagon.repository.FishSpeciesRepository;
@@ -11,6 +12,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
+@Tag(name = "2-2. ProductFishSpecies", description = "상품 어종 관련 API")
 @RequestMapping("api/product-fish-species")
 public class ApiProductFishSpeciesController {
 
