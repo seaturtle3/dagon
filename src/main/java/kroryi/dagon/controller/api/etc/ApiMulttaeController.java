@@ -1,7 +1,6 @@
-package kroryi.dagon.controller.api.multtae;
+package kroryi.dagon.controller.api.etc;
 
 import io.swagger.v3.oas.annotations.Operation;
-import jakarta.annotation.PostConstruct;
 import kroryi.dagon.DTO.multtae.*;
 import kroryi.dagon.component.LunarApiClient;
 import kroryi.dagon.component.MarineWeatherApiClient;

@@ -1,4 +1,4 @@
-package kroryi.dagon.controller.api;
+package kroryi.dagon.controller.api.booking;
 
 import com.siot.IamportRestClient.IamportClient;
 import com.siot.IamportRestClient.exception.IamportResponseException;

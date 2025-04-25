@@ -1,12 +1,9 @@
-package kroryi.dagon.controller.api;
+package kroryi.dagon.controller.api.action;
 
 import io.swagger.v3.oas.annotations.Operation;
 import kroryi.dagon.DTO.NotificationDTO;
-import kroryi.dagon.config.NotificationFilterRequest;
-import kroryi.dagon.entity.Notification;
 import kroryi.dagon.service.NotificationService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;

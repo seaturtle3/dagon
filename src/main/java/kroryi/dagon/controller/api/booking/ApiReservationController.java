@@ -1,8 +1,7 @@
-package kroryi.dagon.controller.api;
+package kroryi.dagon.controller.api.booking;
 
 import io.jsonwebtoken.Claims;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import kroryi.dagon.DTO.ReservationDTO;
 import kroryi.dagon.component.CustomUserDetails;
 import kroryi.dagon.service.SeaFreshwaterFishingService;

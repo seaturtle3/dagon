@@ -1,4 +1,4 @@
-package kroryi.dagon.controller.api.multtae;
+package kroryi.dagon.controller.api.etc;
 
 import io.swagger.v3.oas.annotations.Operation;
 import kroryi.dagon.service.multtae.StationLinkService;

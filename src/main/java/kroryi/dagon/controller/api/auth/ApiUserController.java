@@ -1,7 +1,6 @@
-package kroryi.dagon.controller.api;
+package kroryi.dagon.controller.api.auth;
 
 import io.swagger.v3.oas.annotations.Operation;
-import kroryi.dagon.DTO.LoginRequestDTO;
 import kroryi.dagon.entity.User;
 import kroryi.dagon.repository.UserRepository;
 import kroryi.dagon.service.UserService;

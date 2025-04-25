@@ -1,4 +1,4 @@
-package kroryi.dagon.controller.api;
+package kroryi.dagon.controller.api.auth;
 
 import kroryi.dagon.service.AdminDashboardService;
 import lombok.RequiredArgsConstructor;

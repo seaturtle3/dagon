@@ -1,4 +1,4 @@
-package kroryi.dagon.controller.api.board;
+package kroryi.dagon.controller.api.etc;
 
 import kroryi.dagon.service.ImageCleanupService;
 import lombok.RequiredArgsConstructor;

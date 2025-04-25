@@ -1,8 +1,7 @@
-package kroryi.dagon.controller.api;
+package kroryi.dagon.controller.api.board;
 
 import io.swagger.v3.oas.annotations.Operation;
 import kroryi.dagon.DTO.CommentDTO;
-import kroryi.dagon.service.CommentService;
 import kroryi.dagon.service.FishingDiaryCommentServiceImpl;
 import kroryi.dagon.service.FishingReportCommentServiceImpl;
 import kroryi.dagon.service.FreeBoardCommentServiceImpl;

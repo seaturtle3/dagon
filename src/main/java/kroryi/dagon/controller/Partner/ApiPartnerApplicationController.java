@@ -1,4 +1,4 @@
-package kroryi.dagon.controller.api;
+package kroryi.dagon.controller.Partner;
 
 import jakarta.persistence.EntityNotFoundException;
 import kroryi.dagon.DTO.PartnerApplicationDTO;

@@ -1,4 +1,4 @@
-package kroryi.dagon.controller.api;
+package kroryi.dagon.controller.api.product;
 
 import io.swagger.v3.oas.annotations.Operation;
 import kroryi.dagon.DTO.ProductOptionDTO;

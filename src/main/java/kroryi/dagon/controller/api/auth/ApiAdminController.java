@@ -1,10 +1,9 @@
-package kroryi.dagon.controller.api;
+package kroryi.dagon.controller.api.auth;
 
 import io.swagger.v3.oas.annotations.Operation;
 import kroryi.dagon.DTO.AdminDTO;
 import kroryi.dagon.DTO.UsersDTO;
 import kroryi.dagon.service.AdminService;
-import kroryi.dagon.service.UserService;
 import kroryi.dagon.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;

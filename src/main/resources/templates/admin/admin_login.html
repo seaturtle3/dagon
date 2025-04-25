@@ -42,7 +42,8 @@
             const response = await fetch('/api/admin/login', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json'  // 요청 내용이 JSON임을 명시
+                    'Content-Type': 'application/json',  // 요청 내용이 JSON임을 명시
+                    "Authorization": "Bearer " + localStorage.getItem("authToken")// 요청 내용이 JSON임을 명시
                 },
                 body: JSON.stringify({ aid: uid, apw: upw })  // 아이디와 비밀번호를 JSON으로 전달
             });

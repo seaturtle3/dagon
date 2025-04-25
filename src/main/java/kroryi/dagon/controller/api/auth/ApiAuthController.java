@@ -1,9 +1,8 @@
-package kroryi.dagon.controller.api;
+package kroryi.dagon.controller.api.auth;
 
 import io.swagger.v3.oas.annotations.Operation;
 import kroryi.dagon.DTO.AuthResponseDTO;
 import kroryi.dagon.DTO.LoginRequestDTO;
-import kroryi.dagon.entity.ApiKeyEntity;
 import kroryi.dagon.entity.User;
 import kroryi.dagon.repository.UserRepository;
 import kroryi.dagon.util.JwtUtil;
@@ -17,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.time.LocalDateTime;
 import java.util.Optional;
 
 @RestController
