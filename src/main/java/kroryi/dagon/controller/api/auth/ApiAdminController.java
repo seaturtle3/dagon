@@ -32,7 +32,7 @@ public class ApiAdminController {
 
     private final AdminService adminService;
     private final JwtUtil jwtUtil;
-    private final AuthenticationManager authenticationManager;
+    private final AuthenticationManager adminAuthenticationManager;
 
 
     @PostMapping("/register")
@@ -48,20 +48,21 @@ public class ApiAdminController {
     @PostMapping("/login")
     public ResponseEntity<Map<String, String>> adminLogin(@RequestBody AdminDTO adminLoginDTO) {
         try {
-            Authentication authentication = authenticationManager.authenticate(
+            Authentication authentication = adminAuthenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(adminLoginDTO.getAid(), adminLoginDTO.getApw())
             );
 
-            // 인증이 성공하면 JWT 생성
             SecurityContextHolder.getContext().setAuthentication(authentication);
+
             String token = jwtUtil.generateToken(adminLoginDTO.getAid(), 0L, "admin", "admin");
 
             Map<String, String> response = new HashMap<>();
-            response.put("token", token);  // JSON 응답 반환
+            response.put("token", token);
 
             return ResponseEntity.ok(response);
         } catch (BadCredentialsException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Collections.singletonMap("message", "잘못된 관리자 아이디나 비밀번호입니다."));
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Collections.singletonMap("message", "잘못된 관리자 아이디나 비밀번호입니다."));
         }
     }
 
