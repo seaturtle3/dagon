@@ -49,6 +49,8 @@
         <div class="sidebar-item" id="report-link">신고 목록</div>
         <div class="sidebar-item" id="event-link">이벤트</div>
         <div class="sidebar-item" id="notice-link">공지사항</div>
+        <div class="sidebar-item" id="faq-link">FAQ</div>
+
 
         <div class="sidebar-item" onclick="toggleSubmenu('api-submenu')">API 문서 ▼</div>
         <div id="api-submenu" class="submenu" style="display:none;">
@@ -317,8 +319,15 @@
             <div id="user-details"></div>
 
         </div>
-
-
+        <!-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+        <div id="faq-page" class="page">
+            <h1>FAQ 관리</h1>
+            <div style="margin-top: 20px;">
+                <button onclick="openFaqManage()" class="btn btn-primary">
+                    FAQ 관리 페이지 열기
+                </button>
+            </div>
+        </div>
         <!-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
         <div id="swagger" class="page">
@@ -402,7 +411,8 @@
         'notification-link': 'notifications',
         'report-link' : 'report-list',
         'event-link' : 'event-list',
-        'notice-link': 'notice-list'
+        'notice-link': 'notice-list',
+        'faq-link': 'faq-page'
     };
 
     Object.keys(links).forEach(linkId => {
@@ -411,7 +421,9 @@
             document.getElementById(links[linkId]).classList.add('visible');
         });
     });
-
+    function openFaqManage() {
+        window.open('/faq', '_blank');
+    }
 
     function loadSwagger(group) {
         pages.forEach(p => p.classList.remove('visible'));
