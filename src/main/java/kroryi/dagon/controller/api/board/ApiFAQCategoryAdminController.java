@@ -13,6 +13,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("/api/admin/faq-categories")
 @Tag(name = "Board-FAQ", description = "FAQ 카테고리 관리 API")
 public class ApiFAQCategoryAdminController {
 
