@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.io.IOException;
 
 @RestController
-@Tag(name = "5-4. Image(Admin)", description = "이미지 정리 관리자 기능")
+@Tag(name = "Etc-Image(Admin)", description = "이미지 정리 관리자 기능 API")
 
 @RequestMapping("/api/admin/image")
 @RequiredArgsConstructor

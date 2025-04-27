@@ -12,7 +12,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@Tag(name = "2-2. ProductFishSpecies", description = "상품 어종 관련 API")
+@Tag(name = "Product", description = "상품 어종 관리 API")
 @RequestMapping("api/product-fish-species")
 public class ApiProductFishSpeciesController {
 

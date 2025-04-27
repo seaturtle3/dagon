@@ -18,7 +18,7 @@ import java.util.Optional;
 @RequestMapping("/api/users")
 @RequiredArgsConstructor
 @Log4j2
-@Tag(name = "1-6. User", description = "사용자 정보 및 계정 관리 API")
+@Tag(name = "User", description = "회원가입, 로그인, 마이페이지, 계정 관리 API")
 public class ApiUserController {
 
     private final UserRepository userRepository;

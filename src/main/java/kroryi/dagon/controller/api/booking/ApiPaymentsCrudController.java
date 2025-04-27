@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@Tag(name = "3-4. Payments(KG Inicis)", description = "KG이니시스 결제 CRUD API")
+@Tag(name = "Booking-Inicis", description = "KG이니시스 결제 CRUD API")
 @RequestMapping("/api/payments")
 @RequiredArgsConstructor
 public class ApiPaymentsCrudController {

@@ -23,7 +23,7 @@ import java.util.Map;
 @RequestMapping("/api/mypage")
 @RequiredArgsConstructor
 @Log4j2
-@Tag(name = "1-4. MyPage", description = "마이페이지(정보 수정/포인트 등) API")
+@Tag(name = "User", description = "회원가입, 로그인, 마이페이지, 계정 관리 API")
 public class ApiMyPageController {
 
     private final MyPageService myPageService;

@@ -5,7 +5,39 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>관리자 페이지</title>
     <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="/webjars/swagger-ui/swagger-ui.css">
 </head>
+
+<style>
+    /* 서브메뉴 전체 */
+    .submenu {
+
+        background: #607893;
+        font-size: 14px;
+    }
+
+    /* 서브메뉴 항목 */
+    .submenu-item {
+        padding: 15px 10px 15px 15px;
+        cursor: pointer;
+        color: #f0f0f0;
+        transition: background-color 0.2s, color 0.2s;
+    }
+
+    /* 호버했을 때 */
+    .submenu-item:hover {
+        background: #4b6178;
+        color: #ffffff;
+    }
+
+    /* 선택된 상태 (active) */
+    .submenu-item.active {
+        background: #35485d;
+        font-weight: bold;
+        color: #ffffff;
+    }
+</style>
+
 <body>
 <div class="container">
     <!-- 사이드바 -->
@@ -17,6 +49,15 @@
         <div class="sidebar-item" id="report-link">신고 목록</div>
         <div class="sidebar-item" id="event-link">이벤트</div>
         <div class="sidebar-item" id="notice-link">공지사항</div>
+
+        <div class="sidebar-item" onclick="toggleSubmenu('api-submenu')">API 문서 ▼</div>
+        <div id="api-submenu" class="submenu" style="display:none;">
+            <div class="submenu-item" onclick="loadSwagger('auth')">회원/권한 API</div>
+            <div class="submenu-item" onclick="loadSwagger('booking')">예약/결제 API</div>
+            <div class="submenu-item" onclick="loadSwagger('product')">상품 관련 API</div>
+            <div class="submenu-item" onclick="loadSwagger('board')">게시판 관련 API</div>
+            <div class="submenu-item" onclick="loadSwagger('etc')">기타 API</div>
+        </div>
     </div>
 
     <!-- 메인 콘텐츠 영역 -->
@@ -278,6 +319,14 @@
         </div>
 
 
+        <!-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+
+        <div id="swagger" class="page">
+            <h1>API 문서</h1>
+            <div id="swagger-ui"></div> <!-- 여기 Swagger UI 들어갑니다 -->
+        </div>
+
+
     </div>
 </div>
 
@@ -290,7 +339,58 @@
 <script src="/js/reports-create.js"></script>
 <script src="/js/admin/event-list.js"></script>
 <script src="/js/admin/notification-list.js"></script>
+<script src="/webjars/swagger-ui/swagger-ui-bundle.js"></script>
+<script src="/webjars/swagger-ui/swagger-ui-standalone-preset.js"></script>
 
+<script>
+    const swaggerUi = SwaggerUIBundle({
+        url: location.origin + "/api-docs",   // ✅ 기본 전체 문서만
+        dom_id: '#swagger-ui',
+        presets: [
+            SwaggerUIBundle.presets.apis,
+            SwaggerUIStandalonePreset
+        ],
+        layout: "StandaloneLayout",
+        deepLinking: true,
+        docExpansion: "none",
+        validatorUrl: null,
+        tagsSorter: "alpha"  // 태그 이름 알파벳순 정렬
+
+    });
+
+
+    function toggleSubmenu(id) {
+        const submenu = document.getElementById(id);
+        submenu.style.display = (submenu.style.display === "none") ? "block" : "none";
+    }
+
+    // 하위 메뉴 선택 시 Swagger 불러오고 스타일도 갱신
+    function loadSwagger(group) {
+        pages.forEach(p => p.classList.remove('visible'));
+        document.getElementById('swagger').classList.add('visible');
+
+        // ✅ 기존 submenu-item active 제거
+        document.querySelectorAll('.submenu-item').forEach(item => item.classList.remove('active'));
+
+        // ✅ 현재 클릭한 버튼에 active 추가
+        const clickedItem = event.target;
+        clickedItem.classList.add('active');
+
+        SwaggerUIBundle({
+            url: location.origin + `/api-docs/${group}`,
+            dom_id: '#swagger-ui',
+            layout: "StandaloneLayout",
+            presets: [
+                SwaggerUIBundle.presets.apis,
+                SwaggerUIStandalonePreset
+            ],
+            deepLinking: true,
+            docExpansion: "none",
+            validatorUrl: null,
+            tagsSorter: "alpha"
+        });
+    }
+</script>
 
 
 <script>
@@ -311,6 +411,27 @@
             document.getElementById(links[linkId]).classList.add('visible');
         });
     });
+
+
+    function loadSwagger(group) {
+        pages.forEach(p => p.classList.remove('visible'));
+        document.getElementById('swagger').classList.add('visible');
+
+        SwaggerUIBundle({
+            url: location.origin + `/api-docs/${group}`,
+            dom_id: '#swagger-ui',
+            layout: "StandaloneLayout",
+            presets: [
+                SwaggerUIBundle.presets.apis,
+                SwaggerUIStandalonePreset
+            ],
+            deepLinking: true,
+            docExpansion: "none",
+            validatorUrl: null,
+            tagsSorter: "alpha"
+        });
+    }
+
     document.addEventListener("DOMContentLoaded", function () {
         fetch("/api/admin/counts", {
             headers: {

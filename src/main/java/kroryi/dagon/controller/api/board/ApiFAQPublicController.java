@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@Tag(name = "4-6. FAQ", description = "FAQ 사용자 조회 API")
+@Tag(name = "Board-FAQ", description = "사용자 FAQ 조회 API")
 @RequestMapping("/api/faq")
 public class ApiFAQPublicController {
 

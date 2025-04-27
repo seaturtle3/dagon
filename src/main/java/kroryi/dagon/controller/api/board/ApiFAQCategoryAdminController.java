@@ -13,8 +13,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/admin/faq-categories")
-@Tag(name = "4-5. FAQ 카테고리 관리", description = "FAQ 카테고리 등록, 수정, 삭제, 목록 API")
+@Tag(name = "Board-FAQ", description = "FAQ 카테고리 관리 API")
 public class ApiFAQCategoryAdminController {
 
     private final FAQCategoryService faqCategoryService;

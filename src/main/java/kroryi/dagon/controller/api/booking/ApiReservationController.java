@@ -19,7 +19,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@Tag(name = "3-1. Reservation", description = "예약 관리 API")
+@Tag(name = "Booking-Reservation", description = "예약 생성/조회/취소 API")
 @RequestMapping("/api/reservation")
 @Log4j2
 public class ApiReservationController {
