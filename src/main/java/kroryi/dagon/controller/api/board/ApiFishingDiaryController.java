@@ -15,7 +15,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@Tag(name = "4-7. FishingDiary", description = "조행기 게시판 API")
+@Tag(name = "Board-Community", description = "조행기 게시판 글쓰기/수정/삭제 API")
 @RequestMapping("/api/fishing-diary")
 public class ApiFishingDiaryController {
 

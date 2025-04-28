@@ -6,6 +6,8 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Setter
 @Getter
@@ -20,7 +22,7 @@ public class ApiKeyEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique = true, name = "api_key")
+    @Column(length = 1024, unique = true, name = "api_key")
     private String key;
 
     private String name;
@@ -35,5 +37,9 @@ public class ApiKeyEntity {
 
     private String allowedIp;
 
-
+    @Builder.Default
+    @ToString.Exclude
+    @OneToMany(mappedBy = "apiKey", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference // 👈 추가
+    private List<ApiKeyCallbackUrl> callbackUrls = new ArrayList<>();
 }

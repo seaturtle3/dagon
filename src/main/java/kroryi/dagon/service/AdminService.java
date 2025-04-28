@@ -83,17 +83,22 @@ public class AdminService {
         User user = (User) userRepository.findByUno(Long.valueOf(uno))
                 .orElseThrow(() -> new EntityNotFoundException("회원이 존재하지 않습니다."));
 
+        System.out.println("체크박스 상태: " + dto.isActive());
+
+        // 필요한 필드들 업데이트
         user.setUname(dto.getUname());
         user.setNickname(dto.getNickname());
         user.setEmail(dto.getEmail());
         user.setPhone(dto.getFullPhone());
         user.setPoints(dto.getPoints());
         user.setLevel(UserLevel.values()[dto.getLevel()]);
-        user.setLevelPoint(Integer.valueOf(dto.getLevelPoint()));  // 새 필드 처리
-        user.setLoginType(LoginType.valueOf(dto.getLoginType()));  // 새 필드 처리
+        user.setLevelPoint(Integer.valueOf(dto.getLevelPoint())); // 새 필드 처리
+        user.setLoginType(LoginType.valueOf(dto.getLoginType())); // 새 필드 처리
         user.setRole(UserRole.valueOf(dto.getRole()));
+        user.setProfileImg(dto.getProfile_image()); // 프로필 이미지 업데이트
+        user.setIsActive(dto.isActive());
 
-        return new UsersDTO(userRepository.save(user));
+        return new UsersDTO(userRepository.save(user)); // 수정된 User 객체 저장
     }
 
     @Transactional
@@ -114,6 +119,9 @@ public class AdminService {
         user.getFreeBoards().clear();
         user.getUserActions().clear();
         user.getNotifications().clear();
+        user.getReportsMade().clear();
+        user.getReportsReceived().clear();
+        log.info("delete user: ---> {}", user);
 
         userRepository.delete(user);  // 유저 삭제
     }

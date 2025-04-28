@@ -16,7 +16,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/comments")
-@Tag(name = "4-1. Comment", description = "댓글 기능 API")
+@Tag(name = "Board-Comment", description = "게시판 댓글 작성/삭제 API")
 public class ApiCommentController {
 
     private final FishingDiaryCommentServiceImpl fishingDiaryCommentService;

@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@Tag(name = "3-2. KakaoPay", description = "카카오페이 결제 API")
+@Tag(name = "Booking-KakaoPay", description = "카카오페이 결제 등록/조회/수정/삭제 API")
 @RequestMapping("/api/kakaopay")
 @RequiredArgsConstructor
 public class ApiKakaoPayController {

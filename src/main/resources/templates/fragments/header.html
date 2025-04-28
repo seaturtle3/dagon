@@ -37,10 +37,62 @@
                 </ul>
             </div>
 
-
-            <a class="btn btn-light me-3" th:href="@{/login}" role="button">로그인</a>
-            <a class="btn btn-light" th:href="@{/my-page}">마이페이지</a>
+            <!-- 로그인/마이페이지/로그아웃 버튼 -->
+            <div id="authButtons">
+                <!-- 로그인 상태에 따라 여기에 버튼이 JS로 동적으로 삽입됨 -->
+            </div>
 
         </div>
     </nav>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const authToken = localStorage.getItem("authToken");
+            const authButtons = document.getElementById("authButtons");
+            console.log(authToken)
+
+            if (authToken) {
+                console.log(authButtons)
+                // 로그인 상태일 경우 로그아웃 & 마이페이지
+                authButtons.innerHTML = `
+                <a class="btn btn-light me-2" href="/my-page">마이페이지</a>
+                <button class="btn btn-light" id="logoutBtn">로그아웃</button>
+            `;
+
+                // 로그아웃 버튼 클릭 시 처리
+                document.getElementById("logoutBtn").addEventListener("click", async () => {
+                    try {
+                        const response = await fetch("/api/auth/logout", {
+                            method: "POST",
+                            headers: {
+                                "Authorization": "Bearer " + authToken
+                            }
+                        });
+
+                        // 무조건 토큰 삭제
+                        localStorage.removeItem("authToken");
+
+                        if (response.ok) {
+                            alert("로그아웃 되었습니다.");
+                        } else {
+                            console.warn("로그아웃 실패:", await response.text());
+                        }
+
+                        window.location.href = "/login";
+                    } catch (err) {
+                        console.error("로그아웃 요청 실패:", err);
+                        localStorage.removeItem("authToken");
+                        // window.location.href = "/login";
+                    }
+                });
+            } else {
+                // 비로그인 상태
+                authButtons.innerHTML = `
+                <a class="btn btn-light me-2" href="/login">로그인</a>
+                <a class="btn btn-light" href="/users/register">회원가입</a>
+            `;
+            }
+        });
+    </script>
+
 </header>

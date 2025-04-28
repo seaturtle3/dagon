@@ -36,29 +36,36 @@ public class JwtUtil {
         this.secretKey = Keys.hmacShaKeyFor(keyBytes);
     }
 
-    public String generateToken(String uid, Long uno, String uname, String role) {
+    public String generateToken(User user) {
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + expirationTime);
 
         return Jwts.builder()
-                .setSubject(uid)
-                .claim("uno", uno.toString())
-                .claim("uname", uname)
-                .claim("role",role)
+                .setSubject(user.getUid())
+                .claim("uno", String.valueOf(user.getUno()))
+                .claim("uname", user.getUname())
+                .claim("nickname", user.getNickname())
+                .claim("email", user.getEmail())
+                .claim("role", user.getRole().name())
                 .setIssuedAt(now)
                 .setExpiration(expiryDate)
                 .signWith(secretKey, SignatureAlgorithm.HS256)
                 .compact();
     }
 
+    public String generateAdminToken(String aid, String aname, String role) {
+        Date now = new Date();
+        Date expiryDate = new Date(now.getTime() + expirationTime);
 
-
-
-
-
-
-
-
+        return Jwts.builder()
+                .setSubject(aid)
+                .claim("aname", aname)
+                .claim("role", role)
+                .setIssuedAt(now)
+                .setExpiration(expiryDate)
+                .signWith(secretKey, SignatureAlgorithm.HS256)
+                .compact();
+    }
 
     public Claims parseToken(String token) {
         try {
@@ -106,6 +113,7 @@ public class JwtUtil {
             return false;
         }
     }
+
 
 }
 

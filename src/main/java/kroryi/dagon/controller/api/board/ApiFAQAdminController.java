@@ -17,7 +17,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@Tag(name = "4-4. FAQ(Admin)", description = "FAQ 관리자 기능 API")
+@Tag(name = "Board-FAQ", description = "FAQ 등록/수정/삭제 API")
 @RequestMapping("/api/admin/faq")
 public class ApiFAQAdminController {
     private final FAQService faqService;

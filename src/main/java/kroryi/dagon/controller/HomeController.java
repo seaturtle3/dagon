@@ -33,6 +33,8 @@ public class HomeController {
 
     @GetMapping("/my-page")
     public String myPage() {
+
+        log.info("homecontr----->/my-page");
         return "user/my-page";
     }
 

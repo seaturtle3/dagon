@@ -12,7 +12,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@Tag(name = "4-8. FishingReport", description = "조황정보 게시판 API")
+@Tag(name = "Board-Community", description = "조황정보 게시판 글쓰기/수정/삭제 API")
 @RequestMapping("/api/fishing-report")
 public class ApiFishingReportController {
 

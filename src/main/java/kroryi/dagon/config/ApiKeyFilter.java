@@ -8,6 +8,7 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import kroryi.dagon.component.CustomUserDetails;
 import kroryi.dagon.service.ApiKeyService;
+import kroryi.dagon.service.auth.AdminUserDetails;
 import kroryi.dagon.util.JwtUtil;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
@@ -41,31 +42,39 @@ public class ApiKeyFilter extends OncePerRequestFilter {
         String authHeader = request.getHeader("Authorization");
         log.info("------------------- {}", authHeader);
 
+
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             String jwt = authHeader.substring(7);
 
             try {
-                Claims claims = jwtTokenUtil.parseToken(jwt); // ← 여기서 클레임 꺼냄
+                Claims claims = jwtTokenUtil.parseToken(jwt); // JWT 파싱
 
-                Long uno = Long.valueOf(claims.get("uno", String.class)); // JWT에 uno 들어 있어야 함
-                String uname = claims.get("uname", String.class);
+                String role = claims.get("role", String.class);
+                String uid = claims.getSubject(); // ✅ sub 필드에서 꺼냄
+                String uname = claims.get("uname", String.class); // 이름
 
-                // CustomUserDetails 생성
-                CustomUserDetails userDetails = new CustomUserDetails(
-                        uno,
-                        uname,
-                        "", // 비밀번호는 필요 없으면 빈 문자열로
-                        List.of(new SimpleGrantedAuthority("ROLE_PARTNER")) // 또는 적절한 권한
+                if (role == null || uid == null) {
+                    response.setStatus(HttpStatus.UNAUTHORIZED.value());
+                    response.getWriter().write("Invalid JWT: missing role or uid");
+                    return;
+                }
+
+                // 권한 설정
+                List<SimpleGrantedAuthority> authorities = List.of(
+                        new SimpleGrantedAuthority("ROLE_" + role.toUpperCase())
                 );
 
-                // 인증 객체 생성 및 SecurityContext 등록
-                UsernamePasswordAuthenticationToken authentication =
-                        new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                if (!"ADMIN".equalsIgnoreCase(role)) {
+                    Long uno = claims.get("uno", Integer.class).longValue(); // ✅ uno 추출
 
-                SecurityContextHolder.getContext().setAuthentication(authentication);
+                    CustomUserDetails userDetails = new CustomUserDetails(
+                            uno, uid, "", authorities
+                    );
+                    UsernamePasswordAuthenticationToken authentication =
+                            new UsernamePasswordAuthenticationToken(userDetails, null, authorities);
 
-                filterChain.doFilter(request, response);
-                return;
+                    SecurityContextHolder.getContext().setAuthentication(authentication);
+                }
 
             } catch (Exception e) {
                 response.setStatus(HttpStatus.UNAUTHORIZED.value());
@@ -73,9 +82,10 @@ public class ApiKeyFilter extends OncePerRequestFilter {
                 return;
             }
         }
+        filterChain.doFilter(request, response);
 
-        response.setStatus(HttpStatus.UNAUTHORIZED.value());
-        response.getWriter().write("Unauthorized: Missing or invalid Bearer token");
+//        response.setStatus(HttpStatus.UNAUTHORIZED.value());
+//        response.getWriter().write("Unauthorized: Missing or invalid Bearer token");
     }
 
     @Override
@@ -86,107 +96,82 @@ public class ApiKeyFilter extends OncePerRequestFilter {
         log.info("Request Path = {}", path);
         log.info("Method = {}", method);
 
-        // Swagger, 정적 자원, 로그인/회원가입 예외 처리
-        return
-                // api가 아니면 모두 통과
-                !path.startsWith("/api/") ||
-                        (path.startsWith("/api/users/register") && method.equals("POST")) ||
-                        (path.startsWith("/api/auth/login") && method.equals("POST")) ||
-                        (path.startsWith("/api/auth/kakao") && method.equals("POST")) ||
-                        (path.startsWith("/api/admin/login") && method.equals("POST")) ||
-                        (path.startsWith("/login")) ||
-                        (path.startsWith("/js/")) ||
-                        (path.startsWith("/web/users/") && method.equals("POST")) ||
+        // 정적 리소스 및 Swagger
+        if (path.startsWith("/swagger-ui") ||
+                path.startsWith("/swagger-resources") ||
+                path.startsWith("/webjars") ||
+                path.equals("/api-docs") ||
+                path.equals("/api-docs/swagger-config") ||
+                path.equals("/favicon.ico") ||
+                path.startsWith("/css/") || path.startsWith("/js/") || path.startsWith("/img/")) {
+            return true;
+        }
 
+        // 로그인, 회원가입 관련
+        if (path.equals("/login") || path.equals("/admin/login") || path.equals("/register") ||
+                path.startsWith("/login/oauth2") ||
+                (path.equals("/api/auth/login") && method.equals("POST")) ||
+                (path.equals("/api/users/register") && method.equals("POST")) ||
+                (path.startsWith("/web/users/") && method.equals("POST"))) {
+            return true;
+        }
 
-                        // 물때/api/admin/station
-                        (path.startsWith("/api/multtae/") && method.equals("GET")) ||
-                        (path.startsWith("/api/admin/station") && method.equals("POST")) ||
+        // 공개 API 허용 목록
+        if ((path.equals("/api/users/me") && method.equals("GET")) ||
+                (path.equals("/api/mypage/me") && method.equals("GET")) ||
+                (path.startsWith("/api/multtae") && method.equals("GET")) ||
+                (path.equals("/multtae") || path.startsWith("/multtae/")) ||
+                (path.equals("/api/admin/station") && method.equals("POST")) ||
+                (path.equals("/admin/registration") && method.equals("GET"))) {
+            return true;
+        }
 
-                        // 공지사항 admin/notices 추후 삭제
-                        (path.startsWith("/api/notices") && method.equals("GET")) ||
-                        (path.startsWith("/api/admin/notices") && method.equals("POST")) ||
-                        (path.startsWith("/api/admin/notices") && method.equals("DELETE")) ||
+        // 공지사항/FAQ/이벤트 조회 API는 허용 (읽기 전용)admin/faq-categories
+        if ((path.startsWith("/api/notices") || path.startsWith("/api/event") || path.startsWith("/api/faq")) &&
+                method.equals("GET")) {
+            return true;
+        }
 
-                        // 이벤트 admin/event 추후 삭제
-                        (path.startsWith("/api/event") && method.equals("GET")) ||
-                        (path.startsWith("/api/admin/event") && method.equals("POST")) ||
-                        (path.startsWith("/api/admin/event") && method.equals("DELETE")) ||
+        // 알림 API 허용 목록
+        if ((path.startsWith("/api/notifications") && method.equals("POST")) ||
+                (path.matches("/api/notifications/.*/read") && method.equals("PUT")) ||
+                (path.matches("/api/notifications/.+") && (method.equals("GET") || method.equals("DELETE"))) ||
+                (path.matches("/api/notifications/user/.+") && method.equals("GET"))) {
+            return true;
+        }
 
-                        // 자주하는질문 /admin/faq 추후 삭제
-                        (path.startsWith("/api/faq") && method.equals("GET")) ||
-                        (path.startsWith("/api/admin/faq") && method.equals("POST")) ||
-                        (path.startsWith("/api/admin/faq") && method.equals("DELETE")) ||
+        // 상품 조회/생성 허용
+        if ((path.matches("/api/product/getAll") && method.equals("GET")) ||
+                (path.matches("/api/product/get/.+") && method.equals("GET")) ||
+                (path.matches("/api/product/create") && method.equals("POST"))) {
+            return true;
+        }
 
-                        // 이미지테스트 /api/admin/image 추후 삭제
-                        (path.startsWith("/api/admin/image") && method.equals("POST")) ||
+        // 조황 정보 조회/등록 허용
+        if ((path.matches("/api/fishing-report/get-all") && method.equals("GET")) ||
+                (path.matches("/api/fishing-report/get/.+") && method.equals("GET")) ||
+                (path.matches("/api/fishing-reports") && method.equals("GET")) ||
+                (path.matches("/api/fishing-report/create") && method.equals("POST"))) {
+            return true;
+        }
 
+        // 예약 전체 조회
+        if ((path.equals("/api/reservation/all") && method.equals("GET")) ||
+                (path.equals("/api/reservation/get") && method.equals("GET"))) {
+            return true;
+        }
 
-                        // 알림 생성 로직
-                        (path.startsWith("/api/notifications") && method.equals("POST")) ||
-                        // PUT - 알림 읽음 처리
-                        (path.matches("/api/notifications/.*/read") && method.equals("PUT")) ||
-                        // GET - 특정 알림 조회
-                        (path.matches("/api/notifications/.+") && method.equals("GET")) ||
-                        // DELETE - 특정 알림 삭제
-                        (path.matches("/api/notifications/.+") && method.equals("DELETE")) ||
-                        // GET - 특정 유저의 알림 조회
-                        (path.matches("/api/notifications/user/.+") && method.equals("GET")) ||
-// GET - 이름 전화번호 유저 아이디 조회
-                        (path.matches("/api/admin/register") && method.equals("POST")) ||
-                        // GET - 특정 유저 수정
-                        (path.matches("/api/admin/.+") && method.equals("PUT")) ||
-                        // DELETE - 특정 유저 아이디 삭제
-                        (path.matches("/api/admin/.+") && method.equals("DELETE")) ||
-                        // GET - 특정 유저  상세조회
-                        (path.matches("/api/admin/.+") && method.equals("GET")) ||
+        // 관리자 회원가입 관련
+        if ((path.equals("/api/admin/register") && method.equals("POST")) ||
+                (path.equals("/api/admin/login") && method.equals("POST"))) {
+            return true;
+        }
 
-                        (path.matches("/api/admin") && method.equals("GET")) ||
+        if (path.equals("/admin/api-keys/new") && method.equals("POST")) {
+            return true;
+        }
 
-                        (path.matches("/api/reservation/all") && method.equals("GET")) ||
-
-                        (path.matches("/api/reservation/get") && method.equals("GET")) ||
-
-                        (path.matches("/api/reports/create") && method.equals("POST")) ||
-
-                        (path.equals("/register") && method.equals("POST")) ||
-                        (path.equals("/admin/registration") && method.equals("GET")) ||
-
-                        // 상품 어종별 R
-                        (path.matches("api/product-fish-species/all") && method.equals("GET")) ||
-                        (path.matches("api/product-fish-species/fishSpecies") && method.equals("GET")) ||
-
-                        // 상품 CRUD
-                        (path.matches("/api/product/create") && method.equals("POST")) ||
-                        (path.matches("/api/product/getAll") && method.equals("GET")) ||
-                        (path.matches("/api/product/get/.+") && method.equals("GET")) ||
-                        (path.matches("/api/product/update/.+") && method.equals("PUT")) ||
-                        (path.matches("/api/product/delete/.+") && method.equals("DELETE")) ||
-
-                        // 조황 CRUD
-                        (path.matches("/api/fishing-report/create") && method.equals("POST")) ||
-                        (path.matches("/api/fishing-report/get-all") && method.equals("GET")) ||
-                        (path.matches("/api/fishing-report/get/.+") && method.equals("GET")) ||
-                        (path.matches("/api/fishing-report/update/.+") && method.equals("PUT")) ||
-                        (path.matches("/api/fishing-report/delete/.+") && method.equals("DELETE")) ||
-                        // 조황정보 리스트 조회 (추가)
-                        (path.matches("/api/fishing-reports") && method.equals("GET")) ||
-
-                        // 조행기 CRUD
-                        (path.matches("/api/fishing-diary/create") && method.equals("POST")) ||
-                        (path.matches("/api/fishing-diary/get-all") && method.equals("GET")) ||
-                        (path.matches("/api/fishing-diary/get/.+") && method.equals("GET")) ||
-                        (path.matches("/api/fishing-diary/update/.+") && method.equals("PUT")) ||
-                        (path.matches("/api/fishing-diary/delete/.+") && method.equals("DELETE")) ||
-                        // 조황정보 리스트 조회 (추가)
-                        (path.matches("/api/fishing-diary") && method.equals("GET")) ||
-
-
-                        (path.startsWith("/api/users/me") && method.equals("GET")) ||
-                        // GET - 이름으로 유저 개인정보  조회
-                        (path.matches("/api/mypage/me") && method.equals("GET"));
-
-
-
+        // api가 아닌 경로는 필터 적용하지 않음
+        return !path.startsWith("/api/");
     }
 }
