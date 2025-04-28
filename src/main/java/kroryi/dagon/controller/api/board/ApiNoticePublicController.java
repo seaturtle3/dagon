@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@Tag(name = "4-10. Notice", description = "공지사항 사용자 조회 API")
+@Tag(name = "Board-Notice", description = "사용자 공지사항 조회 API")
 @RequestMapping("/api/notices")
 public class ApiNoticePublicController {
 

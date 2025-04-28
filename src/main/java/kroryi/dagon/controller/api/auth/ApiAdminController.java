@@ -27,7 +27,7 @@ import java.util.Map;
 @RequestMapping("/api/admin")
 @RequiredArgsConstructor
 @Log4j2
-@Tag(name = "1-2. Admin", description = "관리자 인증 및 사용자 관리 API")
+@Tag(name = "Admin", description = "관리자 인증 및 회원 관리 API")
 public class ApiAdminController {
 
     private final AdminService adminService;

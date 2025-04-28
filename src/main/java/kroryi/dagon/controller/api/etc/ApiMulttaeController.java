@@ -33,7 +33,7 @@ import java.util.stream.IntStream;
 @Log4j2
 @RestController
 @RequiredArgsConstructor
-@Tag(name = "5-2. Multtae", description = "물때, 기상 정보 통합 API")
+@Tag(name = "Board-Multtae", description = "물때/기상 통합 조회 API")
 
 @RequestMapping("/api/multtae")
 public class ApiMulttaeController {

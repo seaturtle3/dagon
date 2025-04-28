@@ -21,7 +21,7 @@ import java.nio.file.StandardCopyOption;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.UUID;
-@Tag(name = "5-5. ImageUpload", description = "이미지 업로드/조회 API")
+@Tag(name = "Etc-ImageUpload", description = "이미지 업로드 및 조회 API")
 
 @RestController
 @Log4j2
