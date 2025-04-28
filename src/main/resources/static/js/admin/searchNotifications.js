@@ -41,7 +41,7 @@ function searchNotifications(page = 0, size = 10) {
 
             if (data.content.length === 0) {
                 const noDataRow = document.createElement('tr');
-                noDataRow.innerHTML = `<td colspan="6" class="text-center text-gray-500">검색된 알림이 없습니다.</td>`;
+                noDataRow.innerHTML = `<td colspan="7" class="text-center text-gray-500">검색된 알림이 없습니다.</td>`;
                 tableBody.appendChild(noDataRow);
             } else {
                 data.content.forEach(notification => {

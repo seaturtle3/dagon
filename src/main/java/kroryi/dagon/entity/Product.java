@@ -1,5 +1,6 @@
 package kroryi.dagon.entity;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import kroryi.dagon.enums.MainType;
 import kroryi.dagon.enums.ProdRegion;
@@ -30,14 +31,18 @@ public class Product extends BaseTimeEntity {
     private String prodName;
 
     @Enumerated(EnumType.STRING)
+    @Schema(description = "지역", enumAsRef = true)
     @Column(name = "prod_region", nullable = false)
     private ProdRegion prodRegion;
 
     @Enumerated(EnumType.STRING)
+    @Schema(description = "바다/민물")
     @Column(name = "main_type", nullable = false)
     private MainType mainType;
 
+    
     @Enumerated(EnumType.STRING)
+    @Schema(description = "바다/민물 세부 사항")
     @Column(name = "sub_type", nullable = false)
     private SubType subType;
 

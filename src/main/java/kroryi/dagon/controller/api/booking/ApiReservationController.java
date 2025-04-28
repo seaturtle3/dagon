@@ -1,8 +1,8 @@
-package kroryi.dagon.controller.api;
+package kroryi.dagon.controller.api.booking;
 
 import io.jsonwebtoken.Claims;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import kroryi.dagon.DTO.ReservationDTO;
 import kroryi.dagon.component.CustomUserDetails;
 import kroryi.dagon.service.SeaFreshwaterFishingService;
@@ -19,6 +19,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
+@Tag(name = "3-1. Reservation", description = "예약 관리 API")
 @RequestMapping("/api/reservation")
 @Log4j2
 public class ApiReservationController {

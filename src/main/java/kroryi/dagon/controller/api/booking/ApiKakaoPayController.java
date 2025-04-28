@@ -1,6 +1,7 @@
-package kroryi.dagon.controller.api;
+package kroryi.dagon.controller.api.booking;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import kroryi.dagon.DTO.KakaoPayDTO;
 import kroryi.dagon.service.KakaoPayService;
 import lombok.RequiredArgsConstructor;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+@Tag(name = "3-2. KakaoPay", description = "카카오페이 결제 API")
 @RequestMapping("/api/kakaopay")
 @RequiredArgsConstructor
 public class ApiKakaoPayController {

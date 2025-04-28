@@ -1,6 +1,7 @@
-package kroryi.dagon.controller.api;
+package kroryi.dagon.controller.api.booking;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import kroryi.dagon.DTO.PaymentsDTO;
 import kroryi.dagon.service.PaymentsCrudService;
 import lombok.RequiredArgsConstructor;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+@Tag(name = "3-4. Payments(KG Inicis)", description = "KG이니시스 결제 CRUD API")
 @RequestMapping("/api/payments")
 @RequiredArgsConstructor
 public class ApiPaymentsCrudController {

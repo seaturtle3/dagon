@@ -1,6 +1,7 @@
 package kroryi.dagon.controller.api.board;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import kroryi.dagon.DTO.board.NoticeRequestDTO;
 import kroryi.dagon.DTO.board.NoticeResponseDTO;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
+@Tag(name = "4-9. Notice(Admin)", description = "공지사항 관리자 기능 API")
 @RequestMapping("/api/admin/notices")
 public class ApiNoticeAdminController {
 

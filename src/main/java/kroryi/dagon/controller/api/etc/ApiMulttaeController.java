@@ -1,7 +1,7 @@
-package kroryi.dagon.controller.api.multtae;
+package kroryi.dagon.controller.api.etc;
 
 import io.swagger.v3.oas.annotations.Operation;
-import jakarta.annotation.PostConstruct;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import kroryi.dagon.DTO.multtae.*;
 import kroryi.dagon.component.LunarApiClient;
 import kroryi.dagon.component.MarineWeatherApiClient;
@@ -33,6 +33,8 @@ import java.util.stream.IntStream;
 @Log4j2
 @RestController
 @RequiredArgsConstructor
+@Tag(name = "5-2. Multtae", description = "물때, 기상 정보 통합 API")
+
 @RequestMapping("/api/multtae")
 public class ApiMulttaeController {
 

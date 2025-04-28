@@ -93,6 +93,7 @@ public class ApiKeyFilter extends OncePerRequestFilter {
                         (path.startsWith("/api/users/register") && method.equals("POST")) ||
                         (path.startsWith("/api/auth/login") && method.equals("POST")) ||
                         (path.startsWith("/api/auth/kakao") && method.equals("POST")) ||
+                        (path.startsWith("/api/admin/login") && method.equals("POST")) ||
                         (path.startsWith("/login")) ||
                         (path.startsWith("/js/")) ||
                         (path.startsWith("/web/users/") && method.equals("POST")) ||
@@ -151,6 +152,10 @@ public class ApiKeyFilter extends OncePerRequestFilter {
                         (path.equals("/register") && method.equals("POST")) ||
                         (path.equals("/admin/registration") && method.equals("GET")) ||
 
+                        // 상품 어종별 R
+                        (path.matches("api/product-fish-species/all") && method.equals("GET")) ||
+                        (path.matches("api/product-fish-species/fishSpecies") && method.equals("GET")) ||
+
                         // 상품 CRUD
                         (path.matches("/api/product/create") && method.equals("POST")) ||
                         (path.matches("/api/product/getAll") && method.equals("GET")) ||
@@ -167,6 +172,14 @@ public class ApiKeyFilter extends OncePerRequestFilter {
                         // 조황정보 리스트 조회 (추가)
                         (path.matches("/api/fishing-reports") && method.equals("GET")) ||
 
+                        // 조행기 CRUD
+                        (path.matches("/api/fishing-diary/create") && method.equals("POST")) ||
+                        (path.matches("/api/fishing-diary/get-all") && method.equals("GET")) ||
+                        (path.matches("/api/fishing-diary/get/.+") && method.equals("GET")) ||
+                        (path.matches("/api/fishing-diary/update/.+") && method.equals("PUT")) ||
+                        (path.matches("/api/fishing-diary/delete/.+") && method.equals("DELETE")) ||
+                        // 조황정보 리스트 조회 (추가)
+                        (path.matches("/api/fishing-diary") && method.equals("GET")) ||
 
 
                         (path.startsWith("/api/users/me") && method.equals("GET")) ||

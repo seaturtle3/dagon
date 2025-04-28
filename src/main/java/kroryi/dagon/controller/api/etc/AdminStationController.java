@@ -1,6 +1,7 @@
-package kroryi.dagon.controller.api.multtae;
+package kroryi.dagon.controller.api.etc;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import kroryi.dagon.service.multtae.StationLinkService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -10,6 +11,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
+@Tag(name = "5-1. Station(Admin)", description = "관측소 연결 초기화 API")
+
 @RequestMapping("/api/admin/station")
 public class AdminStationController {
 

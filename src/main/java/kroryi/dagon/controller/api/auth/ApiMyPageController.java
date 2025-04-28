@@ -1,8 +1,8 @@
-package kroryi.dagon.controller.api;
+package kroryi.dagon.controller.api.auth;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import kroryi.dagon.DTO.PasswordFormDTO;
-import kroryi.dagon.DTO.ReservationDTO;
 import kroryi.dagon.DTO.UsersDTO;
 import kroryi.dagon.component.CustomUserDetails;
 import kroryi.dagon.entity.User;
@@ -23,6 +23,7 @@ import java.util.Map;
 @RequestMapping("/api/mypage")
 @RequiredArgsConstructor
 @Log4j2
+@Tag(name = "1-4. MyPage", description = "마이페이지(정보 수정/포인트 등) API")
 public class ApiMyPageController {
 
     private final MyPageService myPageService;

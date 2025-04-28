@@ -1,6 +1,7 @@
 package kroryi.dagon.controller.api.board;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import kroryi.dagon.DTO.board.FishingDiaryDTO;
 import kroryi.dagon.DTO.board.FishingReportDTO;
 import kroryi.dagon.entity.FishingDiary;
@@ -14,6 +15,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
+@Tag(name = "4-7. FishingDiary", description = "조행기 게시판 API")
 @RequestMapping("/api/fishing-diary")
 public class ApiFishingDiaryController {
 
@@ -33,15 +35,15 @@ public class ApiFishingDiaryController {
 
     @Operation(summary = "조행기 ID 조회")
     @GetMapping("/get/{id}")
-    public FishingDiary getFishingDiary(@PathVariable Long fdId) {
-        return fishingDiaryService.getFishingDiary(fdId);
+    public FishingDiary getFishingDiary(@PathVariable Long id) {
+        return fishingDiaryService.getFishingDiary(id);
     }
 
     @Operation(summary = "조행기 수정")
     @PutMapping("/update/{id}")
-    public Long updateFishingDiary(@PathVariable("id") Long fdId,
+    public Long updateFishingDiary(@PathVariable Long id,
                                    @RequestBody FishingDiaryDTO fishingDiaryDTO) {
-        return fishingDiaryService.updateFishingDiary(fdId, fishingDiaryDTO);
+        return fishingDiaryService.updateFishingDiary(id, fishingDiaryDTO);
     }
 
     @Operation(summary = "조행기 삭제")

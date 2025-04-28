@@ -1,10 +1,10 @@
-package kroryi.dagon.controller.api;
+package kroryi.dagon.controller.api.auth;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import kroryi.dagon.DTO.AdminDTO;
 import kroryi.dagon.DTO.UsersDTO;
 import kroryi.dagon.service.AdminService;
-import kroryi.dagon.service.UserService;
 import kroryi.dagon.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -27,11 +27,12 @@ import java.util.Map;
 @RequestMapping("/api/admin")
 @RequiredArgsConstructor
 @Log4j2
+@Tag(name = "1-2. Admin", description = "관리자 인증 및 사용자 관리 API")
 public class ApiAdminController {
 
     private final AdminService adminService;
     private final JwtUtil jwtUtil;
-    private final AuthenticationManager authenticationManager;
+    private final AuthenticationManager adminAuthenticationManager;
 
 
     @PostMapping("/register")
@@ -47,20 +48,21 @@ public class ApiAdminController {
     @PostMapping("/login")
     public ResponseEntity<Map<String, String>> adminLogin(@RequestBody AdminDTO adminLoginDTO) {
         try {
-            Authentication authentication = authenticationManager.authenticate(
+            Authentication authentication = adminAuthenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(adminLoginDTO.getAid(), adminLoginDTO.getApw())
             );
 
-            // 인증이 성공하면 JWT 생성
             SecurityContextHolder.getContext().setAuthentication(authentication);
+
             String token = jwtUtil.generateToken(adminLoginDTO.getAid(), 0L, "admin", "admin");
 
             Map<String, String> response = new HashMap<>();
-            response.put("token", token);  // JSON 응답 반환
+            response.put("token", token);
 
             return ResponseEntity.ok(response);
         } catch (BadCredentialsException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Collections.singletonMap("message", "잘못된 관리자 아이디나 비밀번호입니다."));
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Collections.singletonMap("message", "잘못된 관리자 아이디나 비밀번호입니다."));
         }
     }
 
