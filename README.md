@@ -9,6 +9,28 @@
 
 ## 팀원구성
 
+<table align="center">
+  <tr>
+    <td align="center" style="padding: 20px;">
+      <img src="https://i.imgur.com/U3vTGjX.png" width="100"/><br/>
+      <b>장은정</b>
+    </td>
+    <td align="center" style="padding: 20px;">
+      <img src="https://images.unsplash.com/photo-1593085512500-5d55148d6f0d?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8JUVDJUJBJTkwJUVCJUE2JUFEJUVEJTg0JUIwfGVufDB8fDB8fHww" width="100"/><br/>
+      <b>손강하</b>
+    </td>
+    <td align="center" style="padding: 20px;">
+      <img src="https://i.imgur.com/oYiTqum.png" width="100"/><br/>
+      <b>강진석</b>
+    </td>
+    <td align="center" style="padding: 20px;">
+      <img src="https://i.imgur.com/VSEpKcY.png" width="100"/><br/>
+      <b>박준하</b>
+    </td>
+  </tr>
+</table>
+
+
 ## 역할분담
 
 ### 🧑 장은정  
