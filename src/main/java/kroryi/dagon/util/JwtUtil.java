@@ -42,7 +42,7 @@ public class JwtUtil {
 
         return Jwts.builder()
                 .setSubject(user.getUid())
-                .claim("uno", String.valueOf(user.getUno()))
+                .claim("uno", user.getUno())
                 .claim("uname", user.getUname())
                 .claim("nickname", user.getNickname())
                 .claim("email", user.getEmail())
@@ -97,8 +97,10 @@ public class JwtUtil {
 
     public Long getUnoFromToken(String token) {
         Claims claims = parseToken(token);
-        String unoStr = claims.get("uno", String.class);
-        return Long.parseLong(unoStr);
+        Object unoObj = claims.get("uno");
+        log.info("uno claim type: {}", unoObj.getClass().getName());
+        log.info("uno value: {}", unoObj);
+        return ((Number) unoObj).longValue(); // 안전하게 형변환
     }
 
     // isValidToken: 토큰이 유효한지 확인하는 메서드
