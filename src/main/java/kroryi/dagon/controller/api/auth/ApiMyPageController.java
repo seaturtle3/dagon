@@ -29,12 +29,12 @@ public class ApiMyPageController {
     private final MyPageService myPageService;
     private final FileStorageService fileStorageService;
 
-    // 내 정보 조회
+//     내 정보 조회
     @PostMapping("")
     @Operation(summary = "내 정보", description = "내 정보")
     public ResponseEntity<UsersDTO> getMyPage(@AuthenticationPrincipal CustomUserDetails userDetails) {
 
-        log.info("--> {}",userDetails.getUsername());
+        log.info("--> {}",userDetails.getUname());
 
         UsersDTO dto = myPageService.findUserInfo(userDetails.getUno()); // 서비스에서 조회
         return ResponseEntity.ok(dto);
@@ -60,6 +60,8 @@ public class ApiMyPageController {
             @RequestParam String phone3,
             @RequestParam(required = false) MultipartFile profileImage
     ) {
+
+        log.info("2222222222222222222 {}", userDetails);
         String fullPhone = phone1 + "-" + phone2 + "-" + phone3;
         User user = myPageService.findByUno(userDetails.getUno());  // findByUno()로 사용자 엔티티 조회
 

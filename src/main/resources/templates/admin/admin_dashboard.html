@@ -50,6 +50,7 @@
         <div class="sidebar-item" id="event-link">이벤트</div>
         <div class="sidebar-item" id="notice-link">공지사항</div>
         <div class="sidebar-item" id="faq-link">FAQ</div>
+        <div class="sidebar-item" id="authButtons">로그아웃</div>
 
 
         <div class="sidebar-item" onclick="toggleSubmenu('api-submenu')">API 문서 ▼</div>
@@ -189,7 +190,6 @@
         <!-- 신고 목록 -->
         <div id="report-list" class="page">
             <h1>신고 목록</h1>
-            <button onclick="openReportPopup()">신고하기</button>
             <div class="search-container">
                 <label>검색 기준:</label>
                 <select id="report-search-type">
@@ -368,6 +368,8 @@
     });
 
 
+
+
     function toggleSubmenu(id) {
         const submenu = document.getElementById(id);
         submenu.style.display = (submenu.style.display === "none") ? "block" : "none";
@@ -403,14 +405,16 @@
 
 
 <script>
+
+
     const pages = document.querySelectorAll('.page');
     const links = {
         'dashboard-link': 'dashboard',
         'user-info-link': 'user-info',
         'partner-list-link': 'partner-list',
         'notification-link': 'notifications',
-        'report-link' : 'report-list',
-        'event-link' : 'event-list',
+        'report-link': 'report-list',
+        'event-link': 'event-list',
         'notice-link': 'notice-list',
         'faq-link': 'faq-page'
     };
@@ -421,6 +425,7 @@
             document.getElementById(links[linkId]).classList.add('visible');
         });
     });
+
     function openFaqManage() {
         window.open('/faq', '_blank');
     }
@@ -456,6 +461,42 @@
                 document.getElementById("application-count").innerText = data.totalApplications;
                 document.getElementById("approved-count").innerText = data.approvedPartners;
             });
+    });
+
+        document.addEventListener("DOMContentLoaded", () => {
+        const authToken = localStorage.getItem("authToken");
+        const authButtons = document.getElementById("authButtons");
+
+        if (authToken) {
+        // 로그인 상태일 때 로그아웃 버튼 클릭 이벤트 부여
+        authButtons.style.cursor = "pointer"; // 마우스 커서 표시
+        authButtons.addEventListener("click", async () => {
+        try {
+        const response = await fetch("/api/auth/logout", {
+        method: "POST",
+        headers: {
+        "Authorization": "Bearer " + authToken
+    }
+    });
+
+        localStorage.removeItem("authToken");
+
+        if (response.ok) {
+        alert("로그아웃 되었습니다.");
+    } else {
+        console.warn("로그아웃 실패:", await response.text());
+    }
+
+        window.location.href = "/admin/login";
+    } catch (err) {
+        console.error("로그아웃 요청 실패:", err);
+        localStorage.removeItem("authToken");
+    }
+    });
+    } else {
+        // 비로그인 상태이면 로그아웃 버튼 숨김
+        authButtons.style.display = "none";
+    }
     });
 
 

@@ -30,5 +30,22 @@ public class AdminController {
     public String adminDashboard() {
         return "admin/admin_dashboard";
     }
+
+    /**
+     * API Key 생성
+     */
+    @GetMapping("/api-keys/new")
+    public String newApiKey() {
+
+        return "/admin/create-api-key";
+    }
+
+    @GetMapping("/api-keys/list")
+    public String listApiKey() {
+
+        return "/admin/list-api-keys";
+    }
+
+
 }
 
