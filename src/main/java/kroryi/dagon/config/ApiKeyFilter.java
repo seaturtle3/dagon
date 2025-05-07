@@ -152,16 +152,15 @@ public class ApiKeyFilter extends OncePerRequestFilter {
                         (path.equals("/register") && method.equals("POST")) ||
                         (path.equals("/admin/registration") && method.equals("GET")) ||
 
-                        // 상품 어종별 R
-                        (path.matches("api/product-fish-species/all") && method.equals("GET")) ||
-                        (path.matches("api/product-fish-species/fishSpecies") && method.equals("GET")) ||
-
                         // 상품 CRUD
                         (path.matches("/api/product/create") && method.equals("POST")) ||
                         (path.matches("/api/product/getAll") && method.equals("GET")) ||
                         (path.matches("/api/product/get/.+") && method.equals("GET")) ||
                         (path.matches("/api/product/update/.+") && method.equals("PUT")) ||
                         (path.matches("/api/product/delete/.+") && method.equals("DELETE")) ||
+                        // 상품 어종별 R
+                        (path.matches("api/product-fish-species/all") && method.equals("GET")) ||
+                        (path.matches("api/product-fish-species/fishSpecies") && method.equals("GET")) ||
 
                         // 조황 CRUD
                         (path.matches("/api/fishing-report/create") && method.equals("POST")) ||
