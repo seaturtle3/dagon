@@ -1,4 +1,4 @@
-package kroryi.dagon.service;
+package kroryi.dagon.service.board.fishingReportDiary;
 
 
 import kroryi.dagon.DTO.CommentDTO;
@@ -8,6 +8,7 @@ import kroryi.dagon.entity.User;
 import kroryi.dagon.repository.FishingDiaryCommentRepository;
 import kroryi.dagon.repository.UserRepository;
 import kroryi.dagon.repository.board.FishingDiaryRepository;
+import kroryi.dagon.service.CommentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

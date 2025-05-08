@@ -1,12 +1,9 @@
 package kroryi.dagon.controller.board;
 
 import kroryi.dagon.DTO.board.FishingDiaryDTO;
-import kroryi.dagon.DTO.board.FishingReportDTO;
-import kroryi.dagon.entity.FishingDiary;
 import kroryi.dagon.entity.Product;
-import kroryi.dagon.service.FishingDiaryService;
-import kroryi.dagon.service.FishingReportService;
-import kroryi.dagon.service.ProductService;
+import kroryi.dagon.service.board.fishingReportDiary.FishingDiaryService;
+import kroryi.dagon.service.product.ProductService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Controller;

@@ -1,4 +1,4 @@
-package kroryi.dagon.service;
+package kroryi.dagon.service.board.fishingReportDiary;
 
 import kroryi.dagon.DTO.board.FishingReportDTO;
 import kroryi.dagon.entity.FishingReport;
@@ -14,18 +14,10 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class FishingReportService {
+public class ApiFishingReportService {
 
     private final FishingReportRepository fishingReportRepository;
     private final UserRepository userRepository;
-
-    // ProdId 찾기
-    public List<FishingReportDTO> getFishingReportsByProdId(Long prodId) {
-        List<FishingReport> reports = fishingReportRepository.findByProductProdId(prodId);
-        return reports.stream()
-                .map(FishingReportDTO::new)
-                .collect(Collectors.toList());
-    }
 
     public FishingReportDTO createFishingReport(FishingReportDTO fishingReportDTO) {
         FishingReport fishingReport = new FishingReport();
@@ -51,14 +43,14 @@ public class FishingReportService {
         return new FishingReportDTO(fishingReport);
     }
 
-    public List<FishingReportDTO> getAllFishingReport() {
+    public List<FishingReportDTO> getAllFishingReports() {
         List<FishingReport> fishingReports = fishingReportRepository.findAllWithComments();
         return fishingReports.stream()
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
     }
 
-    public FishingReport getFishingReport(@PathVariable Long fdId) {
+    public FishingReport getFishingReportById(@PathVariable Long fdId) {
         return fishingReportRepository.findById(fdId)
                 .orElseThrow(() -> new RuntimeException("조황정보를 찾을 수 없습니다."));
     }

@@ -3,11 +3,8 @@ package kroryi.dagon.controller.api.board;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import kroryi.dagon.DTO.board.FishingDiaryDTO;
-import kroryi.dagon.DTO.board.FishingReportDTO;
 import kroryi.dagon.entity.FishingDiary;
-import kroryi.dagon.entity.FishingReport;
-import kroryi.dagon.service.FishingDiaryService;
-import kroryi.dagon.service.FishingReportService;
+import kroryi.dagon.service.board.fishingReportDiary.FishingDiaryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
