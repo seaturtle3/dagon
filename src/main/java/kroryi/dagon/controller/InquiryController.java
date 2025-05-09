@@ -1,5 +1,7 @@
-package kroryi.dagon.controller;
+package kroryi.dagon.controller.board;
 
+import io.swagger.annotations.Api;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import kroryi.dagon.DTO.InquiryDTO;
 import kroryi.dagon.entity.Inquiry;
 import kroryi.dagon.enums.InquiryType;
@@ -17,13 +19,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+@Api(tags = {"1:1 문의 API 정보 제공 컨트롤러"})
+@RestController
 @Controller
 @RequiredArgsConstructor
+@Tag(name = "Board-Inquiry", description = "1:1 문의 CRUD API")
 public class InquiryController {
 
     private final InquiryService inquiryService;
     private final InquiryRepository inquiryRepository;
-
 
     @GetMapping("/inquiry")
     public String showInquiryForm(Model model) {
