@@ -1,15 +1,11 @@
-package kroryi.dagon.DTO.board;
+package kroryi.dagon.DTO.board.FishingReportDiary;
 
-import io.swagger.v3.oas.annotations.media.Schema;
 import kroryi.dagon.entity.FishingReport;
-import kroryi.dagon.entity.FishingReportComment;
-import kroryi.dagon.entity.Product;
-import kroryi.dagon.entity.User;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Data
 @NoArgsConstructor
@@ -18,29 +14,29 @@ public class ApiFishingReportDTO {
     private String title;
     private String content;
 
-    @Schema(hidden = true)
-    private User user;
-
-    @Schema(hidden = true)
-    private Product product;
-    private List<FishingReportComment> comments;
-    private String prodName;
-    private String userName;
-
-    public Long getProdId() {
-        return product != null ? product.getProdId() : null;
-    }
+    private ApiProductDTO product;
+    private ApiUserDTO user;
+    private List<ApiCommentDTO> comments;
 
     public ApiFishingReportDTO(FishingReport fishingReport) {
         this.frId = fishingReport.getFrId();
         this.title = fishingReport.getTitle();
         this.content = fishingReport.getContent();
 
-        this.user = fishingReport.getUser();
-        this.product = fishingReport.getProduct();
-        this.comments = fishingReport.getComments();
-        this.prodName = fishingReport.getProduct().getProdName();  // ✅ 이렇게
-        this.userName = fishingReport.getUser().getUname();  // ✅ 이렇게
+        if (fishingReport.getProduct() != null) {
+            this.product = new ApiProductDTO(fishingReport.getProduct());
+        }
+
+        if (fishingReport.getUser() != null) {
+            this.user = new ApiUserDTO(fishingReport.getUser());
+        }
+
+        if (fishingReport.getComments() != null) {
+            this.comments = fishingReport.getComments().stream()
+                    .map(ApiCommentDTO::new)
+                    .collect(Collectors.toList());
+        }
+
     }
 
 }

@@ -1,7 +1,11 @@
 package kroryi.dagon.service.board.fishingReportDiary;
 
-import kroryi.dagon.DTO.board.FishingReportDTO;
+import kroryi.dagon.DTO.board.FishingReportDiary.ApiCommentDTO;
+import kroryi.dagon.DTO.board.FishingReportDiary.ApiFishingReportDTO;
+import kroryi.dagon.DTO.board.FishingReportDiary.ApiProductDTO;
+import kroryi.dagon.DTO.board.FishingReportDiary.ApiUserDTO;
 import kroryi.dagon.entity.FishingReport;
+import kroryi.dagon.entity.Product;
 import kroryi.dagon.entity.User;
 import kroryi.dagon.repository.UserRepository;
 import kroryi.dagon.repository.board.FishingReportRepository;
@@ -19,16 +23,17 @@ public class ApiFishingReportService {
     private final FishingReportRepository fishingReportRepository;
     private final UserRepository userRepository;
 
-    public FishingReportDTO createFishingReport(FishingReportDTO fishingReportDTO) {
+    public ApiFishingReportDTO createFishingReport(ApiFishingReportDTO apiFishingReportDTO) {
         FishingReport fishingReport = new FishingReport();
-        fishingReport.setTitle(fishingReportDTO.getTitle());
-        fishingReport.setContent(fishingReportDTO.getContent());
-        fishingReport.setThumbnailUrl(fishingReportDTO.getThumbnailUrl());
-        fishingReport.setFishingAt(fishingReportDTO.getFishingAt());
-        fishingReport.setModifyAt(fishingReportDTO.getModifyAt());
-        fishingReport.setViews(fishingReportDTO.getViews());
-        fishingReport.setProduct(fishingReportDTO.getProduct());
-        fishingReport.setComments(fishingReportDTO.getComments());
+        fishingReport.setTitle(apiFishingReportDTO.getTitle());
+        fishingReport.setContent(apiFishingReportDTO.getContent());
+
+        // Product 객체 설정
+        Product product = new Product();
+        if (apiFishingReportDTO.getProduct() != null) {
+            product.setProdId(apiFishingReportDTO.getProduct().getProdId());
+            product.setProdName(apiFishingReportDTO.getProduct().getProdName());
+        }
 
         // 실제 로그인 후 유저 ID, 예약 상품 ID
 //        User user = userRepository.findById(fishingReportDTO.getUserId())
@@ -40,12 +45,12 @@ public class ApiFishingReportService {
         fishingReport.setUser(user);
 
         fishingReport = fishingReportRepository.save(fishingReport);
-        return new FishingReportDTO(fishingReport);
+        return new ApiFishingReportDTO(fishingReport);
     }
 
-    public List<FishingReportDTO> getAllFishingReports() {
-        List<FishingReport> fishingReports = fishingReportRepository.findAllWithComments();
-        return fishingReports.stream()
+    public List<ApiFishingReportDTO> getAllFishingReports() {
+        List<FishingReport> apiFishingReports = fishingReportRepository.findAllWithComments();
+        return apiFishingReports.stream()
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
     }
@@ -55,19 +60,22 @@ public class ApiFishingReportService {
                 .orElseThrow(() -> new RuntimeException("조황정보를 찾을 수 없습니다."));
     }
 
-    public Long updateFishingReport(Long fdId, FishingReportDTO fishingReportDTO) {
+    public Long updateFishingReport(Long fdId, ApiFishingReportDTO apiFishingReportDTO) {
         FishingReport fishingReport = fishingReportRepository.findById(fdId)
                 .orElseThrow(() -> new RuntimeException("조황정보 없음"));
 
-        fishingReport.setTitle(fishingReportDTO.getTitle());
-        fishingReport.setContent(fishingReportDTO.getContent());
-        fishingReport.setThumbnailUrl(fishingReportDTO.getThumbnailUrl());
-        fishingReport.setFishingAt(fishingReportDTO.getFishingAt());
-        fishingReport.setModifyAt(fishingReportDTO.getModifyAt());
-        fishingReport.setViews(fishingReportDTO.getViews());
-        fishingReport.setUser(fishingReportDTO.getUser());
-        fishingReport.setProduct(fishingReportDTO.getProduct());
-        fishingReport.setComments(fishingReportDTO.getComments());
+        fishingReport.setTitle(apiFishingReportDTO.getTitle());
+        fishingReport.setContent(apiFishingReportDTO.getContent());
+
+        // User 객체 설정
+        User user = userRepository.findById(apiFishingReportDTO.getUser().getUno())
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+        fishingReport.setUser(user);
+
+        // Product 객체 설정
+        Product product = new Product();
+        product.setProdId(apiFishingReportDTO.getProduct().getProdId());
+        fishingReport.setProduct(product);
 
         fishingReportRepository.save(fishingReport);
 
@@ -79,18 +87,23 @@ public class ApiFishingReportService {
     }
 
 
-    public FishingReportDTO convertToDTO(FishingReport fishingReport) {
-        FishingReportDTO dto = new FishingReportDTO();
+    public ApiFishingReportDTO convertToDTO(FishingReport fishingReport) {
+        ApiFishingReportDTO dto = new ApiFishingReportDTO();
         dto.setFrId(fishingReport.getFrId());
         dto.setTitle(fishingReport.getTitle());
         dto.setContent(fishingReport.getContent());
-        dto.setThumbnailUrl(fishingReport.getThumbnailUrl());
-        dto.setFishingAt(fishingReport.getFishingAt());
-        dto.setModifyAt(fishingReport.getModifyAt());
-        dto.setViews(fishingReport.getViews());
-        dto.setUser(fishingReport.getUser());
-        dto.setProduct(fishingReport.getProduct());
-        dto.setComments(fishingReport.getComments());
+
+        ApiUserDTO userDTO = new ApiUserDTO(fishingReport.getUser());
+        dto.setUser(userDTO);
+
+        // Product 객체 변환
+        ApiProductDTO productDTO = new ApiProductDTO(fishingReport.getProduct());
+        dto.setProduct(productDTO);
+
+        List<ApiCommentDTO> commentDTOs = fishingReport.getComments().stream()
+                .map(ApiCommentDTO::new)
+                .collect(Collectors.toList());
+        dto.setComments(commentDTOs);
 
         return dto;
     }

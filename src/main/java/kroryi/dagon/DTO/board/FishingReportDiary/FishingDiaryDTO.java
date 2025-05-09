@@ -1,4 +1,4 @@
-package kroryi.dagon.DTO.board;
+package kroryi.dagon.DTO.board.FishingReportDiary;
 
 import kroryi.dagon.entity.*;
 import lombok.Data;

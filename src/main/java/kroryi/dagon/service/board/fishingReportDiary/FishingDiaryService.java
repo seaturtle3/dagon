@@ -1,6 +1,6 @@
 package kroryi.dagon.service.board.fishingReportDiary;
 
-import kroryi.dagon.DTO.board.FishingDiaryDTO;
+import kroryi.dagon.DTO.board.FishingReportDiary.FishingDiaryDTO;
 import kroryi.dagon.entity.FishingDiary;
 import kroryi.dagon.entity.Product;
 import kroryi.dagon.entity.User;

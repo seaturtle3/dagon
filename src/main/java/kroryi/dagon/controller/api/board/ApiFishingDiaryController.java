@@ -2,7 +2,7 @@ package kroryi.dagon.controller.api.board;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import kroryi.dagon.DTO.board.FishingDiaryDTO;
+import kroryi.dagon.DTO.board.FishingReportDiary.FishingDiaryDTO;
 import kroryi.dagon.entity.FishingDiary;
 import kroryi.dagon.service.board.fishingReportDiary.FishingDiaryService;
 import lombok.RequiredArgsConstructor;

@@ -2,10 +2,9 @@ package kroryi.dagon.controller.api.board;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import kroryi.dagon.DTO.board.FishingReportDTO;
+import kroryi.dagon.DTO.board.FishingReportDiary.ApiFishingReportDTO;
 import kroryi.dagon.entity.FishingReport;
 import kroryi.dagon.service.board.fishingReportDiary.ApiFishingReportService;
-import kroryi.dagon.service.board.fishingReportDiary.FishingReportService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,13 +20,13 @@ public class ApiFishingReportController {
 
     @Operation(summary = "조황정보 생성")
     @PostMapping("/create")
-    public FishingReportDTO createFishingReport(@RequestBody FishingReportDTO fishingReportDTO) {
-        return apiFishingReportService.createFishingReport(fishingReportDTO);
+    public ApiFishingReportDTO createFishingReport(@RequestBody ApiFishingReportDTO apiFishingReportDTO) {
+        return apiFishingReportService.createFishingReport(apiFishingReportDTO);
     }
 
     @Operation(summary = "조황정보 모두 조회")
     @GetMapping("/get-all")
-    public List<FishingReportDTO> getAllFishingReport() {
+    public List<ApiFishingReportDTO> getAllFishingReport() {
         return apiFishingReportService.getAllFishingReports();
     }
 
@@ -40,8 +39,8 @@ public class ApiFishingReportController {
     @Operation(summary = "조황정보 수정")
     @PutMapping("/update/{id}")
     public Long updateFishingReport(@PathVariable("id") Long frId,
-                                    @RequestBody FishingReportDTO fishingReportDTO) {
-        return apiFishingReportService.updateFishingReport(frId, fishingReportDTO);
+                                    @RequestBody ApiFishingReportDTO apiFishingReportDTO) {
+        return apiFishingReportService.updateFishingReport(frId, apiFishingReportDTO);
     }
 
     @Operation(summary = "조황정보 삭제")

@@ -1,13 +1,12 @@
 package kroryi.dagon.service.board.fishingReportDiary;
 
-import kroryi.dagon.DTO.board.FishingReportDTO;
+import kroryi.dagon.DTO.board.FishingReportDiary.FishingReportDTO;
 import kroryi.dagon.entity.FishingReport;
 import kroryi.dagon.entity.User;
 import kroryi.dagon.repository.UserRepository;
 import kroryi.dagon.repository.board.FishingReportRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
 import java.util.stream.Collectors;

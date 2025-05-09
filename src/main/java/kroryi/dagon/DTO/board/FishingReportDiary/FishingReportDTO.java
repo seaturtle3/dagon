@@ -1,4 +1,4 @@
-package kroryi.dagon.DTO.board;
+package kroryi.dagon.DTO.board.FishingReportDiary;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import kroryi.dagon.entity.FishingReport;
