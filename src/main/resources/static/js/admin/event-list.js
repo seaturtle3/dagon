@@ -27,23 +27,48 @@ function loadEventData(page) {
                 tbody.appendChild(row);
             });
 
-            renderPagination(data);
+            renderEventPagination(data);
         });
 }
 
-function renderPagination(data) {
+// 이벤트용 페이징
+function renderEventPagination(data) {
     const paginationDiv = document.getElementById("event-pagination");
     paginationDiv.innerHTML = "";
 
-    for (let i = 0; i < data.totalPages; i++) {
-        const btn = document.createElement("button");
-        btn.className = "page-btn";
-        btn.innerText = i + 1;
-        btn.onclick = () => loadEventData(i);
-        paginationDiv.appendChild(btn);
+    const totalPages = data.totalPages;
+    const currentPage = data.pageable.pageNumber;
+
+    if (currentPage > 0) {
+        const prevButton = document.createElement('button');
+        prevButton.innerText = '이전';
+        prevButton.onclick = () => loadEventData(currentPage - 1);
+        paginationDiv.appendChild(prevButton);
+    }
+
+    for (let i = 0; i < totalPages; i++) {
+        const pageButton = document.createElement('button');
+        pageButton.innerText = i + 1;
+        pageButton.onclick = () => loadEventData(i);
+        if (i === currentPage) {
+            pageButton.style.fontWeight = 'bold';
+        }
+        paginationDiv.appendChild(pageButton);
+    }
+
+    if (currentPage < totalPages - 1) {
+        const nextButton = document.createElement('button');
+        nextButton.innerText = '다음';
+        nextButton.onclick = () => loadEventData(currentPage + 1);
+        paginationDiv.appendChild(nextButton);
     }
 }
 
+
+
+
+
 document.addEventListener("DOMContentLoaded", () => {
     loadEventData(0);
+    loadNotificationData(0);
 });
