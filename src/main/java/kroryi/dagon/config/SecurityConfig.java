@@ -63,6 +63,8 @@ public class SecurityConfig {
                                 "/admin/login",
                                 "/register",
                                 "/admin/registration"
+
+
                         ).permitAll()
                         .requestMatchers("/api/mypage").authenticated()
                         .requestMatchers("/login/oauth2/code/kakao").permitAll()

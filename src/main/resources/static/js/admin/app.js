@@ -18,11 +18,13 @@ function showDashboard() {
     document.getElementById('dashboard').classList.remove('hidden');
     document.getElementById('user-info').classList.add('hidden');
     document.getElementById('partner-list').classList.add('hidden');  // 파트너 신청 목록 숨김
+    document.getElementById('user-detail').classList.add('hidden');
 }
 
 function showUserInfo() {
     document.getElementById('user-info').classList.remove('hidden');
     document.getElementById('dashboard').classList.add('hidden');
+    document.getElementById('user-detail').classList.add('hidden');
     document.getElementById('partner-list').classList.add('hidden');  // 파트너 신청 목록 숨김
     loadUsers();
 }
@@ -60,7 +62,9 @@ function loadUsers(page = 0, size = 10) {
                 const userList = data.content;
                 const totalPages = data.totalPages;
                 renderUserList(userList); // 유저 목록을 렌더링
-                renderPagination(totalPages, page); // 페이징 렌더링
+                renderUserPagination(totalPages, page); // 페이징 렌더링
+                console.log('renderPagination 호출됨', totalPages, page);
+                console.log('totalPages:', data.totalPages);
             } else {
                 console.error('유효하지 않은 데이터:', data);
             }
@@ -100,17 +104,26 @@ function renderUserList(users) {
 }
 
 // 회원 페이징 처리
-function renderPagination(totalPages, currentPage) {
+function renderUserPagination(totalPages, currentPage) {
+    console.log('✅ renderPagination 호출됨', totalPages, currentPage);
+
     const pagination = document.querySelector('.pagination');
-    pagination.innerHTML = ''; // 기존 페이징 비우기
+    pagination.innerHTML = '';
+
+    if (!totalPages || totalPages === 0) {
+        console.warn('⚠️ 페이지가 0이거나 없음');
+        return;
+    }
 
     for (let i = 0; i < totalPages; i++) {
         const pageItem = document.createElement('button');
         pageItem.innerText = i + 1;
         pageItem.classList.add('page-btn');
+        if (i === currentPage) {
+            pageItem.style.fontWeight = 'bold';
+        }
         pageItem.addEventListener('click', () => loadUsers(i));
         pagination.appendChild(pageItem);
-        console.log(i);
     }
 }
 

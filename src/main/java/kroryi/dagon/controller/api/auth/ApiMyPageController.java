@@ -37,6 +37,10 @@ public class ApiMyPageController {
         log.info("--> {}",userDetails.getUname());
 
         UsersDTO dto = myPageService.findUserInfo(userDetails.getUno()); // 서비스에서 조회
+
+        if (dto.getProfile_image() == null || dto.getProfile_image().isEmpty()) {
+            dto.setProfile_image("/img/default-profile.png");  // 정적 리소스 경로
+        }
         return ResponseEntity.ok(dto);
     }
 
@@ -45,6 +49,8 @@ public class ApiMyPageController {
     @Operation(summary = "이름으로 사용자 정보 조회", description = "uname으로 사용자 정보 조회")
     public ResponseEntity<UsersDTO> getUserByUname(@RequestParam String uname) {
         UsersDTO dto = myPageService.findUserInfoByUname(uname);
+
+
         return ResponseEntity.ok(dto);
     }
 
@@ -74,7 +80,6 @@ public class ApiMyPageController {
             String imagePath = fileStorageService.store(profileImage);  // 이미지 저장
             user.setProfileImg(imagePath);
         }
-
         myPageService.updateUser(userDetails.getUno(), user);  // 사용자 정보 업데이트
         return ResponseEntity.ok(new UsersDTO(user));  // 변경된 사용자 정보 반환
     }

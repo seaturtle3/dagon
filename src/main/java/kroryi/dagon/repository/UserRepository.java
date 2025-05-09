@@ -1,6 +1,5 @@
 package kroryi.dagon.repository;
 
-import kroryi.dagon.DTO.UsersDTO;
 import kroryi.dagon.entity.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -17,7 +16,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByPhoneAndUname(String phone, String uname);
     Optional<User> findByEmail(String email);
 
-
+    Optional<User> findByUidAndUnameAndEmail(String uid, String uname, String email);
     Page<User> findByUnameContainingOrEmailContaining(String search, String search1, Pageable pageable);
 
     Optional<User> findByUno(Long uno);
