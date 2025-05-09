@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>API 키 목록</title>
+</head>
+<body>
+<h1>API 키 목록</h1>
+<button onclick="fetchApiKeys()">목록 새로고침</button>
+<table border="1" id="apiKeyTable">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>이름</th>
+        <th>API 키</th>
+        <th>활성 상태</th>
+        <th>발급일</th>
+        <th>만료일</th>
+        <th>허용 IP</th>
+    </tr>
+    </thead>
+    <tbody>
+    <!-- API 키 목록이 여기에 채워짐 -->
+    </tbody>
+</table>
+
+<script>
+    async function fetchApiKeys() {
+        try {
+            const response = await fetch("/admin/api-keys");
+            if (!response.ok) throw new Error("서버 오류: " + response.status);
+
+            const data = await response.json();
+            const tableBody = document.querySelector("#apiKeyTable tbody");
+            tableBody.innerHTML = ""; // 기존 내용 초기화
+
+            data.forEach(apiKey => {
+                const row = document.createElement("tr");
+
+                row.innerHTML = `
+                        <td>${apiKey.id}</td>
+                        <td>${apiKey.name}</td>
+                        <td>${apiKey.key || '(비공개)'}</td>
+                        <td>${apiKey.active ? "✅ 활성" : "❌ 비활성"}</td>
+                        <td>${apiKey.issuedAt ?? '-'}</td>
+                        <td>${apiKey.expiresAt ?? '-'}</td>
+                        <td>${apiKey.allowedIp ?? '-'}</td>
+                    `;
+
+                tableBody.appendChild(row);
+            });
+
+        } catch (error) {
+            alert("API 키 목록 불러오기 실패: " + error.message);
+        }
+    }
+
+    // 페이지 로드 시 목록 자동 조회
+    window.onload = fetchApiKeys;
+</script>
+</body>
+</html>

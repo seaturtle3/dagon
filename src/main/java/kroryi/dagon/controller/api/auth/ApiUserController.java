@@ -26,7 +26,7 @@ public class ApiUserController {
     private final JwtUtil jwtUtil;
 
     @GetMapping("/me")
-    @Operation(summary = "로그인 ", description = "로그인")
+    @Operation(summary = "아이디 조회 ", description = "전화번호 이름으로 아이디 조회")
     public ResponseEntity<?> getCurrentUser(@RequestHeader("Authorization") String authorizationHeader) {
         // 1. JWT 추출
         String token = null;

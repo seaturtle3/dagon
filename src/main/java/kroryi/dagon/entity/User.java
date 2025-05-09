@@ -109,6 +109,14 @@ public class User extends BaseTimeEntity {
     @OneToMany(mappedBy = "receiver", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Notification> notifications;
 
+    // 신고
+    // 신고한 목록
+    @OneToMany(mappedBy = "reporter", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<Report> reportsMade = new ArrayList<>();
+
+    // 신고받은 목록
+    @OneToMany(mappedBy = "reported", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<Report> reportsReceived = new ArrayList<>();
 
     public void setIsActive(boolean isActive) {
         this.isActive = isActive;
