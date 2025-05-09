@@ -1,5 +1,6 @@
 package kroryi.dagon.DTO.board.FishingReportDiary;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import kroryi.dagon.entity.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -17,7 +18,11 @@ public class FishingDiaryDTO {
     private LocalDateTime fishingAt;
     private LocalDateTime modifyAt;
     private int views;
+
+    @Schema(hidden = true)
     private User user;
+
+    @Schema(hidden = true)
     private Product product;
     private List<FishingReportComment> comments;
     private String prodName;

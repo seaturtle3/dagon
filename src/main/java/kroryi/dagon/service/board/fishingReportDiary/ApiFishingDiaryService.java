@@ -52,9 +52,12 @@ public class ApiFishingDiaryService {
                 .collect(Collectors.toList());
     }
 
-    public FishingDiary getFishingDiaryById(@PathVariable Long id) {
-        return fishingDiaryRepository.findById(id)
+    public ApiFishingDiaryDTO getFishingDiaryById(@PathVariable Long id) {
+        FishingDiary fishingDiary = fishingDiaryRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("조황정보를 찾을 수 없습니다."));
+
+        // FishingDiary를 ApiFishingDiaryDTO로 변환
+        return new ApiFishingDiaryDTO(fishingDiary);
     }
 
     public Long updateFishingDiary(Long fdId, ApiFishingDiaryDTO apiFishingDiaryDTO) {
