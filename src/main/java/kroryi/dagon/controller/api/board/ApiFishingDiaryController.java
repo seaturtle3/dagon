@@ -35,7 +35,7 @@ public class ApiFishingDiaryController {
     @Operation(summary = "조행기 ID 조회")
     @GetMapping("/get/{id}")
     public FishingDiary getFishingDiary(@PathVariable Long id) {
-        return apiFishingDiaryService.getFishingDiary(id);
+        return apiFishingDiaryService.getFishingDiaryById(id);
     }
 
     @Operation(summary = "조행기 수정")

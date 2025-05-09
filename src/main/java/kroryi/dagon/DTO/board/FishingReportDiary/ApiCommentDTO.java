@@ -1,7 +1,7 @@
 package kroryi.dagon.DTO.board.FishingReportDiary;
 
+import kroryi.dagon.entity.FishingDiaryComment;
 import kroryi.dagon.entity.FishingReportComment;
-import kroryi.dagon.entity.User;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -15,6 +15,11 @@ public class ApiCommentDTO {
     public ApiCommentDTO(FishingReportComment comment) {
         this.frCommentId = comment.getFrCommentId();
         this.comment = comment.getCommentContent();
+    }
 
+    public ApiCommentDTO(FishingDiaryComment comment) {
+        this.frCommentId = comment.getFdCommentId();
+        this.comment = comment.getCommentContent();
+        this.user = new ApiUserDTO(comment.getUser());
     }
 }

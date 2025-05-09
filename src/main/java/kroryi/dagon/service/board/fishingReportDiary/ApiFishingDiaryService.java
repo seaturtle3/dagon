@@ -1,6 +1,8 @@
 package kroryi.dagon.service.board.fishingReportDiary;
 
 import kroryi.dagon.DTO.board.FishingReportDiary.ApiFishingDiaryDTO;
+import kroryi.dagon.DTO.board.FishingReportDiary.ApiProductDTO;
+import kroryi.dagon.DTO.board.FishingReportDiary.ApiUserDTO;
 import kroryi.dagon.DTO.board.FishingReportDiary.FishingDiaryDTO;
 import kroryi.dagon.entity.FishingDiary;
 import kroryi.dagon.entity.Product;
@@ -23,27 +25,15 @@ public class ApiFishingDiaryService {
     private final UserRepository userRepository;
     private final ProductService productService;
 
-    // ProdId 찾기
-    public List<ApiFishingDiaryDTO> getFishingDiariesByProdId(Long prodId) {
-        List<FishingDiary> diaries = fishingDiaryRepository.findByProductProdId(prodId);
-        return diaries.stream()
-                .map(ApiFishingDiaryDTO::new)
-                .collect(Collectors.toList());
-    }
-
     public ApiFishingDiaryDTO createFishingDiary(ApiFishingDiaryDTO apiFishingDiaryDTO) {
         FishingDiary fishingDiary = new FishingDiary();
         fishingDiary.setTitle(apiFishingDiaryDTO.getTitle());
         fishingDiary.setContent(apiFishingDiaryDTO.getContent());
-        fishingDiary.setThumbnailUrl(apiFishingDiaryDTO.getThumbnailUrl());
         fishingDiary.setFishingAt(apiFishingDiaryDTO.getFishingAt());
 
-        fishingDiary.setProduct(apiFishingDiaryDTO.getProduct());
-//        fishingDiary.setComments(fishingDiaryDTO.getComments());
-
-        // 여기서 product 객체 찾아서 주입
-        Long prodId = fishingDiaryDTO.getProduct().getProdId();
-        Product product = productService.findById(prodId);  // <- 이거 중요
+        // prodId로 엔티티 조회해서 세팅
+        Long prodId = apiFishingDiaryDTO.getProduct().getProdId();
+        Product product = productService.findById(prodId);
         fishingDiary.setProduct(product);
 
         // 임시 고정된 user
@@ -58,11 +48,11 @@ public class ApiFishingDiaryService {
     public List<ApiFishingDiaryDTO> getAllFishingDiary() {
         List<FishingDiary> fishingReports = fishingDiaryRepository.findAllWithComments();
         return fishingReports.stream()
-                .map(this::convertToDTO)
+                .map(ApiFishingDiaryDTO::new)
                 .collect(Collectors.toList());
     }
 
-    public FishingDiary getFishingDiary(@PathVariable Long id) {
+    public FishingDiary getFishingDiaryById(@PathVariable Long id) {
         return fishingDiaryRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("조황정보를 찾을 수 없습니다."));
     }
@@ -75,9 +65,16 @@ public class ApiFishingDiaryService {
         fishingDiary.setContent(apiFishingDiaryDTO.getContent());
         fishingDiary.setFishingAt(apiFishingDiaryDTO.getFishingAt());
 
-        fishingDiary.setUser(apiFishingDiaryDTO.getUser());
-        fishingDiary.setProduct(apiFishingDiaryDTO.getProduct());
-//        fishingDiary.setComments(apiFishingDiaryDTO.getComments());
+        // User 설정
+        Long userId = apiFishingDiaryDTO.getUser().getUno();
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+        fishingDiary.setUser(user);
+
+        // Product 설정
+        Long prodId = apiFishingDiaryDTO.getProduct().getProdId();
+        Product product = productService.findById(prodId);
+        fishingDiary.setProduct(product);
 
         fishingDiaryRepository.save(fishingDiary);
 
@@ -94,7 +91,6 @@ public class ApiFishingDiaryService {
         dto.setFdId(fishingdiary.getFdId());
         dto.setTitle(fishingdiary.getTitle());
         dto.setContent(fishingdiary.getContent());
-        dto.setThumbnailUrl(fishingdiary.getThumbnailUrl());
         dto.setFishingAt(fishingdiary.getFishingAt());
         dto.setModifyAt(fishingdiary.getModifyAt());
         dto.setViews(fishingdiary.getViews());
