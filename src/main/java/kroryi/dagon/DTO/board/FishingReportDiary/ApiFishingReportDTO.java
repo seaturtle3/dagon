@@ -4,6 +4,7 @@ import kroryi.dagon.entity.FishingReport;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -13,6 +14,7 @@ public class ApiFishingReportDTO {
     private Long frId;
     private String title;
     private String content;
+    private LocalDateTime fishingAt;
 
     private ApiProductDTO product;
     private ApiUserDTO user;

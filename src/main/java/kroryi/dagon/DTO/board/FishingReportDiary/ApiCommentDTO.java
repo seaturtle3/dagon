@@ -10,11 +10,11 @@ import lombok.NoArgsConstructor;
 public class ApiCommentDTO {
     private Long frCommentId;
     private String comment;
-    private User user;
+    private ApiUserDTO user;
 
     public ApiCommentDTO(FishingReportComment comment) {
         this.frCommentId = comment.getFrCommentId();
         this.comment = comment.getCommentContent();
-        this.user = comment.getUser();
+
     }
 }
