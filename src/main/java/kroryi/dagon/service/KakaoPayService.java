@@ -68,6 +68,9 @@ public class KakaoPayService {
             .defaultHeader(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE)
             .build();
 
+    @Value("${app.server.base-url}")
+    private String baseUrl;
+
     public String kakaoPayReady() {
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("cid", "TC0ONETIME");
@@ -77,9 +80,9 @@ public class KakaoPayService {
         params.add("quantity", "1");
         params.add("total_amount", "20000");
         params.add("tax_free_amount", "100");
-        params.add("approval_url", "http://localhost:9090/kakaoPaySuccess");
-        params.add("cancel_url", "http://localhost:9090/kakaoPayCancel");
-        params.add("fail_url", "http://localhost:9090/kakaoPayFail");
+        params.add("approval_url", baseUrl + "/kakaoPaySuccess");
+        params.add("cancel_url", baseUrl + "/kakaoPayCancel");
+        params.add("fail_url", baseUrl + "/kakaoPayFail");
 
         try {
             kakaoPayDTO = webClient.post()
