@@ -1,13 +1,7 @@
-// 공지사항 검색
 function Notifications() {
     const searchKeyword = document.getElementById('notice-search-keyword').value.trim();
-    const searchType = document.getElementById('notice-search-type').value.trim(); // 예: title, content, title+content 등
-    console.log('검색어:', searchKeyword);
-    console.log('검색 타입:', searchType);
-
-    const url = `/api/notices?type=${encodeURIComponent(searchType)}&keyword=${encodeURIComponent(searchKeyword)}`;
-    console.log('요청 URL:', url);
-
+    const searchType = document.getElementById('notice-search-type').value;
+    const url = `/api/notices?page=0&keyword=${encodeURIComponent(searchKeyword)}&type=${searchType}`;
 
     fetch(url, {
         headers: {
@@ -20,8 +14,8 @@ function Notifications() {
         })
         .then(data => {
             if (data && data.content) {
-                renderNotificationList(data.content);  // 공지사항 목록 렌더링
-                setupPagination(data);  // 페이지네이션 설정
+                renderNotificationList(data.content);
+                setupPagination(data, searchKeyword, searchType); // 👈 여기 변경
             } else {
                 console.error('유효하지 않은 데이터:', data);
             }
@@ -30,7 +24,7 @@ function Notifications() {
 }
 
 function renderNotificationList(notices) {
-    const tableBody = document.getElementById('notice-table').querySelector('tbody');
+    const tableBody = document.getElementById('notices-table');
     console.log("테이블 바디:", tableBody);  // tableBody가 제대로 선택되었는지 확인
 
     tableBody.innerHTML = '';
@@ -54,13 +48,12 @@ function renderNotificationList(notices) {
     });
 }
 
-function setupPagination(data) {
+function setupPagination(data, searchKeyword, searchType) {
     const paginationContainer = document.getElementById('notice-pagination');
     paginationContainer.innerHTML = '';
 
     const totalPages = data.totalPages;
     const currentPage = data.pageable.pageNumber;
-
 
     if (currentPage > 0) {
         const prevButton = document.createElement('button');
@@ -72,7 +65,7 @@ function setupPagination(data) {
     for (let i = 0; i < totalPages; i++) {
         const pageButton = document.createElement('button');
         pageButton.innerText = i + 1;
-        pageButton.onclick = () => loadNotificationData(i);
+        pageButton.onclick = () => loadNotificationData(i); // 🔄 searchKeyword와 searchType 사용
         paginationContainer.appendChild(pageButton);
     }
 
@@ -86,8 +79,9 @@ function setupPagination(data) {
 
 function loadNotificationData(page) {
     const searchKeyword = document.getElementById('notice-search-keyword').value.trim();
+    const searchType = document.getElementById('notice-search-type').value;
 
-    fetch(`/api/notices?page=${page}&keyword=${searchKeyword}`, {
+    fetch(`/api/notices?page=${page}&keyword=${encodeURIComponent(searchKeyword)}&searchType=${searchType}`, {
         headers: {
             "Authorization": "Bearer " + localStorage.getItem("authToken")
         }
@@ -95,13 +89,13 @@ function loadNotificationData(page) {
         .then(response => response.json())
         .then(data => {
             renderNotificationList(data.content);
-            setupPagination(data);
+            setupPagination(data, searchKeyword, searchType); // 👈 search 유지
         })
         .catch(error => console.error('Error loading notices:', error));
 }
 
 document.addEventListener('DOMContentLoaded', function () {
-    loadNotificationData(0);
-    const searchBtn = document.getElementById('notice-search-btn');
-    searchBtn.addEventListener('click', Notifications);
+   document.getElementById('notice-search-btn').addEventListener("click", Notifications);
+
+   Notifications();
 });

@@ -29,15 +29,16 @@ public class ApiReportController {
     private final ReportRepository reportRepository;
 
     // 신고 목록 조회 (페이징 및 검색)
-    @GetMapping
     @Operation(summary = "신고 목록조회", description = "사용자 신고 접수 API")
+    @GetMapping
     public ResponseEntity<Page<ReportDTO>> getReports(
-            @RequestParam(required = false) String nickname,
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false) String uname,
+            @RequestParam(required = false) String reportedName) {
 
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
-        Page<ReportDTO> reports = reportService.getReports(nickname, pageable);
+        Page<ReportDTO> reports = reportService.getReports(uname, reportedName, pageable);
         return ResponseEntity.ok(reports);
     }
 

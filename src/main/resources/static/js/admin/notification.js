@@ -1,17 +1,14 @@
 document.addEventListener('DOMContentLoaded', function() {
-    // 알림 등록 UI를 동적으로 삽입
     document.getElementById('notification-form-container').innerHTML = `
       <div class="p-4 rounded-lg shadow bg-white w-full max-w-2xl mx-auto">
         <h2 class="text-xl font-semibold mb-4">관리자 알림 등록</h2>
 
         <form id="adminNotificationForm" class="space-y-4">
-          <!-- 수신자 선택 -->
           <div>
-            <label for="receiverId" class="block font-medium mb-1">수신자 ID (비워두면 전체 발송)</label>
-            <input type="number" id="receiverId" name="receiverId" class="w-full border rounded p-2" placeholder="유저 번호 입력 or 비워두세요">
+            <label for="receiverUid" class="block font-medium mb-1">수신자 유저 아이디 (비워두면 전체 발송)</label>
+            <input type="text" id="receiverUid" name="receiverUid" class="w-full border rounded p-2" placeholder="유저 아이디 입력 or 비워두세요">
           </div>
 
-          <!-- 알림 타입 -->
           <div>
             <label for="type" class="block font-medium mb-1">알림 타입</label>
             <select id="type" name="type" class="w-full border rounded p-2">
@@ -19,43 +16,37 @@ document.addEventListener('DOMContentLoaded', function() {
               <option value="REPLY">답변</option>
               <option value="RESERVATION">예약 알림</option>
             </select>
-          
           </div>
 
-          <!-- 제목 -->
           <div>
             <label for="title" class="block font-medium mb-1">제목</label>
             <input type="text" id="title" name="title" class="w-full border rounded p-2" required>
           </div>
 
-          <!-- 내용 -->
           <div>
             <label for="content" class="block font-medium mb-1">내용</label>
             <textarea id="content" name="content" rows="4" class="w-full border rounded p-2" required></textarea>
           </div>
 
-          <!-- 전송 버튼 -->
           <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded shadow">
             알림 보내기
           </button>
         </form>
 
-        <!-- 결과 메시지 -->
         <div id="resultMessage" class="mt-4 text-green-600 font-semibold hidden"></div>
       </div>
     `;
 
-
     document.getElementById('adminNotificationForm').addEventListener('submit', async function (e) {
         e.preventDefault();
 
-        const receiverId = document.getElementById('receiverId').value || null;
+        const receiverUid = document.getElementById('receiverUid').value || null;
         const type = document.getElementById('type').value;
         const title = document.getElementById('title').value;
         const content = document.getElementById('content').value;
 
         const payload = {
-            receiverId: receiverId ? Number(receiverId) : null,
+            receiverUid: receiverUid || null,
             senderType: "ADMIN",
             type,
             title,

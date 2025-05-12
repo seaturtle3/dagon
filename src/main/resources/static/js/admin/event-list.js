@@ -1,8 +1,15 @@
 function loadEventData(page) {
     const type = document.getElementById("event-search-type").value;
     const keyword = document.getElementById("event-search-keyword").value;
+    const status = document.getElementById("event-status").value;
 
-    fetch(`/api/event?page=${page}&type=${type}&keyword=${keyword}`, {
+    const url = new URL(`/api/event`, window.location.origin);
+    url.searchParams.set("page", page);
+    url.searchParams.set("type", type);
+    url.searchParams.set("keyword", keyword);
+    if (status) url.searchParams.set("status", status); // 상태 있을 때만
+
+    fetch(url, {
         headers: {
             "Authorization": "Bearer " + localStorage.getItem("authToken")
         }
@@ -16,13 +23,13 @@ function loadEventData(page) {
                 const row = document.createElement("tr");
 
                 row.innerHTML = `
-     <td>${event.isTop ? "✔" : ""}</td>
-    <td>${index + 1}</td>
-    <td>${event.thumbnailUrl ? `<img src="${event.thumbnailUrl}" class="event-thumbnail">` : ""}</td>
-    <td><a href="/event/${event.eventId}?page=${page}">${event.title}</a></td>
-    <td>${event.startAt && event.endAt ? `${event.startAt} ~ ${event.endAt}` : "상시 이벤트"}</td>
-    <td>${event.eventStatus}</td>
-            `;
+                    <td>${event.isTop ? "✔" : ""}</td>
+                    <td>${index + 1}</td>
+                    <td>${event.thumbnailUrl ? `<img src="${event.thumbnailUrl}" class="event-thumbnail">` : ""}</td>
+                    <td><a href="/event/${event.eventId}?page=${page}">${event.title}</a></td>
+                    <td>${event.startAt && event.endAt ? `${event.startAt} ~ ${event.endAt}` : "상시 이벤트"}</td>
+                    <td>${event.eventStatus}</td>
+                `;
 
                 tbody.appendChild(row);
             });
