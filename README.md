@@ -170,12 +170,12 @@ Swagger 기반
 
 - **상품 기능**: 상품 / 어종 / 조황,조행기 등 CRUD API
   ![예시](docs/product.gif)
-- 
+
 - **예약 기능**: 예약 등록 / 결제 / 예약 조회 API
   
 - **물때 · 날씨 정보**: 실시간 기상 데이터 및 조석(물때) API 연동
   ![예시](docs/multtae.gif)
-- 
+
 - **게시판 기능**: 공지사항, 이벤트, FAQ 등 CRUD API
   ![예시](docs/notice.gif)
 
