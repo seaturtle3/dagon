@@ -1,4 +1,4 @@
-package kroryi.dagon.service;
+package kroryi.dagon.service.product;
 
 import kroryi.dagon.DTO.ProductOptionDTO;
 import kroryi.dagon.entity.Product;

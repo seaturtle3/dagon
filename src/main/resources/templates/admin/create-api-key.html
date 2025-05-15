@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>API 키 발급</title>
+</head>
+<body>
+<h1>API 키 생성</h1>
+<form id="apiKeyForm">
+    <label>이름: <input type="text" id="name" required></label><br>
+    <label>허용 IP: <input type="text" id="allowedIp" placeholder="예: 127.0.0.1" required></label><br>
+    <label>만료일시: <input type="datetime-local" id="expiresAt" required></label><br>
+    <label>콜백 URL(쉼표로 구분): <input type="text" id="callbackUrls"></label><br>
+    <button type="submit">생성</button>
+</form>
+
+<div id="result"></div>
+
+<script>
+    document.getElementById("apiKeyForm").addEventListener("submit", async function (e) {
+        e.preventDefault();
+
+        const name = document.getElementById("name").value;
+        const allowedIp = document.getElementById("allowedIp").value;
+        const expiresAt = document.getElementById("expiresAt").value;
+        const callbackUrlsRaw = document.getElementById("callbackUrls").value;
+        const callbackUrls = callbackUrlsRaw
+            .split(",")
+            .map(url => url.trim())
+            .filter(url => url.length > 0);
+
+        const body = {
+            name: name,
+            allowedIp: allowedIp,
+            expiresAt: expiresAt,
+            callbackUrls: callbackUrls
+        };
+
+        try {
+            const response = await fetch("/admin/api-keys/new", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(body)
+            });
+
+            const result = await response.json();
+
+            if (response.ok) {
+                document.getElementById("result").innerText =
+                    `✅ API Key 생성 완료:\nID: ${result.id}\nName: ${result.name}`;
+            } else {
+                document.getElementById("result").innerText =
+                    `❌ 오류: ${response.status} ${result.message || JSON.stringify(result)}`;
+            }
+        } catch (error) {
+            document.getElementById("result").innerText = `❌ 요청 실패: ${error.message}`;
+        }
+    });
+</script>
+</body>
+</html>

@@ -1,4 +1,4 @@
-package kroryi.dagon.service;
+package kroryi.dagon.service.product;
 
 import kroryi.dagon.DTO.ProductDTO;
 import kroryi.dagon.entity.Partner;
@@ -6,6 +6,7 @@ import kroryi.dagon.entity.Product;
 import kroryi.dagon.entity.ProductOption;
 import kroryi.dagon.repository.ProductRepository;
 import kroryi.dagon.repository.SeaFreshwaterFishingRepository;
+import kroryi.dagon.service.PartnerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

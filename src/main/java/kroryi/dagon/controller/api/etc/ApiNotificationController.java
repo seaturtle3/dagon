@@ -17,7 +17,6 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @Tag(name = "Etc-Notification", description = "예약 및 관리자 알림 관리 API")
-
 @RequestMapping("/api/notifications")
 public class ApiNotificationController {
 
@@ -45,10 +44,10 @@ public class ApiNotificationController {
     }
 
     //특정 유저의 알림 목록 조회
-    @GetMapping("/user/{receiverId}")
+    @GetMapping("/user/{receiverUid}")
     @Operation(summary = "유저 uno 조회", description = "유저 번호로 조회")
-    public ResponseEntity<List<NotificationDTO>> getByUser(@PathVariable Long receiverId) {
-        return ResponseEntity.ok(notificationService.getNotificationsByUser(receiverId));
+    public ResponseEntity<List<NotificationDTO>> getByUser(@PathVariable String receiverUid) {
+        return ResponseEntity.ok(notificationService.getNotificationsByUser(receiverUid));
     }
 
     // 알림 읽음 처리
@@ -79,17 +78,20 @@ public class ApiNotificationController {
     @GetMapping
     @Operation(summary = "알림 전체/검색 조회", description = "검색 조건에 따라 알림 리스트 조회 (페이징 포함)")
     public ResponseEntity<Page<NotificationDTO>> getNotifications(
-            @RequestParam(required = false) Long uno,
+            @RequestParam(required = false) String uid,
             @RequestParam(required = false) String type,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size
     ) {
+        if (uid != null && uid.isBlank()) {
+            uid = null;
+        }
         if (type != null && (type.isBlank() || type.equals("전체"))) {
             type = null; // 필터링 조건 제거
         }
 
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
-        Page<NotificationDTO> notifications = notificationService.getNotifications(uno, type, pageable);
+        Page<NotificationDTO> notifications = notificationService.getNotifications(uid, type, pageable);
         return ResponseEntity.ok(notifications);
     }
 }

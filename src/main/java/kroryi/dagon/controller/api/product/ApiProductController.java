@@ -3,7 +3,7 @@ package kroryi.dagon.controller.api.product;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import kroryi.dagon.DTO.ProductDTO;
-import kroryi.dagon.service.ProductService;
+import kroryi.dagon.service.product.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 

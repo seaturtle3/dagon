@@ -1,5 +1,6 @@
 package kroryi.dagon.DTO;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import kroryi.dagon.entity.User;
 import lombok.*;
 
@@ -29,6 +30,7 @@ public class UsersDTO {
     private String levelPoint; // levelPoint 추가
     private String loginType;  // 로그인 타입 추가
     private String createdAt;
+    @JsonProperty("isActive")
     private boolean isActive;// 생성일 추가 (BaseTimeEntity에서 자동 생성되는 값)
 
 

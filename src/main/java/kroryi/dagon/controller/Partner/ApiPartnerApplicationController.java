@@ -1,5 +1,6 @@
 package kroryi.dagon.controller.Partner;
 
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.persistence.EntityNotFoundException;
 import kroryi.dagon.DTO.PartnerApplicationDTO;
 import kroryi.dagon.component.CustomUserDetails;
@@ -26,6 +27,7 @@ public class ApiPartnerApplicationController {
      * 파트너 신청 목록을 페이지네이션과 필터링 기능이 있는 API로 제공
      */
     @GetMapping
+    @Operation(summary = "페이징 검색 필터링 ", description = "페이징 검색 필터링")
     public ResponseEntity<Page<PartnerApplicationDTO>> getPartnerApplications(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
@@ -54,6 +56,7 @@ public class ApiPartnerApplicationController {
      * 특정 파트너 신청 상세 정보 조회 API
      */
     @GetMapping("/{id}")
+    @Operation(summary = "파트너 신청 상세 조회 ", description = "파트너 신청 상세 조회")
     public ResponseEntity<PartnerApplicationDTO> getPartnerApplication(@PathVariable Long id) {
         try {
             PartnerApplicationDTO dto = partnerApplicationService.findById(id);
@@ -67,6 +70,7 @@ public class ApiPartnerApplicationController {
      * 파트너 신청 승인 API
      */
     @PostMapping("/{id}/approve")
+    @Operation(summary = "파트너 신청 승인 ", description = "파트너 신청 승인")
     public ResponseEntity<Void> approveApplication(@PathVariable Long id) {
         try {
             partnerApplicationService.approve(id);
@@ -80,6 +84,7 @@ public class ApiPartnerApplicationController {
      * 파트너 신청 반려 API
      */
     @PostMapping("/{id}/reject")
+    @Operation(summary = "파트너 신청 반려 ", description = "파트너 신청 반려")
     public ResponseEntity<Void> rejectApplication(
             @PathVariable Long id,
             @RequestBody Map<String, String> requestBody // JSON 데이터를 받기 위해 Map 사용
