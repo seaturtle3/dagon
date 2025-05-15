@@ -178,7 +178,7 @@ _시연 영상 및 이미지 추가 예정_
 
 > **API 문서 확인 경로**
 > - Swagger UI: [`/swagger-ui/index.html`](http://localhost:8080/swagger-ui/index.html)
-> - 관리자 대시보드: [`/admin-dashboard.html`](http://localhost:8080/admin/dashboard)
+> - 관리자 대시보드: [`/admin-dashboard.html`](http://docs.yi.or.kr:8095/admin/dashboard)
 
 <br/>
 
