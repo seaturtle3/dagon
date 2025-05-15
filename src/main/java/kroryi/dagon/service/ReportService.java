@@ -25,15 +25,18 @@ public class ReportService {
 
     private final UserService userService;
 
-    public Page<ReportDTO> getReports(String nickname, Pageable pageable) {
+    public Page<ReportDTO> getReports(String uname, String reportedName, Pageable pageable) {
         Page<Report> reports;
-        if (nickname != null && !nickname.isEmpty()) {
-            reports = reportRepository.findByReportedUname(nickname, pageable);
+
+        if (uname != null && !uname.isEmpty()) {
+            reports = reportRepository.findByReporter_UnameContaining(uname, pageable);
+        } else if (reportedName != null && !reportedName.isEmpty()) {
+            reports = reportRepository.findByReported_UnameContaining(reportedName, pageable);
         } else {
             reports = reportRepository.findAll(pageable);
         }
 
-        return reports.map(ReportDTO::new);  // DTO 변환
+        return reports.map(ReportDTO::new);
     }
 
     @Transactional

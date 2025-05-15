@@ -46,6 +46,11 @@ public class UserController {
         return "find-id";
     }
 
+    @GetMapping("/find-password")
+    public String findPassword(){
+        return "find-password";
+    }
+
 
 }
 

@@ -8,8 +8,8 @@ import lombok.Data;
 
 public class NotificationDTO {
     private Long id;
-    private Long receiverId;
-    private Long senderId;
+    private String  receiverUid;
+    private String  senderUid;
     private Long reservationId; // 예약 정보 ID
     private SenderType senderType;
     private String type;

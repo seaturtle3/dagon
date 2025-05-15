@@ -125,6 +125,10 @@ public class ApiKeyFilter extends OncePerRequestFilter {
             return true;
         }
 
+        if (path.equals("/api/find-password") && method.equals("POST")) {
+            return true;
+        }
+
         // 공지사항/FAQ/이벤트 조회 API는 허용 (읽기 전용)admin/faq-categories
         if ((path.startsWith("/api/notices") || path.startsWith("/api/event") || path.startsWith("/api/faq")) &&
                 method.equals("GET")) {
