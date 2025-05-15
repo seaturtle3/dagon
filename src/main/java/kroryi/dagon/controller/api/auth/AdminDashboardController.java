@@ -1,5 +1,6 @@
 package kroryi.dagon.controller.api.auth;
 
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import kroryi.dagon.service.AdminDashboardService;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +22,7 @@ public class AdminDashboardController {
     private final AdminDashboardService dashboardService;
 
     @GetMapping("/counts")
+    @Operation(summary = "회원 숫자, 파트너 숫자 조회 ", description = "회원 숫자,파트너 숫자 조회")
     public ResponseEntity<?> getCounts() {
         Map<String, Long> counts = new HashMap<>();
         counts.put("totalUsers", dashboardService.getTotalUsers());

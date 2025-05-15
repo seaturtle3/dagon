@@ -29,14 +29,18 @@ public class ApiMyPageController {
     private final MyPageService myPageService;
     private final FileStorageService fileStorageService;
 
-    // 내 정보 조회
+//     내 정보 조회
     @PostMapping("")
     @Operation(summary = "내 정보", description = "내 정보")
     public ResponseEntity<UsersDTO> getMyPage(@AuthenticationPrincipal CustomUserDetails userDetails) {
 
-        log.info("--> {}",userDetails.getUsername());
+        log.info("--> {}",userDetails.getUname());
 
         UsersDTO dto = myPageService.findUserInfo(userDetails.getUno()); // 서비스에서 조회
+
+        if (dto.getProfile_image() == null || dto.getProfile_image().isEmpty()) {
+            dto.setProfile_image("/img/default-profile.png");  // 정적 리소스 경로
+        }
         return ResponseEntity.ok(dto);
     }
 
@@ -45,6 +49,8 @@ public class ApiMyPageController {
     @Operation(summary = "이름으로 사용자 정보 조회", description = "uname으로 사용자 정보 조회")
     public ResponseEntity<UsersDTO> getUserByUname(@RequestParam String uname) {
         UsersDTO dto = myPageService.findUserInfoByUname(uname);
+
+
         return ResponseEntity.ok(dto);
     }
 
@@ -60,6 +66,8 @@ public class ApiMyPageController {
             @RequestParam String phone3,
             @RequestParam(required = false) MultipartFile profileImage
     ) {
+
+        log.info("2222222222222222222 {}", userDetails);
         String fullPhone = phone1 + "-" + phone2 + "-" + phone3;
         User user = myPageService.findByUno(userDetails.getUno());  // findByUno()로 사용자 엔티티 조회
 
@@ -72,7 +80,6 @@ public class ApiMyPageController {
             String imagePath = fileStorageService.store(profileImage);  // 이미지 저장
             user.setProfileImg(imagePath);
         }
-
         myPageService.updateUser(userDetails.getUno(), user);  // 사용자 정보 업데이트
         return ResponseEntity.ok(new UsersDTO(user));  // 변경된 사용자 정보 반환
     }

@@ -18,4 +18,5 @@ public class EventRequestDTO {
     private LocalDate endAt;
     private Boolean isTop;
 
+
 }

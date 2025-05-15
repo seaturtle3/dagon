@@ -18,11 +18,13 @@ function showDashboard() {
     document.getElementById('dashboard').classList.remove('hidden');
     document.getElementById('user-info').classList.add('hidden');
     document.getElementById('partner-list').classList.add('hidden');  // 파트너 신청 목록 숨김
+    document.getElementById('user-detail').classList.add('hidden');
 }
 
 function showUserInfo() {
     document.getElementById('user-info').classList.remove('hidden');
     document.getElementById('dashboard').classList.add('hidden');
+    document.getElementById('user-detail').classList.add('hidden');
     document.getElementById('partner-list').classList.add('hidden');  // 파트너 신청 목록 숨김
     loadUsers();
 }
@@ -60,7 +62,9 @@ function loadUsers(page = 0, size = 10) {
                 const userList = data.content;
                 const totalPages = data.totalPages;
                 renderUserList(userList); // 유저 목록을 렌더링
-                renderPagination(totalPages, page); // 페이징 렌더링
+                renderUserPagination(totalPages, page); // 페이징 렌더링
+                console.log('renderPagination 호출됨', totalPages, page);
+                console.log('totalPages:', data.totalPages);
             } else {
                 console.error('유효하지 않은 데이터:', data);
             }
@@ -95,22 +99,32 @@ function renderUserList(users) {
         </td>
     `;
         console.log(row.innerHTML); // 로그로 생성된 테이블 행을 확인
+        row.classList.add(user.isActive ? 'active-user' : 'inactive-user');
         userTable.appendChild(row);
     });
 }
 
 // 회원 페이징 처리
-function renderPagination(totalPages, currentPage) {
+function renderUserPagination(totalPages, currentPage) {
+    console.log('✅ renderPagination 호출됨', totalPages, currentPage);
+
     const pagination = document.querySelector('.pagination');
-    pagination.innerHTML = ''; // 기존 페이징 비우기
+    pagination.innerHTML = '';
+
+    if (!totalPages || totalPages === 0) {
+        console.warn('⚠️ 페이지가 0이거나 없음');
+        return;
+    }
 
     for (let i = 0; i < totalPages; i++) {
         const pageItem = document.createElement('button');
         pageItem.innerText = i + 1;
         pageItem.classList.add('page-btn');
+        if (i === currentPage) {
+            pageItem.style.fontWeight = 'bold';
+        }
         pageItem.addEventListener('click', () => loadUsers(i));
         pagination.appendChild(pageItem);
-        console.log(i);
     }
 }
 
@@ -144,6 +158,17 @@ function showUserDetailPopup(user) {
     const popup = document.getElementById('user-detail');
     const userDetails = document.getElementById('user-details');
 
+        if (!popup || !userDetails) {
+            console.error("❌ popup 또는 userDetails 요소가 없습니다.");
+            return;
+        }
+
+        console.log("✅ showUserDetailPopup 호출됨, 유저:", user);
+
+        userDetails.innerHTML = `...`; // 생략된 innerHTML 구성
+        popup.classList.remove('hidden');
+
+
     userDetails.innerHTML = `
         <h3>회원 상세정보 및 수정</h3>
         <label>아이디: <input type="text" value="${user.uid}" readonly></label><br>
@@ -157,7 +182,10 @@ function showUserDetailPopup(user) {
         <label>레벨 포인트: <input type="number" id="edit-levelPoint" value="${user.levelPoint ?? 0}"></label><br>
         <label>로그인 타입: <input type="text" id="edit-loginType" value="${user.loginType ?? ''}"></label><br>
         <label>가입일: <input type="text" value="${user.createdAt}" readonly></label><br>
-        <label>권한: <input type="text" id="edit-role" value="${user.role}"></label><br><br>
+        <label>권한: <input type="text" id="edit-role" value="${user.role}"></label><br>
+         <label>활성화 여부: 
+<input type="checkbox" id="edit-isActive" ${user.isActive ? 'checked' : ''}>
+    </label><br><br>
 
         <button id="save-edit">저장</button>
         <button id="delete-btn">삭제</button>
@@ -178,7 +206,8 @@ function showUserDetailPopup(user) {
             level: parseInt(document.getElementById('edit-level').value),
             levelPoint: parseInt(document.getElementById('edit-levelPoint').value),
             loginType: document.getElementById('edit-loginType').value,
-            role: document.getElementById('edit-role').value
+            role: document.getElementById('edit-role').value,
+            isActive: document.getElementById('edit-isActive').checked
         };
 
         const token = localStorage.getItem('authToken');
@@ -198,6 +227,8 @@ function showUserDetailPopup(user) {
             })
             .then(() => {
                 alert('회원 정보가 수정되었습니다.');
+                console.log("체크박스 상태:", document.getElementById('edit-isActive').checked);
+                console.log("업데이트 유저:", updatedUser);
                 popup.classList.add('hidden');
                 loadUsers();
             })
@@ -208,31 +239,37 @@ function showUserDetailPopup(user) {
     };
 
 // 삭제
-    document.getElementById('delete-btn').onclick = function () {
+    document.getElementById('delete-btn').addEventListener('click', function() {
+        const token = getAuthToken(); // ★ 토큰 가져오기 (로그인한 관리자 토큰)
+
+        if (!token) {
+            alert("인증되지 않은 요청입니다. 로그인 후 다시 시도해주세요.");
+            return;
+        }
+
         if (confirm('정말로 이 회원을 삭제하시겠습니까?')) {
-            const token = localStorage.getItem('authToken');
-            const headers = {
-                'Authorization': `Bearer ${token}`
-            };
             console.log('삭제 요청 대상:', user);
             console.log('삭제할 UNO:', user.uno);
 
-            fetch(`/api/admin/user/${user.uno}`, { // 여기에서 user.uid가 삭제할 회원의 ID입니다.
+            fetch(`/api/admin/user/${user.uno}`, { // ★ 관리자가 회원 삭제하는 API로 요청!
                 method: 'DELETE',
-                headers: headers
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}` // ★ 토큰은 Bearer 형식으로
+                }
             })
                 .then(response => {
-                    if (!response.ok) throw new Error('삭제 실패');
-                    alert('회원이 삭제되었습니다.');
-                    // popup.classList.add('hidden');
-                    // loadUsers(); // 회원 목록을 다시 불러옴
+                    if (response.ok) {
+                        alert('회원이 삭제되었습니다.');
+
+                    }
                 })
                 .catch(error => {
                     console.error('삭제 오류:', error);
                     alert('삭제 중 오류 발생');
                 });
         }
-    };
+    });
 
     // 닫기
     document.getElementById('cancel-btn').onclick = function () {
