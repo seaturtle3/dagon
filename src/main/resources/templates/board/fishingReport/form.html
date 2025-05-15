@@ -2,34 +2,48 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head th:insert="fragments/common-head :: head">
     <meta charset="UTF-8">
-    <title>조황정보</title>
+    <title>조황 글 등록</title>
 </head>
 <body>
 <div th:replace="fragments/header :: header"></div>
 
-<h2>조황 정보 글 등록</h2>
+<div class="container mt-5">
+    <h2 class="mb-4">조황 글 등록</h2>
 
-<form action="/fishing-report/form" method="POST">
-    <label for="fishingAt">조업 날짜:</label>
-    <input type="datetime-local" id="fishingAt" name="fishingAt" required><br><br>
+    <div class="mb-4">
+        <h5>선택된 제품 ID: <span th:text="${prodId}"></span></h5>
+    </div>
 
-    <label for="views">조회수:</label>
-    <input type="number" id="views" name="views" value="0" required><br><br>
+    <form th:action="@{/fishing-report/form(prodId=${product.prodId})}" method="post">
+        <input type="hidden" name="prodId" th:value="${product.prodId}" />
 
-    <label for="thumbnailUrl">썸네일 URL:</label>
-    <input type="text" id="thumbnailUrl" name="thumbnailUrl" required><br><br>
+        <div class="mb-3">
+            <label for="fishingAt" class="form-label">조업 날짜</label>
+            <input type="datetime-local" id="fishingAt" name="fishingAt" class="form-control" required>
+        </div>
 
-    <label for="title">제목:</label>
-    <input type="text" id="title" name="title" required><br><br>
+        <div class="mb-3">
+            <label for="views" class="form-label">조회수</label>
+            <input type="number" id="views" name="views" value="0" class="form-control" required>
+        </div>
 
-    <label for="content">내용:</label>
-    <textarea id="content" name="content" required></textarea><br><br>
+        <div class="mb-3">
+            <label for="thumbnailUrl" class="form-label">썸네일 URL</label>
+            <input type="text" id="thumbnailUrl" name="thumbnailUrl" class="form-control" required>
+        </div>
 
-    <button type="submit">등록</button>
-</form>
+        <div class="mb-3">
+            <label for="title" class="form-label">제목</label>
+            <input type="text" id="title" name="title" class="form-control" required>
+        </div>
 
+        <div class="mb-3">
+            <label for="content" class="form-label">내용</label>
+            <textarea id="content" name="content" rows="5" class="form-control" required></textarea>
+        </div>
 
-
-
+        <button type="submit" class="btn btn-primary">등록</button>
+    </form>
+</div>
 </body>
 </html>

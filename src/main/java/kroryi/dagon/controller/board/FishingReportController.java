@@ -1,42 +1,63 @@
 package kroryi.dagon.controller.board;
 
-import kroryi.dagon.DTO.board.FishingReportDTO;
-import kroryi.dagon.service.FishingReportService;
+import kroryi.dagon.DTO.board.FishingReportDiary.FishingReportDTO;
+import kroryi.dagon.entity.Product;
+import kroryi.dagon.service.board.fishingReportDiary.FishingReportService;
+import kroryi.dagon.service.product.ProductService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Log4j2
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/fishing-report")
 public class FishingReportController {
 
     private final FishingReportService fishingReportService;
+    private final ProductService productService;
 
-    // 모든 조황 정보 조회
-    @GetMapping("/list")
-    public String getAllFishingReports(Model model) {
-        List<FishingReportDTO> fishingReports = fishingReportService.getAllFishingReport();
+    // 조황 특정 prodId 조회
+    @GetMapping("/list/{prodId}")
+    public String getFishingReportsByProdId(@PathVariable Long prodId,
+                                            Model model) {
+        List<FishingReportDTO> fishingReports = fishingReportService.getFishingReportsByProdId(prodId);
         model.addAttribute("fishingReports", fishingReports);
+        model.addAttribute("prodId", prodId);
+        log.info("-------------------특정 prodId: {}", prodId);
+        log.info("---------------------Fishing Reports: {}", fishingReports);  // 반환된 데이터 확인
         return "board/fishingReport/list";
     }
 
-    // 새로운 조황 정보 등록
+
+    // 조황 폼
     @GetMapping("/form")
-    public String showFishingReportForm() {
+    public String showFishingReportForm(@RequestParam(required = false) Long prodId,
+                                        Model model) {
+        if (prodId == null) {
+            throw new IllegalArgumentException("prodId is required");
+        }
+        Product product = productService.findById(prodId);
+        model.addAttribute("product", product);
+        model.addAttribute("prodId", prodId);
         return "board/fishingReport/form";
     }
 
-    // 새로운 조황 정보 등록
+    // 조황 폼 전송
     @PostMapping("/form")
-    public String createFishingReport(FishingReportDTO fishingReportDTO) {
+    public String createFishingReport(@RequestParam(required = false) Long prodId,
+                                      FishingReportDTO fishingReportDTO) {
+        Product product = productService.findById(prodId);
+        fishingReportDTO.setProduct(product);
         fishingReportService.createFishingReport(fishingReportDTO);
-        return "redirect:/fishing-report/list"; // 등록 후 목록 페이지로 리다이렉트
+        log.info("product id: {}", product);
+        log.info("-----------------------Redirecting to /fishing-report/list/{}", prodId);
+        return "redirect:/fishing-report/list/" + prodId;
     }
+
 }
 

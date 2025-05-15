@@ -8,9 +8,6 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.Map;
 
-/**
- * DTO for {@link kroryi.spring.entity.Member}
- */
 @ToString
 @Getter
 @Setter

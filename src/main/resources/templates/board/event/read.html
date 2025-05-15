@@ -28,7 +28,7 @@
         <div th:utext="${event.content}">내용</div>
 
         <div class="button-group text-end mt-4">
-            <a th:href="@{'/event?page=' + ${page} + '&size=' + ${size}}" class="btn btn-secondary">목록으로</a>
+            <a th:href="@{'/admin/dashboard'}" class="btn btn-secondary">목록으로</a>
             <a th:href="@{'/event/' + ${event.eventId} + '/edit?page=' + ${page} + '&size=' + ${size}}"
                class="btn btn-custom">수정</a>
 

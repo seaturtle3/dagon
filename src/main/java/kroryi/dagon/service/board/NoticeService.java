@@ -95,7 +95,13 @@ public class NoticeService {
             return noticeRepository.findAllByOrderByIsTopDescCreatedAtDesc(pageable);
         }
 
-        return noticeRepository.searchByKeyword(keyword, type, pageable);
+        String keywordPattern = "%" + keyword.trim() + "%";
+
+        System.out.println("Search Type: " + type);
+        System.out.println("Search KeywordPattern: " + keywordPattern);
+
+        return noticeRepository.searchByKeyword(keywordPattern, type, pageable);
     }
+
 
 }

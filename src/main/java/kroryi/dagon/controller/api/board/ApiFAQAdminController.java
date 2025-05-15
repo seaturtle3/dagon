@@ -1,6 +1,7 @@
 package kroryi.dagon.controller.api.board;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import kroryi.dagon.DTO.board.FAQRequestDTO;
 import kroryi.dagon.DTO.board.FAQResponseDTO;
@@ -16,6 +17,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
+@Tag(name = "Board-FAQ", description = "FAQ 등록/수정/삭제 API")
 @RequestMapping("/api/admin/faq")
 public class ApiFAQAdminController {
     private final FAQService faqService;

@@ -13,6 +13,8 @@ import java.util.Optional;
 
 public interface PartnerApplicationRepository extends JpaRepository<PartnerApplication, Long> {
 
+
+
     @Query("SELECT p FROM PartnerApplication p JOIN FETCH p.user")
     List<PartnerApplication> findAllWithUser();  // 페이징용 메서드 아래 따로 작성
 

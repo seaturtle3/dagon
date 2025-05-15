@@ -6,10 +6,10 @@ import kroryi.dagon.entity.Product;
 import kroryi.dagon.enums.MainType;
 import kroryi.dagon.enums.ProdRegion;
 import kroryi.dagon.enums.SubType;
+import kroryi.dagon.repository.ProductRepository;
 import kroryi.dagon.service.PartnerService;
-import kroryi.dagon.service.ProductService;
+import kroryi.dagon.service.product.ProductService;
 import lombok.RequiredArgsConstructor;
-import lombok.ToString;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -26,6 +26,8 @@ public class ProductController {
 
     private final ProductService productService;
     private final PartnerService partnerService;
+
+    private final ProductRepository productRepository;
 
     @ModelAttribute("regions")
     public List<ProdRegion> regions() {
@@ -78,6 +80,7 @@ public class ProductController {
 
         return "product/list"; // 리스트 페이지 반환
     }
+
 
 
 }

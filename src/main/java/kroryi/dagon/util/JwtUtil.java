@@ -8,10 +8,12 @@ import kroryi.dagon.entity.User;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import java.nio.charset.StandardCharsets;
 
 import javax.crypto.SecretKey;
-import java.nio.charset.StandardCharsets;
+
 import java.util.Date;
+import java.util.Map;
 
 @Log4j2
 @Component
@@ -34,22 +36,36 @@ public class JwtUtil {
         this.secretKey = Keys.hmacShaKeyFor(keyBytes);
     }
 
-    public String generateToken(String uid, Long uno, String uname, String role) {
+    public String generateToken(User user) {
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + expirationTime);
 
         return Jwts.builder()
-                .setSubject(uid)
-                .claim("uno", uno.toString())
-                .claim("uname", uname)
-                .claim("role",role)
+                .setSubject(user.getUid())
+                .claim("uno", user.getUno())
+                .claim("uname", user.getUname())
+                .claim("nickname", user.getNickname())
+                .claim("email", user.getEmail())
+                .claim("role", user.getRole().name())
                 .setIssuedAt(now)
                 .setExpiration(expiryDate)
                 .signWith(secretKey, SignatureAlgorithm.HS256)
                 .compact();
     }
 
+    public String generateAdminToken(String aid, String aname, String role) {
+        Date now = new Date();
+        Date expiryDate = new Date(now.getTime() + expirationTime);
 
+        return Jwts.builder()
+                .setSubject(aid)
+                .claim("aname", aname)
+                .claim("role", role)
+                .setIssuedAt(now)
+                .setExpiration(expiryDate)
+                .signWith(secretKey, SignatureAlgorithm.HS256)
+                .compact();
+    }
 
     public Claims parseToken(String token) {
         try {
@@ -63,6 +79,8 @@ public class JwtUtil {
         } catch (JwtException e) {
             throw new JwtException("Invalid JWT", e);
         }
+
+
     }
     // 토큰 검증 및 정보 추출 등의 메서드 추가 필요
     // JWT 토큰에서 uid (Subject) 추출
@@ -77,6 +95,13 @@ public class JwtUtil {
         }
     }
 
+    public Long getUnoFromToken(String token) {
+        Claims claims = parseToken(token);
+        Object unoObj = claims.get("uno");
+        log.info("uno claim type: {}", unoObj.getClass().getName());
+        log.info("uno value: {}", unoObj);
+        return ((Number) unoObj).longValue(); // 안전하게 형변환
+    }
 
     // isValidToken: 토큰이 유효한지 확인하는 메서드
     public boolean isValidToken(String token) {
@@ -90,6 +115,7 @@ public class JwtUtil {
             return false;
         }
     }
+
 
 }
 

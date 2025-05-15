@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class AdminController {
 
     // 관리자 로그인 페이지
-    @GetMapping("/login")
+    @GetMapping("")
     public String adminLogin() {
         return "admin/admin_login";
     }
@@ -30,5 +30,22 @@ public class AdminController {
     public String adminDashboard() {
         return "admin/admin_dashboard";
     }
+
+    /**
+     * API Key 생성
+     */
+    @GetMapping("/api-keys/new")
+    public String newApiKey() {
+
+        return "/admin/create-api-key";
+    }
+
+    @GetMapping("/api-keys/list")
+    public String listApiKey() {
+
+        return "/admin/list-api-keys";
+    }
+
+
 }
 

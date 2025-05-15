@@ -13,4 +13,6 @@ public interface FishingReportRepository extends JpaRepository<FishingReport, Lo
     @Query("SELECT fr FROM FishingReport fr LEFT JOIN FETCH fr.comments")
     List<FishingReport> findAllWithComments();
 
+    List<FishingReport> findByProductProdId(Long prodId);
+
 }

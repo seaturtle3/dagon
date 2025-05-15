@@ -86,8 +86,11 @@ public class EventController {
             model.addAttribute("size", size);
             return "board/event/form";
         }
+
         eventService.createEvent(dto, "admin001");
-        return "redirect:/event?page=" + page + "&size=" + size;
+
+        // ✅ 등록 후 대시보드로 이동
+        return "redirect:/admin/dashboard";
     }
 
     // 수정 폼
@@ -116,20 +119,16 @@ public class EventController {
     // 수정 처리
     @PostMapping("/{id}")
     public String update(@PathVariable Long id,
-                         @ModelAttribute EventRequestDTO dto,
-                         @RequestParam(defaultValue = "0") int page,
-                         @RequestParam(defaultValue = "10") int size) {
+                         @ModelAttribute EventRequestDTO dto) {
         eventService.updateEvent(id, dto);
-        return "redirect:/event?page=" + page + "&size=" + size;
+        return "redirect:/admin/dashboard";  // ✅ 수정 후 대시보드로 이동
     }
 
     // 삭제 처리
     @PostMapping("/{id}/delete")
-    public String delete(@PathVariable Long id,
-                         @RequestParam(defaultValue = "0") int page,
-                         @RequestParam(defaultValue = "10") int size) {
+    public String delete(@PathVariable Long id) {
         eventService.deleteEvent(id);
-        return "redirect:/event?page=" + page + "&size=" + size;
+        return "redirect:/admin/dashboard";  // ✅ 원하는 경로로 이동
     }
 
 }

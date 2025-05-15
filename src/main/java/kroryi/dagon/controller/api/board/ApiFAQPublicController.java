@@ -1,6 +1,7 @@
 package kroryi.dagon.controller.api.board;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import kroryi.dagon.DTO.board.FAQListDTO;
 import kroryi.dagon.entity.FAQ;
 import kroryi.dagon.service.board.FAQService;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
+@Tag(name = "Board-FAQ", description = "사용자 FAQ 조회 API")
 @RequestMapping("/api/faq")
 public class ApiFAQPublicController {
 
