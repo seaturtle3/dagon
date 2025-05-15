@@ -150,6 +150,14 @@ public class NotificationService {
     }
 
     public Page<NotificationDTO> getNotifications(String uid, String type, Pageable pageable) {
+        // 빈 문자열("")은 null로 변환해서 처리
+        if (uid != null && uid.isBlank()) {
+            uid = null;
+        }
+        if (type != null && (type.isBlank() || type.equals("전체"))) {
+            type = null;
+        }
+
         Page<Notification> notifications;
 
         if (uid != null && type != null) {
