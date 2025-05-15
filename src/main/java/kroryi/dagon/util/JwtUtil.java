@@ -98,6 +98,7 @@ public class JwtUtil {
     public Long getUnoFromToken(String token) {
         Claims claims = parseToken(token);
         Object unoObj = claims.get("uno");
+        Long uno = ((Number) unoObj).longValue();
         log.info("uno claim type: {}", unoObj.getClass().getName());
         log.info("uno value: {}", unoObj);
         return ((Number) unoObj).longValue(); // 안전하게 형변환

@@ -1,6 +1,8 @@
 document.addEventListener('DOMContentLoaded', function () {
     console.log('페이지가 로드되었습니다.');
 
+
+
     // 기본은 대시보드만 보이도록 (loadUsers 제거)
     document.getElementById('dashboard-link').addEventListener('click', showDashboard);
     document.getElementById('user-info-link').addEventListener('click', function () {
@@ -33,6 +35,7 @@ function showPartnerList() {
     document.getElementById('partner-list').classList.remove('hidden');
     document.getElementById('dashboard').classList.add('hidden');
     document.getElementById('user-info').classList.add('hidden');
+    document.getElementById('user-detail').classList.add('hidden');
     loadData(0);  // 파트너 목록을 로드하는 함수 (필요에 따라 구현)
 }
 
@@ -99,6 +102,7 @@ function renderUserList(users) {
         </td>
     `;
         console.log(row.innerHTML); // 로그로 생성된 테이블 행을 확인
+        row.classList.add(user.isActive ? 'active-user' : 'inactive-user');
         userTable.appendChild(row);
     });
 }
@@ -156,6 +160,17 @@ function viewUserDetail(uid) {
 function showUserDetailPopup(user) {
     const popup = document.getElementById('user-detail');
     const userDetails = document.getElementById('user-details');
+
+        if (!popup || !userDetails) {
+            console.error("❌ popup 또는 userDetails 요소가 없습니다.");
+            return;
+        }
+
+        console.log("✅ showUserDetailPopup 호출됨, 유저:", user);
+
+        userDetails.innerHTML = `...`; // 생략된 innerHTML 구성
+        popup.classList.remove('hidden');
+
 
     userDetails.innerHTML = `
         <h3>회원 상세정보 및 수정</h3>

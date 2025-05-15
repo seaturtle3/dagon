@@ -12,11 +12,11 @@ document.addEventListener('DOMContentLoaded', function () {
                 <option value="REPLY">답변</option>
                 <option value="RESERVATION">예약 알림</option>
             </select>
-            <button id="search-btn" class="bg-blue-500 text-white px-4 py-2 rounded">검색</button>
+            <button id="search-btns" class="bg-blue-500 text-white px-4 py-2 rounded">검색</button>
         </div>
     `;
 
-    document.getElementById('search-btn').addEventListener('click', () => {
+    document.getElementById('search-btns').addEventListener('click', () => {
         currentUid = document.getElementById('search-user-uid').value.trim();
         currentType = document.getElementById('search-type').value;
         searchNotifications(0, currentSize);
@@ -24,6 +24,40 @@ document.addEventListener('DOMContentLoaded', function () {
 
     searchNotifications(0, currentSize);
 });
+
+function renderPagination(data, currentPage, pageSize) {
+    console.log('renderPagination 시작');
+    const paginationDiv = document.getElementById('notification-pagination');
+    if (!paginationDiv) {
+        console.error('notification-pagination 요소를 찾을 수 없음');
+        return;
+    }
+
+    // 기존 내용 삭제
+    paginationDiv.innerHTML = '';
+
+    const totalPages = data.totalPages;
+    console.log('총 페이지 수:', totalPages);
+
+    if (totalPages <= 1) {
+        console.log('페이지 1 이하, 페이지네이션 표시 안 함');
+        return; // 페이지가 1 이하라면 페이지네이션 필요 없음
+    }
+
+    for (let i = 0; i < totalPages; i++) {
+        const btn = document.createElement('button');
+        btn.textContent = i + 1;
+        btn.classList.add('page-btn');
+        if (i === currentPage) btn.classList.add('active');
+
+        btn.addEventListener('click', () => {
+            searchNotifications(i, pageSize);
+        });
+
+        paginationDiv.appendChild(btn);
+    }
+    console.log('renderPagination 종료');
+}
 
 function searchNotifications(page = 0, size = 10) {
     const authToken = localStorage.getItem('authToken');
@@ -43,7 +77,11 @@ function searchNotifications(page = 0, size = 10) {
     })
         .then(response => response.json())
         .then(data => {
-            console.log('알림 데이터:', data);
+            console.log('전체 응답 데이터:', data);
+            console.log('data.number:', data.number);
+            console.log('data.size:', data.size);
+            console.log('data.totalPages:', data.totalPages);
+
 
             const tableBody = document.getElementById('notification-table-body');
             tableBody.innerHTML = '';
@@ -67,7 +105,7 @@ function searchNotifications(page = 0, size = 10) {
                     tableBody.appendChild(row);
                 });
             }
-
+            console.log("renderPagination 호출 직전");
             renderPagination(data, data.number, data.size);  // 한 번만 호출
         })
         .catch(error => {
@@ -75,26 +113,3 @@ function searchNotifications(page = 0, size = 10) {
         });
 }
 
-function renderPagination(data, currentPage, pageSize) {
-    const paginationContainer = document.getElementById('notification-pagination');
-    paginationContainer.innerHTML = '';
-
-    if (!data.totalPages || data.totalPages <= 1) {
-        return;
-    }
-
-    for (let i = 0; i < data.totalPages; i++) {
-        console.log('페이지 버튼 생성:', i + 1);
-        const button = document.createElement('button');
-        button.textContent = i + 1;
-        button.className = 'px-2 py-1 border rounded mx-1';
-        if (i === currentPage) {
-            button.classList.add('bg-blue-500', 'text-white');
-            button.disabled = true; // 현재 페이지 버튼은 비활성화
-        }
-        button.addEventListener('click', () => {
-            searchNotifications(i, pageSize);
-        });
-        paginationContainer.appendChild(button);
-    }
-}

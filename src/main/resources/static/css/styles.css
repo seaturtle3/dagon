@@ -4,6 +4,8 @@
     box-sizing: border-box;
 }
 
+
+
 body {
     font-family: Arial, sans-serif;
 }
@@ -11,6 +13,11 @@ body {
 .container {
     display: flex;
     height: 100vh;
+}
+
+.inactive-user {
+    background-color: #f0f0f0;
+    color: #999;
 }
 
 .sidebar {
@@ -130,8 +137,5 @@ table th {
     cursor: pointer;
 }
 
-.hidden {
-    display: none !important;
-}
 
 
