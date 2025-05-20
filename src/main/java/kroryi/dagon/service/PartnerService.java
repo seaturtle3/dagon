@@ -14,6 +14,7 @@ import kroryi.dagon.entity.Partner;
 import kroryi.dagon.repository.PartnerRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -33,22 +34,27 @@ public class PartnerService {
 
 
     // 파트너 신청 적용
-    public void partner(PartnerApplicationDTO dto) throws Exception {
-        PartnerApplication application = new PartnerApplication();
-
-        application.setPname(dto.getPname());
-        application.setPAddress(dto.getPaddress());
-        application.setCeoName(dto.getCeoName());
-        application.setLicense(dto.getLicense());
-        application.setPInfo(dto.getPinfo());
-
-
+    @Transactional
+    public void applyPartner(PartnerApplicationDTO dto) {
+        // User 엔티티 조회
         User user = userRepository.findById(dto.getUno())
-                .orElseThrow(() -> new Exception("사용자 정보를 찾을 수 없습니다."));
-        application.setUser(user);
+                .orElseThrow(() -> new UsernameNotFoundException("유저를 찾을 수 없습니다."));
 
-        partnerApplicationRepository.save(application);
+        // DTO → 엔티티 변환
+        PartnerApplication entity = new PartnerApplication();
+
+        entity.setPname(dto.getPname());
+        entity.setCeoName(dto.getCeoName());
+        entity.setPAddress(dto.getPaddress());
+        entity.setPInfo(dto.getPinfo());
+        entity.setLicense(dto.getLicense());
+        entity.setPStatus(ApplicationStatus.PENDING);
+        entity.setUser(user);
+
+        // 저장
+        partnerApplicationRepository.save(entity);
     }
+
 
     public List<PartnerDTO> getAllPartners() {
         return partnersRepository.findAll().stream()

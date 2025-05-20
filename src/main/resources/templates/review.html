@@ -95,12 +95,9 @@
     </form>
 </div>
 
-<script src="/js/auth.js"></script>
 <script>
 
     async function dataSend() {
-
-
         const pname = document.getElementById("pname").value.trim();
         const paddress = document.getElementById("paddress").value.trim();
         const ceoName = document.getElementById("ceoName").value.trim();
@@ -112,7 +109,6 @@
         const licenseRegex = /^\d{10}$/;
         const pnameRegex = /^[a-zA-Z가-힣0-9\s]{2,30}$/;
 
-        // 검증
         if (!pnameRegex.test(pname)) {
             errorBox.textContent = "업체명은 특수문자 없이 2~30자로 입력해주세요.";
             return;
@@ -138,41 +134,45 @@
             return;
         }
 
-        // 전송
         const data = {
             pname, paddress, ceoName, license, pinfo
         };
 
-        const token = window.getAuthToken();  // 인증 토큰을 가져옵니다.
+        // 토큰 가져오기 (localStorage에서 예시)
+        const token = localStorage.getItem('authToken');
+        if (!token) {
+            alert("로그인 상태가 아닙니다. 다시 로그인해주세요.");
+            return;
+        }
+
         console.log("파트너 신청 API 요청 시 토큰:", token);
+        console.log(data);
 
-
-        console.log(data)
-        const response = await fetch(`/partner/review`, {
+        const response = await fetch(`/api/partners/register`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': 'Bearer ' + getAuthToken()
+                'Authorization': 'Bearer ' + token
             },
             body: JSON.stringify(data)
         });
 
-
         if (!response.ok) {
             const errorText = await response.text();
-            throw new Error(errorText || '서버 오류');
+            alert(errorText || '서버 오류');
+            return;
         }
 
-        const obj = await response.text(); // ← 문자열 → JSON
-        console.log(obj)
+        const obj = await response.text();
+        console.log(obj);
         alert(obj);
-        // ✅ 홈 또는 마이페이지 등으로 이동
-        window.location.href = "/"; // 또는 "/mypage", "/partner/status" 등 원하는 경로
+
+        // 신청 후 원하는 페이지로 이동
+        window.location.href = "/";
     }
 
     document.getElementById("partnerForm").addEventListener("submit", function (event) {
         event.preventDefault();
-
         dataSend();
     });
 
