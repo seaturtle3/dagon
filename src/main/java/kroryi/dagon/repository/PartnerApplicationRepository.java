@@ -39,4 +39,6 @@ public interface PartnerApplicationRepository extends JpaRepository<PartnerAppli
 
     @Query("SELECT p FROM PartnerApplication p JOIN FETCH p.user WHERE p.pid = :id")
     Optional<PartnerApplication> findByIdWithUser(@Param("id") Long id);
+
+    long countBypStatus(ApplicationStatus status);
 }

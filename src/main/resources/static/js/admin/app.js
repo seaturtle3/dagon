@@ -36,8 +36,10 @@ function showPartnerList() {
     document.getElementById('dashboard').classList.add('hidden');
     document.getElementById('user-info').classList.add('hidden');
     document.getElementById('user-detail').classList.add('hidden');
-    loadData(0);  // 파트너 목록을 로드하는 함수 (필요에 따라 구현)
+    loadData();  // 파트너 목록을 로드하는 함수 (필요에 따라 구현)
 }
+
+
 
 
 
@@ -278,6 +280,13 @@ function showUserDetailPopup(user) {
     document.getElementById('cancel-btn').onclick = function () {
         popup.classList.add('hidden');
     };
+
+
+    window.addEventListener('DOMContentLoaded', () => {
+        const defaultPage = 'partner-list';  // 또는 'faq-page'
+        document.querySelectorAll('.page').forEach(el => el.style.display = 'none');
+        document.getElementById(defaultPage).style.display = 'block';
+    });
 }
 
 

@@ -30,15 +30,15 @@ async function loadData(page = 0) {
         }
 
         const data = await response.json();
-        renderTable(data);
-        renderPagination(data);
+        renderpatnerTable(data);
+        renderPaginationPatner(data);
     } catch (error) {
         console.error('Error fetching data', error);
         alert('데이터를 불러오는 중 오류가 발생했습니다.');
     }
 }
 
-function renderTable(data) {
+function renderpatnerTable(data) {
     const body = document.getElementById('tableBody');
     body.innerHTML = '';
 
@@ -67,7 +67,7 @@ function renderTable(data) {
     });
 }
 
-function renderPagination(data) {
+function renderPaginationPatner(data) {
     const pagination = document.getElementById('pagination');
     pagination.innerHTML = '';
 
@@ -106,4 +106,4 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // 검색 버튼 클릭 시 로드
-document.querySelector('button').addEventListener('click', () => loadData(0));
+document.getElementById('partner-search-btn').addEventListener('click', () => loadPartnerData(0));
