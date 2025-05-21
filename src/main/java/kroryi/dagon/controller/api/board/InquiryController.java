@@ -1,6 +1,11 @@
 package kroryi.dagon.controller.api.board;
 
-import io.swagger.annotations.Api;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import kroryi.dagon.DTO.InquiryDTO;
 import kroryi.dagon.entity.Inquiry;
@@ -10,42 +15,31 @@ import kroryi.dagon.enums.WriterType;
 import kroryi.dagon.repository.InquiryRepository;
 import kroryi.dagon.service.InquiryService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.time.LocalDateTime;
+import java.util.*;
 import java.util.stream.Collectors;
 
-@Api(tags = {"1:1 문의 API 정보 제공 컨트롤러"})
 @RestController
-@Controller
 @RequiredArgsConstructor
-@Tag(name = "Board-Inquiry", description = "1:1 문의 CRUD API")
+@Tag(name = "1:1 문의 API", description = "문의 작성 및 목록 조회 API")
 public class InquiryController {
 
     private final InquiryService inquiryService;
     private final InquiryRepository inquiryRepository;
 
-    @GetMapping("/inquiry")
-    public String showInquiryForm(Model model) {
-        // InquiryDTO나 관련 데이터를 모델에 추가할 수 있습니다.
-        model.addAttribute("writerTypes", WriterType.values());
-        model.addAttribute("inquiryTypes", InquiryType.values());
-
-        // inquiry.html을 반환하여 해당 페이지를 렌더링
-        return "question/inquiry"; // 여기서 "inquiry"는 inquiry.html을 의미합니다.
-    }
-
-
+    @Operation(summary = "1:1 문의 작성", description = "사용자가 관리자 또는 파트너에게 1:1 문의를 등록합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "문의 등록 성공",
+                    content = @Content(schema = @Schema(implementation = Map.class))),
+            @ApiResponse(responseCode = "400", description = "입력값 오류"),
+            @ApiResponse(responseCode = "500", description = "서버 에러")
+    })
     @PostMapping("/inquiry")
-    @ResponseBody
     public Map<String, Object> submitInquiry(@RequestBody InquiryDTO inquiry) {
         Map<String, Object> response = new HashMap<>();
         try {
-            // DTO → Entity
             Inquiry entity = new Inquiry();
             entity.setWriterType(WriterType.valueOf(inquiry.getUserType()));
             entity.setReceiverType(ReceiverType.valueOf(inquiry.getReceiverType()));
@@ -54,53 +48,25 @@ public class InquiryController {
             entity.setContact(inquiry.getContact());
             entity.setTitle(inquiry.getTitle());
             entity.setContent(inquiry.getContent());
-
-            // 저장
             inquiryRepository.save(entity);
 
             response.put("success", true);
         } catch (Exception e) {
-            e.printStackTrace(); // 에러 확인
             response.put("success", false);
+            response.put("message", e.getMessage());
         }
-
-
         return response;
     }
 
-//    @PostMapping("/inquiry")
-//    public String submitInquiry(@Valid @ModelAttribute Inquiry inquiry, BindingResult result, Model model) {
-//        if (result.hasErrors()) {
-//            model.addAttribute("inquiryTypes", InquiryType.values());
-//            model.addAttribute("writerTypes", WriterType.values());
-//            return "question/inquiry";
-//        }
-//        inquiryRepository.save(inquiry);
-//        return "redirect:/inquiry-list";
-//    }
-//
-//    @PostMapping("/inquiry")
-//    @ResponseBody
-//    public Map<String, Object> submitInquiry(@RequestBody InquiryDTO inquiry) {
-//        // 문의 저장 처리 로직...
-//        Map<String, Object> response = new HashMap<>();
-//        try {
-//            // 예: DB 저장 로직
-//            System.out.println("문의 등록: " + inquiry.getTitle());
-//
-//            response.put("success", true);
-//        } catch (Exception e) {
-//            response.put("success", false);
-//        }
-//
-//        return response;
-//    }
-
+    @Operation(summary = "문의 목록 조회", description = "전체 1:1 문의를 조회합니다. 관리자/파트너 구분")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "조회 성공",
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Inquiry.class))))
+    })
     @GetMapping("/inquiry/list")
-    public String showInquiries(Model model) {
+    public Map<String, List<Inquiry>> getInquiries() {
         List<Inquiry> all = inquiryService.findAll();
 
-        // 안전한 Enum 비교
         List<Inquiry> toPartners = all.stream()
                 .filter(i -> ReceiverType.PARTNER.equals(i.getReceiverType()))
                 .collect(Collectors.toList());
@@ -109,13 +75,47 @@ public class InquiryController {
                 .filter(i -> ReceiverType.ADMIN.equals(i.getReceiverType()))
                 .collect(Collectors.toList());
 
-        // 로그로 값 확인
-        System.out.println("=== 전체 문의 수: " + all.size() + " ===");
-        toPartners.forEach(i -> System.out.println("→ [PARTNER] " + i.getTitle()));
-        toAdmins.forEach(i -> System.out.println("→ [ADMIN] " + i.getTitle()));
+        Map<String, List<Inquiry>> result = new HashMap<>();
+        result.put("toPartners", toPartners);
+        result.put("toAdmins", toAdmins);
 
-        model.addAttribute("toPartners", toPartners);
-        model.addAttribute("toAdmins", toAdmins);
-        return "question/list";
+        return result;
+    }
+
+    public Map<String, Object> updateInquiry(@PathVariable Long id, @RequestBody InquiryDTO dto) {
+        Map<String, Object> response = new HashMap<>();
+        Optional<Inquiry> optionalInquiry = inquiryRepository.findById(id);
+
+        if (optionalInquiry.isPresent()) {
+            Inquiry inquiry = optionalInquiry.get();
+            inquiry.setTitle(dto.getTitle());
+            inquiry.setContent(dto.getContent());
+            inquiry.setContact(dto.getContact());
+            inquiry.setInquiryType(InquiryType.valueOf(dto.getInquiryType()));
+            inquiry.setUpdatedAt(LocalDateTime.now());
+
+            inquiryRepository.save(inquiry);
+            response.put("success", true);
+        } else {
+            response.put("success", false);
+            response.put("message", "해당 ID의 문의가 존재하지 않습니다.");
+        }
+
+        return response;
+    }
+
+    public Map<String, Object> deleteInquiry(@PathVariable Long id) {
+        Map<String, Object> response = new HashMap<>();
+        Optional<Inquiry> optionalInquiry = inquiryRepository.findById(id);
+
+        if (optionalInquiry.isPresent()) {
+            inquiryRepository.deleteById(id);
+            response.put("success", true);
+        } else {
+            response.put("success", false);
+            response.put("message", "해당 ID의 문의가 존재하지 않습니다.");
+        }
+
+        return response;
     }
 }
