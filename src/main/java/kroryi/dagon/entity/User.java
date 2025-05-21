@@ -58,6 +58,9 @@ public class User extends BaseTimeEntity {
     @Column(name = "level_point", nullable = false)
     private Integer levelPoint = 0;
 
+    @Column(name = "last_login_at")
+    private LocalDateTime lastLoginAt;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private UserRole role = UserRole.USER;
