@@ -27,14 +27,13 @@ public class FishingCenterController {
                                 @RequestParam(defaultValue = "15") int size,
                                 Model model) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
-        Page<Product> products = productRepository.findAll(pageable);
+        Page<Product> products = productRepository.findAllWithNonEmptyReportOrDiary(pageable);
 
         model.addAttribute("products", products.getContent());
         model.addAttribute("productPage", products);
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", products.getTotalPages());
 
-        log.info("products");
         return "board/fishing-center";
     }
 
