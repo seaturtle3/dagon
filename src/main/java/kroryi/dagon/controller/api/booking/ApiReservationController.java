@@ -5,17 +5,29 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import kroryi.dagon.DTO.ReservationDTO;
 import kroryi.dagon.component.CustomUserDetails;
+import kroryi.dagon.entity.Reservation;
+import kroryi.dagon.repository.SeaFreshwaterFishingRepository;
+import kroryi.dagon.service.CustomUserDetailsService;
 import kroryi.dagon.service.SeaFreshwaterFishingService;
 import kroryi.dagon.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -26,6 +38,7 @@ public class ApiReservationController {
 
     private final SeaFreshwaterFishingService seaFreshwaterFishingService;
     private final JwtUtil jwtUtil;
+    private final SeaFreshwaterFishingRepository seaFreshwaterFishingRepository;
 
     @Operation(summary = "예약 전 선택한 옵션 조회", description = "예약 전 선택한 옵션 조회")
     @GetMapping("/all")
@@ -83,17 +96,25 @@ public class ApiReservationController {
         try {
             String token = authorization.replace("Bearer ", "");
 
-            // 토큰 유효성 검사
             if (!jwtUtil.isValidToken(token)) {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid Token");
             }
 
-            // 사용자 uno 추출
             Claims claims = jwtUtil.parseToken(token);
-            Long uno = Long.parseLong(claims.get("uno").toString());
+            String role = claims.get("role", String.class);
 
-            // 취소 서비스 호출
-            boolean canceled = seaFreshwaterFishingService.cancelReservationByUser(reservationId, uno);
+            boolean canceled;
+
+            if ("ADMIN".equals(role)) {
+                // 관리자면 uno 없이 바로 취소
+                canceled = seaFreshwaterFishingService.cancelReservationByAdmin(reservationId);
+            } else if ("USER".equals(role)) {
+                // 일반 사용자면 uno 꺼내서 취소 권한 체크
+                Long uno = Long.parseLong(claims.get("uno").toString());
+                canceled = seaFreshwaterFishingService.cancelReservationByUser(reservationId, uno);
+            } else {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body("권한이 없습니다.");
+            }
 
             if (canceled) {
                 return ResponseEntity.ok("예약이 성공적으로 취소되었습니다.");
@@ -102,9 +123,34 @@ public class ApiReservationController {
             }
 
         } catch (Exception e) {
+            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("예약 취소 중 오류 발생");
         }
     }
 
+
+
+    @GetMapping
+    public ResponseEntity<Page<ReservationDTO>> getReservations(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "createdAt") String sortBy,
+            @RequestParam(defaultValue = "desc") String direction,
+            @RequestParam(required = false) String searchType,
+            @RequestParam(required = false) String keyword) {
+
+        Pageable pageable = PageRequest.of(page, size,
+                direction.equalsIgnoreCase("asc") ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending());
+
+        Page<ReservationDTO> result;
+
+        if (keyword == null || keyword.isBlank()) {
+            result = seaFreshwaterFishingService.getAllReservations(pageable);
+        } else {
+            result = seaFreshwaterFishingService.searchReservations(searchType, keyword, pageable);
+        }
+
+        return ResponseEntity.ok(result);
+    }
 
 }

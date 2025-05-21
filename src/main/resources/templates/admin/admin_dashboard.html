@@ -46,6 +46,7 @@
         <div class="sidebar-item" id="dashboard-link">대시보드</div>
         <div class="sidebar-item" id="user-info-link">회원 정보</div>
         <div class="sidebar-item" id="partner-list-link">파트너 신청 목록</div>
+        <div class="sidebar-item" id="reservation-list-link">예약 목록</div>
         <div class="sidebar-item" id="notification-link">알림</div>
         <div class="sidebar-item" id="report-link">신고 목록</div>
         <div class="sidebar-item" id="event-link">이벤트</div>
@@ -217,8 +218,48 @@
 
 
 <!-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+    <!-- 예약 목록 -->
+    <div id="reservation-list" class="page">
+        <h1>예약 목록</h1>
+
+        <div class="search-container">
+            <label>검색 기준:</label>
+            <select id="reservation-search-type">
+                <option value="userName">예약자 이름</option>
+                <option value="productName">예약한 조항 이름</option>
+            </select>
+
+            <input type="text" id="reservation-search-keyword" placeholder="검색어 입력">
 
 
+            <button id="reservation-search-button">검색</button>
+        </div>
+
+        <table>
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>상품명</th>
+                <th>옵션명</th>
+                <th>예약자 이름</th>
+                <th>예약일</th>
+                <th>인원수</th>
+                <th>상태</th>
+                <th>결제방법</th>
+                <th>결제완료 시간</th>
+                <th>예약취소</th>
+            </tr>
+            </thead>
+            <tbody id="reservation-table-body">
+            <!-- 예약 데이터 삽입 영역 -->
+            </tbody>
+        </table>
+
+        <div id="reservation-pagination" class="pagination"></div>
+    </div>
+
+
+    <!-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 <!-- 알림 -->
 <div id="notifications" class="page">
     <h1>알림</h1>
@@ -452,7 +493,7 @@
 
 
 </div>
-</div>
+
 <script src="/js/admin/app.js"></script>
 <script src="/js/admin/partneradmin.js"></script>
 <script src="/js/admin/faq.js"></script>
@@ -463,6 +504,7 @@
 <script src="/js/reports-create.js"></script>
 <script src="/js/admin/event-list.js"></script>
 <script src="/js/admin/notification-list.js"></script>
+<script src="/js/admin/reservation.js"></script>
 <script src="/js/admin/dashboard.js"></script>
 <script src="/webjars/swagger-ui/swagger-ui-bundle.js"></script>
 <script src="/webjars/swagger-ui/swagger-ui-standalone-preset.js"></script>
@@ -526,11 +568,13 @@
         'dashboard-link': 'dashboard',
         'user-info-link': 'user-info',
         'partner-list-link': 'partner-list',
+        'reservation-list-link' : 'reservation-list',
         'notification-link': 'notifications',
         'report-link': 'report-list',
         'event-link': 'event-list',
         'notice-link': 'notice-list',
         'faq-link': 'faq-list'
+
     };
     Object.keys(links).forEach(linkId => {
         document.getElementById(linkId).addEventListener('click', () => {
