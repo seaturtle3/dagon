@@ -21,6 +21,4 @@ public interface ProductRepository extends JpaRepository<Product, Long>, JpaSpec
     List<Product> findByMainTypeAndSubType(MainType mainType, SubType subType);
     List<Product> findByMainTypeAndSubTypeAndProdRegion(MainType mainType, SubType subType, ProdRegion prodRegion);
 
-
-    Throwable findByProdId(Long prodId);
 }
