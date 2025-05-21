@@ -22,7 +22,7 @@ public class FishingReportController {
     private final FishingReportService fishingReportService;
     private final ProductService productService;
 
-    // 조황 특정 prodId 조회
+    // 조황정보 상품ID로 조회
     @GetMapping("/list/{prodId}")
     public String getFishingReportsByProdId(@PathVariable Long prodId,
                                             @RequestParam(defaultValue = "0") int page,
@@ -38,8 +38,6 @@ public class FishingReportController {
 
         return "board/fishingReport/list";
     }
-
-
 
     // 조황정보 폼
     @GetMapping("/form")

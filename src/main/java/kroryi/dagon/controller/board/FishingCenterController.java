@@ -24,7 +24,7 @@ public class FishingCenterController {
 
     @GetMapping("fishing-center")
     public String fishingCenter(@RequestParam(defaultValue = "0") int page,
-                                @RequestParam(defaultValue = "10") int size,
+                                @RequestParam(defaultValue = "15") int size,
                                 Model model) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
         Page<Product> products = productRepository.findAll(pageable);
