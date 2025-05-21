@@ -34,11 +34,12 @@ public class FAQController {
         BoardSearchDTO searchDTO = new BoardSearchDTO();
         searchDTO.setKeyword(keyword);
         searchDTO.setType(type);
+        searchDTO.setFaqType(type);
         searchDTO.setCategoryId(categoryId);
 
 
         Page<FAQ> faqPage = isAdmin
-                ? faqService.searchPaged(searchDTO, PageRequest.of(page, size))
+                ? faqService.searchFaq(searchDTO, PageRequest.of(page, size))
                 : faqService.searchActivePaged(searchDTO, PageRequest.of(page, size));
 
         int totalPages = faqPage.getTotalPages();

@@ -6,8 +6,10 @@ import kroryi.dagon.DTO.PartnerApplicationDTO;
 import kroryi.dagon.entity.Partner;
 import kroryi.dagon.entity.PartnerApplication;
 import kroryi.dagon.enums.ApplicationStatus;
+import kroryi.dagon.enums.UserRole;
 import kroryi.dagon.repository.PartnerApplicationRepository;
 import kroryi.dagon.repository.PartnerRepository;
+import kroryi.dagon.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -23,14 +25,33 @@ import java.time.LocalDateTime;
 public class PartnerApplicationService {
 
     private final PartnerApplicationRepository partnerApplicationRepository;
-
+private final UserRepository userRepository;
     private final PartnerRepository partnerRepository;
+
+
+    public void register(PartnerApplicationDTO dto) {
+        // 유저 정보 조회
+        User user = userRepository.findByUno(dto.getUno())
+                .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 사용자입니다."));
+
+        PartnerApplication entity = new PartnerApplication();
+        entity.setPname(dto.getPname());
+        entity.setCeoName(dto.getCeoName());
+        entity.setPAddress(dto.getPaddress());
+        entity.setPInfo(dto.getPinfo());
+        entity.setLicense(dto.getLicense());
+        entity.setPStatus(ApplicationStatus.PENDING); // 기본 상태
+        entity.setUser(user);
+
+        partnerApplicationRepository.save(entity);
+    }
 
     public Page<PartnerApplicationDTO> getAllApplications(Pageable pageable) {
         return partnerApplicationRepository.findAllWithUser(pageable)
                 .map(entity -> new PartnerApplicationDTO(
                         entity.getPid(),
                         entity.getUser().getUno(),
+                        entity.getUser().getUid(),
                         entity.getPname(),
                         entity.getPAddress(),
                         entity.getCeoName(),
@@ -67,6 +88,7 @@ public class PartnerApplicationService {
                 .map(entity -> new PartnerApplicationDTO(
                         entity.getPid(),
                         entity.getUser().getUno(),
+                        entity.getUser().getUid(),
                         entity.getPname(),
                         entity.getPAddress(),
                         entity.getCeoName(),
@@ -89,6 +111,7 @@ public class PartnerApplicationService {
         return new PartnerApplicationDTO(
                 entity.getPid(),
                 entity.getUser().getUno(),
+                entity.getUser().getUid(),
                 entity.getPname(),
                 entity.getPAddress(),
                 entity.getCeoName(),
@@ -111,9 +134,12 @@ public class PartnerApplicationService {
         app.setPStatus(ApplicationStatus.APPROVED);
         app.setPReviewedAt(LocalDateTime.now());
 
+        User user = app.getUser();
         Long uno = app.getUser().getUno();
 
         Partner partner = partnerRepository.findById(uno).orElse(null);
+
+        user.setRole(UserRole.PARTNER);
 
         if (partner == null) {
             partner = new Partner();

@@ -47,8 +47,8 @@ public class ApiFAQAdminController {
     }
 
     @Operation(summary = "FAQ 수정", description = "기존 FAQ 내용 수정")
-    @PostMapping("/{id}")
-    public ResponseEntity<FAQResponseDTO> update(@PathVariable Long id, FAQRequestDTO dto) {
+    @PutMapping("/{id}")
+    public ResponseEntity<FAQResponseDTO> update(@PathVariable Long id,@RequestBody FAQRequestDTO dto) {
         FAQ faq = faqService.updateFAQ(id, dto);
         return ResponseEntity.ok(FAQResponseDTO.from(faq));
     }

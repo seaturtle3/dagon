@@ -145,6 +145,7 @@
                 <tr>
                     <th>ID</th>
                     <th>상호명</th>
+                    <th>아이디</th>
                     <th>신청자</th>
                     <th>상태</th>
                 </tr>
@@ -340,12 +341,51 @@
 
         <!-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
         <div id="faq-page" class="page">
-            <h1>FAQ 관리</h1>
-            <div style="margin-top: 20px;">
-                <button onclick="openFaqManage()" class="btn btn-primary">
-                    FAQ 관리 페이지 열기
-                </button>
+            <h1>FAQ 목록</h1>
+
+            <!-- 검색 기능 -->
+            <div class="search-bar">
+                <input type="text" id="faq-search-keyword" placeholder="질문 검색...">
+                <select id="faq-search-type">
+                    <option value="question">질문</option>
+                    <option value="answer">답변</option>
+                    <option value="question+answer">질문+답변</option>
+                </select>
+                <button id="faq-search-btn">검색</button>
             </div>
+
+            <!-- FAQ 테이블 -->
+            <table id="faq-table">
+                <thead>
+                <tr>
+                    <th>번호</th>
+                    <th>카테고리</th>
+                    <th>질문</th>
+                    <th>노출순서</th>
+                    <th>활성화 여부</th>
+                    <th>상세보기</th>
+                </tr>
+                </thead>
+                <tbody id="faq-table-body">
+                <!-- FAQ 목록이 여기에 로딩됩니다 -->
+                </tbody>
+            </table>
+
+            <!-- 페이지네이션 -->
+            <div id="faq-pagination" class="pagination">
+                <!-- 페이지 버튼이 여기에 로딩됩니다 -->
+            </div>
+
+            <!-- FAQ 등록 버튼 -->
+            <div class="text-end mt-4">
+                <button onclick="location.href='/admin/faq-categories'" class="btn btn-primary">FAQ 카테고리 관리</button>
+            </div>
+        </div>
+
+        <!-- 상세보기 팝업 -->
+        <div id="faq-detail" class="popup hidden">
+            <h2>FAQ 상세보기</h2>
+            <div id="faq-detail-content"></div>
         </div>
         <!-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
@@ -358,11 +398,12 @@
     </div>
 </div>
 
+<script src="/js/admin/partneradmin.js"></script>
+<script src="/js/admin/app.js"></script>
+<script src="/js/admin/faq.js"></script>
 <script src="/js/admin/report.js"></script>
 <script src="/js/admin/searchNotifications.js"></script>
 <script src="/js/admin/notification.js"></script>
-<script src="/js/admin/partneradmin.js"></script>
-<script src="/js/admin/app.js"></script>
 <script src="/js/auth.js"></script>
 <script src="/js/reports-create.js"></script>
 <script src="/js/admin/event-list.js"></script>
@@ -437,11 +478,22 @@
         'notice-link': 'notice-list',
         'faq-link': 'faq-page'
     };
-
     Object.keys(links).forEach(linkId => {
         document.getElementById(linkId).addEventListener('click', () => {
             pages.forEach(p => p.classList.remove('visible'));
             document.getElementById(links[linkId]).classList.add('visible');
+
+            // 회원 상세보기 숨기기
+            const userDetail = document.getElementById('user-detail');
+            if (userDetail) {
+                userDetail.classList.add('hidden');  // 또는 userDetail.style.display = 'none';
+            }
+
+            // FAQ 상세보기 숨기기 추가
+            const faqDetail = document.getElementById('faq-detail');
+            if (faqDetail) {
+                faqDetail.classList.add('hidden');  // 또는 faqDetail.style.display = 'none';
+            }
         });
     });
 
@@ -506,7 +558,7 @@
         console.warn("로그아웃 실패:", await response.text());
     }
 
-        window.location.href = "/admin/login";
+        window.location.href = "/admin";
     } catch (err) {
         console.error("로그아웃 요청 실패:", err);
         localStorage.removeItem("authToken");

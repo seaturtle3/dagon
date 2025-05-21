@@ -58,8 +58,10 @@ function renderTable(data) {
         row.innerHTML = `
             <td>${item.pid}</td>
             <td>${item.pname}</td>
+             <td>${item.uid}</td>
             <td>${item.displayName}</td>
             <td>${item.pstatus}</td>
+           
         `;
         body.appendChild(row);
     });

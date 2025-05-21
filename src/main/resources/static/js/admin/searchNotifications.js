@@ -12,11 +12,11 @@ document.addEventListener('DOMContentLoaded', function () {
                 <option value="REPLY">답변</option>
                 <option value="RESERVATION">예약 알림</option>
             </select>
-            <button id="search-btn" class="bg-blue-500 text-white px-4 py-2 rounded">검색</button>
+            <button id="search-btns" class="bg-blue-500 text-white px-4 py-2 rounded">검색</button>
         </div>
     `;
 
-    document.getElementById('search-btn').addEventListener('click', () => {
+    document.getElementById('search-btns').addEventListener('click', () => {
         currentUid = document.getElementById('search-user-uid').value.trim();
         currentType = document.getElementById('search-type').value;
         searchNotifications(0, currentSize);
