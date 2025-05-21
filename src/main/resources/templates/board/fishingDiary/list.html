@@ -20,6 +20,7 @@
         <table class="table table-bordered text-center align-middle">
             <thead class="table-light">
             <tr>
+                <th>조행기 ID</th>
                 <th>썸네일</th>
                 <th>제목</th>
                 <th>조회수</th>
@@ -32,6 +33,7 @@
             </thead>
             <tbody>
             <tr th:each="diary : ${fishingDiaries}">
+                <td th:text="${diary.fdId}">조행기 ID</td>
                 <td>
                     <img th:src="${diary.thumbnailUrl}" alt="썸네일" class="img-thumbnail" style="width: 100px;">
                 </td>

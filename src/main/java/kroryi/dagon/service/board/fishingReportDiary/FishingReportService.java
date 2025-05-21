@@ -1,5 +1,6 @@
 package kroryi.dagon.service.board.fishingReportDiary;
 
+import jakarta.persistence.EntityNotFoundException;
 import kroryi.dagon.DTO.board.FishingReportDiary.FishingReportDTO;
 import kroryi.dagon.entity.FishingReport;
 import kroryi.dagon.entity.User;
@@ -28,7 +29,6 @@ public class FishingReportService {
         return reportPage.map(this::convertToDTO);
     }
 
-
     public FishingReportDTO createFishingReport(FishingReportDTO fishingReportDTO) {
         FishingReport fishingReport = new FishingReport();
         fishingReport.setTitle(fishingReportDTO.getTitle());
@@ -53,6 +53,11 @@ public class FishingReportService {
         return new FishingReportDTO(fishingReport);
     }
 
+    public FishingReport findById(Long id) {
+        return fishingReportRepository.findById(id)
+                .orElseThrow(()->new EntityNotFoundException("FishingReport not found with id: " + id));
+    }
+
 
     private FishingReportDTO convertToDTO(FishingReport report) {
         FishingReportDTO dto = new FishingReportDTO();
@@ -65,6 +70,5 @@ public class FishingReportService {
         dto.setThumbnailUrl(report.getThumbnailUrl());
         return dto;
     }
-
 
 }

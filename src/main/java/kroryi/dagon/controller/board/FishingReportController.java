@@ -1,6 +1,7 @@
 package kroryi.dagon.controller.board;
 
 import kroryi.dagon.DTO.board.FishingReportDiary.FishingReportDTO;
+import kroryi.dagon.entity.FishingReport;
 import kroryi.dagon.entity.Product;
 import kroryi.dagon.service.board.fishingReportDiary.FishingReportService;
 import kroryi.dagon.service.product.ProductService;
@@ -64,5 +65,12 @@ public class FishingReportController {
         return "redirect:/fishing-report/list/" + prodId;
     }
 
+    @GetMapping("/detail/{id}")
+    public String showReportDetail(@PathVariable Long id,
+                                   Model model) {
+        FishingReport report = fishingReportService.findById(id);
+        model.addAttribute("report", report);
+        return "board/fishingReport/detail";
+    }
 }
 

@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface FishingReportRepository extends JpaRepository<FishingReport, Long> {
@@ -17,5 +18,7 @@ public interface FishingReportRepository extends JpaRepository<FishingReport, Lo
     List<FishingReport> findAllWithComments();
 
     Page<FishingReport> findByProductProdId(Long prodId, Pageable pageable);
+
+    Optional<FishingReport> findById(Long id);
 
 }
