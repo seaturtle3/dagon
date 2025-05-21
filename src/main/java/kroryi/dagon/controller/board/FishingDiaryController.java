@@ -6,6 +6,7 @@ import kroryi.dagon.service.board.fishingReportDiary.FishingDiaryService;
 import kroryi.dagon.service.product.ProductService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -23,9 +24,17 @@ public class FishingDiaryController {
 
     @GetMapping("/list/{prodId}")
     public String fishingDiaryList(@PathVariable Long prodId,
+                                   @RequestParam(defaultValue = "0") int page,
+                                   @RequestParam(defaultValue = "10") int size,
                                    Model model) {
-        List<FishingDiaryDTO> fishingDiaries = fishingDiaryService.getFishingDiariesByProdId(prodId);
-        model.addAttribute("fishingDiaries", fishingDiaries);
+        Page<FishingDiaryDTO> diaryPage = fishingDiaryService.getFishingDiariesByProdId(prodId, page, size);
+
+        model.addAttribute("fishingDiaries", diaryPage.getContent());
+        model.addAttribute("diaryPage", diaryPage);
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", diaryPage.getTotalPages());
+        model.addAttribute("prodId", prodId);
+
         return "board/fishingDiary/list";
     }
 

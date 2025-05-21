@@ -8,6 +8,10 @@ import kroryi.dagon.repository.UserRepository;
 import kroryi.dagon.repository.board.FishingDiaryRepository;
 import kroryi.dagon.service.product.ProductService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
 
@@ -23,11 +27,11 @@ public class FishingDiaryService {
     private final ProductService productService;
 
     // ProdId 찾기
-    public List<FishingDiaryDTO> getFishingDiariesByProdId(Long prodId) {
-        List<FishingDiary> diaries = fishingDiaryRepository.findByProductProdId(prodId);
-        return diaries.stream()
-                .map(FishingDiaryDTO::new)
-                .collect(Collectors.toList());
+    public Page<FishingDiaryDTO> getFishingDiariesByProdId(Long prodId, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("fishingAt").descending());
+        Page<FishingDiary> diaryPage = fishingDiaryRepository.findByProductProdId(prodId, pageable);
+
+        return diaryPage.map(this::convertToDTO);
     }
 
     public FishingDiaryDTO createFishingDiary(FishingDiaryDTO fishingDiaryDTO) {
@@ -53,6 +57,18 @@ public class FishingDiaryService {
 
         fishingDiary = fishingDiaryRepository.save(fishingDiary);
         return new FishingDiaryDTO(fishingDiary);
+    }
+
+    public FishingDiaryDTO convertToDTO(FishingDiary diary) {
+        FishingDiaryDTO dto = new FishingDiaryDTO();
+        dto.setFdId(diary.getFdId());
+        dto.setTitle(diary.getTitle());
+        dto.setViews(diary.getViews());
+        dto.setProdName(diary.getProduct().getProdName());
+        dto.setUserName(diary.getUser().getUname());
+        dto.setFishingAt(diary.getFishingAt());
+        dto.setThumbnailUrl(diary.getThumbnailUrl());
+        return dto;
     }
 
 }

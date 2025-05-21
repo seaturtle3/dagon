@@ -59,17 +59,17 @@
     <nav th:if="${totalPages > 1}" class="mt-3">
         <ul class="pagination justify-content-center">
             <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
-                <a class="page-link" th:href="@{'/fishing-report/list/' + ${prodId} + '?page=' + ${currentPage - 1}}">이전</a>
+                <a class="page-link" th:href="@{'/fishing-diary/list/' + ${prodId} + '?page=' + ${currentPage - 1}}">이전</a>
             </li>
 
             <li class="page-item" th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
                 th:classappend="${i == currentPage} ? 'active'">
-                <a class="page-link" th:href="@{'/fishing-report/list/' + ${prodId} + '?page=' + ${i}}"
+                <a class="page-link" th:href="@{'/fishing-diary/list/' + ${prodId} + '?page=' + ${i}}"
                    th:text="${i + 1}">1</a>
             </li>
 
             <li class="page-item" th:classappend="${currentPage + 1 == totalPages} ? 'disabled'">
-                <a class="page-link" th:href="@{'/fishing-report/list/' + ${prodId} + '?page=' + ${currentPage + 1}}">다음</a>
+                <a class="page-link" th:href="@{'/fishing-diary/list/' + ${prodId} + '?page=' + ${currentPage + 1}}">다음</a>
             </li>
         </ul>
     </nav>
