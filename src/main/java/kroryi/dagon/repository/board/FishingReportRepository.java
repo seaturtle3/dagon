@@ -1,9 +1,12 @@
 package kroryi.dagon.repository.board;
 
 import kroryi.dagon.entity.FishingReport;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+
 
 import java.util.List;
 
@@ -13,6 +16,6 @@ public interface FishingReportRepository extends JpaRepository<FishingReport, Lo
     @Query("SELECT fr FROM FishingReport fr LEFT JOIN FETCH fr.comments")
     List<FishingReport> findAllWithComments();
 
-    List<FishingReport> findByProductProdId(Long prodId);
+    Page<FishingReport> findByProductProdId(Long prodId, Pageable pageable);
 
 }

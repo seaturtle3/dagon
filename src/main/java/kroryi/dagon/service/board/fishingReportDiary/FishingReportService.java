@@ -6,10 +6,12 @@ import kroryi.dagon.entity.User;
 import kroryi.dagon.repository.UserRepository;
 import kroryi.dagon.repository.board.FishingReportRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -19,12 +21,13 @@ public class FishingReportService {
     private final UserRepository userRepository;
 
     // ProdId 찾기
-    public List<FishingReportDTO> getFishingReportsByProdId(Long prodId) {
-        List<FishingReport> reports = fishingReportRepository.findByProductProdId(prodId);
-        return reports.stream()
-                .map(FishingReportDTO::new)
-                .collect(Collectors.toList());
+    public Page<FishingReportDTO> getFishingReportsByProdId(Long prodId, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("fishingAt").descending());
+        Page<FishingReport> reportPage = fishingReportRepository.findByProductProdId(prodId, pageable);
+
+        return reportPage.map(this::convertToDTO);
     }
+
 
     public FishingReportDTO createFishingReport(FishingReportDTO fishingReportDTO) {
         FishingReport fishingReport = new FishingReport();
@@ -49,5 +52,19 @@ public class FishingReportService {
         fishingReport = fishingReportRepository.save(fishingReport);
         return new FishingReportDTO(fishingReport);
     }
+
+
+    private FishingReportDTO convertToDTO(FishingReport report) {
+        FishingReportDTO dto = new FishingReportDTO();
+        dto.setFrId(report.getFrId());
+        dto.setTitle(report.getTitle());
+        dto.setViews(report.getViews());
+        dto.setProdName(report.getProduct().getProdName());
+        dto.setUserName(report.getUser().getUname());
+        dto.setFishingAt(report.getFishingAt());
+        dto.setThumbnailUrl(report.getThumbnailUrl());
+        return dto;
+    }
+
 
 }

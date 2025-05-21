@@ -22,7 +22,8 @@ public class FishingDiaryController {
     private final ProductService productService;
 
     @GetMapping("/list/{prodId}")
-    public String fishingDiaryList(@PathVariable Long prodId, Model model) {
+    public String fishingDiaryList(@PathVariable Long prodId,
+                                   Model model) {
         List<FishingDiaryDTO> fishingDiaries = fishingDiaryService.getFishingDiariesByProdId(prodId);
         model.addAttribute("fishingDiaries", fishingDiaries);
         return "board/fishingDiary/list";
