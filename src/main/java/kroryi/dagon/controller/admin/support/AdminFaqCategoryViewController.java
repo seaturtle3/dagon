@@ -1,4 +1,4 @@
-package kroryi.dagon.controller.legacy.board;
+package kroryi.dagon.controller.admin.support;
 
 import kroryi.dagon.DTO.board.FAQCategoryRequestDTO;
 import kroryi.dagon.entity.FAQCategory;
@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/admin/faq-categories")
-public class AdminFAQCategoryController {
+public class AdminFaqCategoryViewController {
 
     private final FAQCategoryService faqCategoryService;
 

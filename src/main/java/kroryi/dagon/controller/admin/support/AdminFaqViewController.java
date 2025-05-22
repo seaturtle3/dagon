@@ -1,9 +1,8 @@
-package kroryi.dagon.controller.legacy.board;
+package kroryi.dagon.controller.admin.support;
 
 import kroryi.dagon.DTO.board.BoardSearchDTO;
 import kroryi.dagon.DTO.board.FAQRequestDTO;
 import kroryi.dagon.entity.FAQ;
-import kroryi.dagon.entity.FAQCategory;
 import kroryi.dagon.service.board.FAQCategoryService;
 import kroryi.dagon.service.board.FAQService;
 import kroryi.dagon.util.PaginationUtil;
@@ -16,8 +15,8 @@ import org.springframework.web.bind.annotation.*;
 
 @Controller
 @RequiredArgsConstructor
-@RequestMapping("/faq")
-public class FAQController {
+@RequestMapping("/admin/faq")
+public class AdminFaqViewController {
     private final FAQService faqService;
     private final FAQCategoryService faqCategoryService;
 
@@ -44,7 +43,7 @@ public class FAQController {
 
         int totalPages = faqPage.getTotalPages();
         if (page >= totalPages && totalPages > 0) {
-            return "redirect:/faq?page=" + (totalPages - 1) + "&size=" + size;
+            return "redirect:/admin/faq?page=" + (totalPages - 1) + "&size=" + size;
         }
 
         model.addAttribute("faqPage", faqPage);
@@ -66,7 +65,7 @@ public class FAQController {
         FAQRequestDTO dto = new FAQRequestDTO();
         dto.setIsActive(true);
         model.addAttribute("faq", dto);
-        model.addAttribute("formAction", "/faq");
+        model.addAttribute("formAction", "/admin/faq");
         model.addAttribute("page", page);
         model.addAttribute("size", size);
         model.addAttribute("categories", faqCategoryService.findAll());
@@ -78,7 +77,7 @@ public class FAQController {
                          @RequestParam(defaultValue = "0") int page,
                          @RequestParam(defaultValue = "10") int size) {
         faqService.createFAQ(dto, "admin001");
-        return "redirect:/faq?page=" + page + "&size=" + size;
+        return "redirect:/admin/faq?page=" + page + "&size=" + size;
     }
 
     @GetMapping("/{id}/edit")
@@ -88,7 +87,7 @@ public class FAQController {
                              Model model) {
         FAQ faq = faqService.findById(id);
         model.addAttribute("faq", FAQRequestDTO.from(faq));
-        model.addAttribute("formAction", "/faq/" + id + "?page=" + page + "&size=" + size);
+        model.addAttribute("formAction", "/admin/faq/" + id + "?page=" + page + "&size=" + size);
         model.addAttribute("page", page);
         model.addAttribute("size", size);
         model.addAttribute("categories", faqCategoryService.findAll());
@@ -101,6 +100,6 @@ public class FAQController {
                          @RequestParam(defaultValue = "0") int page,
                          @RequestParam(defaultValue = "10") int size) {
         faqService.updateFAQ(id, dto);
-        return "redirect:/faq?page=" + page + "&size=" + size;
+        return "redirect:/admin/faq?page=" + page + "&size=" + size;
     }
 }

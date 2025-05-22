@@ -1,25 +1,24 @@
-package kroryi.dagon.controller.legacy.board;
+package kroryi.dagon.controller.admin.community;
 
 import jakarta.validation.Valid;
 import kroryi.dagon.DTO.board.BoardSearchDTO;
-import kroryi.dagon.DTO.board.NoticeRequestDTO;
-import kroryi.dagon.entity.Notice;
-import kroryi.dagon.service.board.NoticeService;
+import kroryi.dagon.DTO.board.EventRequestDTO;
+import kroryi.dagon.entity.Event;
+import kroryi.dagon.service.board.EventService;
 import kroryi.dagon.util.PaginationUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 @Controller
-@RequestMapping("/notices")
+@RequestMapping("/admin/event")
 @RequiredArgsConstructor
-public class NoticeController {
-    private final NoticeService noticeService;
+public class AdminEventViewController {
+    private final EventService eventService;
 
     // 목록 조회
     @GetMapping
@@ -29,24 +28,24 @@ public class NoticeController {
                           @RequestParam(required = false) String type,
                           Model model) {
 
+
         BoardSearchDTO searchDTO = new BoardSearchDTO();
         searchDTO.setKeyword(keyword);
         searchDTO.setType(type);
 
-        Page<Notice> paged = noticeService.searchNotices(searchDTO, PageRequest.of(page, size));
+        Page<Event> paged = eventService.searchEvents(searchDTO, PageRequest.of(page, size));
 
         if (page >= paged.getTotalPages() && paged.getTotalPages() > 0) {
-            return "redirect:/notices?page=" + (paged.getTotalPages() - 1) + "&size=" + size;
+            return "redirect:/admin/event?page=" + (paged.getTotalPages() - 1) + "&size=" + size;
         }
 
-        model.addAttribute("noticePage", paged);
+        model.addAttribute("eventPage", paged);
         model.addAttribute("pagination", PaginationUtil.getPaginationData(paged));
         model.addAttribute("size", size);
-        model.addAttribute("keyword", keyword);
-        model.addAttribute("type", type);
-        return "board/notice/list";
+        model.addAttribute("keyword", keyword); // 검색 유지
+        model.addAttribute("type", type);       // 검색 유지
+        return "board/event/list";
     }
-
 
     // 단건 조회
     @GetMapping("/{id}")
@@ -54,38 +53,43 @@ public class NoticeController {
                           @RequestParam(defaultValue = "0") int page,
                           @RequestParam(defaultValue = "10") int size,
                           Model model) {
-        noticeService.increaseViews(id);
-        model.addAttribute("notice", noticeService.findById(id));
+        eventService.increaseViews(id);
+        model.addAttribute("event", eventService.findById(id));
         model.addAttribute("page", page);
         model.addAttribute("size", size);
-        return "board/notice/read";
+        return "board/event/read";
     }
+
     // 등록 폼
     @GetMapping("/create")
     public String createForm(@RequestParam(defaultValue = "0") int page,
                              @RequestParam(defaultValue = "10") int size,
                              Model model) {
-        model.addAttribute("noticeForm", new NoticeRequestDTO());
-        model.addAttribute("formAction", "/notices?page=" + page + "&size=" + size);
+        model.addAttribute("eventForm", new EventRequestDTO());
+        model.addAttribute("formAction", "/admin/event?page=" + page + "&size=" + size);
         model.addAttribute("page", page);
         model.addAttribute("size", size);
-        return "board/notice/form";
+        return "board/event/form";
     }
 
     // 등록 처리
     @PostMapping
-    public String create(@Valid @ModelAttribute("noticeForm") NoticeRequestDTO dto,
+    public String create(@Valid @ModelAttribute("eventForm") EventRequestDTO dto,
                          BindingResult result,
                          @RequestParam(defaultValue = "0") int page,
                          @RequestParam(defaultValue = "10") int size,
                          Model model) {
         if (result.hasErrors()) {
+            model.addAttribute("formAction", "/admin/event?page=" + page + "&size=" + size);
             model.addAttribute("page", page);
             model.addAttribute("size", size);
-            return "board/notice/form";
+            return "board/event/form";
         }
-        noticeService.createNotice(dto, "admin001");
-        return "redirect:/admin/dashboard";  // ✅ 변경됨
+
+        eventService.createEvent(dto, "admin001");
+
+        // ✅ 등록 후 대시보드로 이동
+        return "redirect:/admin/dashboard";
     }
 
     // 수정 폼
@@ -94,36 +98,36 @@ public class NoticeController {
                              @RequestParam(defaultValue = "0") int page,
                              @RequestParam(defaultValue = "10") int size,
                              Model model) {
-        Notice n = noticeService.findById(id);
-        NoticeRequestDTO dto = new NoticeRequestDTO();
-        dto.setTitle(n.getTitle());
-        dto.setContent(n.getContent());
-        dto.setIsTop(n.getIsTop());
+        Event event = eventService.findById(id);
+        EventRequestDTO dto = new EventRequestDTO();
+        dto.setTitle(event.getTitle());
+        dto.setContent(event.getContent());
+        dto.setThumbnailUrl(event.getThumbnailUrl());
+        dto.setStartAt(event.getStartAt());
+        dto.setEndAt(event.getEndAt());
+        dto.setIsTop(event.getIsTop());
 
-        model.addAttribute("noticeForm", dto);
-        model.addAttribute("noticeId", id);
-        model.addAttribute("formAction", "/notices/" + id + "?page=" + page + "&size=" + size);
+        model.addAttribute("eventForm", dto);
+        model.addAttribute("eventId", id);
+        model.addAttribute("formAction", "/admin/event/" + id + "?page=" + page + "&size=" + size);
         model.addAttribute("page", page);
         model.addAttribute("size", size);
-        return "board/notice/form";
+        return "board/event/form";
     }
 
     // 수정 처리
     @PostMapping("/{id}")
     public String update(@PathVariable Long id,
-                         @ModelAttribute NoticeRequestDTO dto,
-                         @RequestParam(defaultValue = "0") int page,
-                         @RequestParam(defaultValue = "10") int size) {
-        noticeService.updateNotice(id, dto);
-        return "redirect:/admin/dashboard";  // ✅ 변경됨
+                         @ModelAttribute EventRequestDTO dto) {
+        eventService.updateEvent(id, dto);
+        return "redirect:/admin/dashboard";  // ✅ 수정 후 대시보드로 이동
     }
 
     // 삭제 처리
     @PostMapping("/{id}/delete")
-    public String delete(@PathVariable Long id,
-                         @RequestParam(defaultValue = "0") int page,
-                         @RequestParam(defaultValue = "10") int size) {
-        noticeService.deleteNotice(id);
-        return "redirect:/admin/dashboard";  // ✅ 변경됨
+    public String delete(@PathVariable Long id) {
+        eventService.deleteEvent(id);
+        return "redirect:/admin/dashboard";  // ✅ 원하는 경로로 이동
     }
+
 }

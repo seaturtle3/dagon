@@ -1,4 +1,4 @@
-package kroryi.dagon.controller.community;
+package kroryi.dagon.controller.legacy.api.board;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

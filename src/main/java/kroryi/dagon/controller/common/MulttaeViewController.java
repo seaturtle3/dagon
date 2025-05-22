@@ -1,4 +1,4 @@
-package kroryi.dagon.controller.view;
+package kroryi.dagon.controller.common;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
