@@ -59,6 +59,11 @@ public class FishingDiaryService {
         return new FishingDiaryDTO(fishingDiary);
     }
 
+    public FishingDiary findById(Long id) {
+        return fishingDiaryRepository.findById(id)
+                .orElseThrow(()->new IllegalArgumentException("FishingDiary not found with id: " + id));
+    }
+
     public FishingDiaryDTO convertToDTO(FishingDiary diary) {
         FishingDiaryDTO dto = new FishingDiaryDTO();
         dto.setFdId(diary.getFdId());

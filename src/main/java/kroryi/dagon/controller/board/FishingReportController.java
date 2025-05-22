@@ -72,5 +72,6 @@ public class FishingReportController {
         model.addAttribute("report", report);
         return "board/fishingReport/detail";
     }
+
 }
 

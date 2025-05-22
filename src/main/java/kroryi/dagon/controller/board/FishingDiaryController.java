@@ -1,6 +1,8 @@
 package kroryi.dagon.controller.board;
 
 import kroryi.dagon.DTO.board.FishingReportDiary.FishingDiaryDTO;
+import kroryi.dagon.entity.FishingDiary;
+import kroryi.dagon.entity.FishingReport;
 import kroryi.dagon.entity.Product;
 import kroryi.dagon.service.board.fishingReportDiary.FishingDiaryService;
 import kroryi.dagon.service.product.ProductService;
@@ -59,6 +61,14 @@ public class FishingDiaryController {
         log.info("form prodId---------------------{}",prodId);
         log.info("form product ---------------------{}",product);
         return "redirect:/fishing-diary/list/" + prodId;
+    }
+
+    @GetMapping("/detail/{id}")
+    public String showDiaryDetail(@PathVariable Long id,
+                                   Model model) {
+        FishingDiary diary = fishingDiaryService.findById(id);
+        model.addAttribute("diary", diary);
+        return "board/fishingDiary/detail";
     }
 
 }
