@@ -2,7 +2,7 @@
 const size = 10;
 let currentPage = 0;
 
-async function loadData(page = 0) {
+async function loadPartnerData(page = 0) {
     currentPage = page; // 페이지 갱신
     const keyword = document.getElementById('searchKeyword').value;
     const type = document.getElementById('searchType').value;
@@ -74,7 +74,7 @@ function renderPaginationPatner(data) {
     // totalPages가 1일 때에도 버튼을 보이게 하기
     const first = document.createElement('button');
     first.innerHTML = '&laquo;';
-    first.onclick = () => loadData(0);
+    first.onclick = () => loadPartnerData(0);
     pagination.appendChild(first);
 
     const startPage = Math.max(0, currentPage - 2);
@@ -86,14 +86,14 @@ function renderPaginationPatner(data) {
         if (i === currentPage) {
             button.classList.add('active');
         }
-        button.onclick = () => loadData(i);
+        button.onclick = () => loadPartnerData(i);
         pagination.appendChild(button);
     }
 
     // "Last" button을 보이게 하여 마지막 페이지로 이동
     const last = document.createElement('button');
     last.innerHTML = '&raquo;';
-    last.onclick = () => loadData(data.totalPages - 1);
+    last.onclick = () => loadPartnerData(data.totalPages - 1);
     pagination.appendChild(last);
 }
 
@@ -102,7 +102,7 @@ function goToDetail(id) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    loadData(0); // 페이지가 처음 로드되었을 때
+    loadPartnerData(0); // 페이지가 처음 로드되었을 때
 });
 
 // 검색 버튼 클릭 시 로드

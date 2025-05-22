@@ -123,14 +123,14 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('today-reservation-count').textContent = data.todayReservationCount || 0;
             document.getElementById('future-reservation-count').textContent = data.futureReservationCount || 0;
 
-            console.log('오늘 예약 요소:', todayEl);
-            console.log('미래 예약 요소:', futureEl);
+
+
 
             if(todayEl) todayEl.textContent = data.todayCount || 0;
             if(futureEl) futureEl.textContent = data.futureCount || 0;
         })
         .catch(error => {
-            console.error('❌ 예약 통계 조회 실패:', error);
+
         });
 });
 
