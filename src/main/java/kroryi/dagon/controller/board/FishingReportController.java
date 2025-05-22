@@ -70,6 +70,8 @@ public class FishingReportController {
                                    Model model) {
         FishingReport report = fishingReportService.findById(id);
         model.addAttribute("report", report);
+        model.addAttribute("prodId", report.getProduct().getProdId());
+
         return "board/fishingReport/detail";
     }
 

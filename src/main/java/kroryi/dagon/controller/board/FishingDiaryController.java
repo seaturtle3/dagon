@@ -68,6 +68,8 @@ public class FishingDiaryController {
                                    Model model) {
         FishingDiary diary = fishingDiaryService.findById(id);
         model.addAttribute("diary", diary);
+        model.addAttribute("prodId", diary.getProduct().getProdId());
+
         return "board/fishingDiary/detail";
     }
 
