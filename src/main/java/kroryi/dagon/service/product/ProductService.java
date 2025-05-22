@@ -8,6 +8,7 @@ import kroryi.dagon.repository.ProductRepository;
 import kroryi.dagon.repository.SeaFreshwaterFishingRepository;
 import kroryi.dagon.service.PartnerService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,7 +39,8 @@ public class ProductService {
     // [Read] 전체 상품 조회
     @Transactional(readOnly = true)
     public List<ProductDTO> getAllProducts() {
-        return productRepository.findAll().stream()
+        return productRepository.findAll(Sort.by(Sort.Direction.DESC, "createdAt"))
+                .stream()
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
     }

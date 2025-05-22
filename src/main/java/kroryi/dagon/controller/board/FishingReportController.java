@@ -1,11 +1,13 @@
 package kroryi.dagon.controller.board;
 
 import kroryi.dagon.DTO.board.FishingReportDiary.FishingReportDTO;
+import kroryi.dagon.entity.FishingReport;
 import kroryi.dagon.entity.Product;
 import kroryi.dagon.service.board.fishingReportDiary.FishingReportService;
 import kroryi.dagon.service.product.ProductService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -21,20 +23,24 @@ public class FishingReportController {
     private final FishingReportService fishingReportService;
     private final ProductService productService;
 
-    // 조황 특정 prodId 조회
+    // 조황정보 상품ID로 조회
     @GetMapping("/list/{prodId}")
     public String getFishingReportsByProdId(@PathVariable Long prodId,
+                                            @RequestParam(defaultValue = "0") int page,
+                                            @RequestParam(defaultValue = "10") int size,
                                             Model model) {
-        List<FishingReportDTO> fishingReports = fishingReportService.getFishingReportsByProdId(prodId);
-        model.addAttribute("fishingReports", fishingReports);
+        Page<FishingReportDTO> reportPage = fishingReportService.getFishingReportsByProdId(prodId, page, size);
+
+        model.addAttribute("reportPage", reportPage);
+        model.addAttribute("fishingReports", reportPage.getContent()); // 기존 코드 호환용
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", reportPage.getTotalPages());
         model.addAttribute("prodId", prodId);
-        log.info("-------------------특정 prodId: {}", prodId);
-        log.info("---------------------Fishing Reports: {}", fishingReports);  // 반환된 데이터 확인
+
         return "board/fishingReport/list";
     }
 
-
-    // 조황 폼
+    // 조황정보 폼
     @GetMapping("/form")
     public String showFishingReportForm(@RequestParam(required = false) Long prodId,
                                         Model model) {
@@ -47,7 +53,7 @@ public class FishingReportController {
         return "board/fishingReport/form";
     }
 
-    // 조황 폼 전송
+    // 조황정보 폼 전송
     @PostMapping("/form")
     public String createFishingReport(@RequestParam(required = false) Long prodId,
                                       FishingReportDTO fishingReportDTO) {
@@ -57,6 +63,16 @@ public class FishingReportController {
         log.info("product id: {}", product);
         log.info("-----------------------Redirecting to /fishing-report/list/{}", prodId);
         return "redirect:/fishing-report/list/" + prodId;
+    }
+
+    @GetMapping("/detail/{id}")
+    public String showReportDetail(@PathVariable Long id,
+                                   Model model) {
+        FishingReport report = fishingReportService.findById(id);
+        model.addAttribute("report", report);
+        model.addAttribute("prodId", report.getProduct().getProdId());
+
+        return "board/fishingReport/detail";
     }
 
 }

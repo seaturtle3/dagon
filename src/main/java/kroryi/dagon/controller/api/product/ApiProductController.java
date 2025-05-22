@@ -24,7 +24,7 @@ public class ApiProductController {
     }
 
     @Operation(summary = "모든 상품 조회", description = "모든 상품 조회")
-    @GetMapping("/getAll")
+    @GetMapping("/get-all")
     public List<ProductDTO> getAllProducts() {
         return productService.getAllProducts();
     }
