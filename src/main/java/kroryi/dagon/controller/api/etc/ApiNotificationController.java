@@ -44,10 +44,9 @@ public class ApiNotificationController {
     }
 
     //특정 유저의 알림 목록 조회
-    @GetMapping("/user/{receiverUid}")
-    @Operation(summary = "유저 uno 조회", description = "유저 번호로 조회")
-    public ResponseEntity<List<NotificationDTO>> getByUser(@PathVariable String receiverUid) {
-        return ResponseEntity.ok(notificationService.getNotificationsByUser(receiverUid));
+    @GetMapping("/by-user/{receiverUno}")
+    public List<NotificationDTO> getNotificationsByUser(@PathVariable Long receiverUno) {
+        return notificationService.getNotificationsByUser(receiverUno);
     }
 
     // 알림 읽음 처리
