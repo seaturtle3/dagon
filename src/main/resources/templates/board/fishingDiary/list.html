@@ -72,7 +72,7 @@
 
     <div class="mt-4 d-flex gap-2">
         <!-- 글쓰기 버튼 -->
-        <form th:action="@{/fishing-report/form(prodId=${prodId})}" method="get">
+        <form th:action="@{/fishing-diary/form(prodId=${prodId})}" method="get">
             <input type="hidden" name="prodId" th:value="${prodId}" />
             <button type="submit" class="btn btn-success">글쓰기</button>
         </form>

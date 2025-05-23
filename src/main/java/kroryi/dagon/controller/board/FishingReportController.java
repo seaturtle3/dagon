@@ -67,12 +67,13 @@ public class FishingReportController {
 
     // 조황정보 폼 전송
     @PostMapping("/form")
-    public String createFishingReport(@RequestParam(required = false) Long prodId,
+    public String createOrUpdateFishingReport(@RequestParam(required = false) Long prodId,
                                       @RequestParam(required = false) Long id,
                                       FishingReportDTO fishingReportDTO) {
+
         Product product = productService.findById(prodId);
         fishingReportDTO.setProduct(product);
-        fishingReportService.createFishingReport(fishingReportDTO);
+
 
         if (id != null) {
             fishingReportService.updateFishingReport(id, fishingReportDTO);
