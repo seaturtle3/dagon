@@ -21,7 +21,5 @@ public class InquiryService {
 
     public List<Inquiry> findAll() {
         return inquiryRepository.findAll();
-
     }
-
 }
