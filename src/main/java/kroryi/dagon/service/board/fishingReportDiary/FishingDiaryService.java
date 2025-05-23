@@ -1,13 +1,17 @@
 package kroryi.dagon.service.board.fishingReportDiary;
 
+import jakarta.persistence.EntityNotFoundException;
 import kroryi.dagon.DTO.board.FishingReportDiary.FishingDiaryDTO;
+import kroryi.dagon.DTO.board.FishingReportDiary.FishingReportDTO;
 import kroryi.dagon.entity.FishingDiary;
+import kroryi.dagon.entity.FishingReport;
 import kroryi.dagon.entity.Product;
 import kroryi.dagon.entity.User;
 import kroryi.dagon.repository.UserRepository;
 import kroryi.dagon.repository.board.FishingDiaryRepository;
 import kroryi.dagon.service.product.ProductService;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -25,6 +29,7 @@ public class FishingDiaryService {
     private final FishingDiaryRepository fishingDiaryRepository;
     private final UserRepository userRepository;
     private final ProductService productService;
+    private final ModelMapper modelMapper;
 
     // ProdId 찾기
     public Page<FishingDiaryDTO> getFishingDiariesByProdId(Long prodId, int page, int size) {
@@ -62,6 +67,37 @@ public class FishingDiaryService {
     public FishingDiary findById(Long id) {
         return fishingDiaryRepository.findById(id)
                 .orElseThrow(()->new IllegalArgumentException("FishingDiary not found with id: " + id));
+    }
+
+    public FishingDiaryDTO findDTOById(Long id) {
+        FishingDiary entity = fishingDiaryRepository.findById(id)
+                .orElseThrow(()->new EntityNotFoundException("조행기 X id: " + id));
+        return modelMapper.map(entity, FishingDiaryDTO.class);
+    }
+
+    public FishingReportDTO updateFishingDiary(Long id,
+                                                FishingDiaryDTO fishingDiaryDTO) {
+        FishingDiary existing = fishingDiaryRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("조행기 X ID : " + id));
+
+        existing.setTitle(fishingDiaryDTO.getTitle());
+        existing.setContent(fishingDiaryDTO.getContent());
+        existing.setThumbnailUrl(fishingDiaryDTO.getThumbnailUrl());
+        existing.setFishingAt(fishingDiaryDTO.getFishingAt());
+
+        fishingDiaryRepository.save(existing);
+
+        return modelMapper.map(existing, FishingReportDTO.class);
+    }
+
+    public Long deleteAndReturnProdId(Long id) {
+        FishingDiary diary = fishingDiaryRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 조행기 ID: " + id));
+
+        Long prodId = diary.getProduct().getProdId(); // 삭제 후 리스트로 돌아가기 위해 prodId 보관
+        fishingDiaryRepository.delete(diary);
+
+        return prodId;
     }
 
     public FishingDiaryDTO convertToDTO(FishingDiary diary) {

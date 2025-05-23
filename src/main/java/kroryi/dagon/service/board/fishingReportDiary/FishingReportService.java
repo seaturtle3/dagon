@@ -62,7 +62,7 @@ public class FishingReportService {
 
     public FishingReportDTO findDTOById(Long id) {
         FishingReport entity = fishingReportRepository.findById(id)
-                .orElseThrow(()->new EntityNotFoundException("조황글 X id: " + id));
+                .orElseThrow(()->new EntityNotFoundException("조황정보 X id: " + id));
         return modelMapper.map(entity, FishingReportDTO.class);
     }
 

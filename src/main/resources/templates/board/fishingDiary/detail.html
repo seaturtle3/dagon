@@ -57,6 +57,14 @@
             </tbody>
         </table>
 
+        <!-- 수정/삭제 버튼 -->
+        <div class="mt-3 mb-4 text-end">
+            <a th:href="@{/fishing-diary/form(prodId=${diary.product.prodId}, id=${diary.fdId})}" class="btn btn-primary me-2">수정</a>
+            <form th:action="@{/fishing-diary/delete/{id}(id=${diary.fdId})}" method="post" style="display:inline;">
+                <button type="submit" class="btn btn-danger" onclick="return confirm('삭제하시겠습니까?');">삭제</button>
+            </form>
+        </div>
+
         <!-- 댓글 영역 -->
         <div class="mt-5">
             <h5 class="mb-5">댓글</h5>

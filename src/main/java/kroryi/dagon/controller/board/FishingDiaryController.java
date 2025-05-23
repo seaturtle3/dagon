@@ -1,6 +1,7 @@
 package kroryi.dagon.controller.board;
 
 import kroryi.dagon.DTO.board.FishingReportDiary.FishingDiaryDTO;
+import kroryi.dagon.DTO.board.FishingReportDiary.FishingReportDTO;
 import kroryi.dagon.entity.FishingDiary;
 import kroryi.dagon.entity.FishingReport;
 import kroryi.dagon.entity.Product;
@@ -41,36 +42,55 @@ public class FishingDiaryController {
     }
 
     @GetMapping("/form")
-    public String showFishingDiaryForm(@RequestParam(required = false) Long prodId, Model model) {
+    public String showFishingDiaryForm(@RequestParam(required = false) Long prodId,
+                                       @RequestParam(required = false) Long id,
+                                       Model model) {
         if (prodId == null) {
             throw new IllegalArgumentException("prodId is required");
         }
         Product product = productService.findById(prodId);
         model.addAttribute("product", product);
         model.addAttribute("prodId", prodId);
+
+        if (id != null) {
+            FishingDiaryDTO DiaryDTO = fishingDiaryService.findDTOById(id);
+            model.addAttribute("diary", DiaryDTO);
+        }
+
         return "board/fishingDiary/form";
     }
 
     @PostMapping("/form")
-    public String createFishingDiary(@RequestParam Long prodId, Model model,
-                                     FishingDiaryDTO fishingDiaryDTO) {
+    public String createOrUpdateFishingDiary(@RequestParam(required = false) Long prodId,
+                                             @RequestParam(required = false) Long id,
+                                             FishingDiaryDTO fishingDiaryDTO) {
+
         Product product = productService.findById(prodId);
         fishingDiaryDTO.setProduct(product);
-        fishingDiaryService.createFishingDiary(fishingDiaryDTO);
-        model.addAttribute("product", product);
-        log.info("form prodId---------------------{}",prodId);
-        log.info("form product ---------------------{}",product);
-        return "redirect:/fishing-diary/list/" + prodId;
-    }
 
-    @GetMapping("/detail/{id}")
-    public String showDiaryDetail(@PathVariable Long id,
-                                   Model model) {
-        FishingDiary diary = fishingDiaryService.findById(id);
-        model.addAttribute("diary", diary);
-        model.addAttribute("prodId", diary.getProduct().getProdId());
+        if (id != null) {
+            fishingDiaryService.updateFishingDiary(id, fishingDiaryDTO);
+        } else {
+            fishingDiaryService.createFishingDiary(fishingDiaryDTO);
+        }
 
-        return "board/fishingDiary/detail";
-    }
+        return"redirect:/fishing-diary/list/" + prodId;
+}
+
+@GetMapping("/detail/{id}")
+public String showDiaryDetail(@PathVariable Long id,
+                              Model model) {
+    FishingDiary diary = fishingDiaryService.findById(id);
+    model.addAttribute("diary", diary);
+    model.addAttribute("prodId", diary.getProduct().getProdId());
+
+    return "board/fishingDiary/detail";
+}
+
+@PostMapping("/delete/{id}")
+public String deleteDiaryDetail(@PathVariable Long id) {
+    Long prodId = fishingDiaryService.deleteAndReturnProdId(id);
+    return "redirect:/fishing-diary/list/" + prodId;
+}
 
 }

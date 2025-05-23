@@ -50,7 +50,6 @@ public class FishingReportController {
         if (prodId == null) {
             throw new IllegalArgumentException("prodId is required");
         }
-
         Product product = productService.findById(prodId);
         model.addAttribute("product", product);
         model.addAttribute("prodId", prodId);
@@ -68,20 +67,17 @@ public class FishingReportController {
     // 조황정보 폼 전송
     @PostMapping("/form")
     public String createOrUpdateFishingReport(@RequestParam(required = false) Long prodId,
-                                      @RequestParam(required = false) Long id,
-                                      FishingReportDTO fishingReportDTO) {
+                                              @RequestParam(required = false) Long id,
+                                              FishingReportDTO fishingReportDTO) {
 
         Product product = productService.findById(prodId);
         fishingReportDTO.setProduct(product);
-
 
         if (id != null) {
             fishingReportService.updateFishingReport(id, fishingReportDTO);
         } else {
             fishingReportService.createFishingReport(fishingReportDTO);
         }
-
-        log.info("-----------------------Redirecting to /fishing-report/list/{}", prodId);
 
         return "redirect:/fishing-report/list/" + prodId;
     }
