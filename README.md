@@ -168,7 +168,6 @@ Swagger 기반
 - **회원 기능**: 로그인 / 회원가입 / 마이페이지 API
   ![예시](docs/login.gif)
 
-
 - **상품 기능**: 상품 / 어종 / 조황,조행기 등 CRUD API
   ![예시](docs/product.gif)
 

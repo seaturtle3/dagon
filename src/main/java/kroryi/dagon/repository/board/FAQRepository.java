@@ -8,6 +8,9 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 public interface FAQRepository extends JpaRepository<FAQ, Long> {
+
+
+
     // 표시 순서 기준 정렬된 전체 리스트 (활성 여부 포함) (관리자페이지용)
     Page<FAQ> findAllByOrderByDisplayOrderAsc(Pageable pageable);
 
@@ -46,4 +49,17 @@ public interface FAQRepository extends JpaRepository<FAQ, Long> {
     Page<FAQ> searchByKeywordAndActive(@Param("keyword") String keyword,
                                        @Param("type") String type,
                                        Pageable pageable);
+
+    @Query("""
+    SELECT f FROM FAQ f
+    WHERE f.isActive = false AND (
+          (:type = 'question' AND f.question LIKE %:keyword%)
+       OR (:type = 'answer' AND f.answer LIKE %:keyword%)
+       OR (:type = 'question+answer' AND (f.question LIKE %:keyword% OR f.answer LIKE %:keyword%))
+    )
+    ORDER BY f.displayOrder ASC
+""")
+    Page<FAQ> searchByKeywordAndInactive(@Param("keyword") String keyword,
+                                         @Param("type") String type,
+                                         Pageable pageable);
 }

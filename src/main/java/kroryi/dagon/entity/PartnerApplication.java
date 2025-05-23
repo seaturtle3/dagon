@@ -2,6 +2,7 @@ package kroryi.dagon.entity;
 
 import jakarta.persistence.*;
 import kroryi.dagon.enums.ApplicationStatus;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -47,4 +48,6 @@ public class PartnerApplication extends BaseTimeEntity {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "uno", nullable = false)
     private User user; // ✅ uno → user 변경
+
+
 }

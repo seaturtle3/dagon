@@ -51,7 +51,12 @@ public class ApiAuthController {
 
         // 입력된 비밀번호를 암호화하여 데이터베이스 비밀번호와 비교
         if (passwordEncoder.matches(loginRequestDTO.getUpw(), user.getUpw())) {
+
+            user.setLastLoginAt(LocalDateTime.now());
+            userRepository.save(user);
+
             String token = jwtUtil.generateToken(user);
+
 
 
             log.info("token {}", token);

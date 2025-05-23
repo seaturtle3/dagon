@@ -1,6 +1,8 @@
 document.addEventListener('DOMContentLoaded', function () {
     console.log('페이지가 로드되었습니다.');
 
+
+
     // 기본은 대시보드만 보이도록 (loadUsers 제거)
     document.getElementById('dashboard-link').addEventListener('click', showDashboard);
     document.getElementById('user-info-link').addEventListener('click', function () {
@@ -33,8 +35,11 @@ function showPartnerList() {
     document.getElementById('partner-list').classList.remove('hidden');
     document.getElementById('dashboard').classList.add('hidden');
     document.getElementById('user-info').classList.add('hidden');
-    loadData(0);  // 파트너 목록을 로드하는 함수 (필요에 따라 구현)
+    document.getElementById('user-detail').classList.add('hidden');
+    loadData();  // 파트너 목록을 로드하는 함수 (필요에 따라 구현)
 }
+
+
 
 
 
@@ -275,6 +280,13 @@ function showUserDetailPopup(user) {
     document.getElementById('cancel-btn').onclick = function () {
         popup.classList.add('hidden');
     };
+
+
+    window.addEventListener('DOMContentLoaded', () => {
+        const defaultPage = 'partner-list';  // 또는 'faq-page'
+        document.querySelectorAll('.page').forEach(el => el.style.display = 'none');
+        document.getElementById(defaultPage).style.display = 'block';
+    });
 }
 
 

@@ -2,8 +2,10 @@ package kroryi.dagon.entity;
 
 import jakarta.persistence.*;
 import kroryi.dagon.enums.SenderType;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+
 
 
 import java.time.LocalDateTime;
@@ -11,6 +13,7 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @Entity
+
 public class Notification {
 
     @Id
@@ -23,7 +26,7 @@ public class Notification {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "receiver_id")
-    private User receiver;; // 알림 받는 사람 (User 엔티티와 연결)
+    private User receiver; // 알림 받는 사람 (User 엔티티와 연결)
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "sender_id")
@@ -38,8 +41,6 @@ public class Notification {
     private boolean isRead = false;
 
     private LocalDateTime createdAt;
-
-
 
 
 }

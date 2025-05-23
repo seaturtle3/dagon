@@ -12,10 +12,13 @@ import kroryi.dagon.enums.SubType;
 import kroryi.dagon.repository.ProductRepository;
 import kroryi.dagon.repository.SeaFreshwaterFishingRepository;
 import lombok.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -115,4 +118,57 @@ public class SeaFreshwaterFishingService {
 
         return true;
     }
+
+    public Page<ReservationDTO> getAllReservations(Pageable pageable) {
+        Page<Reservation> reservations = seaFreshwaterFishingRepository.findAllWithDetails(pageable);
+        return reservations.map(this::toDTO);
+    }
+
+
+    // 관리자 예약 취소
+    public boolean cancelReservationByAdmin(Long reservationId) {
+        // 예약 ID로 예약 찾기
+        Optional<Reservation> optional = seaFreshwaterFishingRepository.findById(reservationId);
+        if (optional.isPresent()) {
+            Reservation reservation = optional.get();
+
+            // 예약 상태 확인 (이미 취소된 건지 확인)
+            if (reservation.getReservationStatus() != ReservationStatus.CANCELED) {
+                reservation.setReservationStatus(ReservationStatus.CANCELED);
+                seaFreshwaterFishingRepository.save(reservation);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private ReservationDTO toDTO(Reservation reservation) {
+        return ReservationDTO.builder()
+                .reservationId(reservation.getReservationId())
+                .productName(reservation.getProduct().getProdName())
+                .optionName(reservation.getProductOption().getOptName())
+                .userName(reservation.getUser().getUname())
+                .fishingAt(reservation.getFishingAt())
+                .numPerson(reservation.getNumPerson())
+                .reservationStatus(reservation.getReservationStatus())
+                .paymentsMethod(reservation.getPaymentsMethod())
+                .paidAt(reservation.getPaidAt())
+                .createdAt(reservation.getCreatedAt())
+                .build();
+    }
+
+
+    public Page<ReservationDTO> searchReservations(String searchType, String keyword, Pageable pageable) {
+        if ("productName".equalsIgnoreCase(searchType)) {
+            Page<Reservation> reservations = seaFreshwaterFishingRepository.findByProductNameContainingIgnoreCase(keyword, pageable);
+            return reservations.map(this::toDTO);
+        } else if ("userName".equalsIgnoreCase(searchType)) {
+            Page<Reservation> reservations = seaFreshwaterFishingRepository.findByUserNameContainingIgnoreCase(keyword, pageable);
+            return reservations.map(this::toDTO);
+        } else {
+            // 기본 검색 안하면 전체 리턴
+            return getAllReservations(pageable);
+        }
+    }
 }
+

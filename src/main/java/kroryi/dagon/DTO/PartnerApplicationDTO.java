@@ -14,6 +14,7 @@ import java.time.LocalDateTime;
 public class PartnerApplicationDTO {
     private Long pid;
     private Long uno;
+    private String uid;
     private String pname;
     private String paddress;
     private String ceoName;
