@@ -1,4 +1,4 @@
-package kroryi.dagon.controller.common;
+package kroryi.dagon.controller.base;
 
 import kroryi.dagon.entity.ProductFishSpecies;
 import kroryi.dagon.enums.ProdRegion;

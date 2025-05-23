@@ -12,9 +12,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @Tag(name = "Station", description = "관측소 연결 초기화 API (관리자)")
-
 @RequestMapping("/api/admin/station")
-public class AdminStationController {
+public class ApiAdminStationController {
 
     private final StationLinkService stationLinkService;
 

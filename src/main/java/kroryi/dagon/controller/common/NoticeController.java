@@ -1,4 +1,4 @@
-package kroryi.dagon.controller.user.support;
+package kroryi.dagon.controller.common;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @Tag(name = "Notice", description = "공지사항 조회 API (사용자)")
 @RequestMapping("/api/notices")
-public class UserNoticeController {
+public class NoticeController {
 
     private final NoticeService noticeService;
 

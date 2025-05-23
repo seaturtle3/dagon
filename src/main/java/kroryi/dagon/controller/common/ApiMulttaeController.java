@@ -35,7 +35,7 @@ import java.util.stream.IntStream;
 @RequiredArgsConstructor
 @Tag(name = "Multtae", description = "물때/기상 통합 조회 API")
 @RequestMapping("/api/multtae")
-public class MulttaeController {
+public class ApiMulttaeController {
 
     private final TideApiClient tideApiClient;
     private final MarineWeatherApiClient marineWeatherApiClient;

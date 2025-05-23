@@ -16,7 +16,7 @@ import java.util.Map;
 @RequestMapping("/api/admin/")
 @RequiredArgsConstructor
 @Tag(name = "Admin", description = "관리자 대시보드 통계 API")
-public class AdminDashboardController {
+public class ApiAdminDashboardController {
 
 
     private final AdminDashboardService dashboardService;

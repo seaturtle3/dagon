@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @Tag(name = "FAQ", description = "FAQ 관리 API (관리자)")
 @RequestMapping("/api/admin/faq")
-public class AdminFaqController {
+public class ApiAdminFaqController {
     private final FAQService faqService;
 
     @Operation(summary = "FAQ 목록 페이징 조회 (관리자)", description = "FAQ 전체를 페이지 단위로 조회")

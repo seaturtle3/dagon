@@ -15,7 +15,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("/api/admin/faq-categories")
 @Tag(name = "FAQ", description = "FAQ 카테고리 관리 API (관리자)")
-public class AdminFaqCategoryController {
+public class ApiAdminFaqCategoryController {
 
     private final FAQCategoryService faqCategoryService;
 

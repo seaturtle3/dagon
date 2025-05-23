@@ -14,7 +14,7 @@ import java.util.List;
 @Tag(name = "Payments", description = "카카오페이 결제정보 API (관리자)")
 @RequestMapping("/api/kakaopay")
 @RequiredArgsConstructor
-public class AdminKakaoPayController {
+public class ApiAdminKakaoPayController {
 
     private final KakaoPayService kakaoPayService;
 

@@ -1,4 +1,4 @@
-package kroryi.dagon.controller.user.community;
+package kroryi.dagon.controller.common;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @Tag(name = "Event", description = "이벤트 조회 API (사용자)")
 @RequestMapping("/api/event")
-public class UserEventController {
+public class ApiEventController {
 
     private final EventService eventService;
 

@@ -14,7 +14,7 @@ import java.util.List;
 @Tag(name = "Payments", description = "결제정보 관리 API (관리자)")
 @RequestMapping("/api/payments")
 @RequiredArgsConstructor
-public class AdminPaymentsController {
+public class ApiAdminPaymentsController {
 
     private final PaymentsCrudService paymentsCrudService;
 

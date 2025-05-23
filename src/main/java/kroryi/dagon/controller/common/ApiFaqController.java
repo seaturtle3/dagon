@@ -1,4 +1,4 @@
-package kroryi.dagon.controller.user.support;
+package kroryi.dagon.controller.common;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -15,14 +15,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@Tag(name = "FAQ", description = "FAQ 조회 API (사용자)")
+@Tag(name = "FAQ", description = "FAQ 조회 API (공용)")
 @RequestMapping("/api/faq")
-public class UserFaqController {
+public class ApiFaqController {
 
     private final FAQService faqService;
 
     @GetMapping
-    @Operation(summary = "FAQ 목록 조회 (사용자)", description = "활성화된 FAQ만 노출 + 페이징")
+    @Operation(summary = "FAQ 목록 조회 (공용)", description = "활성화된 FAQ만 노출 + 페이징")
     public Page<FAQListDTO> getPublicFAQ(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {

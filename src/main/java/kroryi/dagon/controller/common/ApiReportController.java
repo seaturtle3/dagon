@@ -23,8 +23,8 @@ import java.util.Map;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/reports")
-@Tag(name = "Report", description = "신고 관리 API (공용)")
-public class ContentReportController {
+@Tag(name = "Report", description = "신고 관리 API (사용자 + 관리자)")
+public class ApiReportController {
 
     private final ReportService reportService;
     private final JwtUtil jwtUtil;

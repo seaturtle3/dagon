@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @Tag(name = "Event", description = "이벤트관리 API (관리자)")
 @RequestMapping("/api/admin/event")
-public class AdminEventController {
+public class ApiAdminEventController {
 
     private final EventService eventService;
 
