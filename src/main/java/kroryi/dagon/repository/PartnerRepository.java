@@ -9,4 +9,5 @@ import java.util.Optional;
 @Repository
 public interface PartnerRepository extends JpaRepository<Partner, Long> {
     Optional<Partner> findByPname(String pname);
+
 }

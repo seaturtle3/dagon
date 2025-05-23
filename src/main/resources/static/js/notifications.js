@@ -2,7 +2,12 @@ const baseUrl = window.location.origin + "/api/notifications/by-user/"; // baseU
 const token = localStorage.getItem("authToken"); // 또는 쿠키/다른 저장소에서 불러오기
 const userUno = localStorage.getItem("userUno");
 
-function loadNotifications() {
+let currentPage = 0;
+const pageSize = 10;
+
+function loadNotifications(page = 0) {
+    currentPage = page;
+
     if (!baseUrl) {
         console.warn("알림을 불러올 수 없습니다. baseUrl이 정의되지 않았습니다.");
         return;
@@ -13,7 +18,9 @@ function loadNotifications() {
         return;
     }
 
-    fetch(baseUrl + userUno, {
+    const url = `${baseUrl}${userUno}?page=${page}&size=${pageSize}`;
+
+    fetch(url, {
         headers: {
             "Authorization": `Bearer ${token}`
         }
@@ -23,7 +30,8 @@ function loadNotifications() {
             const container = document.getElementById('notificationList');
             container.innerHTML = '';
 
-            const notifications = data.content || data; // 둘 중 어떤 형식이든 처리
+            const notifications = data.content || data;
+
             console.log("알림 응답 데이터:", data);
 
             if (!Array.isArray(notifications)) {
@@ -50,6 +58,10 @@ function loadNotifications() {
                 `;
                 container.appendChild(div);
             });
+
+            if (data.totalPages !== undefined) {
+                renderPagination(data.totalPages, data.number); // totalPages, currentPage
+            }
         })
         .catch(err => {
             console.error("알림 불러오기 실패", err);
@@ -66,6 +78,19 @@ function markAsRead(id) {
     })
         .then(() => loadNotifications())
         .catch(err => console.error("읽음 처리 실패", err));
+}
+
+function renderPagination(totalPages, currentPage) {
+    const paginationContainer = document.getElementById('notification-pagination');
+    paginationContainer.innerHTML = '';
+
+    for (let i = 0; i < totalPages; i++) {
+        const btn = document.createElement('button');
+        btn.textContent = i + 1;
+        btn.className = i === currentPage ? 'active-page' : '';
+        btn.onclick = () => loadNotifications(i);
+        paginationContainer.appendChild(btn);
+    }
 }
 
 function deleteNotification(id) {

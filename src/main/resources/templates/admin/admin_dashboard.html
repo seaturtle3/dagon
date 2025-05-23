@@ -653,28 +653,8 @@
         }
     });
 
-    function openFaqManage() {
-        window.open('/faq', '_blank');
-    }
 
-    function loadSwagger(group) {
-        pages.forEach(p => p.classList.remove('visible'));
-        document.getElementById('swagger').classList.add('visible');
 
-        SwaggerUIBundle({
-            url: location.origin + `/api-docs/${group}`,
-            dom_id: '#swagger-ui',
-            layout: "StandaloneLayout",
-            presets: [
-                SwaggerUIBundle.presets.apis,
-                SwaggerUIStandalonePreset
-            ],
-            deepLinking: true,
-            docExpansion: "none",
-            validatorUrl: null,
-            tagsSorter: "alpha"
-        });
-    }
 
     document.addEventListener("DOMContentLoaded", function () {
         fetch("/api/admin/counts", {

@@ -20,4 +20,6 @@ public class PartnerDTO implements Serializable {
     String pInfo;
     String license;
     String licenseImg;
+
+
 }

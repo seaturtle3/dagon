@@ -107,6 +107,9 @@ public class SeaFreshwaterFishingService {
         Reservation reservation = seaFreshwaterFishingRepository.findById(reservationId)
                 .orElseThrow(() -> new RuntimeException("예약을 찾을 수 없습니다."));
 
+        System.out.println("예약자 uno: " + reservation.getUser().getUno());
+        System.out.println("토큰 uno: " + uno);
+
         // 해당 예약이 로그인한 사용자 소유인지 확인
         if (!reservation.getUser().getUno().equals(uno)) {
             return false; // 본인의 예약이 아님

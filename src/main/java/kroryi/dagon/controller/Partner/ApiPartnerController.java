@@ -2,11 +2,13 @@ package kroryi.dagon.controller.Partner;
 
 import io.swagger.v3.oas.annotations.Operation;
 
-import jakarta.validation.Valid;
-import kroryi.dagon.DTO.PartnerApplicationDTO;
 import kroryi.dagon.DTO.PartnerDTO;
+import kroryi.dagon.DTO.PartnerPageDTO;
 import kroryi.dagon.component.CustomUserDetails;
+import kroryi.dagon.repository.PartnerRepository;
+import kroryi.dagon.repository.UserRepository;
 import kroryi.dagon.service.PartnerService;
+import kroryi.dagon.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
@@ -51,6 +53,18 @@ public class ApiPartnerController {
     public void deletePartner(@PathVariable Long id) {
         partnerService.deletePartner(id);
     }
+
+
+    @GetMapping("/me/details")
+    public ResponseEntity<PartnerPageDTO> getMyPartnerInfo(@AuthenticationPrincipal CustomUserDetails userDetails) {
+        if (userDetails == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        Long uno = userDetails.getUno();
+        PartnerPageDTO partnerPageDTO = partnerService.getPartnerInfoByUno(uno);
+        return ResponseEntity.ok(partnerPageDTO);
+    }
 }
+
 
 

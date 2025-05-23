@@ -1,0 +1,40 @@
+<div id="partner-info"></div>
+
+<script>
+    const token = localStorage.getItem('authToken');
+    if (!token) {
+        console.error('로그인이 필요합니다: 토큰이 없습니다.');
+        document.getElementById('partner-info').innerText = '로그인 후 이용해주세요.';
+    } else {
+        fetch('/partner/me/details', {
+            headers: {
+                'Authorization': 'Bearer ' + token
+
+            }
+        })
+
+            .then(response => {
+                if (!response.ok) {
+                    console.log('authToken:', localStorage.getItem('authToken'));
+                    throw new Error(`서버 응답 오류: ${response.status} ${response.statusText}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                const div = document.getElementById('partner-info');
+                div.innerHTML = `
+        <h2>${data.uname}님의 파트너 정보</h2>
+        <p><strong>상호명:</strong> ${data.pname}</p>
+        <p><strong>대표자명:</strong> ${data.ceoName}</p>
+        <p><strong>주소:</strong> ${data.pAddress}</p>
+        <p><strong>소개:</strong> ${data.pInfo}</p>
+        <p><strong>사업자번호:</strong> ${data.license}</p>
+        <img src="${data.licenseImg}" alt="사업자 등록증" width="200"/>
+      `;
+            })
+            .catch(err => {
+                console.error('파트너 정보 로딩 실패:', err);
+                document.getElementById('partner-info').innerText = '파트너 정보 로딩 중 오류가 발생했습니다.';
+            });
+    }
+</script>

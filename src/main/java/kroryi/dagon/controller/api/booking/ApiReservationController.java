@@ -103,13 +103,14 @@ public class ApiReservationController {
             Claims claims = jwtUtil.parseToken(token);
             String role = claims.get("role", String.class);
 
+
+
+
             boolean canceled;
 
             if ("ADMIN".equals(role)) {
-                // 관리자면 uno 없이 바로 취소
                 canceled = seaFreshwaterFishingService.cancelReservationByAdmin(reservationId);
-            } else if ("USER".equals(role)) {
-                // 일반 사용자면 uno 꺼내서 취소 권한 체크
+            } else if ("USER".equals(role) || "PARTNER".equals(role)) {
                 Long uno = Long.parseLong(claims.get("uno").toString());
                 canceled = seaFreshwaterFishingService.cancelReservationByUser(reservationId, uno);
             } else {

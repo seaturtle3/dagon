@@ -1,29 +1,17 @@
 package kroryi.dagon.controller.api.auth;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.servlet.http.HttpServletRequest;
 import kroryi.dagon.DTO.ReservationCountDTO;
-import kroryi.dagon.DTO.multtae.AdminUserStatsDTO;
 import kroryi.dagon.service.AdminDashboardService;
 import kroryi.dagon.service.AdminDetailsService;
+import kroryi.dagon.service.PartnerService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.client.RestTemplate;
-import org.springframework.web.util.UriComponentsBuilder;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URI;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
@@ -38,6 +26,7 @@ public class AdminDashboardController {
 
     private final AdminDashboardService dashboardService;
     private final AdminDetailsService adminDetailsService;
+    private final PartnerService partnerService;
 
     @GetMapping("/counts")
     @Operation(summary = "회원 숫자, 파트너 숫자 조회 ", description = "회원 숫자,파트너 숫자 조회")
@@ -108,6 +97,9 @@ public class AdminDashboardController {
 
 
     }
+
+
+
 
 
 }

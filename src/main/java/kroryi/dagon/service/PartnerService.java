@@ -3,6 +3,8 @@ package kroryi.dagon.service;
 
 import jakarta.transaction.Transactional;
 import kroryi.dagon.DTO.PartnerApplicationDTO;;
+
+import kroryi.dagon.DTO.PartnerPageDTO;
 import kroryi.dagon.entity.PartnerApplication;
 import kroryi.dagon.entity.User;
 import kroryi.dagon.enums.ApplicationStatus;
@@ -138,6 +140,12 @@ public class PartnerService {
         partner.setLicense(app.getLicense());
 
         partnersRepository.save(partner);
+    }
+
+    public PartnerPageDTO getPartnerInfoByUno(Long uno) {
+        Partner partner = partnersRepository.findById(uno)
+                .orElseThrow(() -> new RuntimeException("파트너 정보를 찾을 수 없습니다."));
+        return PartnerPageDTO.fromEntity(partner);
     }
 }
 
