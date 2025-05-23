@@ -73,13 +73,14 @@ public class FishingReportController {
         Product product = productService.findById(prodId);
         fishingReportDTO.setProduct(product);
 
+        Long savedId;
         if (id != null) {
-            fishingReportService.updateFishingReport(id, fishingReportDTO);
+            savedId = fishingReportService.updateFishingReport(id, fishingReportDTO);
+            return "redirect:/fishing-report/detail/" + savedId;
         } else {
             fishingReportService.createFishingReport(fishingReportDTO);
+            return "redirect:/fishing-report/list/" + prodId;
         }
-
-        return "redirect:/fishing-report/list/" + prodId;
     }
 
     @GetMapping("/detail/{id}")

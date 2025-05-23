@@ -75,7 +75,7 @@ public class FishingDiaryService {
         return modelMapper.map(entity, FishingDiaryDTO.class);
     }
 
-    public FishingReportDTO updateFishingDiary(Long id,
+    public Long updateFishingDiary(Long id,
                                                 FishingDiaryDTO fishingDiaryDTO) {
         FishingDiary existing = fishingDiaryRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("조행기 X ID : " + id));
@@ -87,7 +87,7 @@ public class FishingDiaryService {
 
         fishingDiaryRepository.save(existing);
 
-        return modelMapper.map(existing, FishingReportDTO.class);
+        return existing.getFdId();
     }
 
     public Long deleteAndReturnProdId(Long id) {

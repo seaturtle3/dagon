@@ -31,7 +31,7 @@ public class FishingReportService {
         return reportPage.map(this::convertToDTO);
     }
 
-    public FishingReportDTO createFishingReport(FishingReportDTO fishingReportDTO) {
+    public Long createFishingReport(FishingReportDTO fishingReportDTO) {
         FishingReport fishingReport = new FishingReport();
         fishingReport.setTitle(fishingReportDTO.getTitle());
         fishingReport.setContent(fishingReportDTO.getContent());
@@ -52,7 +52,7 @@ public class FishingReportService {
         fishingReport.setUser(user);
 
         fishingReport = fishingReportRepository.save(fishingReport);
-        return new FishingReportDTO(fishingReport);
+        return fishingReport.getFrId();
     }
 
     public FishingReport findById(Long id) {
@@ -66,7 +66,7 @@ public class FishingReportService {
         return modelMapper.map(entity, FishingReportDTO.class);
     }
 
-    public FishingReportDTO updateFishingReport(Long id,
+    public Long updateFishingReport(Long id,
                                                 FishingReportDTO fishingReportDTO) {
         FishingReport existing = fishingReportRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("조황정보 X ID : " + id));
@@ -78,7 +78,7 @@ public class FishingReportService {
 
         fishingReportRepository.save(existing);
 
-        return modelMapper.map(existing, FishingReportDTO.class);
+        return existing.getFrId();
     }
 
     public Long deleteAndReturnProdId(Long id) {

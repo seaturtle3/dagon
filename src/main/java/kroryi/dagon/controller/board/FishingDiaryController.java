@@ -68,13 +68,14 @@ public class FishingDiaryController {
         Product product = productService.findById(prodId);
         fishingDiaryDTO.setProduct(product);
 
+        Long savedId;
         if (id != null) {
-            fishingDiaryService.updateFishingDiary(id, fishingDiaryDTO);
+            savedId = fishingDiaryService.updateFishingDiary(id, fishingDiaryDTO);
+            return "redirect:/fishing-diary/detail/" + savedId;
         } else {
             fishingDiaryService.createFishingDiary(fishingDiaryDTO);
+            return"redirect:/fishing-diary/list/" + prodId;
         }
-
-        return"redirect:/fishing-diary/list/" + prodId;
 }
 
 @GetMapping("/detail/{id}")
