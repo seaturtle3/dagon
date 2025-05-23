@@ -1,6 +1,7 @@
 package kroryi.dagon.service;
 
 import kroryi.dagon.DTO.NotificationDTO;
+import kroryi.dagon.entity.Inquiry;
 import kroryi.dagon.entity.Notification;
 import kroryi.dagon.entity.Reservation;
 import kroryi.dagon.entity.User;
@@ -171,5 +172,19 @@ public class NotificationService {
         }
 
         return notifications.map(this::convertToDTO);
+    }
+
+    public void sendInquiryAnswerNotification(Inquiry inquiry, User sender) {
+        Notification notification = new Notification();
+        notification.setReceiver(inquiry.getUser());  // 수신자 - 문의한 유저
+        notification.setSender(sender);                // 보낸 사람 - null이어도 무관
+        notification.setSenderType(SenderType.ADMIN); // 보낸 사람 타입으로 관리자 구분
+        notification.setType("ANSWER");
+        notification.setTitle("1:1 문의 답변 도착");
+        notification.setContent(inquiry.getAnswerContent());
+        notification.setRead(false);
+        notification.setCreatedAt(LocalDateTime.now());
+
+        notificationRepository.save(notification);
     }
 }

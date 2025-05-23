@@ -52,6 +52,7 @@
         <div class="sidebar-item" id="event-link">이벤트</div>
         <div class="sidebar-item" id="notice-link">공지사항</div>
         <div class="sidebar-item" id="faq-link">FAQ</div>
+        <div class="sidebar-item" id="inquiry-list-link">1대1 문의</div>
         <div class="sidebar-item" id="authButtons">로그아웃</div>
 
 
@@ -485,6 +486,42 @@
     <div id="faq-detail-content"></div>
 </div>
 <!-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+    <div id="inquiry-list" class="page">
+        <h1>1:1 문의</h1>
+        <div class="search-bar">
+            <input type="text" id="inquiry-search" placeholder="제목, 내용, 작성자 검색...">
+            <button id="inquiry-search-btn">검색</button>
+        </div>
+        <table id="inquiry-table">
+            <thead>
+            <tr>
+                <th>문의 ID</th>
+                <th>제목</th>
+                <th>작성자</th>
+                <th>작성일</th>
+                <th>상태</th>
+                <th>상세보기</th>
+            </tr>
+            </thead>
+            <tbody id="inquiry-table-body">
+            <!-- 문의 목록 데이터가 여기 들어옵니다 -->
+            </tbody>
+        </table>
+
+        <div id="inquiry-pagination" class="pagination"></div>
+    </div>
+
+    <!-- 상세보기 팝업 -->
+    <div id="inquiry-detail" class="hidden popup">
+        <div class="popup-content">
+            <span class="close">&times;</span>
+            <div id="inquiry-details">
+                <!-- 상세내용 출력 -->
+            </div>
+        </div>
+    </div>
+
+    <!-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
 <div id="swagger" class="page">
     <h1>API 문서</h1>
@@ -501,6 +538,7 @@
 <script src="/js/admin/searchNotifications.js"></script>
 <script src="/js/admin/notification.js"></script>
 <script src="/js/auth.js"></script>
+<script src="/js/admin/inquiry.js"></script>
 <script src="/js/reports-create.js"></script>
 <script src="/js/admin/event-list.js"></script>
 <script src="/js/admin/notification-list.js"></script>
@@ -573,7 +611,8 @@
         'report-link': 'report-list',
         'event-link': 'event-list',
         'notice-link': 'notice-list',
-        'faq-link': 'faq-list'
+        'faq-link': 'faq-list',
+        'inquiry-list-link' : 'inquiry-list'
 
     };
     Object.keys(links).forEach(linkId => {
