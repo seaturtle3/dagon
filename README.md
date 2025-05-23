@@ -166,8 +166,8 @@ _(역할 내용 미정) 예시_
 Swagger 기반
 
 - **회원 기능**: 로그인 / 회원가입 / 마이페이지 API
-  ![예시](https://www.youtube.com/watch?v=F-dNbkL9Piw)
-
+  ![예시](docs/login.gif)
+  📺 [기능별 API 설계 1. Auth (Swagger 시연 영상)](https://www.youtube.com/watch?v=F-dNbkL9Piw)
 - **상품 기능**: 상품 / 어종 / 조황,조행기 등 CRUD API
   ![예시](docs/product.gif)
 
