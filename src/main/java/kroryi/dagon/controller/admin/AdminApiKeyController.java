@@ -1,4 +1,4 @@
-package kroryi.dagon.controller.legacy;
+package kroryi.dagon.controller.admin;
 
 
 import io.jsonwebtoken.Claims;
@@ -22,13 +22,13 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/admin/api-keys")
 @Log4j2
-public class ApiKeyAdminController {
+public class AdminApiKeyController {
 
     private final ApiKeyRepository apiKeyRepository;
     private final ApiKeyCallbackUrlRepository callbackUrlRepository;
     private final JwtUtil jwtTokenUtil;
 
-    public ApiKeyAdminController(ApiKeyRepository apiKeyRepository,
+    public AdminApiKeyController(ApiKeyRepository apiKeyRepository,
                                  ApiKeyCallbackUrlRepository callbackUrlRepository
             , JwtUtil jwtTokenUtil) {
         this.apiKeyRepository = apiKeyRepository;

@@ -1,4 +1,4 @@
-package kroryi.dagon.controller.legacy.board;
+package kroryi.dagon.controller.user.community;
 
 import kroryi.dagon.DTO.board.FishingReportDiary.FishingDiaryDTO;
 import kroryi.dagon.entity.Product;
@@ -16,7 +16,7 @@ import java.util.List;
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/fishing-diary")
-public class FishingDiaryController {
+public class FishingDiaryViewController {
 
     private final FishingDiaryService fishingDiaryService;
     private final ProductService productService;

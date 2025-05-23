@@ -1,4 +1,4 @@
-package kroryi.dagon.controller.legacy.api.board;
+package kroryi.dagon.controller.user.community;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -11,9 +11,9 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@Tag(name = "FishingDiary", description = "조행기 API")
+@Tag(name = "FishingDiary", description = "조행기 API (일반회원)")
 @RequestMapping("/api/fishing-diary")
-public class FishingDiaryController {
+public class ApiUserFishingDiaryController {
 
     private final ApiFishingDiaryService apiFishingDiaryService;
 

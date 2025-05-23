@@ -1,4 +1,4 @@
-package kroryi.dagon.controller.legacy.board;
+package kroryi.dagon.controller.common;
 
 import kroryi.dagon.entity.Product;
 import kroryi.dagon.repository.ProductRepository;
@@ -13,7 +13,7 @@ import java.util.List;
 @Log4j2
 @Controller
 @RequiredArgsConstructor
-public class FishingCenterController {
+public class FishingCenterViewController {
 
     private final ProductRepository productRepository;
 

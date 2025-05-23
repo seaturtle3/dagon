@@ -1,4 +1,4 @@
-package kroryi.dagon.controller.legacy;
+package kroryi.dagon.controller.admin.dashboard;
 
 
 import lombok.AllArgsConstructor;
@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("/admin")
 @Log4j2
 @AllArgsConstructor
-public class AdminController {
+public class AdminDashboardViewController {
 
     // 관리자 로그인 페이지
     @GetMapping("")

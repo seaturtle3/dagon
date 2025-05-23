@@ -1,4 +1,4 @@
-package kroryi.dagon.controller.legacy.api.product;
+package kroryi.dagon.controller.common;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -13,7 +13,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@Tag(name = "Product", description = "상품 옵션 관리 API")
+@Tag(name = "Product", description = "상품 옵션 조회 API (공용)")
 @RequestMapping("api/product-option")
 public class ApiProductOptionController {
 
