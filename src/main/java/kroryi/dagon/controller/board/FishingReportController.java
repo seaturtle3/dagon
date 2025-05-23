@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import static org.springframework.data.jpa.domain.AbstractPersistable_.id;
+
 @Log4j2
 @Controller
 @RequiredArgsConstructor
@@ -43,25 +45,43 @@ public class FishingReportController {
     // 조황정보 폼
     @GetMapping("/form")
     public String showFishingReportForm(@RequestParam(required = false) Long prodId,
+                                        @RequestParam(required = false) Long id,
                                         Model model) {
         if (prodId == null) {
             throw new IllegalArgumentException("prodId is required");
         }
+
         Product product = productService.findById(prodId);
         model.addAttribute("product", product);
         model.addAttribute("prodId", prodId);
+
+        if (id != null) {
+            FishingReportDTO reportDTO = fishingReportService.findDTOById(id);
+            model.addAttribute("report", reportDTO);
+        }
+
+        log.info("----------------------- prodId:{}, id:{}", prodId, id);
+
         return "board/fishingReport/form";
     }
 
     // 조황정보 폼 전송
     @PostMapping("/form")
     public String createFishingReport(@RequestParam(required = false) Long prodId,
+                                      @RequestParam(required = false) Long id,
                                       FishingReportDTO fishingReportDTO) {
         Product product = productService.findById(prodId);
         fishingReportDTO.setProduct(product);
         fishingReportService.createFishingReport(fishingReportDTO);
-        log.info("product id: {}", product);
+
+        if (id != null) {
+            fishingReportService.updateFishingReport(id, fishingReportDTO);
+        } else {
+            fishingReportService.createFishingReport(fishingReportDTO);
+        }
+
         log.info("-----------------------Redirecting to /fishing-report/list/{}", prodId);
+
         return "redirect:/fishing-report/list/" + prodId;
     }
 
@@ -73,6 +93,12 @@ public class FishingReportController {
         model.addAttribute("prodId", report.getProduct().getProdId());
 
         return "board/fishingReport/detail";
+    }
+
+    @PostMapping("/delete/{id}")
+    public String deleteReportDetail(@PathVariable Long id) {
+        Long prodId = fishingReportService.deleteAndReturnProdId(id);
+        return "redirect:/fishing-report/list/" + prodId;
     }
 
 }
