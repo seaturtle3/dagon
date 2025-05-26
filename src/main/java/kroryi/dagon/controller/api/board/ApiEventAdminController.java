@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@Tag(name = "4-2. Event(Admin)", description = "이벤트 관리자 기능 API")
+@Tag(name = "Board-Event", description = "이벤트 등록/수정/삭제 API")
 @RequestMapping("/api/admin/event")
 public class ApiEventAdminController {
 

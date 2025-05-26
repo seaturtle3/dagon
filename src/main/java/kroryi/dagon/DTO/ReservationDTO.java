@@ -18,6 +18,8 @@ public class ReservationDTO {
     @JsonProperty("prod_name")
     private String productName;
     private String optionName;
+    private String userName;
+
     @JsonFormat
     private LocalDateTime fishingAt;
     private Integer numPerson;

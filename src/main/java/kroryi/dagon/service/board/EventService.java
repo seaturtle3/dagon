@@ -5,6 +5,7 @@ import kroryi.dagon.DTO.board.BoardSearchDTO;
 import kroryi.dagon.DTO.board.EventRequestDTO;
 import kroryi.dagon.entity.Admin;
 import kroryi.dagon.entity.Event;
+import kroryi.dagon.enums.EventStatus;
 import kroryi.dagon.repository.AdminRepository;
 import kroryi.dagon.repository.board.EventRepository;
 import kroryi.dagon.util.ImageFileUtil;
@@ -99,11 +100,21 @@ public class EventService {
     public Page<Event> searchEvents(BoardSearchDTO dto, Pageable pageable) {
         String keyword = dto.getKeyword();
         String type = dto.getType();
+        String statusStr = dto.getStatus(); // 상태 문자열 받기
 
-        if (keyword == null || keyword.isBlank()) {
-            return eventRepository.findAllByOrderByIsTopDescCreatedAtDesc(pageable);
+        EventStatus status = null;
+        if (statusStr != null && !statusStr.isEmpty()) {
+            status = EventStatus.valueOf(statusStr.toUpperCase()); // String을 Enum으로 변환
         }
 
-        return eventRepository.searchByKeyword(keyword, type, pageable);
+        if (keyword == null || keyword.isBlank()) {
+            if (status != null) {
+                return eventRepository.findByEventStatus(status, pageable); // 상태로 필터링
+            }
+            return eventRepository.findAllByOrderByIsTopDescCreatedAtDesc(pageable); // 기본 전체 검색
+        }
+
+        // 키워드와 상태로 필터링
+        return eventRepository.searchByKeywordAndStatus(keyword, type, status, pageable);
     }
 }

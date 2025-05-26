@@ -8,9 +8,8 @@ import kroryi.dagon.enums.ProdRegion;
 import kroryi.dagon.enums.SubType;
 import kroryi.dagon.repository.ProductRepository;
 import kroryi.dagon.service.PartnerService;
-import kroryi.dagon.service.ProductService;
+import kroryi.dagon.service.product.ProductService;
 import lombok.RequiredArgsConstructor;
-import lombok.ToString;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -46,8 +45,8 @@ public class ProductController {
     }
 
 
-    // 배 등록 폼 페이지
-    @GetMapping("/register")
+    // 배 등록 페이지
+    @GetMapping("/form")
     public String showRegisterForm(Model model) {
         model.addAttribute("product", new Product());
         model.addAttribute("regions", regions());
@@ -57,8 +56,8 @@ public class ProductController {
         return "product/form";
     }
 
-    // 배 등록 처리
-    @PostMapping("/register")
+    // 배 등록 전송
+    @PostMapping("/form")
     public String registerProduct(@ModelAttribute("product") Product product) {
         // 파트너가 없으면 기본 파트너 설정
         if (product.getPartner() == null) {
@@ -68,7 +67,7 @@ public class ProductController {
         log.info("등록받은 Product 데이터: {}", product);
 
         productService.saveProduct(product); // 상품 저장
-        return "redirect:/product/list"; // 등록 후 리스트 페이지로 리다이렉트
+        return "redirect:/fishing-center"; // 등록 후 리스트 페이지로 리다이렉트
     }
 
     // 배 리스트 페이지
@@ -81,7 +80,6 @@ public class ProductController {
 
         return "product/list"; // 리스트 페이지 반환
     }
-
 
 
 }

@@ -10,37 +10,63 @@
 <div class="container mt-5">
     <h2 class="mb-4">조행기 등록</h2>
 
+    <div class="mt-4 mb-4 text-start">
+        <a th:if="${diary == null}"
+           th:href="@{/fishing-diary/list/{prodId}(prodId=${prodId})}"
+           class="btn btn-secondary">← 뒤로가기</a>
+
+        <a th:if="${diary != null}"
+           th:href="@{/fishing-diary/detail/{id}(id=${diary.fdId})}"
+           class="btn btn-secondary">← 뒤로가기</a>
+    </div>
+
     <div class="mb-4">
         <h5>선택된 제품 ID: <span th:text="${product.prodId}"></span></h5>
     </div>
 
-    <form th:action="@{/fishing-diary/form(prodId=${product.prodId})}" method="post">
-        <input type="hidden" name="prodId" th:value="${product.prodId}" />
+    <form th:action="@{/fishing-diary/form(prodId=${prodId}, id=${diary != null ? diary.fdId : null})}"
+          method="post">
+
+        <!-- ID (수정용) -->
+        <input type="hidden" name="id" th:if="${diary != null}" th:value="${diary.fdId}" />
 
         <div class="mb-3">
-            <label for="fishingAt" class="form-label">조업 날짜</label>
-            <input type="datetime-local" id="fishingAt" name="fishingAt" class="form-control" required>
+            <label for="fishingAt" class="form-label">작성 날짜</label>
+            <input type="datetime-local" id="fishingAt" name="fishingAt" class="form-control"
+                   th:if="${diary != null and diary.fishingAt != null}"
+                   th:value="${#temporals.format(diary.fishingAt, 'yyyy-MM-dd''T''HH:mm')}" readonly />
+
+            <input type="datetime-local" id="fishingAt" name="fishingAt" class="form-control"
+                   th:if="${diary == null or diary.fishingAt == null}" required />
         </div>
 
         <div class="mb-3">
             <label for="views" class="form-label">조회수</label>
-            <input type="number" id="views" name="views" value="0" class="form-control" required>
+            <input type="number" id="views" name="views"
+                   th:value="${diary != null ? diary.views : 0}"
+                   class="form-control" readonly />
         </div>
 
         <div class="mb-3">
             <label for="thumbnailUrl" class="form-label">썸네일 URL</label>
-            <input type="text" id="thumbnailUrl" name="thumbnailUrl" class="form-control" required>
+            <input type="text" id="thumbnailUrl" name="thumbnailUrl"
+                   th:value="${diary != null ? diary.thumbnailUrl : ''}"
+                   class="form-control" required />
         </div>
 
         <div class="mb-3">
             <label for="title" class="form-label">제목</label>
-            <input type="text" id="title" name="title" class="form-control" required>
+            <input type="text" id="title" name="title"
+                   th:value="${diary != null ? diary.title : ''}"
+                   class="form-control" required />
         </div>
 
         <div class="mb-3">
             <label for="content" class="form-label">내용</label>
-            <textarea id="content" name="content" rows="5" class="form-control" required></textarea>
+            <textarea id="content" name="content" rows="5" class="form-control" required
+                      th:text="${diary != null ? diary.content : ''}"></textarea>
         </div>
+
 
         <button type="submit" class="btn btn-primary">등록</button>
     </form>

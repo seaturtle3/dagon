@@ -32,13 +32,18 @@
                 아이디를 잊으셨나요?
                 <a href="/find-id" class="text-blue-500 hover:underline">아이디 찾기</a>
             </p>
+            <p class="mt-2 text-center">
+                비밀번호를 잊으셨나요?
+                <a href="/find-password" class="text-blue-500 hover:underline">비밀번호 찾기</a>
+            </p>
         </div>
     </form>
 
     <!-- 카카오 로그인 버튼 추가 -->
-    <div>
+    <p class="mt-2 text-center">
         <a href="/oauth2/authorization/kakao">카카오 로그인</a>
-    </div>
+        <a href="/admin" class="text-blue-500 hover:underline">어드민 로그인</a>
+   </p>
 
 </div>
 
@@ -64,10 +69,13 @@
 
             if (response.ok) {
                 const responseData = await response.json();
+                const token = responseData.token;
                 console.log("로그인 성공:", responseData);
 
                 // JWT 토큰이 포함되어 있다면 localStorage에 저장
                 localStorage.setItem('authToken', responseData.token);
+
+                await registerApiKey(token);
 
                 // 로그인 성공 후 페이지 이동
                 window.location.href = '/';
@@ -88,6 +96,34 @@
             console.error("로그인 요청 실패:", error);
             errorMessage.textContent = "서버와 통신 중 오류가 발생했습니다.";
         }
+
+
+        // ✅ API 키 등록 함수
+        async function registerApiKey(token) {
+            try {
+                const response = await fetch('/admin/api-keys/new', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + token
+                    },
+                    body: JSON.stringify({
+                        name: "기본 로그인 API 키",   // 예시 이름
+                        key: token                   // 서버에서 재발급/암호화 가능
+                    })
+                });
+
+                if (response.ok) {
+                    console.log("API 키 등록 성공");
+                } else {
+                    const result = await response.text();
+                    console.error("API 키 등록 실패:", result);
+                }
+            } catch (err) {
+                console.error("API 키 등록 중 오류:", err);
+            }
+        }
+
     });
 </script>
 </body>

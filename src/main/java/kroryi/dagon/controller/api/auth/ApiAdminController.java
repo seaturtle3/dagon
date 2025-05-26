@@ -4,6 +4,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import kroryi.dagon.DTO.AdminDTO;
 import kroryi.dagon.DTO.UsersDTO;
+import kroryi.dagon.entity.Admin;
+import kroryi.dagon.repository.AdminRepository;
 import kroryi.dagon.service.AdminService;
 import kroryi.dagon.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +19,8 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collections;
@@ -27,12 +31,13 @@ import java.util.Map;
 @RequestMapping("/api/admin")
 @RequiredArgsConstructor
 @Log4j2
-@Tag(name = "1-2. Admin", description = "관리자 인증 및 사용자 관리 API")
+@Tag(name = "Admin", description = "관리자 인증 및 회원 관리 API")
 public class ApiAdminController {
 
     private final AdminService adminService;
     private final JwtUtil jwtUtil;
-    private final AuthenticationManager authenticationManager;
+    private final AuthenticationManager adminAuthenticationManager;
+    private final AdminRepository adminRepository;
 
 
     @PostMapping("/register")
@@ -46,22 +51,34 @@ public class ApiAdminController {
         }
     }
     @PostMapping("/login")
+    @Operation(summary = "관리자 로그인 ", description = "관리자 로그인")
     public ResponseEntity<Map<String, String>> adminLogin(@RequestBody AdminDTO adminLoginDTO) {
         try {
-            Authentication authentication = authenticationManager.authenticate(
+            Authentication authentication = adminAuthenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(adminLoginDTO.getAid(), adminLoginDTO.getApw())
             );
 
-            // 인증이 성공하면 JWT 생성
             SecurityContextHolder.getContext().setAuthentication(authentication);
-            String token = jwtUtil.generateToken(adminLoginDTO.getAid(), 0L, "admin", "admin");
+
+            // DB에서 관리자 정보 조회
+            Admin admin = adminRepository.findByAid(adminLoginDTO.getAid())
+                    .orElseThrow(() -> new UsernameNotFoundException("관리자 정보 없음"));
+
+            // 토큰 생성
+            String token = jwtUtil.generateAdminToken(
+                    admin.getAid(),
+                    admin.getAname(),
+                    admin.getRole().toString()
+            );
 
             Map<String, String> response = new HashMap<>();
-            response.put("token", token);  // JSON 응답 반환
+            response.put("token", token);
 
             return ResponseEntity.ok(response);
+
         } catch (BadCredentialsException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Collections.singletonMap("message", "잘못된 관리자 아이디나 비밀번호입니다."));
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Collections.singletonMap("message", "잘못된 관리자 아이디나 비밀번호입니다."));
         }
     }
 
@@ -91,8 +108,10 @@ public class ApiAdminController {
 
     // 회원 삭제
     @DeleteMapping("/user/{uno}")
+    @Operation(summary = "회원 삭제 ", description = "회원 삭제")
     public ResponseEntity<?> deleteUser(@PathVariable String uno) {
         try {
+            log.info("Delete->>>>>>> {}", uno);
             adminService.deleteUser(uno);
             return ResponseEntity.ok().build();
         } catch (Exception e) {

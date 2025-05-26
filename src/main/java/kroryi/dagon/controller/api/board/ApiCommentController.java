@@ -3,8 +3,8 @@ package kroryi.dagon.controller.api.board;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import kroryi.dagon.DTO.CommentDTO;
-import kroryi.dagon.service.FishingDiaryCommentServiceImpl;
-import kroryi.dagon.service.FishingReportCommentServiceImpl;
+import kroryi.dagon.service.board.fishingReportDiary.FishingDiaryCommentServiceImpl;
+import kroryi.dagon.service.board.fishingReportDiary.FishingReportCommentServiceImpl;
 import kroryi.dagon.service.FreeBoardCommentServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -16,7 +16,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/comments")
-@Tag(name = "4-1. Comment", description = "댓글 기능 API")
+@Tag(name = "Board-Comment", description = "게시판 댓글 작성/삭제 API")
 public class ApiCommentController {
 
     private final FishingDiaryCommentServiceImpl fishingDiaryCommentService;

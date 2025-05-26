@@ -1,12 +1,18 @@
 package kroryi.dagon.config;
 
 import kroryi.dagon.handler.CustomSocialLoginSuccessHandler;
+import kroryi.dagon.service.AdminDetailsService;
+import kroryi.dagon.service.AdminService;
 import kroryi.dagon.service.ApiKeyService;
+import kroryi.dagon.service.CustomUserDetailsService;
 import kroryi.dagon.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.ProviderManager;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -20,12 +26,15 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import java.util.List;
+
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final UserDetailsService userDetailsService;
+    private final AdminDetailsService adminDetailsService;
+    private final CustomUserDetailsService userDetailsService;
     private final JwtUtil jwtUtil; // JWT 유틸리티 주입
 
     @Bean
@@ -54,7 +63,11 @@ public class SecurityConfig {
                                 "/admin/login",
                                 "/register",
                                 "/admin/registration"
+
+
                         ).permitAll()
+                        .requestMatchers("/api/mypage").authenticated()
+                        .requestMatchers("/partner/review").authenticated()
                         .requestMatchers("/login/oauth2/code/kakao").permitAll()
                         .anyRequest().authenticated()
                 )
@@ -66,7 +79,7 @@ public class SecurityConfig {
                             .permitAll();
                 })
                 .oauth2Login(
-                        (login)->login.loginPage("/login")
+                        (login) -> login.loginPage("/login")
                                 .successHandler(socialLoginSuccessHandler()))
                 .logout(logout -> logout
                         .logoutSuccessUrl("/login?logout")
@@ -84,15 +97,22 @@ public class SecurityConfig {
     }
 
 
-
     @Bean
     public AuthenticationSuccessHandler socialLoginSuccessHandler() {
         return new CustomSocialLoginSuccessHandler(passwordEncoder());
     }
 
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
-        return configuration.getAuthenticationManager(); // ✅ 최신 방식
+    public AuthenticationManager authenticationManager(HttpSecurity http) throws Exception {
+        DaoAuthenticationProvider userProvider = new DaoAuthenticationProvider();
+        userProvider.setUserDetailsService(userDetailsService);
+        userProvider.setPasswordEncoder(passwordEncoder());
+
+        DaoAuthenticationProvider adminProvider = new DaoAuthenticationProvider();
+        adminProvider.setUserDetailsService(adminDetailsService);
+        adminProvider.setPasswordEncoder(passwordEncoder());
+
+        return new ProviderManager(List.of(userProvider, adminProvider));
     }
 
 }

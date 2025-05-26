@@ -2,6 +2,7 @@ package kroryi.dagon.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import kroryi.dagon.enums.AdminRole;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -23,8 +24,9 @@ public class Admin {
     @Column(name = "aname")
     private String aname;
 
+    @Enumerated(EnumType.STRING) // enum을 문자열로 저장
     @Column(name = "role")
-    private String role;
+    private AdminRole role = AdminRole.ADMIN;
 
     // 공지사항
     @OneToMany(mappedBy = "admin", cascade = CascadeType.ALL, orphanRemoval = true)

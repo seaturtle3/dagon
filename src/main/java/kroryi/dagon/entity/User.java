@@ -58,6 +58,9 @@ public class User extends BaseTimeEntity {
     @Column(name = "level_point", nullable = false)
     private Integer levelPoint = 0;
 
+    @Column(name = "last_login_at")
+    private LocalDateTime lastLoginAt;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private UserRole role = UserRole.USER;
@@ -109,6 +112,14 @@ public class User extends BaseTimeEntity {
     @OneToMany(mappedBy = "receiver", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Notification> notifications;
 
+    // 신고
+    // 신고한 목록
+    @OneToMany(mappedBy = "reporter", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<Report> reportsMade = new ArrayList<>();
+
+    // 신고받은 목록
+    @OneToMany(mappedBy = "reported", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<Report> reportsReceived = new ArrayList<>();
 
     public void setIsActive(boolean isActive) {
         this.isActive = isActive;

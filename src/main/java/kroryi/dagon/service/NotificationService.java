@@ -1,6 +1,7 @@
 package kroryi.dagon.service;
 
 import kroryi.dagon.DTO.NotificationDTO;
+import kroryi.dagon.entity.Inquiry;
 import kroryi.dagon.entity.Notification;
 import kroryi.dagon.entity.Reservation;
 import kroryi.dagon.entity.User;
@@ -24,19 +25,19 @@ public class NotificationService {
 
     private final NotificationRepository notificationRepository;
     private final UserRepository userRepository;
-    private final SeaFreshwaterFishingRepository reservationRepository;  // 예약 정보 처리
+    private final SeaFreshwaterFishingRepository reservationRepository;
 
+    // 예약 정보 처리
     public NotificationDTO createNotification(NotificationDTO dto) {
-        // 유저 정보 받아오기
-        User receiver = userRepository.findById(dto.getReceiverId())
+        // uid 기준으로 유저 조회
+        User receiver = userRepository.findByUid(dto.getReceiverUid())
                 .orElseThrow(() -> new RuntimeException("Receiver not found"));
 
         User sender = null;
         SenderType senderType = SenderType.fromString(String.valueOf(dto.getSenderType()));
 
-        // 발신자 처리 (생략)
+        // 발신자 처리 (생략 또는 필요 시 sender도 같은 방식으로 조회)
 
-        // 예약 정보 받아오기
         Reservation reservation = null;
         if (dto.getReservationId() != null) {
             reservation = reservationRepository.findById(dto.getReservationId())
@@ -44,28 +45,28 @@ public class NotificationService {
         }
 
         Notification notification = new Notification();
-        notification.setReceiver(receiver);  // 유저 정보 연결
-        notification.setSender(sender);      // 발신자 정보 연결
+        notification.setReceiver(receiver);
+        notification.setSender(sender);
         notification.setSenderType(senderType);
         notification.setType(dto.getType());
         notification.setTitle(dto.getTitle());
         notification.setContent(dto.getContent());
         notification.setCreatedAt(LocalDateTime.now());
-        notification.setReservation(reservation);  // 예약 정보 연결
+        notification.setReservation(reservation);
 
         Notification saved = notificationRepository.save(notification);
         return convertToDTO(saved);
     }
 
     public NotificationDTO createSimpleNotification(NotificationDTO dto) {
-        User receiver = userRepository.findById(dto.getReceiverId())
+        User receiver = userRepository.findByUid(dto.getReceiverUid())
                 .orElseThrow(() -> new RuntimeException("Receiver not found"));
 
         User sender = null;
         SenderType senderType = SenderType.fromString(String.valueOf(dto.getSenderType()));
 
         if (senderType == SenderType.ADMIN || senderType == SenderType.PARTNER) {
-            sender = userRepository.findById(dto.getSenderId())
+            sender = userRepository.findByUid(dto.getReceiverUid())
                     .orElseThrow(() -> new RuntimeException("Sender not found"));
         }
 
@@ -88,12 +89,6 @@ public class NotificationService {
         return convertToDTO(notification);
     }
 
-    public List<NotificationDTO> getNotificationsByUser(Long receiverId) {
-        return notificationRepository.findByReceiver_UnoOrderByCreatedAtDesc(receiverId)
-                .stream()
-                .map(this::convertToDTO)
-                .collect(Collectors.toList());
-    }
 
     public NotificationDTO markAsRead(Long id) {
         Notification notification = notificationRepository.findById(id)
@@ -110,8 +105,8 @@ public class NotificationService {
     private NotificationDTO convertToDTO(Notification entity) {
         NotificationDTO dto = new NotificationDTO();
         dto.setId(entity.getId());
-        dto.setReceiverId(entity.getReceiver().getUno());
-        dto.setSenderId(entity.getSender() != null ? entity.getSender().getUno() : null);
+        dto.setReceiverUid(entity.getReceiver().getUid());
+        dto.setSenderUid(entity.getSender() != null ? entity.getSender().getUid() : null);
         dto.setSenderType(entity.getSenderType());
         dto.setType(entity.getType());
         dto.setTitle(entity.getTitle());
@@ -125,8 +120,8 @@ public class NotificationService {
     public void sendAdminNotification(NotificationDTO dto) {
         List<User> receivers;
 
-        if (dto.getReceiverId() != null) {
-            User receiver = userRepository.findById(dto.getReceiverId())
+        if (dto.getReceiverUid() != null) {
+            User receiver = userRepository.findByUid(dto.getReceiverUid())
                     .orElseThrow(() -> new RuntimeException("Receiver not found"));
             receivers = List.of(receiver);
         } else {
@@ -148,13 +143,28 @@ public class NotificationService {
         }
     }
 
-    public Page<NotificationDTO> getNotifications(Long uno, String type, Pageable pageable) {
+    public List<NotificationDTO> getNotificationsByUser(String receiverUid) {
+        return notificationRepository.findByReceiver_UidOrderByCreatedAtDesc(receiverUid)
+                .stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+
+    public Page<NotificationDTO> getNotifications(String uid, String type, Pageable pageable) {
+        // 빈 문자열("")은 null로 변환해서 처리
+        if (uid != null && uid.isBlank()) {
+            uid = null;
+        }
+        if (type != null && (type.isBlank() || type.equals("전체"))) {
+            type = null;
+        }
+
         Page<Notification> notifications;
 
-        if (uno != null && type != null) {
-            notifications = notificationRepository.findByReceiverUnoAndType(uno, type, pageable); // uno 사용
-        } else if (uno != null) {
-            notifications = notificationRepository.findByReceiverUno(uno, pageable); // uno 사용
+        if (uid != null && type != null) {
+            notifications = notificationRepository.findByReceiver_UidAndType(uid, type, pageable);
+        } else if (uid != null) {
+            notifications = notificationRepository.findByReceiver_Uid(uid, pageable);
         } else if (type != null) {
             notifications = notificationRepository.findByType(type, pageable);
         } else {
@@ -164,5 +174,17 @@ public class NotificationService {
         return notifications.map(this::convertToDTO);
     }
 
-    }
+    public void sendInquiryAnswerNotification(Inquiry inquiry, User sender) {
+        Notification notification = new Notification();
+        notification.setReceiver(inquiry.getUser());  // 수신자 - 문의한 유저
+        notification.setSender(sender);                // 보낸 사람 - null이어도 무관
+        notification.setSenderType(SenderType.ADMIN); // 보낸 사람 타입으로 관리자 구분
+        notification.setType("ANSWER");
+        notification.setTitle("1:1 문의 답변 도착");
+        notification.setContent(inquiry.getAnswerContent());
+        notification.setRead(false);
+        notification.setCreatedAt(LocalDateTime.now());
 
+        notificationRepository.save(notification);
+    }
+}

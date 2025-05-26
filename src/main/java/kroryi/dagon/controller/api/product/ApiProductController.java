@@ -3,7 +3,7 @@ package kroryi.dagon.controller.api.product;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import kroryi.dagon.DTO.ProductDTO;
-import kroryi.dagon.service.ProductService;
+import kroryi.dagon.service.product.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -11,7 +11,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@Tag(name = "2-1. Product", description = "상품 등록 및 조회 API")
+@Tag(name = "Product", description = "상품 등록/조회/수정/삭제 API")
 @RequestMapping("/api/product")
 public class ApiProductController {
 
@@ -24,7 +24,7 @@ public class ApiProductController {
     }
 
     @Operation(summary = "모든 상품 조회", description = "모든 상품 조회")
-    @GetMapping("/getAll")
+    @GetMapping("/get-all")
     public List<ProductDTO> getAllProducts() {
         return productService.getAllProducts();
     }

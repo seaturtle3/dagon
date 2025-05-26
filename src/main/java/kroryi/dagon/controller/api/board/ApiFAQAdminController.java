@@ -17,7 +17,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@Tag(name = "4-4. FAQ(Admin)", description = "FAQ 관리자 기능 API")
+@Tag(name = "Board-FAQ", description = "FAQ 등록/수정/삭제 API")
 @RequestMapping("/api/admin/faq")
 public class ApiFAQAdminController {
     private final FAQService faqService;
@@ -47,8 +47,8 @@ public class ApiFAQAdminController {
     }
 
     @Operation(summary = "FAQ 수정", description = "기존 FAQ 내용 수정")
-    @PostMapping("/{id}")
-    public ResponseEntity<FAQResponseDTO> update(@PathVariable Long id, FAQRequestDTO dto) {
+    @PutMapping("/{id}")
+    public ResponseEntity<FAQResponseDTO> update(@PathVariable Long id,@RequestBody FAQRequestDTO dto) {
         FAQ faq = faqService.updateFAQ(id, dto);
         return ResponseEntity.ok(FAQResponseDTO.from(faq));
     }

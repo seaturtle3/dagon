@@ -19,7 +19,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 @RestController
-@Tag(name = "3-3. Payments(Iamport)", description = "아임포트 결제 검증 API")
+@Tag(name = "Booking-Iamport", description = "아임포트 결제 검증 API")
 @RequestMapping("/api/payments")
 @RequiredArgsConstructor
 @Log4j2
