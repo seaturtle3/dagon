@@ -38,7 +38,7 @@ public class ApiFishingReportController {
         Pageable pageable = PageRequest.of(page, size, sort);
         return apiFishingReportService.getAllFishingReports(pageable);
     }
-    
+
     @Operation(summary = "조황정보 ID 조회")
     @GetMapping("/get/{id}")
     public ApiFishingReportDTO getFishingReport(@PathVariable Long id) {
