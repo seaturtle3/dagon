@@ -5,6 +5,10 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import kroryi.dagon.DTO.board.FishingReportDiary.ApiFishingReportDTO;
 import kroryi.dagon.service.board.fishingReportDiary.ApiFishingReportService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,10 +27,16 @@ public class ApiFishingReportController {
         return apiFishingReportService.createFishingReport(apiFishingReportDTO);
     }
 
-    @Operation(summary = "조황정보 모두 조회")
+    @Operation(summary = "조황정보 전체 조회 (페이징)")
     @GetMapping("/get-all")
-    public List<ApiFishingReportDTO> getAllFishingReport() {
-        return apiFishingReportService.getAllFishingReports();
+    public Page<ApiFishingReportDTO> getAllFishingReports(@RequestParam(defaultValue = "0") int page,
+                                                          @RequestParam(defaultValue = "10") int size,
+                                                          @RequestParam(defaultValue = "frId") String sortBy,
+                                                          @RequestParam(defaultValue = "desc") String direction)
+    {
+        Sort sort = direction.equalsIgnoreCase("desc") ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
+        Pageable pageable = PageRequest.of(page, size, sort);
+        return apiFishingReportService.getAllFishingReports(pageable);
     }
 
     @Operation(summary = "조황정보 ID 조회")
