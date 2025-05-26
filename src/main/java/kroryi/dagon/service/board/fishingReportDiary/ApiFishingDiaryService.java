@@ -11,6 +11,8 @@ import kroryi.dagon.repository.UserRepository;
 import kroryi.dagon.repository.board.FishingDiaryRepository;
 import kroryi.dagon.service.product.ProductService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
 
@@ -45,11 +47,9 @@ public class ApiFishingDiaryService {
         return new ApiFishingDiaryDTO(fishingDiary);
     }
 
-    public List<ApiFishingDiaryDTO> getAllFishingDiary() {
-        List<FishingDiary> fishingReports = fishingDiaryRepository.findAllWithComments();
-        return fishingReports.stream()
-                .map(ApiFishingDiaryDTO::new)
-                .collect(Collectors.toList());
+    public Page<ApiFishingDiaryDTO> getAllFishingDiary(Pageable pageable) {
+        Page<FishingDiary> page = fishingDiaryRepository.findAll(pageable); // pageable 적용
+        return page.map(ApiFishingDiaryDTO::new); // Page<Entity> → Page<DTO>
     }
 
     public ApiFishingDiaryDTO getFishingDiaryById(@PathVariable Long id) {
