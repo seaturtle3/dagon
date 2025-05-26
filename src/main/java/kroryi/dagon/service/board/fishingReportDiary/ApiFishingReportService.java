@@ -11,6 +11,8 @@ import kroryi.dagon.repository.ProductRepository;
 import kroryi.dagon.repository.UserRepository;
 import kroryi.dagon.repository.board.FishingReportRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -50,11 +52,9 @@ public class ApiFishingReportService {
         return new ApiFishingReportDTO(fishingReport);
     }
 
-    public List<ApiFishingReportDTO> getAllFishingReports() {
-        List<FishingReport> apiFishingReports = fishingReportRepository.findAllWithComments();
-        return apiFishingReports.stream()
-                .map(this::convertToDTO)
-                .collect(Collectors.toList());
+    public Page<ApiFishingReportDTO> getAllFishingReports(Pageable pageable) {
+        Page<FishingReport> fishingReports = fishingReportRepository.findAll(pageable);
+        return fishingReports.map(this::convertToDTO); // map으로 DTO 변환
     }
 
     public ApiFishingReportDTO getFishingReportById(Long id) {
