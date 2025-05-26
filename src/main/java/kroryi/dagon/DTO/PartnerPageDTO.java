@@ -19,17 +19,14 @@ public class PartnerPageDTO {
     private String uname; // 유저 이름
 
 
-
-
-    public static PartnerPageDTO fromEntity(Partner partner) {
-        PartnerPageDTO dto = new PartnerPageDTO();
-        dto.setUno(partner.getUno());
-        dto.setPname(partner.getPname());
-        dto.setPAddress(partner.getPAddress());
-        dto.setCeoName(partner.getCeoName());
-        dto.setPInfo(partner.getPInfo());
-        dto.setLicense(partner.getLicense());
-        dto.setUname(partner.getUser().getUname());
-        return dto;
+    public PartnerPageDTO(Partner partner) {
+        this.uno = partner.getUno();
+        this.pname = partner.getPname();
+        this.ceoName = partner.getCeoName();
+        this.pAddress = partner.getPAddress();
+        this.pInfo = partner.getPInfo();
+        this.license = partner.getLicense();
+        this.licenseImg = partner.getLicenseImg();
+        this.uname = partner.getUser().getUname();  // User와 연관관계가 있다면
     }
 }

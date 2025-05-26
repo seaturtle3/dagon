@@ -3,6 +3,7 @@ package kroryi.dagon.service;
 import jakarta.persistence.criteria.Predicate;
 import kroryi.dagon.DTO.ProductDTO;
 import kroryi.dagon.DTO.ReservationDTO;
+import kroryi.dagon.DTO.ReservationResponseDTO;
 import kroryi.dagon.entity.Product;
 import kroryi.dagon.entity.Reservation;
 import kroryi.dagon.enums.MainType;
@@ -94,6 +95,7 @@ public class SeaFreshwaterFishingService {
                 .reservationId(reservation.getReservationId())
                 .productName(reservation.getProduct().getProdName())
                 .optionName(reservation.getProductOption().getOptName())
+                .userName(reservation.getUser().getUname())
                 .fishingAt(reservation.getFishingAt())
                 .numPerson(reservation.getNumPerson())
                 .reservationStatus(reservation.getReservationStatus())
@@ -173,5 +175,13 @@ public class SeaFreshwaterFishingService {
             return getAllReservations(pageable);
         }
     }
+
+    public List<ReservationResponseDTO> getReservationsByUserUno(Long uno) {
+        List<Reservation> reservations = seaFreshwaterFishingRepository.findByUserUno(uno);
+        return reservations.stream()
+                .map(ReservationResponseDTO::from)
+                .collect(Collectors.toList());
+    }
+
 }
 
