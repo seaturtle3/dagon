@@ -47,5 +47,4 @@ public class ApiProductController {
         productService.deleteProduct(id);
     }
 
-
 }
