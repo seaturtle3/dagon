@@ -35,9 +35,9 @@ public class ApiFishingDiaryController {
             @RequestParam(defaultValue = "fdId") String sortBy,
             @RequestParam(defaultValue = "desc") String direction) {
 
-        Sort sort = direction.equalsIgnoreCase("desc") ?
-                Sort.by(sortBy).descending() :
-                Sort.by(sortBy).ascending();
+        Sort sort = direction.equalsIgnoreCase("desc")
+                ? Sort.by(sortBy).descending()
+                : Sort.by(sortBy).ascending();
 
         Pageable pageable = PageRequest.of(page, size, sort);
         return apiFishingDiaryService.getAllFishingDiary(pageable);
