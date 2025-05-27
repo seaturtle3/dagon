@@ -1,4 +1,4 @@
-package kroryi.dagon.controller.common;
+package kroryi.dagon.controller.common.support;
 
 import io.jsonwebtoken.JwtException;
 import io.swagger.v3.oas.annotations.Operation;

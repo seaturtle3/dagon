@@ -1,4 +1,4 @@
-package kroryi.dagon.controller.common;
+package kroryi.dagon.controller.base.community;
 
 import kroryi.dagon.entity.Product;
 import kroryi.dagon.repository.ProductRepository;

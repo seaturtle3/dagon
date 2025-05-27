@@ -1,4 +1,4 @@
-package kroryi.dagon.controller.admin.reserve;
+package kroryi.dagon.controller.admin.order;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

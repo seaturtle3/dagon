@@ -1,4 +1,4 @@
-package kroryi.dagon.controller.user.reserve;
+package kroryi.dagon.controller.user.order;
 
 import io.jsonwebtoken.Claims;
 import io.swagger.v3.oas.annotations.Operation;

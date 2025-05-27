@@ -1,4 +1,4 @@
-package kroryi.dagon.controller.user.reserve;
+package kroryi.dagon.controller.user.order;
 
 import com.siot.IamportRestClient.IamportClient;
 import com.siot.IamportRestClient.exception.IamportResponseException;
