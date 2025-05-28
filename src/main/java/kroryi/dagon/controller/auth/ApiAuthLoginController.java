@@ -25,7 +25,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Log4j2
 @Tag(name = "Auth", description = "로그인, 로그아웃, 인증 관련 API")
-public class AuthLoginController {
+public class ApiAuthLoginController {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder; // 주입

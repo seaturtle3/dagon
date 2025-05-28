@@ -23,7 +23,7 @@ import java.util.UUID;
 @RequestMapping("/api")
 // J : ⚠ 실제 경로는 /api/find-password 지만 인증 기능이라 auth 폴더에 위치시킴
 @Tag(name = "Auth", description = "로그인, 회원가입, 비밀번호 찾기 등 인증 관련 API")
-public class AuthPasswordController {
+public class ApiAuthPasswordController {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
