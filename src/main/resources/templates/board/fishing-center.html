@@ -14,6 +14,7 @@
             <thead>
             <tr>
                 <th>배 ID</th>
+                <th>썸네일</th>
                 <th>배 이름</th>
                 <th>지역</th>
                 <th>등록일</th>
@@ -23,7 +24,11 @@
             <tr th:each="product : ${products}"
                 th:onclick="|location.href='@{/fishing-report/list/{id}(id=${product.prodId})}'|"
                 style="cursor:pointer">
+
                 <td th:text="${product.prodId}">배 ID</td>
+                <td>
+                    <img th:src="@{|/uploads/${product.prodThumbnail}|}" alt="썸네일" width="80" height="60">
+                </td>
                 <td th:text="${product.prodName}">배 이름</td>
                 <td th:text="${product.prodRegion}">지역</td>
                 <td th:text="${#temporals.format(product.createdAt, 'yyyy-MM-dd')}">등록일</td>

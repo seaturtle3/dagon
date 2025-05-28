@@ -51,6 +51,8 @@ public class ApiPartnerController {
     public void deletePartner(@PathVariable Long id) {
         partnerService.deletePartner(id);
     }
+
+
 }
 
 

@@ -78,6 +78,9 @@ public class Product extends BaseTimeEntity {
     @Column(name = "available_date")
     private LocalDate availableDate;
 
+    @Column(name = "prod_thumbnail")
+    private String prodThumbnail; // 저장된 파일명 or URL
+
 
     // 옵션
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
