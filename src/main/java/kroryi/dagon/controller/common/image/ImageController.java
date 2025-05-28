@@ -1,4 +1,4 @@
-package kroryi.dagon.controller.common;
+package kroryi.dagon.controller.common.image;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;

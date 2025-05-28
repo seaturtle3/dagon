@@ -22,7 +22,7 @@ import java.util.List;
 @Tag(name = "Reservation", description = "예약 API (사용자)")
 @RequestMapping("/api/reservation")
 @Log4j2
-public class UserReservationController {
+public class ApiUserReservationController {
 
     private final SeaFreshwaterFishingService seaFreshwaterFishingService;
     private final JwtUtil jwtUtil;

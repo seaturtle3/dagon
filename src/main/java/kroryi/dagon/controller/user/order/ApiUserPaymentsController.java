@@ -23,7 +23,7 @@ import java.util.Map;
 @RequestMapping("/api/payments")
 @RequiredArgsConstructor
 @Log4j2
-public class UserPaymentsController {
+public class ApiUserPaymentsController {
 
     private final IamportClient iamportClient;
     private final PaymentsService paymentsService;
