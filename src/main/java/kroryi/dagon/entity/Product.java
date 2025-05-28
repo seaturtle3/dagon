@@ -1,5 +1,7 @@
 package kroryi.dagon.entity;
 
+
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import kroryi.dagon.enums.MainType;
@@ -8,6 +10,7 @@ import kroryi.dagon.enums.SubType;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import net.minidev.json.annotate.JsonIgnore;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -40,6 +43,7 @@ public class Product extends BaseTimeEntity {
     @Column(name = "main_type", nullable = false)
     private MainType mainType;
 
+
     
     @Enumerated(EnumType.STRING)
     @Schema(description = "바다/민물 세부 사항")
@@ -58,6 +62,7 @@ public class Product extends BaseTimeEntity {
     @Column(name = "prod_address")
     private String prodAddress;
 
+
     @Lob
     @Column(name = "prod_description")
     private String prodDescription;
@@ -73,6 +78,8 @@ public class Product extends BaseTimeEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "uno", nullable = false)
     private Partner partner;
+
+    private boolean deleted = false;
 
     // 예약 가능한 날짜
     @Column(name = "available_date")
@@ -96,7 +103,9 @@ public class Product extends BaseTimeEntity {
     private List<ProdFacilityMapping> facilityMappings = new ArrayList<>();
 
     // 조황정보
+
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+
     private List<FishingReport> fishingReports = new ArrayList<>();
 
     // 조행기

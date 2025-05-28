@@ -1,16 +1,23 @@
 package kroryi.dagon.service;
 
+import jakarta.persistence.EntityNotFoundException;
 import kroryi.dagon.DTO.ProductDTO;
 import kroryi.dagon.entity.Partner;
 import kroryi.dagon.entity.Product;
 import kroryi.dagon.entity.ProductOption;
+import kroryi.dagon.entity.User;
 import kroryi.dagon.repository.ProductRepository;
 import kroryi.dagon.repository.SeaFreshwaterFishingRepository;
+import kroryi.dagon.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.nio.file.AccessDeniedException;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 @Service
@@ -18,7 +25,10 @@ import java.util.stream.Collectors;
 public class ProductService {
 
     private final ProductRepository productRepository;
+    private final UserRepository userRepository;
     private final PartnerService partnerService;
+
+
     private final SeaFreshwaterFishingRepository seaFreshwaterFishingRepository;
 
     @Transactional
@@ -136,5 +146,129 @@ public class ProductService {
         return productRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("해당 배가 없습니다. id=" + id));
     }
+
+// ------------------------------------------------------------------------------------
+
+    // 파트너 uno로 상품 리스트 조회
+    public List<ProductDTO> getProductsByPartnerUno(String uno) {
+        return productRepository.findByPartner_Uno(Long.valueOf(uno)).stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+
+    // 파트너 uno로 상품 등록
+    @Transactional
+    public Long addProductByUno(String uno, ProductDTO dto) {
+        Partner partner = partnerService.findByUno(uno);
+        Product product = convertToEntity(dto);
+        product.setPartner(partner);
+        return productRepository.save(product).getProdId();
+    }
+
+    // 파트너 uno로 상품 단건 조회
+    @Transactional(readOnly = true)
+    public ProductDTO getProductByIdAndUno(Long id, String uno) throws AccessDeniedException {
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("상품이 존재하지 않습니다."));
+        if (!product.getPartner().getUno().equals(uno)) {
+            throw new AccessDeniedException("내 상품만 조회할 수 있습니다.");
+        }
+        return convertToDTO(product);
+    }
+
+    // 파트너 uno로 상품 수정
+    @Transactional
+    public Long updateProductByUno(Long id, String uno, ProductDTO dto) throws AccessDeniedException {
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("상품이 존재하지 않습니다."));
+        if (!product.getPartner().getUno().equals(uno)) {
+            throw new AccessDeniedException("내 상품만 수정할 수 있습니다.");
+        }
+
+        // 수정 필드
+        product.setProdName(dto.getProdName());
+        product.setProdRegion(dto.getProdRegion());
+        product.setMainType(dto.getMainType());
+        product.setSubType(dto.getSubType());
+        product.setMaxPerson(dto.getMaxPerson());
+        product.setMinPerson(dto.getMinPerson());
+        product.setWeight(dto.getWeight());
+        product.setProdAddress(dto.getProdAddress());
+        product.setProdDescription(dto.getProdDescription());
+        product.setProdEvent(dto.getProdEvent());
+        product.setProdNotice(dto.getProdNotice());
+
+        return product.getProdId();
+    }
+
+
+
+    public List<ProductDTO> getProductsByPartnerUno(Long partnerUno) {
+        List<Product> products = productRepository.findByPartner_UnoAndDeletedFalse(partnerUno);
+        return products.stream()
+                .map(ProductDTO::fromEntity)
+                .collect(Collectors.toList());
+    }
+    public void updateProducts(Long prodId, ProductDTO dto) {
+        Product product = productRepository.findById(prodId)
+                .orElseThrow(() -> new EntityNotFoundException("상품을 찾을 수 없습니다."));
+
+        // ProductDTO에 있는 모든 필드를 제품에 반영 (필요에 따라 null 체크 추가 가능)
+        product.setProdName(dto.getProdName());
+        product.setProdRegion(dto.getProdRegion());
+        product.setMainType(dto.getMainType());
+        product.setSubType(dto.getSubType());
+        product.setMaxPerson(dto.getMaxPerson());
+        product.setMinPerson(dto.getMinPerson());
+        product.setWeight(dto.getWeight());
+        product.setProdAddress(dto.getProdAddress());
+        product.setProdDescription(dto.getProdDescription());
+        product.setProdEvent(dto.getProdEvent());
+        product.setProdNotice(dto.getProdNotice());
+        // 필요하다면 prodPrice 등 가격 필드도 추가하세요
+
+        productRepository.save(product);
+    }
+
+
+
+    public Product getProductEntityById(Long prodId) throws ChangeSetPersister.NotFoundException {
+        return productRepository.findById(prodId)
+                .orElseThrow(ChangeSetPersister.NotFoundException::new);
+    }
+
+    public void deleteProducts(Long prodId) throws ChangeSetPersister.NotFoundException {
+        Product product = productRepository.findById(prodId)
+                .orElseThrow(ChangeSetPersister.NotFoundException::new);
+
+        product.setDeleted(true);
+        productRepository.save(product);
+    }
+
+
+    @Transactional
+    public void createProduct(ProductDTO dto, Long uno) {
+        User partner = userRepository.findById(uno)
+                .orElseThrow(() -> new RuntimeException("파트너를 찾을 수 없습니다."));
+
+        Product product = new Product();
+        product.setProdName(dto.getProdName());
+        product.setProdRegion(dto.getProdRegion());
+        product.setMainType(dto.getMainType());
+        product.setSubType(dto.getSubType());
+        product.setMaxPerson(dto.getMaxPerson());
+        product.setMinPerson(dto.getMinPerson());
+        product.setWeight(dto.getWeight());
+        product.setProdAddress(dto.getProdAddress());
+        product.setProdDescription(dto.getProdDescription());
+        product.setProdEvent(dto.getProdEvent());
+        product.setProdNotice(dto.getProdNotice());
+
+        // 파트너 (uno 외래키) 연결
+        product.setPartner(partner.getPartner());
+
+        productRepository.save(product);
+    }
+
 
 }

@@ -28,26 +28,33 @@ async function loadInquiries() {
             div.style.padding = "15px";
             div.style.marginBottom = "10px";
 
+
             div.innerHTML = `
-        <p><strong>제목:</strong> ${inquiry.title}</p>
-        <p><strong>내용:</strong> ${inquiry.content}</p>
-        <p><strong>유형:</strong> ${inquiry.inquiryType}</p>
-        <p><strong>작성자:</strong> ${inquiry.userName} (${inquiry.userUid})</p>
-        <p><strong>업소명:</strong> ${inquiry.partnerName || '-'}</p>
-        <p><strong>작성일:</strong> ${new Date(inquiry.createdAt).toLocaleString()}</p>
-        <p><strong>답변 여부:</strong> ${inquiry.answerContent ? "✅" : "❌"}</p>
-        <div>
-          <label for="answer_${inquiry.id}"><strong>답변:</strong></label><br />
-          <textarea id="answer_${inquiry.id}" rows="3" cols="60">${inquiry.answerContent || ""}</textarea><br />
-          <button onclick="submitAnswer(${inquiry.id})">답변 저장</button>
-        </div>
-    `;
+    <p><strong>제목:</strong> ${inquiry.title}</p>
+    <p><strong>내용:</strong> ${inquiry.content}</p>
+    <p><strong>유형:</strong> ${inquiry.inquiryType}</p>
+    <p><strong>작성자:</strong> ${inquiry.userName} (${inquiry.userUid})</p>
+    <p><strong>업소명:</strong> ${inquiry.partnerName || '-'}</p>
+    <p><strong>작성일:</strong> ${new Date(inquiry.createdAt).toLocaleString()}</p>
+    <p><strong>답변 여부:</strong> ${inquiry.answerContent ? "✅" : "❌"}</p>
+    <button onclick="toggleAnswerBox(${inquiry.id})">답변 ${inquiry.answerContent ? "수정" : "작성"}</button>
+    <div id="answerBox_${inquiry.id}" style="display: none; margin-top: 10px;">
+        <label for="answer_${inquiry.id}"><strong>답변:</strong></label><br />
+        <textarea id="answer_${inquiry.id}" rows="3" cols="60">${inquiry.answerContent || ""}</textarea><br />
+        <button onclick="submitAnswer(${inquiry.id})">답변 저장</button>
+    </div>
+`;
             container.appendChild(div);
         });
     } else {
         container.innerHTML = "<p>문의 목록을 불러오지 못했습니다.</p>";
     }
 }
+function toggleAnswerBox(inquiryId) {
+    const box = document.getElementById(`answerBox_${inquiryId}`);
+    box.style.display = box.style.display === 'none' ? 'block' : 'none';
+}
+
 
 async function submitAnswer(inquiryId) {
     const token = localStorage.getItem('authToken');

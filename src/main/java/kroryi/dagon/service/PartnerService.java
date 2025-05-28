@@ -206,5 +206,9 @@ public class PartnerService {
     }
 
 
+    public Partner findByUno(String uno) {
+        return (Partner) partnersRepository.findByUno(Long.valueOf(uno))
+                .orElseThrow(() -> new IllegalArgumentException("해당 파트너가 없습니다. uno=" + uno));
+    }
 }
 

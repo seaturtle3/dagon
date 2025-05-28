@@ -66,17 +66,39 @@
             max-width: 300px;
             margin-top: 10px;
         }
+
+        #inquiryContainer {
+            max-height: 600px; /* 원하는 높이로 조절 가능 */
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            padding: 10px;
+            background-color: #fafafa;
+        }
+
+        .details.hidden {
+            display: none;
+        }
+
+        .details {
+            margin-left: 1rem;
+            padding: 0.5rem;
+            background-color: #f9f9f9;
+            border-left: 3px solid #ddd;
+        }
+
     </style>
 </head>
 <body>
 
 <!-- 사이드바 -->
 <div class="sidebar">
-    <h2>마이페이지</h2>
+    <h2>파트너 페이지</h2>
     <button onclick="showTab('userInfo')">내 정보</button>
     <button onclick="showTab('partnerInfo')">파트너 정보</button>
     <button onclick="showTab('inquiryList')">문의 목록</button>
     <button onclick="showTab('reservationSummary')">예약 현황</button>
+    <button onclick="showTab('productManagement'); loadProductList();">상품 관리</button>
+    <button onclick="showTab('productRegister');">상품 등록</button>
     <button onclick="logout()">로그아웃</button>
 </div>
 
@@ -86,6 +108,7 @@
     <div id="userInfo" class="tab-content active">
         <h1>내 정보</h1>
         <p id="userInfoText">불러오는 중...</p>
+        
     </div>
 
     <!-- 파트너 정보 탭 -->
@@ -112,7 +135,7 @@
         </form>
         <button type="button" id="editBtn">수정하기</button>
         <button type="button" id="saveBtn" style="display:none;">수정완료</button>
-        <button type="button" id="deleteBtn">삭제하기</button>
+        <button type="button" id="deleteBtn">탈퇴하기</button>
 
 
     </div>
@@ -139,10 +162,30 @@
     </div>
 
 
+
+    <div id="productManagement" class="tab-content">
+        <h1>상품 관리</h1>
+
+
+        <h2>상품 목록</h2>
+        <div id="productListContainer" class="product-list">
+            <!-- JS가 <div class="product-item"> 추가 -->
+        </div>
+    </div>
+
+    <div id="productRegister" class="tab-content">
+        <h1>상품 등록</h1>
+        <div id="productRegisterContainer">
+            <!-- 등록 폼은 JS에서 추가됨 -->
+        </div>
+    </div>
 </div>
+
 
 <script src="/js/inquiry-list.js"></script>
 <script src="/js/reservation-list.js"></script>
+<script src="/js/product.js"></script>
+<script src="/js/productregister.js"></script>
 <script src="/js/auth.js"></script>
 <script>
     // 탭 전환 함수
@@ -257,6 +300,8 @@
             alert("삭제 실패");
         }
     });
+
+
 
     window.onload = loadUserInfo;
 </script>
