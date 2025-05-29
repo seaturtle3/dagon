@@ -18,17 +18,11 @@
            name="fishingAt"
            th:value="${#temporals.format(fishingAt, 'yyyy-MM-dd''T''HH:mm')}"/>
 
-    <label for="uid">예약자:</label>
-    <input type="text" id="uid" name="customerName" disabled/>
-
-    <label for="uPhone">연락처:</label>
-    <input type="text" id="uPhone" name="contact" required/>
-
-    <label for="numPerson">인원수:</label>
+    <label for="numPerson">인원 수:</label>
     <input type="number" id="numPerson" name="numPerson" min="1" max="20" step="1" value="1"/>
 
-    <label for="opt_name">옵션명:</label>
-    <input type="text" id="opt_name" name="numPerson" required/>
+    <label for="uid">예약자:</label>
+    <input type="text" id="uid" name="uid" disabled/>
 
     <label for="totalAmount">결제 금액:</label>
     <span id="totalAmount">1000</span> 원
