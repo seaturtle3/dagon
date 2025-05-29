@@ -98,7 +98,8 @@
     <button onclick="showTab('inquiryList')">문의 목록</button>
     <button onclick="showTab('reservationSummary')">예약 현황</button>
     <button onclick="showTab('productManagement'); loadProductList();">상품 관리</button>
-    <button onclick="showTab('productRegister');">상품 등록</button>
+    <button onclick="showTab('productRegister'); loadProductRegisterForm();">상품 등록</button>
+    <button onclick="showTab('fishingReport'); loadFishingReports();">조황 정보</button>
     <button onclick="logout()">로그아웃</button>
 </div>
 
@@ -179,13 +180,23 @@
             <!-- 등록 폼은 JS에서 추가됨 -->
         </div>
     </div>
+
+    <div id="fishingReport" class="tab-content">
+        <h1>조황 정보</h1>
+        <div id="fishingReportContainer">
+            <!-- JS가 조황정보 목록을 여기에 채움 -->
+        </div>
+    </div>
+
 </div>
 
 
+
+
+<script src="/js/fishing-report.js"></script>
 <script src="/js/inquiry-list.js"></script>
 <script src="/js/reservation-list.js"></script>
 <script src="/js/product.js"></script>
-<script src="/js/productregister.js"></script>
 <script src="/js/auth.js"></script>
 <script>
     // 탭 전환 함수

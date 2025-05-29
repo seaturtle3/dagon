@@ -39,7 +39,6 @@ public class PartnerService {
     private final PartnerApplicationRepository partnerApplicationRepository;
     private final UserRepository userRepository;
     private final PartnerRepository partnersRepository;
-    private final ProductRepository productRepository;
 
 
 

@@ -48,6 +48,177 @@ async function loadProductList() {
 }
 
 
+function loadProductRegisterForm() {
+    const container = document.getElementById("productRegisterContainer");
+    if (!container) return;
+
+    container.innerHTML = `
+        <h2>상품 등록</h2>
+        <form id="productForm">
+            <label for="prodName">상품명:</label><br />
+            <input type="text" id="prodName" name="prodName"><br /><br />
+
+            <label for="prodRegion">지역:</label><br />
+            <select id="prodRegion" name="prodRegion">
+                <option value="">선택</option>
+                <option value="GANGWON">강원도</option>
+                <option value="GYEONGGI">경기도</option>
+                <option value="GYEONGNAM">경상남도</option>
+                <option value="GYEONGBUK">경상북도</option>
+                <option value="GWANGJU">광주</option>
+                <option value="DAEGU">대구</option>
+                <option value="DAEJEON">대전</option>
+                <option value="BUSAN">부산</option>
+                <option value="SEOUL">서울</option>
+                <option value="SEJONG">세종</option>
+                <option value="ULSAN">울산</option>
+                <option value="INCHEON">인천</option>
+                <option value="JEONNAM">전라남도</option>
+                <option value="JEONBUK">전라북도</option>
+                <option value="JEJU">제주도</option>
+                <option value="CHUNGNAM">충청남도</option>
+                <option value="CHUNGBUK">충청북도</option>
+            </select><br /><br />
+
+            <label for="mainType">메인 타입:</label><br />
+            <select id="mainType" name="mainType" required>
+                <option value="">선택</option>
+                <option value="SEA">바다낚시</option>
+                <option value="FRESHWATER">민물낚시</option>
+            </select><br /><br />
+
+            <label for="subType">서브 타입:</label><br />
+            <select id="subType" name="subType" required>
+                <option value="">선택</option>
+            </select><br /><br />
+
+            <label for="prodDescription">설명:</label><br />
+            <textarea id="prodDescription" name="prodDescription" rows="4" cols="50"></textarea><br /><br />
+
+            <label for="maxPerson">최대 인원:</label><br />
+            <input type="number" id="maxPerson" name="maxPerson"><br /><br />
+
+            <label for="minPerson">최소 인원:</label><br />
+            <input type="number" id="minPerson" name="minPerson"><br /><br />
+
+            <label for="weight">무게:</label><br />
+            <input type="number" id="weight" name="weight" step="0.1"><br /><br />
+
+            <label for="prodAddress">주소:</label><br />
+            <input type="text" id="prodAddress" name="prodAddress"><br /><br />
+
+            <label for="prodEvent">이벤트:</label><br />
+            <input type="text" id="prodEvent" name="prodEvent"><br /><br />
+
+            <label for="prodNotice">공지사항:</label><br />
+            <input type="text" id="prodNotice" name="prodNotice"><br /><br />
+
+            <button type="submit" id="submitProductBtn">등록</button>
+        </form>
+    `;
+
+    const subTypeOptions = {
+        SEA: [
+            { value: "BREAK_WATER", label: "방파제" },
+            { value: "ROCKY_SHORE", label: "갯바위" },
+            { value: "ESTUARY", label: "하구" },
+            { value: "BOAT", label: "선상" },
+            { value: "MUD_FLAT", label: "갯벌" },
+            { value: "ARTIFICIAL", label: "인공낚시터" },
+            { value: "OPEN_SEA", label: "해상" },
+            { value: "BEACH", label: "해변" },
+            { value: "REEF", label: "암초" },
+            { value: "OTHER_SEA", label: "기타_바다" }
+        ],
+        FRESHWATER: [
+            { value: "RIVER", label: "강" },
+            { value: "RESERVOIR", label: "저수지" },
+            { value: "DAM", label: "댐" },
+            { value: "POND", label: "연못" },
+            { value: "SMALL_LAKE", label: "소류지" },
+            { value: "CANAL", label: "수로" },
+            { value: "FLOATING_PLATFORM", label: "좌대" },
+            { value: "OPEN_AREA", label: "노지" },
+            { value: "OTHER_FRESHWATER", label: "기타_민물" }
+        ]
+    };
+
+    const mainTypeSelect = document.getElementById("mainType");
+    const subTypeSelect = document.getElementById("subType");
+
+    function populateSubTypes() {
+        const mainType = mainTypeSelect.value;
+        subTypeSelect.innerHTML = '<option value="">선택</option>';
+
+        if (mainType && subTypeOptions[mainType]) {
+            subTypeSelect.disabled = false;
+            subTypeOptions[mainType].forEach(opt => {
+                const option = document.createElement("option");
+                option.value = opt.value;
+                option.textContent = opt.label;
+                subTypeSelect.appendChild(option);
+            });
+        } else {
+            subTypeSelect.disabled = true;
+        }
+    }
+
+    mainTypeSelect.addEventListener("change", populateSubTypes);
+    populateSubTypes(); // 초기 서브타입 세팅
+
+    // 등록 버튼 (form submit 이벤트) 처리
+    const productForm = document.getElementById("productForm");
+    productForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        const token = localStorage.getItem("authToken");
+        if (!token) {
+            alert("로그인이 필요합니다.");
+            return;
+        }
+
+        const getValue = id => document.getElementById(id)?.value || "";
+
+        const productData = {
+            prodName: getValue("prodName"),
+            prodRegion: getValue("prodRegion"),
+            mainType: getValue("mainType"),
+            subType: getValue("subType"),
+            prodDescription: getValue("prodDescription"),
+            maxPerson: Number(getValue("maxPerson")),
+            minPerson: Number(getValue("minPerson")),
+            weight: parseFloat(getValue("weight")),
+            prodAddress: getValue("prodAddress"),
+            prodEvent: getValue("prodEvent"),
+            prodNotice: getValue("prodNotice")
+        };
+
+        try {
+            const response = await fetch("/api/partner/product", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                },
+                body: JSON.stringify(productData)
+            });
+
+            if (response.ok) {
+                alert("상품이 성공적으로 등록되었습니다.");
+                productForm.reset();
+                loadProductList();
+                showTab("productManagement");
+            } else {
+                const errorData = await response.json();
+                alert("등록 실패: " + (errorData.message || "오류 발생"));
+            }
+        } catch (err) {
+            console.error("등록 중 오류 발생:", err);
+            alert("등록 중 오류가 발생했습니다.");
+        }
+    });
+}
+
 
 function renderProductList(products) {
     const container = document.getElementById("productListContainer");

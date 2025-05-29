@@ -71,12 +71,7 @@ public class ApiPartnerProductController {
     }
 
 
-    @PostMapping("/create")
-    public Long createProduct(@RequestHeader("Authorization") String token,
-                              @RequestBody ProductDTO productDTO) {
-        String uno = String.valueOf(jwtProvider.getUnoFromToken(token));
-        return productService.addProductByUno(uno, productDTO);
-    }
+
 
     @PutMapping("/{prodId}")
     public ResponseEntity<?> updateProduct(@PathVariable Long prodId,
