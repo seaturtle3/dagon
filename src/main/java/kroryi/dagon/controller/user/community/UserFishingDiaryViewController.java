@@ -76,22 +76,22 @@ public class UserFishingDiaryViewController {
             fishingDiaryService.createFishingDiary(fishingDiaryDTO);
             return"redirect:/fishing-diary/list/" + prodId;
         }
-    }
+}
 
-    @GetMapping("/detail/{id}")
-    public String showDiaryDetail(@PathVariable Long id,
-                                  Model model) {
-        FishingDiary diary = fishingDiaryService.findById(id);
-        model.addAttribute("diary", diary);
-        model.addAttribute("prodId", diary.getProduct().getProdId());
+@GetMapping("/detail/{id}")
+public String showDiaryDetail(@PathVariable Long id,
+                              Model model) {
+    FishingDiary diary = fishingDiaryService.findById(id);
+    model.addAttribute("diary", diary);
+    model.addAttribute("prodId", diary.getProduct().getProdId());
 
-        return "board/fishingDiary/detail";
-    }
+    return "board/fishingDiary/detail";
+}
 
-    @PostMapping("/delete/{id}")
-    public String deleteDiaryDetail(@PathVariable Long id) {
-        Long prodId = fishingDiaryService.deleteAndReturnProdId(id);
-        return "redirect:/fishing-diary/list/" + prodId;
-    }
+@PostMapping("/delete/{id}")
+public String deleteDiaryDetail(@PathVariable Long id) {
+    Long prodId = fishingDiaryService.deleteAndReturnProdId(id);
+    return "redirect:/fishing-diary/list/" + prodId;
+}
 
 }

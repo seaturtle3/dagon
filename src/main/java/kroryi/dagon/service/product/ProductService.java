@@ -43,12 +43,9 @@ public class ProductService {
         return products.map(ProductDTO::fromEntity);  // 생성자 대신 정적 메서드 사용
     }
 
-    @Transactional(readOnly = true)
-    public List<ProductDTO> getAllProducts() {
-        return productRepository.findAll(Sort.by(Sort.Direction.DESC, "createdAt"))
-                .stream()
-                .map(this::convertToDTO)
-                .collect(Collectors.toList());
+    public Page<ProductDTO> getProductList(Pageable pageable) {
+        return productRepository.findAll(pageable)
+                .map(ProductDTO::fromEntity);
     }
 
     @Transactional(readOnly = true)
