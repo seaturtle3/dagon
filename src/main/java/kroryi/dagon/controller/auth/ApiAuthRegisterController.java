@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/users") // 변경: 끝에 '/' 제거
 // J : ⚠ 실제 경로는 users 지만, 인증 관련 기능으로 auth 폴더에 위치시킴
-@Tag(name = "Auth", description = "회원가입, 로그인, 마이페이지, 계정 관리 API")
+@Tag(name = "Auth", description = "회원가입 API")
 public class ApiAuthRegisterController {
 
     @Autowired
