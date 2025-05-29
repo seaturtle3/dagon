@@ -1,10 +1,10 @@
-package kroryi.dagon.service.board;
+package kroryi.dagon.service.community;
 
 import kroryi.dagon.entity.Event;
 import kroryi.dagon.repository.board.EventRepository;
+import kroryi.dagon.service.BaseContentProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 

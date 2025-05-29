@@ -6,7 +6,7 @@ import jakarta.validation.Valid;
 import kroryi.dagon.DTO.board.FAQRequestDTO;
 import kroryi.dagon.DTO.board.FAQResponseDTO;
 import kroryi.dagon.entity.FAQ;
-import kroryi.dagon.service.board.FAQService;
+import kroryi.dagon.service.support.FAQService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;

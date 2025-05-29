@@ -5,7 +5,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import kroryi.dagon.DTO.board.BoardSearchDTO;
 import kroryi.dagon.DTO.board.EventResponseDTO;
 import kroryi.dagon.entity.Event;
-import kroryi.dagon.service.board.EventService;
+import kroryi.dagon.service.community.EventService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;

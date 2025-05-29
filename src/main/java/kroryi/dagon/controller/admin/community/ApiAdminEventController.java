@@ -6,7 +6,7 @@ import jakarta.validation.Valid;
 import kroryi.dagon.DTO.board.EventRequestDTO;
 import kroryi.dagon.DTO.board.EventResponseDTO;
 import kroryi.dagon.entity.Event;
-import kroryi.dagon.service.board.EventService;
+import kroryi.dagon.service.community.EventService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;

@@ -1,4 +1,6 @@
-package kroryi.dagon.service.board;
+package kroryi.dagon.service;
+
+import kroryi.dagon.service.image.ImageContentProvider;
 
 import java.util.List;
 import java.util.Objects;

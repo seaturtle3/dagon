@@ -2,7 +2,7 @@ package kroryi.dagon.controller.admin.support;
 
 import kroryi.dagon.DTO.board.FAQCategoryRequestDTO;
 import kroryi.dagon.entity.FAQCategory;
-import kroryi.dagon.service.board.FAQCategoryService;
+import kroryi.dagon.service.support.FAQCategoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

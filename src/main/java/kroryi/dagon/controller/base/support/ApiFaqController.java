@@ -4,7 +4,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import kroryi.dagon.DTO.board.FAQListDTO;
 import kroryi.dagon.entity.FAQ;
-import kroryi.dagon.service.board.FAQService;
+import kroryi.dagon.service.support.FAQService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;

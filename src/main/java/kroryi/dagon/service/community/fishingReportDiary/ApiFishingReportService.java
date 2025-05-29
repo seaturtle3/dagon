@@ -1,4 +1,4 @@
-package kroryi.dagon.service.board.fishingReportDiary;
+package kroryi.dagon.service.community.fishingReportDiary;
 
 import kroryi.dagon.DTO.board.FishingReportDiary.ApiCommentDTO;
 import kroryi.dagon.DTO.board.FishingReportDiary.ApiFishingReportDTO;

@@ -1,4 +1,4 @@
-package kroryi.dagon.service.board;
+package kroryi.dagon.service.image;
 
 import java.util.List;
 

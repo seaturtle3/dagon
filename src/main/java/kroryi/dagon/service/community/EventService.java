@@ -1,4 +1,4 @@
-package kroryi.dagon.service.board;
+package kroryi.dagon.service.community;
 
 import jakarta.transaction.Transactional;
 import kroryi.dagon.DTO.board.BoardSearchDTO;

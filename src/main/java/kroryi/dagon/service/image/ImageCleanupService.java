@@ -1,8 +1,5 @@
-package kroryi.dagon.service;
+package kroryi.dagon.service.image;
 
-import jakarta.transaction.Transactional;
-import kroryi.dagon.repository.board.NoticeRepository;
-import kroryi.dagon.service.board.ImageContentProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;

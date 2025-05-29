@@ -3,7 +3,7 @@ package kroryi.dagon.controller.partner.community;
 import kroryi.dagon.DTO.board.FishingReportDiary.FishingReportDTO;
 import kroryi.dagon.entity.FishingReport;
 import kroryi.dagon.entity.Product;
-import kroryi.dagon.service.board.fishingReportDiary.FishingReportService;
+import kroryi.dagon.service.community.fishingReportDiary.FishingReportService;
 import kroryi.dagon.service.product.ProductService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -11,10 +11,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-
-import static org.springframework.data.jpa.domain.AbstractPersistable_.id;
 
 @Log4j2
 @Controller

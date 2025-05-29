@@ -1,7 +1,7 @@
 package kroryi.dagon.controller.admin.image;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
-import kroryi.dagon.service.ImageCleanupService;
+import kroryi.dagon.service.image.ImageCleanupService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;

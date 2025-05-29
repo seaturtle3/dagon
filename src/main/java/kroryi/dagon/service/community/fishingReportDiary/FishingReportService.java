@@ -1,4 +1,4 @@
-package kroryi.dagon.service.board.fishingReportDiary;
+package kroryi.dagon.service.community.fishingReportDiary;
 
 import jakarta.persistence.EntityNotFoundException;
 import kroryi.dagon.DTO.board.FishingReportDiary.FishingReportDTO;

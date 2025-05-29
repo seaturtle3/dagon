@@ -6,7 +6,7 @@ import jakarta.validation.Valid;
 import kroryi.dagon.DTO.board.NoticeRequestDTO;
 import kroryi.dagon.DTO.board.NoticeResponseDTO;
 import kroryi.dagon.entity.Notice;
-import kroryi.dagon.service.board.NoticeService;
+import kroryi.dagon.service.support.NoticeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;

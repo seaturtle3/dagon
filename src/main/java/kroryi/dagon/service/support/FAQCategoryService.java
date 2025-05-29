@@ -1,4 +1,4 @@
-package kroryi.dagon.service.board;
+package kroryi.dagon.service.support;
 
 
 import kroryi.dagon.entity.FAQCategory;

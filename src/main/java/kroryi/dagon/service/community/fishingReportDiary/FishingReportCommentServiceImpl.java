@@ -1,13 +1,12 @@
-package kroryi.dagon.service.board.fishingReportDiary;
-
+package kroryi.dagon.service.community.fishingReportDiary;
 
 import kroryi.dagon.DTO.CommentDTO;
-import kroryi.dagon.entity.FishingDiary;
-import kroryi.dagon.entity.FishingDiaryComment;
+import kroryi.dagon.entity.FishingReport;
+import kroryi.dagon.entity.FishingReportComment;
 import kroryi.dagon.entity.User;
-import kroryi.dagon.repository.FishingDiaryCommentRepository;
+import kroryi.dagon.repository.FishingReportCommentRepository;
 import kroryi.dagon.repository.UserRepository;
-import kroryi.dagon.repository.board.FishingDiaryRepository;
+import kroryi.dagon.repository.board.FishingReportRepository;
 import kroryi.dagon.service.CommentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -18,34 +17,35 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class FishingDiaryCommentServiceImpl implements CommentService {
+public class FishingReportCommentServiceImpl implements CommentService {
 
-    private final FishingDiaryRepository diaryRepository;
-    private final FishingDiaryCommentRepository commentRepository;
+    private final FishingReportRepository reportRepository;
+    private final FishingReportCommentRepository commentRepository;
     private final UserRepository userRepository;
 
     @Override
     public void createComment(Long postId, String content, Long userId) {
-        FishingDiary diary = diaryRepository.findById(postId)
+        FishingReport report = reportRepository.findById(postId)
                 .orElseThrow(() -> new IllegalArgumentException("게시글 없음"));
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("회원 없음"));
 
-        FishingDiaryComment comment = new FishingDiaryComment();
+        FishingReportComment comment = new FishingReportComment();
         comment.setCommentContent(content);
-        comment.setFishingDiary(diary);
+        comment.setFishingReport(report);
         comment.setUser(user);
         comment.setModifyAt(LocalDateTime.now());
+
 
         commentRepository.save(comment);
     }
 
     @Override
     public List<CommentDTO> getComments(Long postId) {
-        return commentRepository.findByFishingDiary_FdId(postId)
+        return commentRepository.findByFishingReport_FrId(postId)
                 .stream()
                 .map(c -> new CommentDTO(
-                        c.getFdCommentId(),
+                        c.getFrCommentId(),
                         c.getUser().getNickname(),
                         c.getCommentContent(),
                         c.getModifyAt()
@@ -54,7 +54,7 @@ public class FishingDiaryCommentServiceImpl implements CommentService {
 
     @Override
     public void updateComment(Long commentId, String content) {
-        FishingDiaryComment comment = commentRepository.findById(commentId)
+        FishingReportComment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new IllegalArgumentException("댓글 없음"));
         comment.setCommentContent(content);
         comment.setModifyAt(LocalDateTime.now());
@@ -66,4 +66,3 @@ public class FishingDiaryCommentServiceImpl implements CommentService {
         commentRepository.deleteById(commentId);
     }
 }
-
