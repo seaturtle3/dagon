@@ -42,7 +42,6 @@ public class ApiProductController {
         return productService.getAllProductsApi(pageable);
     }
 
-
     @Operation(summary = "상품 단건 조회", description = "ID로 상품 조회")
     @GetMapping("/get/{id}")
     public ProductDTO getProduct(@PathVariable Long id) {
