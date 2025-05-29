@@ -1,4 +1,4 @@
-package kroryi.dagon.controller.auth;
+package kroryi.dagon.controller.user.myPage;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -24,7 +24,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 @Log4j2
 @Tag(name = "Auth", description = "로그인, 마이페이지, 계정 수정, 포인트 등 인증 관련 API")
-public class ApiAuthMyPageController {
+public class ApiMyPageController {
 
     private final MyPageService myPageService;
     private final FileStorageService fileStorageService;

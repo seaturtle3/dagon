@@ -1,6 +1,7 @@
 package kroryi.dagon.controller.legacy;
 
 import jakarta.servlet.http.HttpServletRequest;
+import kroryi.dagon.DTO.ProductDTO;
 import kroryi.dagon.entity.Product;
 import kroryi.dagon.entity.ProductFishSpecies;
 import kroryi.dagon.enums.MainType;

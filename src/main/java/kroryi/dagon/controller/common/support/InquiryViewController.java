@@ -1,4 +1,4 @@
-package kroryi.dagon.controller.user.support;
+package kroryi.dagon.controller.common.support;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/inquiry")
-public class UserInquiryViewController {
+public class InquiryViewController {
 
     @GetMapping("")
     public String inquiry() {

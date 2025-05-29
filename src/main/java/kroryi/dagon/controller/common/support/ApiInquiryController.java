@@ -1,6 +1,5 @@
-package kroryi.dagon.controller.user.support;
+package kroryi.dagon.controller.common.support;
 
-import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 import io.jsonwebtoken.Claims;
@@ -10,12 +9,9 @@ import kroryi.dagon.DTO.InquiryResponseDTO;
 import kroryi.dagon.DTO.InquiryUpdateRequestDTO;
 import kroryi.dagon.component.CustomUserDetails;
 import kroryi.dagon.entity.Inquiry;
-import kroryi.dagon.entity.Notification;
 import kroryi.dagon.entity.User;
-import kroryi.dagon.enums.SenderType;
 import kroryi.dagon.repository.InquiryRepository;
 import kroryi.dagon.repository.UserRepository;
-import kroryi.dagon.service.CustomUserDetailsService;
 import kroryi.dagon.service.InquiryService;
 import kroryi.dagon.service.NotificationService;
 import kroryi.dagon.util.JwtUtil;
@@ -27,7 +23,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.nio.file.AccessDeniedException;
@@ -38,7 +33,7 @@ import java.util.Map;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/inquiries")
-public class ApiUserInquiryController {
+public class ApiInquiryController {
 
     private final InquiryService inquiryService;
     private final UserRepository userRepository;
