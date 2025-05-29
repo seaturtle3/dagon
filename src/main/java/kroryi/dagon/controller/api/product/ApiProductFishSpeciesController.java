@@ -19,7 +19,7 @@ public class ApiProductFishSpeciesController {
     private final FishSpeciesRepository fishSpeciesRepository;
 
     @Operation(summary = "모든 어종 리스트 조회", description = "저장된 모든 어종 정보를 조회합니다.")
-    @GetMapping("/all")
+    @GetMapping("/get-all")
     public List<ProductFishSpecies> getAllFishSpecies() {
         return fishSpeciesRepository.findAll();
     }

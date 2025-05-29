@@ -8,6 +8,10 @@ import kroryi.dagon.repository.ProductRepository;
 import kroryi.dagon.repository.SeaFreshwaterFishingRepository;
 import kroryi.dagon.service.PartnerService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,15 +39,16 @@ public class ProductService {
         return savedProduct.getProdId();
     }
 
-    // [Read] 전체 상품 조회
-    @Transactional(readOnly = true)
-    public List<ProductDTO> getAllProducts() {
-        return productRepository.findAll().stream()
-                .map(this::convertToDTO)
-                .collect(Collectors.toList());
+    public Page<ProductDTO> getAllProductsApi (Pageable pageable) {
+        Page<Product> products = productRepository.findAll(pageable);
+        return products.map(ProductDTO::fromEntity);  // 생성자 대신 정적 메서드 사용
     }
 
-    // [Read] id로 단건 조회
+    public Page<ProductDTO> getProductList(Pageable pageable) {
+        return productRepository.findAll(pageable)
+                .map(ProductDTO::fromEntity);
+    }
+
     @Transactional(readOnly = true)
     public ProductDTO getProductById(Long id) {
         Product product = productRepository.findById(id)
@@ -88,6 +93,20 @@ public class ProductService {
         productRepository.delete(product);
     }
 
+    public void saveProduct(Product product) {
+
+        if (product.getPartner() == null) {
+            Partner defaultPartner = partnerService.getDefaultPartner();  // 기본 파트너 가져오기
+            product.setPartner(defaultPartner);  // 파트너 자동 설정
+        }
+        productRepository.save(product);
+    }
+
+    public Product findById(Long id) {
+        return productRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("해당 배가 없습니다. id=" + id));
+    }
+
     // Entity -> DTO 변환
     private ProductDTO convertToDTO(Product product) {
         ProductDTO dto = new ProductDTO();
@@ -122,20 +141,6 @@ public class ProductService {
         product.setProdNotice(dto.getProdNotice());
 
         return product;
-    }
-
-    public void saveProduct(Product product) {
-
-        if (product.getPartner() == null) {
-            Partner defaultPartner = partnerService.getDefaultPartner();  // 기본 파트너 가져오기
-            product.setPartner(defaultPartner);  // 파트너 자동 설정
-        }
-        productRepository.save(product);
-    }
-
-    public Product findById(Long id) {
-        return productRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("해당 배가 없습니다. id=" + id));
     }
 
 }

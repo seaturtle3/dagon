@@ -4,8 +4,11 @@ import kroryi.dagon.entity.Product;
 import kroryi.dagon.enums.MainType;
 import kroryi.dagon.enums.ProdRegion;
 import kroryi.dagon.enums.SubType;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -21,6 +24,12 @@ public interface ProductRepository extends JpaRepository<Product, Long>, JpaSpec
     List<Product> findByMainTypeAndSubType(MainType mainType, SubType subType);
     List<Product> findByMainTypeAndSubTypeAndProdRegion(MainType mainType, SubType subType, ProdRegion prodRegion);
 
-
-    Throwable findByProdId(Long prodId);
+    @Query("""
+                select distinct p from Product p
+                left join p.fishingReports fr
+                left join p.fishingDiaries fd
+                where (fr.content is not null and fr.content <> '') 
+                   or (fd.content is not null and fd.content <> '')
+            """)
+    Page<Product> findAllWithNonEmptyReportOrDiary(Pageable pageable);
 }

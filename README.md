@@ -13,9 +13,9 @@
 
 📅 **개발 기간** 2025.03.21 ~ 2025.04.25
 
-</br>
+<br/>
 
-</br>
+<br/>
 
 
 ## 🐟 팀원구성
@@ -41,9 +41,9 @@
   </tr>
 </table>
 
-</br>
+<br/>
 
-</br>
+<br/>
 
 ## 🛠 개발 환경 및 기술 스택
 
@@ -58,9 +58,9 @@
 | **협업 도구** | Git, GitHub, Notion, Discord, Google Sheets, IntelliJ IDEA              |
 
 
-</br>
+<br/>
 
-</br>
+<br/>
 
 ## 🌟 주요 기능
 
@@ -75,9 +75,9 @@
 - **관리자 기능**: 관리자 대시보드, 모든 게시판 관리 및 통계
 
 
-</br>
+<br/>
 
-</br>
+<br/>
 
 ## 📁 프로젝트 구조
 
@@ -123,9 +123,9 @@ dagon/
 └── README.md
 ```
 
-</br>
+<br/>
 
-</br>
+<br/>
 
 ## ⚓ 역할분담
 
@@ -158,31 +158,37 @@ _(역할 내용 미정) 예시_
 - 관리자 대시보드 메뉴 구성 및 기능 연동
 
 
-</br>
+<br/>
 
-</br>
+<br/>
 
 ## 📌 기능별 API 설계
 Swagger 기반
-_시연 영상 및 이미지 추가 예정_
 
 - **회원 기능**: 로그인 / 회원가입 / 마이페이지 API
-  
-- **예약 기능**: 예약 등록 / 결제 / 예약 조회 API
+  ![예시](docs/login.gif)
+
+- **상품 기능**: 상품 / 어종 / 조황,조행기 등 CRUD API
+  ![예시](docs/product.gif)
+
+- **예약&결제 기능**: 예약 등록 / 결제 / 예약 조회 API
+  ![예시](docs/pay.gif)
   
 - **물때 · 날씨 정보**: 실시간 기상 데이터 및 조석(물때) API 연동
-  
-- **게시판 기능**: 공지사항, 이벤트, FAQ, 조황정보, 조행기 등 CRUD API
-  
+  ![예시](docs/multtae.gif)
+
+- **게시판 기능**: 공지사항, 이벤트, FAQ 등 CRUD API
+  ![예시](docs/notice.gif)
+
 - **관리자 기능**: 관리자 페이지 내 모든 기능 관리 API
 
 > **API 문서 확인 경로**
 > - Swagger UI: [`/swagger-ui/index.html`](http://localhost:8080/swagger-ui/index.html)
-> - 관리자 대시보드: [`/admin-dashboard.html`](http://localhost:8080/admin/dashboard)
+> - 관리자 대시보드: [`/admin-dashboard.html`](http://docs.yi.or.kr:8095/admin/dashboard)
 
-</br>
+<br/>
 
-</br>
+<br/>
 
 
 ## 🌊 개발과정

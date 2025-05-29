@@ -20,7 +20,7 @@ public class ApiProductOptionController {
     private final ProductOptionService prod_optionService;
 
     @Operation(summary = "모든 상품 옵션 조회",description = "모든 상품 옵션 조회")
-    @GetMapping("/all")
+    @GetMapping("/get-all")
     public List<ProductOptionDTO> getAllProductOptions() {
         return prod_optionService.getAllProductOptions();
     }

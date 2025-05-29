@@ -67,6 +67,7 @@ public class SecurityConfig {
 
                         ).permitAll()
                         .requestMatchers("/api/mypage").authenticated()
+                        .requestMatchers("/partner/review").authenticated()
                         .requestMatchers("/login/oauth2/code/kakao").permitAll()
                         .anyRequest().authenticated()
                 )
