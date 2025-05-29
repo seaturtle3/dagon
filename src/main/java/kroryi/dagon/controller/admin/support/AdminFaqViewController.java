@@ -3,6 +3,7 @@ package kroryi.dagon.controller.admin.support;
 import kroryi.dagon.DTO.board.BoardSearchDTO;
 import kroryi.dagon.DTO.board.FAQRequestDTO;
 import kroryi.dagon.entity.FAQ;
+import kroryi.dagon.entity.FAQCategory;
 import kroryi.dagon.service.board.FAQCategoryService;
 import kroryi.dagon.service.board.FAQService;
 import kroryi.dagon.util.PaginationUtil;
