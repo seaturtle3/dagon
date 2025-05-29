@@ -12,6 +12,10 @@ import kroryi.dagon.service.product.ProductService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -94,14 +98,18 @@ public class ProductController {
 
     // 배 리스트 페이지
     @GetMapping("/list")
-    public String showProductList(Model model) {
-        List<ProductDTO> products = productService.getAllProducts();
-        model.addAttribute("productList", products);
+    public String showProductList(@PageableDefault(size = 10, sort = "prodId", direction = Sort.Direction.DESC) Pageable pageable,
+                                  Model model) {
+        Page<ProductDTO> productPage = productService.getProductList(pageable);
+        model.addAttribute("productPage", productPage);
+        model.addAttribute("currentPage", productPage.getNumber());
+        model.addAttribute("totalPages", productPage.getTotalPages());
 
-        log.info("List Get productList: {}", products);
+        log.info("Product Page: {}", productPage);
 
-        return "product/list"; // 리스트 페이지 반환
+        return "product/list";
     }
+
 
 
 }

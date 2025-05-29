@@ -29,7 +29,7 @@
         </tr>
         </thead>
         <tbody>
-        <tr th:each="product : ${productList}">
+        <tr th:each="product : ${productPage.content}">
             <td>
                 <img th:src="@{|/uploads/${product.prodThumbnail}|}" alt="썸네일" width="100" height="70">
             </td>
@@ -51,6 +51,23 @@
         </tr>
         </tbody>
     </table>
+
+    <nav th:if="${productPage.totalPages > 1}">
+        <ul class="pagination justify-content-center">
+            <li class="page-item" th:classappend="${productPage.first} ? 'disabled'">
+                <a class="page-link" th:href="@{/product/list(page=${productPage.number - 1})}">이전</a>
+            </li>
+
+            <li class="page-item" th:each="i : ${#numbers.sequence(0, productPage.totalPages - 1)}"
+                th:classappend="${i == productPage.number} ? 'active'">
+                <a class="page-link" th:href="@{/product/list(page=${i})}" th:text="${i + 1}">1</a>
+            </li>
+
+            <li class="page-item" th:classappend="${productPage.last} ? 'disabled'">
+                <a class="page-link" th:href="@{/product/list(page=${productPage.number + 1})}">다음</a>
+            </li>
+        </ul>
+    </nav>
 </div>
 </body>
 </html>
