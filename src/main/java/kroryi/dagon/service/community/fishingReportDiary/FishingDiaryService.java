@@ -2,9 +2,7 @@ package kroryi.dagon.service.community.fishingReportDiary;
 
 import jakarta.persistence.EntityNotFoundException;
 import kroryi.dagon.DTO.board.FishingReportDiary.FishingDiaryDTO;
-import kroryi.dagon.DTO.board.FishingReportDiary.FishingReportDTO;
 import kroryi.dagon.entity.FishingDiary;
-import kroryi.dagon.entity.FishingReport;
 import kroryi.dagon.entity.Product;
 import kroryi.dagon.entity.User;
 import kroryi.dagon.repository.UserRepository;
@@ -17,10 +15,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PathVariable;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor

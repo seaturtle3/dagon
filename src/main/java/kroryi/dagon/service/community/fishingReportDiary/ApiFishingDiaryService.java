@@ -1,8 +1,6 @@
 package kroryi.dagon.service.community.fishingReportDiary;
 
 import kroryi.dagon.DTO.board.FishingReportDiary.ApiFishingDiaryDTO;
-import kroryi.dagon.DTO.board.FishingReportDiary.ApiProductDTO;
-import kroryi.dagon.DTO.board.FishingReportDiary.ApiUserDTO;
 import kroryi.dagon.DTO.board.FishingReportDiary.FishingDiaryDTO;
 import kroryi.dagon.entity.FishingDiary;
 import kroryi.dagon.entity.Product;
@@ -15,9 +13,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor

@@ -5,6 +5,7 @@ import kroryi.dagon.repository.board.FAQRepository;
 import kroryi.dagon.service.BaseContentProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 

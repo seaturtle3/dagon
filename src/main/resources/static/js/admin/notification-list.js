@@ -39,10 +39,10 @@ function renderNotificationList(notices) {
         row.innerHTML = `
             <td>${notice.isTop === true ? "✔" : ""}</td>
             <td>${index + 1}</td>
-            <td><a href="/notices/${notice.noticeId}">${notice.title}</a></td>
+            <td><a href="/admin/notice/${notice.noticeId}">${notice.title}</a></td>
             <td>${new Date(notice.createdAt).toLocaleDateString()}</td>
             <td>${notice.views !== undefined ? notice.views : '0'}</td>
-            <td><a href="/notices/${notice.noticeId}">상세보기</a></td>
+            <td><a href="/admin/notice/${notice.noticeId}">상세보기</a></td>
         `;
         tableBody.appendChild(row);
     });
