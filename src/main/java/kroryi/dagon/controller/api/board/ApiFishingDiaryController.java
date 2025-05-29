@@ -3,15 +3,13 @@ package kroryi.dagon.controller.api.board;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import kroryi.dagon.DTO.board.FishingReportDiary.ApiFishingDiaryDTO;
-import kroryi.dagon.service.board.fishingReportDiary.ApiFishingDiaryService;
+import kroryi.dagon.service.board.fishingCenter.ApiFishingDiaryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
