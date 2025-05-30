@@ -1,4 +1,4 @@
-package kroryi.dagon.controller;
+package kroryi.dagon.controller.api.board;
 
 import io.jsonwebtoken.Claims;
 import jakarta.validation.Valid;
@@ -32,7 +32,7 @@ import java.time.LocalDateTime;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/inquiries")
+@RequestMapping("/api/inquiry")
 @RequiredArgsConstructor
 public class ApiInquiryController {
 
