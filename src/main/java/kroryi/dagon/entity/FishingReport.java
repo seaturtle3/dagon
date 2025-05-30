@@ -1,5 +1,6 @@
 package kroryi.dagon.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import kroryi.dagon.service.UserService;
 import lombok.Getter;
@@ -54,5 +55,6 @@ public class FishingReport extends BaseTimeEntity {
     // 조황정보 댓글
     @OneToMany(mappedBy = "fishingReport", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<FishingReportComment> comments = new ArrayList<>();
+
 
 }

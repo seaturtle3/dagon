@@ -445,6 +445,26 @@
         loadNotifications(); // 알림 목록 불러오기
     });
 
+    const userRole = 'PARTNER';
+
+    window.addEventListener('DOMContentLoaded', () => {
+        console.log("현재 역할:", userRole); // 콘솔에 확인
+
+        if (userRole === 'PARTNER') {
+            const sidebar = document.getElementById('sidebar');
+
+            const partnerBtn = document.createElement('button');
+            partnerBtn.id = 'partnerPageBtn';
+            partnerBtn.className = 'bg-sky-500 text-white px-4 py-2 rounded hover:bg-sky-600 w-full mb-4';
+            partnerBtn.textContent = '파트너 전용 메뉴';
+            partnerBtn.onclick = function () {
+                // 파트너 메뉴 클릭 시 동작
+                alert('파트너 메뉴 클릭됨!');
+            };
+
+            sidebar.appendChild(partnerBtn);
+        }
+    });
 
     // 이미지 미리보기
     function previewImage(event) {
