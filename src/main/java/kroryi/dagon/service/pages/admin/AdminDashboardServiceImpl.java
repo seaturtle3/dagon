@@ -1,6 +1,5 @@
-package kroryi.dagon.service;
+package kroryi.dagon.service.pages.admin;
 
-import kroryi.dagon.enums.ApplicationStatus;
 import kroryi.dagon.repository.PartnerApplicationRepository;
 import kroryi.dagon.repository.PartnerRepository;
 import kroryi.dagon.repository.UserRepository;

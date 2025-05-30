@@ -1,6 +1,6 @@
 package kroryi.dagon.controller.legacy;
 
-import kroryi.dagon.service.KakaoPayService;
+import kroryi.dagon.service.order.KakaoPayService;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.log4j.Log4j2;

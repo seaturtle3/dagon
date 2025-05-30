@@ -1,4 +1,4 @@
-package kroryi.dagon.service;
+package kroryi.dagon.service.auth;
 
 
 import jakarta.transaction.Transactional;
@@ -11,7 +11,6 @@ import kroryi.dagon.repository.PartnerRepository;
 import kroryi.dagon.repository.UserRepository;
 import kroryi.dagon.DTO.PartnerDTO;
 import kroryi.dagon.entity.Partner;
-import kroryi.dagon.repository.PartnerRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;

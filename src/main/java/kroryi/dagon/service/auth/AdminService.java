@@ -1,4 +1,4 @@
-package kroryi.dagon.service;
+package kroryi.dagon.service.auth;
 
 
 import jakarta.persistence.EntityNotFoundException;

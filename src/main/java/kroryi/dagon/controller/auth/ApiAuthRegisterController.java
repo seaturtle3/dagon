@@ -3,7 +3,7 @@ package kroryi.dagon.controller.auth;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import kroryi.dagon.DTO.UsersDTO;
-import kroryi.dagon.service.RegisterService;
+import kroryi.dagon.service.auth.RegisterService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

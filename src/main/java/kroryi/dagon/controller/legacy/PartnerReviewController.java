@@ -1,6 +1,6 @@
 package kroryi.dagon.controller.legacy;
 
-import kroryi.dagon.service.PartnerApplicationService;
+import kroryi.dagon.service.approval.PartnerApplicationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;

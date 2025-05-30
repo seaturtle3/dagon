@@ -1,4 +1,4 @@
-package kroryi.dagon.service.board.fishingCenter;
+package kroryi.dagon.service.community.fishingCenter;
 
 import kroryi.dagon.DTO.ProductDTO;
 import kroryi.dagon.entity.Product;

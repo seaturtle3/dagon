@@ -1,7 +1,7 @@
 package kroryi.dagon.controller.legacy;
 
 import kroryi.dagon.DTO.UsersDTO;
-import kroryi.dagon.service.RegisterService;
+import kroryi.dagon.service.auth.RegisterService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;

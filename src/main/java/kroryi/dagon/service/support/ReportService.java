@@ -1,4 +1,4 @@
-package kroryi.dagon.service;
+package kroryi.dagon.service.support;
 
 import jakarta.transaction.Transactional;
 import kroryi.dagon.DTO.ReportDTO;
@@ -7,6 +7,7 @@ import kroryi.dagon.entity.Report;
 import kroryi.dagon.entity.User;
 import kroryi.dagon.repository.ReportRepository;
 import kroryi.dagon.repository.UserRepository;
+import kroryi.dagon.service.auth.UserService;
 import kroryi.dagon.util.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;

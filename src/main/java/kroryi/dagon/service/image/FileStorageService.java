@@ -1,4 +1,4 @@
-package kroryi.dagon.service;
+package kroryi.dagon.service.image;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;

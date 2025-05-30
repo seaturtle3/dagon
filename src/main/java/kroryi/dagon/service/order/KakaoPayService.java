@@ -1,4 +1,4 @@
-package kroryi.dagon.service;
+package kroryi.dagon.service.order;
 
 import kroryi.dagon.DTO.KakaoPayDTO;
 import kroryi.dagon.entity.KakaoPayEntity;

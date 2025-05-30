@@ -1,7 +1,7 @@
 package kroryi.dagon.controller.base.community;
 
 import kroryi.dagon.DTO.ProductDTO;
-import kroryi.dagon.service.board.fishingCenter.ApiFishingCenterService;
+import kroryi.dagon.service.community.fishingCenter.ApiFishingCenterService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;

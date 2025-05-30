@@ -4,7 +4,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import kroryi.dagon.entity.User;
 import kroryi.dagon.repository.UserRepository;
-import kroryi.dagon.service.UserService;
+import kroryi.dagon.service.auth.UserService;
 import kroryi.dagon.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;

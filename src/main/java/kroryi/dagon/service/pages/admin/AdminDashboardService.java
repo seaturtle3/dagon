@@ -1,6 +1,4 @@
-package kroryi.dagon.service;
-
-import kroryi.dagon.DTO.multtae.AdminUserStatsDTO;
+package kroryi.dagon.service.pages.admin;
 
 public interface AdminDashboardService {
     long getTotalUsers();

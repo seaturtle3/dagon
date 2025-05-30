@@ -3,7 +3,7 @@ package kroryi.dagon.controller.admin.order;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import kroryi.dagon.DTO.KakaoPayDTO;
-import kroryi.dagon.service.KakaoPayService;
+import kroryi.dagon.service.order.KakaoPayService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

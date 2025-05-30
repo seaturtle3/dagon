@@ -1,9 +1,10 @@
-package kroryi.dagon.service;
+package kroryi.dagon.service.pages.user;
 
 import kroryi.dagon.DTO.PasswordFormDTO;
 import kroryi.dagon.DTO.UsersDTO;
 import kroryi.dagon.entity.User;
 import kroryi.dagon.repository.MyPageRepository;
+import kroryi.dagon.service.image.FileStorageService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;

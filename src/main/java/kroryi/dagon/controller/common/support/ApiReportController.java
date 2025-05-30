@@ -6,7 +6,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import kroryi.dagon.DTO.ReportDTO;
 import kroryi.dagon.DTO.ReportRequestDTO;
 import kroryi.dagon.repository.ReportRepository;
-import kroryi.dagon.service.ReportService;
+import kroryi.dagon.service.support.ReportService;
 import kroryi.dagon.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;

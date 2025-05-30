@@ -1,20 +1,14 @@
-package kroryi.dagon.service;
+package kroryi.dagon.service.auth;
 
 import jakarta.transaction.Transactional;
-import kroryi.dagon.DTO.ReportDTO;
 import kroryi.dagon.DTO.UsersDTO;
-import kroryi.dagon.entity.Report;
 import kroryi.dagon.entity.User;
 import kroryi.dagon.repository.ReportRepository;
 import kroryi.dagon.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Service

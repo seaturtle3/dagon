@@ -1,4 +1,4 @@
-package kroryi.dagon.service;
+package kroryi.dagon.service.auth;
 
 import kroryi.dagon.DTO.UsersDTO;
 import kroryi.dagon.entity.User;

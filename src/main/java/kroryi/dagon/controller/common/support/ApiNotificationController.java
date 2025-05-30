@@ -3,7 +3,7 @@ package kroryi.dagon.controller.common.support;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import kroryi.dagon.DTO.NotificationDTO;
-import kroryi.dagon.service.NotificationService;
+import kroryi.dagon.service.support.NotificationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;

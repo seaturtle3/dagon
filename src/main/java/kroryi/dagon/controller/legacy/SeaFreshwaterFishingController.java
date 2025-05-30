@@ -1,14 +1,13 @@
 package kroryi.dagon.controller.legacy;
 
 import jakarta.servlet.http.HttpServletRequest;
-import kroryi.dagon.DTO.ProductDTO;
 import kroryi.dagon.entity.Product;
 import kroryi.dagon.entity.ProductFishSpecies;
 import kroryi.dagon.enums.MainType;
 import kroryi.dagon.enums.ProdRegion;
 import kroryi.dagon.enums.SubType;
 import kroryi.dagon.repository.FishSpeciesRepository;
-import kroryi.dagon.service.SeaFreshwaterFishingService;
+import kroryi.dagon.service.order.SeaFreshwaterFishingService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Controller;

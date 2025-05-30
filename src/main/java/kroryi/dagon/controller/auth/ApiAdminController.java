@@ -6,7 +6,7 @@ import kroryi.dagon.DTO.AdminDTO;
 import kroryi.dagon.DTO.UsersDTO;
 import kroryi.dagon.entity.Admin;
 import kroryi.dagon.repository.AdminRepository;
-import kroryi.dagon.service.AdminService;
+import kroryi.dagon.service.auth.AdminService;
 import kroryi.dagon.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -19,7 +19,6 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 

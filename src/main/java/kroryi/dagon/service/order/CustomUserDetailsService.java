@@ -1,4 +1,4 @@
-package kroryi.dagon.service;
+package kroryi.dagon.service.order;
 
 import kroryi.dagon.component.CustomUserDetails;
 import kroryi.dagon.entity.User;

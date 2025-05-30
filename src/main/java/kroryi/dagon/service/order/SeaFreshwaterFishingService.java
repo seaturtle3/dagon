@@ -1,6 +1,5 @@
-package kroryi.dagon.service;
+package kroryi.dagon.service.order;
 
-import jakarta.persistence.criteria.Predicate;
 import kroryi.dagon.DTO.ProductDTO;
 import kroryi.dagon.DTO.ReservationDTO;
 import kroryi.dagon.entity.Product;
@@ -16,7 +15,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;

@@ -1,4 +1,4 @@
-package kroryi.dagon.service;
+package kroryi.dagon.service.support;
 
 import kroryi.dagon.DTO.NotificationDTO;
 import kroryi.dagon.entity.Inquiry;

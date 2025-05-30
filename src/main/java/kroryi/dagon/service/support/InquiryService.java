@@ -1,4 +1,4 @@
-package kroryi.dagon.service;
+package kroryi.dagon.service.support;
 
 import jakarta.persistence.EntityNotFoundException;
 
@@ -6,11 +6,9 @@ import kroryi.dagon.DTO.InquiryCreateRequestDTO;
 import kroryi.dagon.DTO.InquiryResponseDTO;
 import kroryi.dagon.DTO.InquiryUpdateRequestDTO;
 import kroryi.dagon.entity.Inquiry;
-import kroryi.dagon.entity.Notification;
 import kroryi.dagon.entity.Partner;
 import kroryi.dagon.entity.User;
 import kroryi.dagon.enums.ReceiverType;
-import kroryi.dagon.enums.SenderType;
 import kroryi.dagon.repository.InquiryRepository;
 import kroryi.dagon.repository.NotificationRepository;
 import kroryi.dagon.repository.PartnerRepository;
@@ -23,7 +21,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.nio.file.AccessDeniedException;
-import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Service

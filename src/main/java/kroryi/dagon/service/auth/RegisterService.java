@@ -1,4 +1,4 @@
-package kroryi.dagon.service;
+package kroryi.dagon.service.auth;
 
 import kroryi.dagon.DTO.UsersDTO;
 import kroryi.dagon.entity.User;
@@ -6,12 +6,8 @@ import kroryi.dagon.enums.UserRole;
 import kroryi.dagon.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import java.time.LocalDateTime;
 
 @Service
 @Log4j2

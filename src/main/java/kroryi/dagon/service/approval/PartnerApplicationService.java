@@ -1,4 +1,4 @@
-package kroryi.dagon.service;
+package kroryi.dagon.service.approval;
 
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
