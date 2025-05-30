@@ -3,7 +3,6 @@ package kroryi.dagon.util;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
-import jakarta.servlet.http.HttpServletRequest;
 import kroryi.dagon.DTO.LoginRequestDTO;
 import kroryi.dagon.entity.User;
 import lombok.extern.log4j.Log4j2;
@@ -96,25 +95,6 @@ public class JwtUtil {
         }
     }
 
-    public String resolveToken(HttpServletRequest request) {
-        String bearerToken = request.getHeader("Authorization");
-        if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
-            return bearerToken.substring(7);
-        }
-        return null;
-    }
-
-    public boolean isAdmin(String token) {
-        try {
-            Claims claims = parseToken(token);
-            String role = claims.get("role", String.class);
-            return "ADMIN".equalsIgnoreCase(role);
-        } catch (Exception e) {
-            log.error("어드민 체크 중 오류 발생: {}", e.getMessage());
-            return false;
-        }
-    }
-
     public Long getUnoFromToken(String token) {
         Claims claims = parseToken(token);
         Object unoObj = claims.get("uno");
@@ -123,8 +103,6 @@ public class JwtUtil {
         log.info("uno value: {}", unoObj);
         return ((Number) unoObj).longValue(); // 안전하게 형변환
     }
-
-
 
     // isValidToken: 토큰이 유효한지 확인하는 메서드
     public boolean isValidToken(String token) {
@@ -138,7 +116,6 @@ public class JwtUtil {
             return false;
         }
     }
-
 
 
 }

@@ -5,6 +5,7 @@ import kroryi.dagon.enums.MainType;
 import kroryi.dagon.enums.ProdRegion;
 import kroryi.dagon.enums.SubType;
 import lombok.Data;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -24,6 +25,7 @@ public class ProductDTO {
     private String prodEvent;
     private String prodNotice;
     private LocalDate createdAt;
+    private String prodThumbnail;
 
 
     public static ProductDTO fromEntity(Product product) {
@@ -45,6 +47,8 @@ public class ProductDTO {
         if (product.getCreatedAt() != null) {
             dto.setCreatedAt(product.getCreatedAt().toLocalDate());  // LocalDateTime에서 LocalDate만 추출
         }
+
+        dto.setProdThumbnail(product.getProdThumbnail());
 
         return dto;
     }

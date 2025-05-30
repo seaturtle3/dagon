@@ -376,7 +376,7 @@
     <div id="event-pagination" class="pagination"></div>
 
     <div class="text-end mt-4">
-        <button onclick="location.href='/event/create'" class="btn btn-primary">이벤트 작성</button>
+        <button onclick="location.href='/admin/event/create'" class="btn btn-primary">이벤트 작성</button>
     </div>
 </div>
 
@@ -424,7 +424,7 @@
 
     <!-- 공지사항 작성 버튼 -->
     <div class="text-end mt-4">
-        <button onclick="location.href='/notices/create'" class="btn btn-primary">공지사항 작성</button>
+        <button onclick="location.href='/admin/notice/create'" class="btn btn-primary">공지사항 작성</button>
     </div>
 </div>
 
@@ -653,8 +653,28 @@
         }
     });
 
+    function openFaqManage() {
+        window.open('/faq', '_blank');
+    }
 
+    function loadSwagger(group) {
+        pages.forEach(p => p.classList.remove('visible'));
+        document.getElementById('swagger').classList.add('visible');
 
+        SwaggerUIBundle({
+            url: location.origin + `/api-docs/${group}`,
+            dom_id: '#swagger-ui',
+            layout: "StandaloneLayout",
+            presets: [
+                SwaggerUIBundle.presets.apis,
+                SwaggerUIStandalonePreset
+            ],
+            deepLinking: true,
+            docExpansion: "none",
+            validatorUrl: null,
+            tagsSorter: "alpha"
+        });
+    }
 
     document.addEventListener("DOMContentLoaded", function () {
         fetch("/api/admin/counts", {

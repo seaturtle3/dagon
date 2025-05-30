@@ -9,8 +9,4 @@ import java.util.Optional;
 @Repository
 public interface PartnerRepository extends JpaRepository<Partner, Long> {
     Optional<Partner> findByPname(String pname);
-
-    Optional<Partner> findByUserUno(Long uno);
-
-    Optional<Object> findByUno(Long uno);
 }

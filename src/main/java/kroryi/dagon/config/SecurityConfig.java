@@ -1,25 +1,20 @@
 package kroryi.dagon.config;
 
 import kroryi.dagon.handler.CustomSocialLoginSuccessHandler;
-import kroryi.dagon.service.AdminDetailsService;
-import kroryi.dagon.service.AdminService;
+import kroryi.dagon.service.pages.admin.AdminDetailsService;
 import kroryi.dagon.service.ApiKeyService;
-import kroryi.dagon.service.CustomUserDetailsService;
+import kroryi.dagon.service.order.CustomUserDetailsService;
 import kroryi.dagon.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -65,13 +60,10 @@ public class SecurityConfig {
                                 "/admin/registration"
 
 
-
                         ).permitAll()
                         .requestMatchers("/api/mypage").authenticated()
-                        .requestMatchers("/partner/api").authenticated()
                         .requestMatchers("/partner/review").authenticated()
                         .requestMatchers("/login/oauth2/code/kakao").permitAll()
-
                         .anyRequest().authenticated()
                 )
                 .formLogin(formLogin -> { // 기존 폼 로그인 설정 유지
@@ -88,7 +80,7 @@ public class SecurityConfig {
                         .logoutSuccessUrl("/login?logout")
                         .permitAll()
                 )
-                .addFilterBefore(apiKeyFilter, UsernamePasswordAuthenticationFilter.class) // ✅ 이게 핵심!!
+                .addFilterBefore(apiKeyFilter, UsernamePasswordAuthenticationFilter.class); // ✅ 이게 핵심!!
         ;
 
         return http.build();

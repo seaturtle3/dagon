@@ -26,7 +26,7 @@ function loadEventData(page) {
                     <td>${event.isTop ? "✔" : ""}</td>
                     <td>${index + 1}</td>
                     <td>${event.thumbnailUrl ? `<img src="${event.thumbnailUrl}" class="event-thumbnail">` : ""}</td>
-                    <td><a href="/event/${event.eventId}?page=${page}">${event.title}</a></td>
+                    <td><a href="/admin/event/${event.eventId}?page=${page}">${event.title}</a></td>
                     <td>${event.startAt && event.endAt ? `${event.startAt} ~ ${event.endAt}` : "상시 이벤트"}</td>
                     <td>${event.eventStatus}</td>
                 `;

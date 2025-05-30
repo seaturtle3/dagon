@@ -1,14 +1,10 @@
 package kroryi.dagon.component;
 
-import kroryi.dagon.entity.User;
 import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import java.util.Collection;
-import java.util.List;
 
 @Getter
 public class CustomUserDetails implements UserDetails {
@@ -17,15 +13,12 @@ public class CustomUserDetails implements UserDetails {
     private final String uname;
     private final String password;
     private final Collection<? extends GrantedAuthority> authorities;
-    private final String role; // ✅ 역할 정보 추가
 
-    public CustomUserDetails(Long uno, String uname, String password, Collection<? extends GrantedAuthority> authorities,String role) {
+    public CustomUserDetails(Long uno, String uname, String password, Collection<? extends GrantedAuthority> authorities) {
         this.uno = uno;
         this.uname = uname;
         this.password = password;
         this.authorities = authorities;
-        this.role = role;
-
     }
 
     @Override
@@ -62,5 +55,4 @@ public class CustomUserDetails implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
-
 }

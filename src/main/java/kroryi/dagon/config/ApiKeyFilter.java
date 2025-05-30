@@ -42,7 +42,6 @@ public class ApiKeyFilter extends OncePerRequestFilter {
         String authHeader = request.getHeader("Authorization");
         log.info("------------------- {}", authHeader);
 
-
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             String jwt = authHeader.substring(7);
 
@@ -68,7 +67,7 @@ public class ApiKeyFilter extends OncePerRequestFilter {
                     Long uno = claims.get("uno", Integer.class).longValue(); // ✅ uno 추출
 
                     CustomUserDetails userDetails = new CustomUserDetails(
-                            uno, uid, "", authorities,role
+                            uno, uid, "", authorities
                     );
                     UsernamePasswordAuthenticationToken authentication =
                             new UsernamePasswordAuthenticationToken(userDetails, null, authorities);

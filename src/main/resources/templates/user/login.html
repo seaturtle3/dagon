@@ -72,34 +72,14 @@
                 const token = responseData.token;
                 console.log("로그인 성공:", responseData);
 
-                localStorage.setItem('authToken', token);
-
-                // JWT에서 uno 추출하여 저장
-                function parseJwt(token) {
-                    try {
-                        const base64Url = token.split('.')[1];
-                        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-                        const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
-                            return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-                        }).join(''));
-                        return JSON.parse(jsonPayload);
-                    } catch(e) {
-                        return null;
-                    }
-                }
-
-                const payload = parseJwt(token);
-                if (payload && payload.uno) {
-                    localStorage.setItem('userUno', payload.uno);
-                } else {
-                    console.warn("JWT 토큰에 uno 정보가 없습니다.");
-                }
+                // JWT 토큰이 포함되어 있다면 localStorage에 저장
+                localStorage.setItem('authToken', responseData.token);
 
                 await registerApiKey(token);
 
+                // 로그인 성공 후 페이지 이동
                 window.location.href = '/';
-            }
-             else {
+            } else {
                 // 응답 본문을 문자열로 받기 (JSON이 아닐 수 있기 때문)
                 const errorText = await response.text();
 

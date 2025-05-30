@@ -8,8 +8,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import java.util.List;
-
 public interface InquiryRepository extends JpaRepository<Inquiry, Long> {
 
     // ADMIN receiverType만 검색+페이징 (제목 또는 내용에 키워드 포함)
@@ -23,8 +21,4 @@ public interface InquiryRepository extends JpaRepository<Inquiry, Long> {
 
     // ADMIN receiverType만 페이징 조회 (키워드 없을 때)
     Page<Inquiry> findByReceiverType(ReceiverType receiverType, Pageable pageable);
-
-    List<Inquiry> findByUser_UnoAndPartner_Uno(Long userUno, Long partnerUno);
-
-    List<Inquiry> findByPartner_Uno(Long partnerUno);
 }

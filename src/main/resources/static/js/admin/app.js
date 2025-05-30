@@ -41,8 +41,6 @@ function showPartnerList() {
 
 
 
-
-
 // 회원 목록 조회 함수
 function loadUsers(page = 0, size = 10) {
     const search = document.getElementById('search').value.trim();
