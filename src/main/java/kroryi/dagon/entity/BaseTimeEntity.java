@@ -18,14 +18,13 @@ public abstract class BaseTimeEntity {
     @Column(name = "created_at")
     protected LocalDateTime createdAt;
 
-
     @PrePersist
     public void onPrePersist() {
         this.createdAt = LocalDateTime.now();
     }
 
     // LocalDateTime을 LocalDate로 변환
-    public LocalDate getCreatedAt() {
+    public LocalDate getCreatedDate() {
         return this.createdAt != null ? this.createdAt.toLocalDate() : null;
     }
 }

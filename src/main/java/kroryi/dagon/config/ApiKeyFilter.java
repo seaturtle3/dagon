@@ -167,7 +167,6 @@ public class ApiKeyFilter extends OncePerRequestFilter {
         // 관리자 회원가입 관련
         if ((path.equals("/api/admin/register") && method.equals("POST")) ||
                 (path.equals("/api/admin/login") && method.equals("POST"))) {
-
             return true;
         }
 

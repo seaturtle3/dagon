@@ -94,7 +94,7 @@ public class SeaFreshwaterFishingService {
         dto.setProdNotice(product.getProdNotice());
         // LocalDateTime -> LocalDate 변환
         if (product.getCreatedAt() != null) {
-            dto.setCreatedAt(product.getCreatedAt());  // LocalDateTime에서 LocalDate만 추출
+            dto.setCreatedAt(product.getCreatedDate());  // LocalDateTime에서 LocalDate만 추출
         }
 
         return dto;
