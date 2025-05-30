@@ -1,8 +1,8 @@
 package kroryi.dagon.controller.api.board;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import kroryi.dagon.DTO.ProductDTO;
 import kroryi.dagon.service.board.fishingCenter.ApiFishingCenterService;
-import kroryi.dagon.service.product.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
+@Tag(name = "Board-fishingCenter", description = "조황센터 특정 배 조회 API")
 @RequestMapping("/api/fishing-center")
 public class ApiFishingCenterController {
 
