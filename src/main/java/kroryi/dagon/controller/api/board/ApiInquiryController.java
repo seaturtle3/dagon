@@ -1,6 +1,8 @@
 package kroryi.dagon.controller.api.board;
 
 import io.jsonwebtoken.Claims;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import kroryi.dagon.DTO.InquiryCreateRequestDTO;
 import kroryi.dagon.DTO.InquiryResponseDTO;
@@ -32,6 +34,7 @@ import java.time.LocalDateTime;
 import java.util.Map;
 
 @RestController
+@Tag(name = "Board-Inquiry", description = "1:1문의 생성/조회/수정/삭제 API")
 @RequestMapping("/api/inquiries")
 @RequiredArgsConstructor
 public class ApiInquiryController {
@@ -44,6 +47,7 @@ public class ApiInquiryController {
 
 
     // 1. 문의 생성
+    @Operation(summary = "1:1문의 생성", description = "1:1문의 생성")
     @PostMapping
     public ResponseEntity<InquiryResponseDTO> createInquiry(
             @RequestBody @Valid InquiryCreateRequestDTO request,
@@ -53,6 +57,7 @@ public class ApiInquiryController {
     }
 
     // 2. 문의 리스트 조회 (검색+페이징)
+    @Operation(summary = "1:1문의 리스트 조회", description = "1:1문의 리스트 조회")
     @GetMapping("/admin")
     public ResponseEntity<Page<InquiryResponseDTO>> getAdminInquiries(
             @RequestParam(defaultValue = "0") int page,
@@ -66,6 +71,7 @@ public class ApiInquiryController {
     }
 
     // 3. 문의 단건 조회
+    @Operation(summary = "1:1문의 단건 조회", description = "1:1문의 단건 조회")
     @GetMapping("/{id}")
     public ResponseEntity<InquiryResponseDTO> getInquiry(@PathVariable Long id) {
         InquiryResponseDTO response = inquiryService.getInquiry(id);
@@ -73,6 +79,7 @@ public class ApiInquiryController {
     }
 
     // 4. 문의 수정
+    @Operation(summary = "1:1문의 수정", description = "1:1문의 수정")
     @PutMapping("/{id}")
     public ResponseEntity<InquiryResponseDTO> updateInquiry(
             @PathVariable Long id,
@@ -83,6 +90,7 @@ public class ApiInquiryController {
     }
 
     // 5. 문의 삭제
+    @Operation(summary = "1:1문의 삭제", description = "1:1문의 삭제")
     @DeleteMapping("" +
             "/{inquiryId}")
     public ResponseEntity<?> deleteInquiry(
@@ -124,6 +132,8 @@ public class ApiInquiryController {
         }
     }
 
+    // 6. 문의 답글 저장 및 전송
+    @Operation(summary = "1:1문의 답글/알림", description = "1:1문의 답글/알림")
     @PostMapping("/{inquiryId}/answer")
     public ResponseEntity<?> answerInquiry(
             @PathVariable Long inquiryId,
