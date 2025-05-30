@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
 <head>
   <meta charset="UTF-8">
   <title>예약 확인</title>
@@ -12,19 +12,23 @@
 <p id="amountText"></p>
 
 <button onclick="goBack()">예약정보 수정</button>
-<button onclick="requestPay()">결제하기</button>
+<button onclick="requestPay()">카카오페이/네이버페이/신용카드로 결제하기</button>
+<a th:href="@{/payments/account}"
+   class="btn">무통장 입금(계좌정보 확인)</a>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.iamport.kr/js/iamport.payment-1.1.8.js"></script>
 
 <script>
   // URL에서 쿼리스트링 파싱
+
   const params = new URLSearchParams(window.location.search);
   const fishingAt = params.get("fishingAt");
   const numPerson = params.get("numPerson");
   const amount = params.get("amount");
 
   document.getElementById("fishingAtText").textContent = "출조일: " + fishingAt;
+
   document.getElementById("numPersonText").textContent = "인원 수: " + numPerson + "명";
   document.getElementById("amountText").textContent = "결제 금액: " + amount + "원";
 

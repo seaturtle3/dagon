@@ -24,11 +24,11 @@
     <label for="uid">예약자:</label>
     <input type="text" id="uid" name="uid" disabled/>
 
-    <label for="totalAmount">총 금액:</label>
+    <label for="totalAmount">결제 금액:</label>
     <span id="totalAmount">1000</span> 원
     <input type="hidden" id="amount" name="amount" value="1000"/>
 </form>
-
+<br>
 <button type="button" onclick="openReservationPopup()">예약 확인</button>
 
 <script src="/js/auth.js"></script>
@@ -111,6 +111,7 @@
 
     function verifyPayment(impUid) {
         fetch("/api/payment/verify", {
+
             method: "POST",
             headers: {
                 "Content-Type": "application/json",

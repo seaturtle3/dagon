@@ -3,15 +3,13 @@ package kroryi.dagon.controller.api.board;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import kroryi.dagon.DTO.board.FishingReportDiary.ApiFishingReportDTO;
-import kroryi.dagon.service.board.fishingReportDiary.ApiFishingReportService;
+import kroryi.dagon.service.board.fishingCenter.ApiFishingReportService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -34,7 +32,9 @@ public class ApiFishingReportController {
                                                           @RequestParam(defaultValue = "frId") String sortBy,
                                                           @RequestParam(defaultValue = "desc") String direction)
     {
-        Sort sort = direction.equalsIgnoreCase("desc") ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
+        Sort sort = direction.equalsIgnoreCase("desc")
+                ? Sort.by(sortBy).descending()
+                : Sort.by(sortBy).ascending();
         Pageable pageable = PageRequest.of(page, size, sort);
         return apiFishingReportService.getAllFishingReports(pageable);
     }
