@@ -25,11 +25,11 @@ public interface ProductRepository extends JpaRepository<Product, Long>, JpaSpec
     List<Product> findByMainTypeAndSubTypeAndProdRegion(MainType mainType, SubType subType, ProdRegion prodRegion);
 
     @Query("""
-                select distinct p from Product p
-                left join p.fishingReports fr
-                left join p.fishingDiaries fd
-                where (fr.content is not null and fr.content <> '') 
-                   or (fd.content is not null and fd.content <> '')
-            """)
+    select distinct p from Product p
+    left join p.fishingReports fr
+    left join p.fishingDiaries fd
+    where (fr.content is not null and fr.content <> '') 
+       or (fd.content is not null and fd.content <> '')
+""")
     Page<Product> findAllWithNonEmptyReportOrDiary(Pageable pageable);
 }

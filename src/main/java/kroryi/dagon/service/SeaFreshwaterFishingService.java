@@ -17,7 +17,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -48,18 +47,6 @@ public class SeaFreshwaterFishingService {
         }
     }
 
-    public ReservationDTO createReservation(ReservationDTO dto) {
-        Reservation reservation = new Reservation();
-        // 유저, 상품, 옵션 등 엔티티 매핑 생략
-        reservation.setFishingAt(dto.getFishingAt());
-        reservation.setNumPerson(dto.getNumPerson());
-        reservation.setReservationStatus(ReservationStatus.PENDING);
-        reservation.setPaymentsMethod(dto.getPaymentsMethod());
-
-        Reservation saved = seaFreshwaterFishingRepository.save(reservation);
-        return toDTO(saved);
-    }
-
     // 필터 : 메인타입, 서브타입, 지역
     public List<Product> getProductsByFilters(MainType mainType, SubType subType, ProdRegion region) {
         if (subType == null && region == null) {
@@ -73,11 +60,7 @@ public class SeaFreshwaterFishingService {
         }
     }
 
-    public ReservationDTO getReservationById(Long id) {
-        return seaFreshwaterFishingRepository.findById(id)
-                .map(this::toDTO)
-                .orElse(null);
-    }
+
 
     public ProductDTO convertToDTO(Product product) {
         ProductDTO dto = new ProductDTO();
@@ -94,7 +77,7 @@ public class SeaFreshwaterFishingService {
         dto.setProdNotice(product.getProdNotice());
         // LocalDateTime -> LocalDate 변환
         if (product.getCreatedAt() != null) {
-            dto.setCreatedAt(product.getCreatedAt());  // LocalDateTime에서 LocalDate만 추출
+            dto.setCreatedAt(product.getCreatedAt().toLocalDate());  // LocalDateTime에서 LocalDate만 추출
         }
 
         return dto;
@@ -141,19 +124,6 @@ public class SeaFreshwaterFishingService {
         return reservations.map(this::toDTO);
     }
 
-    public ReservationDTO updateReservation(Long id, ReservationDTO dto) {
-        Reservation reservation = seaFreshwaterFishingRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("예약을 찾을 수 없습니다."));
-
-        // 유효성 체크 및 업데이트
-        reservation.setFishingAt(dto.getFishingAt());
-        reservation.setNumPerson(dto.getNumPerson());
-        reservation.setPaymentsMethod(dto.getPaymentsMethod());
-        reservation.setReservationStatus(dto.getReservationStatus());
-
-        Reservation updated = seaFreshwaterFishingRepository.save(reservation);
-        return toDTO(updated);
-    }
 
     // 관리자 예약 취소
     public boolean cancelReservationByAdmin(Long reservationId) {

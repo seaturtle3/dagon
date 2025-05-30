@@ -19,13 +19,13 @@
 
 <div class="container">
     <h1 class="page-title">
-        <a th:href="@{/notices}" style="text-decoration: none; color: inherit;">공지사항</a>
+        <a th:href="@{/admin/notice}" style="text-decoration: none; color: inherit;">공지사항</a>
     </h1>
     <!-- 페이지 사이즈 선택 -->
-    <div th:replace="~{fragments/paging-options :: sizeSelector('/notices', ${size}, ${pagination.currentPage}, ${keyword}, ${type})}"></div>
+    <div th:replace="~{fragments/paging-options :: sizeSelector('/admin/notice', ${size}, ${pagination.currentPage}, ${keyword}, ${type})}"></div>
 
     <!--  검색  -->
-    <div th:replace="~{fragments/search-form-board :: searchForm('/notices', ${type}, ${keyword}, ${size})}"></div>
+    <div th:replace="~{fragments/search-form-board :: searchForm('/admin/notice', ${type}, ${keyword}, ${size})}"></div>
 
     <!-- 공지사항 테이블 -->
     <table class="board-table">
@@ -43,7 +43,7 @@
             <td th:text="${n.isTop ? '✔' : ''}"></td>
             <td th:text="${iterStat.index + 1}"></td>
             <td>
-                <a th:href="@{'/notices/' + ${n.noticeId} + '?page=' + ${pagination.currentPage} + '&size=' + ${size}}"
+                <a th:href="@{'/admin/notice/' + ${n.noticeId} + '?page=' + ${pagination.currentPage} + '&size=' + ${size}}"
                    th:text="${n.title}">공지 제목</a>
             </td>
             <td th:text="${#temporals.format(n.createdAt, 'yyyy-MM-dd')}"></td>
@@ -54,7 +54,7 @@
 
     <!-- 작성 버튼 -->
     <div class="button-group text-end mt-4">
-        <a class="btn btn-custom" th:href="@{'/notices/create?page=' + ${pagination.currentPage} + '&size=' + ${size}}">공지 작성</a>
+        <a class="btn btn-custom" th:href="@{'/admin/notice/create?page=' + ${pagination.currentPage} + '&size=' + ${size}}">공지 작성</a>
     </div>
 
     <!-- 페이지네이션 -->

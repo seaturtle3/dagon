@@ -7,5 +7,4 @@ public interface AdminDashboardService {
     long getTotalApplications();
     long getApprovedPartners();
 
-
 }

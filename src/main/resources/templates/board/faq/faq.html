@@ -42,7 +42,7 @@
 
 
     <div class="mb-3">
-        <a href="/faq" class="btn btn-outline-primary btn-sm me-1">전체</a>
+        <a href="admin/faq" class="btn btn-outline-primary btn-sm me-1">전체</a>
         <a th:each="c : ${categories}"
            th:href="@{'/faq?categoryId=' + ${c.id}}"
            th:text="${c.name}" class="btn btn-outline-secondary btn-sm me-1">

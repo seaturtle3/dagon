@@ -19,7 +19,7 @@
     function requestPay() {
         IMP.request_pay({
             pg: "html5_inicis.INIpayTest",
-            pay_method: "kakaopay",
+            pay_method: "card",
             merchant_uid: "ORD-" + new Date().getTime(),
             name: "테스트 상품",
             amount: 100,
@@ -32,8 +32,7 @@
             if (rsp.success) {
                 // JSON 데이터를 서버로 전송
                 const requestData = {
-                    imp_uid: rsp.imp_uid,
-                    merchant_uid: rsp.merchant_uid
+                    imp_uid: rsp.imp_uid
                 };
 
                 fetch("/api/payment/verify", {
@@ -46,7 +45,7 @@
                 })
                     .then(response => response.json())
                     .then(data => {
-                        if (data.success === "true" || data.success === true) {
+                        if (data.success === "true") {
                             alert("결제 성공 및 검증 완료");
                         } else {
                             alert("결제 검증 실패: " + data.message);

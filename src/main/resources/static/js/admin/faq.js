@@ -1,12 +1,12 @@
-let currenPage = 0;
+let currentPage = 0;
 const pageSize = 10;
 
 document.addEventListener('DOMContentLoaded', () => {
-    loadFAQs(currenPage);
+    loadFAQs(currentPage);
 
     document.getElementById('faq-search-btn').addEventListener('click', () => {
-        currenPage = 0;
-        loadFAQs(currenPage);
+        currentPage = 0;
+        loadFAQs(currentPage);
     });
 });
 
