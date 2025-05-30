@@ -5,9 +5,12 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import kroryi.dagon.DTO.PasswordFormDTO;
 import kroryi.dagon.DTO.UsersDTO;
 import kroryi.dagon.component.CustomUserDetails;
+import kroryi.dagon.entity.Partner;
 import kroryi.dagon.entity.User;
+import kroryi.dagon.service.CustomUserDetailsService;
 import kroryi.dagon.service.FileStorageService;
 import kroryi.dagon.service.MyPageService;
+import kroryi.dagon.service.PartnerService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.MediaType;
@@ -28,6 +31,7 @@ public class ApiMyPageController {
 
     private final MyPageService myPageService;
     private final FileStorageService fileStorageService;
+    private final PartnerService partnerService;
 
 //     내 정보 조회
     @PostMapping("")
@@ -41,6 +45,18 @@ public class ApiMyPageController {
         if (dto.getProfile_image() == null || dto.getProfile_image().isEmpty()) {
             dto.setProfile_image("/img/default-profile.png");  // 정적 리소스 경로
         }
+
+        Partner partner = partnerService.findPartnerByUserUno(userDetails.getUno());
+        if (partner != null) {
+            dto.setPname(partner.getPname());
+            dto.setCeoName(partner.getCeoName());
+            dto.setPAddress(partner.getPAddress());
+            dto.setPInfo(partner.getPInfo());
+            dto.setLicense(partner.getLicense());
+            dto.setLicenseImg(partner.getLicenseImg());
+        }
+
+
         return ResponseEntity.ok(dto);
     }
 

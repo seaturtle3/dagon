@@ -3,6 +3,7 @@ package kroryi.dagon.service;
 import jakarta.persistence.criteria.Predicate;
 import kroryi.dagon.DTO.ProductDTO;
 import kroryi.dagon.DTO.ReservationDTO;
+import kroryi.dagon.DTO.ReservationResponseDTO;
 import kroryi.dagon.entity.Product;
 import kroryi.dagon.entity.Reservation;
 import kroryi.dagon.enums.MainType;
@@ -94,6 +95,7 @@ public class SeaFreshwaterFishingService {
                 .reservationId(reservation.getReservationId())
                 .productName(reservation.getProduct().getProdName())
                 .optionName(reservation.getProductOption().getOptName())
+                .userName(reservation.getUser().getUname())
                 .fishingAt(reservation.getFishingAt())
                 .numPerson(reservation.getNumPerson())
                 .reservationStatus(reservation.getReservationStatus())
@@ -106,6 +108,9 @@ public class SeaFreshwaterFishingService {
     public boolean cancelReservationByUser(Long reservationId, Long uno) {
         Reservation reservation = seaFreshwaterFishingRepository.findById(reservationId)
                 .orElseThrow(() -> new RuntimeException("예약을 찾을 수 없습니다."));
+
+        System.out.println("예약자 uno: " + reservation.getUser().getUno());
+        System.out.println("토큰 uno: " + uno);
 
         // 해당 예약이 로그인한 사용자 소유인지 확인
         if (!reservation.getUser().getUno().equals(uno)) {
@@ -170,5 +175,13 @@ public class SeaFreshwaterFishingService {
             return getAllReservations(pageable);
         }
     }
+
+    public List<ReservationResponseDTO> getReservationsByUserUno(Long uno) {
+        List<Reservation> reservations = seaFreshwaterFishingRepository.findByUserUno(uno);
+        return reservations.stream()
+                .map(ReservationResponseDTO::from)
+                .collect(Collectors.toList());
+    }
+
 }
 

@@ -65,10 +65,13 @@ public class SecurityConfig {
                                 "/admin/registration"
 
 
+
                         ).permitAll()
                         .requestMatchers("/api/mypage").authenticated()
+                        .requestMatchers("/partner/api").authenticated()
                         .requestMatchers("/partner/review").authenticated()
                         .requestMatchers("/login/oauth2/code/kakao").permitAll()
+
                         .anyRequest().authenticated()
                 )
                 .formLogin(formLogin -> { // 기존 폼 로그인 설정 유지
@@ -85,7 +88,7 @@ public class SecurityConfig {
                         .logoutSuccessUrl("/login?logout")
                         .permitAll()
                 )
-                .addFilterBefore(apiKeyFilter, UsernamePasswordAuthenticationFilter.class); // ✅ 이게 핵심!!
+                .addFilterBefore(apiKeyFilter, UsernamePasswordAuthenticationFilter.class) // ✅ 이게 핵심!!
         ;
 
         return http.build();

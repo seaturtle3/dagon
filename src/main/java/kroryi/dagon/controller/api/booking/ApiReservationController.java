@@ -4,6 +4,7 @@ import io.jsonwebtoken.Claims;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import kroryi.dagon.DTO.ReservationDTO;
+import kroryi.dagon.DTO.ReservationResponseDTO;
 import kroryi.dagon.component.CustomUserDetails;
 import kroryi.dagon.entity.Reservation;
 import kroryi.dagon.repository.SeaFreshwaterFishingRepository;
@@ -61,7 +62,7 @@ public class ApiReservationController {
     @GetMapping("/get")
     public ResponseEntity<?> getMyReservations(@RequestHeader("Authorization") String authorization) {
 
-        try{
+        try {
             // Bearer <token> 형식에서 토큰만 추출
             String token = authorization.replace("Bearer ", "");
 
@@ -82,7 +83,7 @@ public class ApiReservationController {
             log.info("222222223->{}", reservations.toString());
 
             return ResponseEntity.ok(reservations);
-        }catch (Exception e){
+        } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized");
         }
 
@@ -103,13 +104,12 @@ public class ApiReservationController {
             Claims claims = jwtUtil.parseToken(token);
             String role = claims.get("role", String.class);
 
+
             boolean canceled;
 
             if ("ADMIN".equals(role)) {
-                // 관리자면 uno 없이 바로 취소
                 canceled = seaFreshwaterFishingService.cancelReservationByAdmin(reservationId);
-            } else if ("USER".equals(role)) {
-                // 일반 사용자면 uno 꺼내서 취소 권한 체크
+            } else if ("USER".equals(role) || "PARTNER".equals(role)) {
                 Long uno = Long.parseLong(claims.get("uno").toString());
                 canceled = seaFreshwaterFishingService.cancelReservationByUser(reservationId, uno);
             } else {
@@ -127,7 +127,6 @@ public class ApiReservationController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("예약 취소 중 오류 발생");
         }
     }
-
 
 
     @GetMapping
@@ -153,4 +152,27 @@ public class ApiReservationController {
         return ResponseEntity.ok(result);
     }
 
+
+    @GetMapping("/partner")
+    public ResponseEntity<List<ReservationDTO>> getReservationsForPartner(@AuthenticationPrincipal CustomUserDetails userDetails) {
+        Long partnerUno = userDetails.getUno();
+
+        List<Reservation> reservations = seaFreshwaterFishingRepository.findByProduct_Partner_Uno(partnerUno);
+
+        List<ReservationDTO> dtoList = reservations.stream().map(r -> ReservationDTO.builder()
+                .reservationId(r.getReservationId())
+                .productName(r.getProduct().getProdName())
+                .optionName(r.getProductOption() != null ? r.getProductOption().getOptName() : "-")
+                .userName(r.getUser().getUname())
+                .fishingAt(r.getFishingAt())
+                .numPerson(r.getNumPerson())
+                .reservationStatus(r.getReservationStatus())
+                .paymentsMethod(r.getPaymentsMethod())
+                .paidAt(r.getPaidAt())
+                .createdAt(r.getCreatedAt())
+                .build()
+        ).toList();
+
+        return ResponseEntity.ok(dtoList);
+    }
 }

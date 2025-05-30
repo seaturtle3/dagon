@@ -143,8 +143,8 @@ public class NotificationService {
         }
     }
 
-    public List<NotificationDTO> getNotificationsByUser(String receiverUid) {
-        return notificationRepository.findByReceiver_UidOrderByCreatedAtDesc(receiverUid)
+    public List<NotificationDTO> getNotificationsByUser(Long receiverUno) {
+        return notificationRepository.findByReceiver_UnoOrderByCreatedAtDesc(receiverUno)
                 .stream()
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());

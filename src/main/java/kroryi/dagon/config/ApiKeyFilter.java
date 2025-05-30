@@ -67,7 +67,7 @@ public class ApiKeyFilter extends OncePerRequestFilter {
                     Long uno = claims.get("uno", Integer.class).longValue(); // ✅ uno 추출
 
                     CustomUserDetails userDetails = new CustomUserDetails(
-                            uno, uid, "", authorities
+                            uno, uid, "", authorities,role
                     );
                     UsernamePasswordAuthenticationToken authentication =
                             new UsernamePasswordAuthenticationToken(userDetails, null, authorities);

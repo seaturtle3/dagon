@@ -3,13 +3,17 @@ package kroryi.dagon.controller.api.etc;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import kroryi.dagon.DTO.NotificationDTO;
+import kroryi.dagon.component.CustomUserDetails;
+import kroryi.dagon.repository.NotificationRepository;
 import kroryi.dagon.service.NotificationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,6 +25,7 @@ import java.util.List;
 public class ApiNotificationController {
 
     private final NotificationService notificationService;
+    private final NotificationRepository notificationRepository;
 
     // 예약알림 등록
     @PostMapping
@@ -44,10 +49,9 @@ public class ApiNotificationController {
     }
 
     //특정 유저의 알림 목록 조회
-    @GetMapping("/user/{receiverUid}")
-    @Operation(summary = "유저 uno 조회", description = "유저 번호로 조회")
-    public ResponseEntity<List<NotificationDTO>> getByUser(@PathVariable String receiverUid) {
-        return ResponseEntity.ok(notificationService.getNotificationsByUser(receiverUid));
+    @GetMapping("/by-user/{receiverUno}")
+    public List<NotificationDTO> getNotificationsByUser(@PathVariable Long receiverUno) {
+        return notificationService.getNotificationsByUser(receiverUno);
     }
 
     // 알림 읽음 처리
@@ -94,5 +98,7 @@ public class ApiNotificationController {
         Page<NotificationDTO> notifications = notificationService.getNotifications(uid, type, pageable);
         return ResponseEntity.ok(notifications);
     }
+
+
 }
 
