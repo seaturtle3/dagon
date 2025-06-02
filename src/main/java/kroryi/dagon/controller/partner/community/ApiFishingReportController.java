@@ -1,7 +1,9 @@
-package kroryi.dagon.controller.Partner;
+package kroryi.dagon.controller.partner.community;
 
-
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
+import kroryi.dagon.DTO.board.FishingReportDiary.ApiFishingReportDTO;
 import kroryi.dagon.DTO.board.FishingReportDiary.FishingReportCreateDTO;
 import kroryi.dagon.DTO.board.FishingReportDiary.FishingReportDTO;
 import kroryi.dagon.DTO.board.PartnerFishingReportDTO;
@@ -10,10 +12,16 @@ import kroryi.dagon.entity.Product;
 import kroryi.dagon.entity.User;
 import kroryi.dagon.service.PartnerFishingReportService;
 import kroryi.dagon.service.auth.UserService;
+import kroryi.dagon.service.community.fishingReportDiary.ApiFishingReportService;
+import kroryi.dagon.security.JwtTokenProvider;
 import kroryi.dagon.service.image.FileStorageService;
 import kroryi.dagon.service.product.ProductService;
 import kroryi.dagon.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -23,10 +31,13 @@ import java.nio.file.AccessDeniedException;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/fishing-report")
 @RequiredArgsConstructor
-public class ApiPartnerFishingReportController {
+@Tag(name = "FishingReport", description = "조황정보 API (파트너)")
+@RequestMapping("/api/fishing-report")
+public class ApiFishingReportController {
 
+    private final ApiFishingReportService apiFishingReportService;
+    private final JwtTokenProvider jwtTokenProvider;
     private final PartnerFishingReportService partnerFishingReportService;
     private final UserService userService;
     private final ProductService productService;
@@ -34,6 +45,51 @@ public class ApiPartnerFishingReportController {
     private final JwtUtil jwtUtil;
 
 
+
+    @Operation(summary = "조황정보 생성")
+    @PostMapping("/create")
+    public ApiFishingReportDTO createFishingReport(
+            @RequestHeader("Authorization") String token,
+            @RequestBody ApiFishingReportDTO apiFishingReportDTO) {
+        String bearerToken = token.substring(7); // "Bearer " 제거
+        Long userUno = jwtTokenProvider.getUserUnoFromToken(bearerToken);
+        return apiFishingReportService.createFishingReport(apiFishingReportDTO, userUno);
+    }
+
+    @Operation(summary = "조황정보 전체 조회 (페이징)")
+    @GetMapping("/get-all")
+    public Page<ApiFishingReportDTO> getAllFishingReports(@RequestParam(defaultValue = "0") int page,
+                                                          @RequestParam(defaultValue = "10") int size,
+                                                          @RequestParam(defaultValue = "frId") String sortBy,
+                                                          @RequestParam(defaultValue = "desc") String direction)
+    {
+        Sort sort = direction.equalsIgnoreCase("desc")
+                ? Sort.by(sortBy).descending()
+                : Sort.by(sortBy).ascending();
+        Pageable pageable = PageRequest.of(page, size, sort);
+        return apiFishingReportService.getAllFishingReports(pageable);
+    }
+
+    @Operation(summary = "조황정보 ID 조회")
+    @GetMapping("/get/{id}")
+    public ApiFishingReportDTO getFishingReport(@PathVariable Long id) {
+        return apiFishingReportService.getFishingReportById(id);
+    }
+
+    @Operation(summary = "조황정보 수정")
+    @PutMapping("/update/{id}")
+    public Long updateFishingReport(@PathVariable("id") Long frId,
+                                    @RequestBody ApiFishingReportDTO apiFishingReportDTO) {
+        return apiFishingReportService.updateFishingReport(frId, apiFishingReportDTO);
+    }
+
+    @Operation(summary = "조황정보 삭제")
+    @DeleteMapping("/delete/{id}")
+    public void deleteFishingReport(@PathVariable Long id) {
+        apiFishingReportService.deleteFishingReport(id);
+    }
+
+    //====================================================================================================
     @GetMapping("/mine")
     public List<PartnerFishingReportDTO> getMyReports(HttpServletRequest request) {
         String token = jwtUtil.resolveToken(request);
@@ -108,4 +164,7 @@ public class ApiPartnerFishingReportController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("조황 등록 실패: " + e.getMessage());
         }
     }
+
+
+
 }
