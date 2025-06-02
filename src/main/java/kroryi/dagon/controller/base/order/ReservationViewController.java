@@ -1,4 +1,4 @@
-package kroryi.dagon.controller.legacy;
+package kroryi.dagon.controller.base.order;
 
 import kroryi.dagon.DTO.ProductDTO;
 import kroryi.dagon.service.product.ProductService;
@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 @Log4j2
 @RequiredArgsConstructor
 @RequestMapping("/reservation")
-public class ReservePaymentController {
+public class ReservationViewController {
 
     private final ProductService productService;
     @GetMapping("/{id}")
