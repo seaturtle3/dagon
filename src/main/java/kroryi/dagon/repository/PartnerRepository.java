@@ -17,7 +17,13 @@ public interface PartnerRepository extends JpaRepository<Partner, Long> {
     Optional<Partner> findByUserUno(Long uno);
 
     Optional<Object> findByUno(Long uno);
+    @Query("SELECT p FROM Partner p WHERE p.ceoName LIKE :ceoName")
+    Page<Partner> findByCeoNameContaining(@Param("ceoName") String ceoName, Pageable pageable);
 
-    @Query("SELECT p FROM Partner p WHERE (:pname IS NULL OR p.pname LIKE %:pname%)")
+    @Query("SELECT p FROM Partner p WHERE p.pAddress LIKE :pAddress")
+    Page<Partner> findByPAddressContaining(@Param("pAddress") String pAddress, Pageable pageable);
+
+
+    @Query("SELECT p FROM Partner p WHERE (:pname IS NULL OR p.pname LIKE :pname)")
     Page<Partner> findByPnameContaining(@Param("pname") String pname, Pageable pageable);
 }

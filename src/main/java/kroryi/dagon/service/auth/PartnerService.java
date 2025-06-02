@@ -195,15 +195,22 @@ public class PartnerService {
     }
 
 
-    public Page<Partner> searchPartners(String pname, Pageable pageable) {
-        if (pname == null || pname.trim().isEmpty()) {
-            // 검색어가 없으면 전체 리스트 조회 (조건 없이)
+    public Page<Partner> searchPartners(String searchType, String keyword, Pageable pageable) {
+        if (keyword == null || keyword.trim().isEmpty()) {
             return partnersRepository.findAll(pageable);
-        } else {
-            // 검색어가 있으면 해당 검색어 포함하는 결과 조회
-            return partnersRepository.findByPnameContaining(pname.trim(), pageable);
+        }
+
+        String likeKeyword = "%" + keyword.trim() + "%";
+
+        switch (searchType) {
+            case "ceoName":
+                return partnersRepository.findByCeoNameContaining(likeKeyword, pageable);
+            case "pAddress":
+                return partnersRepository.findByPAddressContaining(likeKeyword, pageable);
+            case "pname":
+            default:
+                return partnersRepository.findByPnameContaining(likeKeyword, pageable);
         }
     }
 }
-
 

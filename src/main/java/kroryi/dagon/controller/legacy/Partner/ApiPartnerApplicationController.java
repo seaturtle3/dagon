@@ -131,12 +131,11 @@ public class ApiPartnerApplicationController {
 
     @GetMapping("/all")
     public Page<PartnerDTO> getPartners(
-            @RequestParam(required = false) String pname,
+            @RequestParam(required = false) String searchType,
+            @RequestParam(required = false) String keyword,
             @PageableDefault(size = 10) Pageable pageable) {
 
-        Page<Partner> partnersPage = partnerService.searchPartners(pname, pageable);
-
-        // Partner -> PartnerDTO 변환
+        Page<Partner> partnersPage = partnerService.searchPartners(searchType, keyword, pageable);
         return partnersPage.map(PartnerDTO::new);
     }
 }

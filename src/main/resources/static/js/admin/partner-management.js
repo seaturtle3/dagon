@@ -1,6 +1,9 @@
 const PartnerManagementModule = (() => {
     const apiEndpoint = '/api/partners/all'; // 관리자용 파트너 리스트 API 가정
 
+
+
+
     let currentSearchType = 'pname';
     let currentSearchKeyword = '';
     let currentPageIndex = 0;
