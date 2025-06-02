@@ -1,4 +1,4 @@
-package kroryi.dagon.controller.Partner.community;
+package kroryi.dagon.controller.partner.community;
 
 import kroryi.dagon.DTO.board.FishingReportDiary.FishingReportDTO;
 import kroryi.dagon.entity.FishingReport;

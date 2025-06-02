@@ -1,4 +1,4 @@
-package kroryi.dagon.controller.Partner;
+package kroryi.dagon.controller.partner;
 
 import io.swagger.v3.oas.annotations.Operation;
 

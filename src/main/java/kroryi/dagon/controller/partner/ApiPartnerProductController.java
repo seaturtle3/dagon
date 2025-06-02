@@ -1,4 +1,4 @@
-package kroryi.dagon.controller.Partner;
+package kroryi.dagon.controller.partner;
 
 import jakarta.servlet.http.HttpServletRequest;
 import kroryi.dagon.DTO.ProductDTO;
