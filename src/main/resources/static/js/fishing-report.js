@@ -2,6 +2,7 @@ document.addEventListener("DOMContentLoaded", () => {
     loadFishingReports();
 });
 
+
 async function loadFishingReports() {
     const token = localStorage.getItem("authToken");
     if (!token) {
@@ -15,12 +16,23 @@ async function loadFishingReports() {
         }
     });
 
+    const text = await response.text();  // 응답을 먼저 텍스트로 받음
+    console.log("서버 응답:", text);
+
     if (!response.ok) {
         alert("조황정보를 불러오지 못했습니다.");
         return;
     }
 
-    const reports = await response.json();
+    let reports;
+    try {
+        reports = JSON.parse(text);  // 텍스트를 JSON으로 파싱 시도
+    } catch (e) {
+        console.error("JSON 파싱 실패:", e);
+        alert("서버에서 올바른 JSON을 받지 못했습니다.");
+        return;
+    }
+
     const container = document.getElementById("fishingReportContainer");
     container.innerHTML = ""; // 초기화
 
@@ -55,6 +67,7 @@ async function loadFishingReports() {
         btnDelete.addEventListener("click", () => deleteReport(report.frId));
     });
 }
+
 
 function toggleEditForm(report, container, editBtn) {
     if (container.style.display === "block") {
@@ -192,3 +205,52 @@ function formatDateForInput(dateString) {
     if (dd < 10) dd = "0" + dd;
     return `${yyyy}-${mm}-${dd}`;
 }
+
+// 조황정보 등록 폼 이벤트 리스너
+document.addEventListener('DOMContentLoaded', function() {
+    const fishingReportForm = document.getElementById('fishingReportForm');
+    if (fishingReportForm) {
+        fishingReportForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const token = localStorage.getItem('authToken');
+            if (!token) {
+                alert('로그인이 필요합니다.');
+                return;
+            }
+
+            const prodId = document.getElementById('prodId').value; // hidden input으로 상품 ID를 받음
+            
+            const fishingReportData = {
+                title: document.getElementById('title').value,
+                content: document.getElementById('content').value,
+                fishingAt: document.getElementById('fishingAt').value,
+                product: {
+                    prodId: prodId
+                }
+            };
+
+            try {
+                const response = await fetch('/api/fishing-report/create', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify(fishingReportData)
+                });
+
+                if (response.ok) {
+                    alert('조황정보가 등록되었습니다.');
+                    window.location.href = `/fishing-report/list/${prodId}`; // 목록 페이지로 이동
+                } else {
+                    const errorData = await response.json();
+                    alert('등록 실패: ' + (errorData.message || '오류가 발생했습니다.'));
+                }
+            } catch (error) {
+                console.error('조황정보 등록 중 오류:', error);
+                alert('조황정보 등록 중 오류가 발생했습니다.');
+            }
+        });
+    }
+});

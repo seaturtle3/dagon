@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import kroryi.dagon.DTO.ReservationDTO;
 import kroryi.dagon.component.CustomUserDetails;
+import kroryi.dagon.entity.Reservation;
 import kroryi.dagon.repository.SeaFreshwaterFishingRepository;
 import kroryi.dagon.service.order.SeaFreshwaterFishingService;
 import kroryi.dagon.util.JwtUtil;
@@ -96,13 +97,14 @@ public class ApiReservationController {
             Claims claims = jwtUtil.parseToken(token);
             String role = claims.get("role", String.class);
 
+            System.out.println("role: " + role);
+            System.out.println("uno from token: " + claims.get("uno"));
+            System.out.println("reservationId: " + reservationId);
             boolean canceled;
 
             if ("ADMIN".equals(role)) {
-                // 관리자면 uno 없이 바로 취소
                 canceled = seaFreshwaterFishingService.cancelReservationByAdmin(reservationId);
-            } else if ("USER".equals(role)) {
-                // 일반 사용자면 uno 꺼내서 취소 권한 체크
+            } else if ("USER".equals(role) || "PARTNER".equals(role)) {
                 Long uno = Long.parseLong(claims.get("uno").toString());
                 canceled = seaFreshwaterFishingService.cancelReservationByUser(reservationId, uno);
             } else {
@@ -145,5 +147,29 @@ public class ApiReservationController {
 
         return ResponseEntity.ok(result);
     }
+
+    @GetMapping("/partner")
+    public ResponseEntity<List<ReservationDTO>> getReservationsForPartner(@AuthenticationPrincipal CustomUserDetails userDetails) {
+        Long partnerUno = userDetails.getUno();
+
+        List<Reservation> reservations = seaFreshwaterFishingRepository.findByProduct_Partner_Uno(partnerUno);
+
+        List<ReservationDTO> dtoList = reservations.stream().map(r -> ReservationDTO.builder()
+                .reservationId(r.getReservationId())
+                .productName(r.getProduct().getProdName())
+                .optionName(r.getProductOption() != null ? r.getProductOption().getOptName() : "-")
+                .userName(r.getUser().getUname())
+                .fishingAt(r.getFishingAt())
+                .numPerson(r.getNumPerson())
+                .reservationStatus(r.getReservationStatus())
+                .paymentsMethod(r.getPaymentsMethod())
+                .paidAt(r.getPaidAt())
+                .createdAt(r.getCreatedAt())
+                .build()
+        ).toList();
+
+        return ResponseEntity.ok(dtoList);
+    }
+
 
 }

@@ -1,10 +1,10 @@
 package kroryi.dagon.config;
 
 import kroryi.dagon.handler.CustomSocialLoginSuccessHandler;
-import kroryi.dagon.service.AdminDetailsService;
-import kroryi.dagon.service.AdminService;
+
 import kroryi.dagon.service.ApiKeyService;
-import kroryi.dagon.service.CustomUserDetailsService;
+
+
 import kroryi.dagon.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -33,8 +33,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final AdminDetailsService adminDetailsService;
-    private final CustomUserDetailsService userDetailsService;
+    private final kroryi.dagon.service.pages.admin.AdminDetailsService adminDetailsService;
+    private final kroryi.dagon.service.order.CustomUserDetailsService userDetailsService;
     private final JwtUtil jwtUtil; // JWT 유틸리티 주입
 
     @Bean

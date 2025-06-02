@@ -22,7 +22,7 @@ public class PartnerDTO implements Serializable {
 
 
 
-    public PartnerDTO(Partner partner) {
+    public PartnerDTO (Partner partner) {
         this.uno = partner.getUno();
         this.pname = partner.getPname();
         this.ceoName = partner.getCeoName();
@@ -31,4 +31,6 @@ public class PartnerDTO implements Serializable {
         this.license = partner.getLicense();
         this.licenseImg = partner.getLicenseImg();
     }
+
+
 }

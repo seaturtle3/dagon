@@ -220,6 +220,8 @@ function loadProductRegisterForm() {
 }
 
 
+
+
 function renderProductList(products) {
     const container = document.getElementById("productListContainer");
     container.innerHTML = "";
@@ -230,6 +232,8 @@ function renderProductList(products) {
     }
 
     products.forEach(product => {
+
+
         const item = document.createElement("div");
         item.className = "product-item";
 
@@ -256,18 +260,80 @@ function renderProductList(products) {
             <p>등록일: ${product.createdAt ? new Date(product.createdAt).toLocaleDateString() : "없음"}</p>
             <button onclick="editProduct(${product.prodId})">수정</button>
             <button onclick="deleteProduct(${product.prodId})">삭제</button>
+        <button onclick="toggleReportForm(${product.prodId})">🎣 조황 등록</button>
+             <div id="reportForm-${product.prodId}" class="report-form hidden">
+        <input type="text" placeholder="제목" id="reportTitle-${product.prodId}" /><br>
+        <textarea placeholder="내용" id="reportContent-${product.prodId}"></textarea><br>
+        <input type="date" id="reportDate-${product.prodId}" /><br>
+        <input type="file" id="reportThumb-${product.prodId}" /><br>
+        <button onclick="submitFishingReport(${product.prodId})">등록하기</button>
+    </div>
+            
         `;
+
+
 
         // 요약 클릭 시 상세 토글
         summary.addEventListener("click", () => {
             details.classList.toggle("hidden");
         });
 
+
+
         item.appendChild(summary);
         item.appendChild(details);
         container.appendChild(item);
     });
 }
+
+function toggleReportForm(prodId) {
+    const form = document.getElementById(`reportForm-${prodId}`);
+    if (form) {
+        form.classList.toggle("hidden");
+    }
+}
+
+async function submitFishingReport(prodId) {
+    const title = document.getElementById(`reportTitle-${prodId}`).value;
+    const content = document.getElementById(`reportContent-${prodId}`).value;
+    const date = document.getElementById(`reportDate-${prodId}`).value;
+    const thumbFile = document.getElementById(`reportThumb-${prodId}`).files[0];
+
+    const token = localStorage.getItem('authToken'); // 토큰 가져오는 방식에 따라 수정
+
+    const formData = new FormData();
+    formData.append("dto", new Blob([JSON.stringify({
+        title,
+        content,
+        fishingAt: date,
+        prodId: prodId
+    })], { type: "application/json" }));
+    if (thumbFile) {
+        formData.append("thumbnailFile", thumbFile);
+    }
+
+    try {
+        const response = await fetch("/api/fishing-report", {
+            method: "POST",
+            headers: {
+                "Authorization": `Bearer ${token}`
+            },
+            body: formData
+        });
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error("서버 응답:", errorText);
+            throw new Error("등록 실패");
+        }
+        alert("조황 등록 성공!");
+        toggleReportForm(prodId); // 폼 닫기
+    } catch (err) {
+        console.error(err);
+        alert("조황 등록 중 오류가 발생했습니다.");
+    }
+}
+
 async function deleteProduct(prodId) {  // 매개변수명 통일
     const token = localStorage.getItem('authToken');
     if (!confirm("정말 삭제하시겠습니까?")) return;

@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.nio.file.AccessDeniedException;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Map;
 
 @Tag(name = "User-Inquiry", description = "1:1 문의 API (사용자)")
@@ -148,4 +149,28 @@ public class ApiInquiryController {
 
         return ResponseEntity.ok("답변이 저장되고 알림이 전송되었습니다.");
     }
+    @GetMapping("/user-to-partner")
+    public ResponseEntity<List<Inquiry>> getUserToPartnerInquiries(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @RequestParam Long partnerUno
+    ) {
+        Long userUno = userDetails.getUno(); // 토큰에서 유저 uno 추출
+        List<Inquiry> inquiries = inquiryService.getUserToPartnerInquiries(userUno, partnerUno);
+        return ResponseEntity.ok(inquiries);
+    }
+
+    @GetMapping("/partner-inquiries")
+    public ResponseEntity<List<InquiryResponseDTO>> getInquiriesToPartner(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @RequestParam Long partnerUno) {
+
+        // 현재 로그인한 파트너가 요청한 것인지 확인하려면 아래 로직을 사용할 수 있음
+        if (!userDetails.getUno().equals(partnerUno)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+
+        List<InquiryResponseDTO> inquiries = inquiryService.getInquiriesToPartner(partnerUno);
+        return ResponseEntity.ok(inquiries);
+    }
+
 }

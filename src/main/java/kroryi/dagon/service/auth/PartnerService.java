@@ -1,8 +1,10 @@
 package kroryi.dagon.service.auth;
 
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
-import kroryi.dagon.DTO.PartnerApplicationDTO;;
+import kroryi.dagon.DTO.PartnerApplicationDTO;
 import kroryi.dagon.entity.PartnerApplication;
 import kroryi.dagon.entity.User;
 import kroryi.dagon.enums.ApplicationStatus;
@@ -13,12 +15,15 @@ import kroryi.dagon.DTO.PartnerDTO;
 import kroryi.dagon.entity.Partner;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
-
+import java.util.Optional;
 
 
 @Log4j2
@@ -29,7 +34,6 @@ public class PartnerService {
     private final PartnerApplicationRepository partnerApplicationRepository;
     private final UserRepository userRepository;
     private final PartnerRepository partnersRepository;
-
 
 
     // 파트너 신청 적용
@@ -111,7 +115,6 @@ public class PartnerService {
     }
 
 
-
     @Transactional
     public void approve(Long id) {
         PartnerApplication app = partnerApplicationRepository.findById(id)
@@ -138,5 +141,69 @@ public class PartnerService {
 
         partnersRepository.save(partner);
     }
+
+
+    @Transactional
+    public PartnerDTO MypageUpdatePartner(Long id, PartnerDTO partnerDTO) {
+        Partner partner = partnersRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("파트너를 찾을 수 없습니다."));
+
+        partner.setPname(partnerDTO.getPname());
+        partner.setCeoName(partnerDTO.getCeoName());
+        partner.setPAddress(partnerDTO.getPAddress());
+        partner.setPInfo(partnerDTO.getPInfo());
+        partner.setLicense(partnerDTO.getLicense());
+        partner.setLicenseImg(partnerDTO.getLicenseImg());
+
+        partnersRepository.save(partner);
+
+        return new PartnerDTO(partner);
+    }
+
+
+    public Partner findPartnerByUserUno(Long uno) {
+        return partnersRepository.findByUserUno(uno)
+                .orElse(null); // 파트너 정보가 없으면 null 반환
+    }
+
+    public Partner findPartnerById(Long id) {
+        return partnersRepository.findById(id).orElse(null);
+    }
+
+
+    @Autowired
+    private EntityManager em;
+
+    @Transactional
+    public void deletePartner(Long uno) {
+        Partner partner = partnersRepository.findById(uno)
+                .orElseThrow(() -> new EntityNotFoundException("파트너 없음"));
+
+        em.remove(partner);
+        em.flush();
+    }
+
+
+    public boolean isOwner(Long uno, Long partnerId) {
+        Optional<Partner> optionalPartner = partnersRepository.findById(partnerId);
+        if (optionalPartner.isEmpty()) return false;
+
+        Partner partner = optionalPartner.get();
+        if (partner.getUser() == null) return false;
+
+        return uno.equals(partner.getUser().getUno());
+    }
+
+
+    public Page<Partner> searchPartners(String pname, Pageable pageable) {
+        if (pname == null || pname.trim().isEmpty()) {
+            // 검색어가 없으면 전체 리스트 조회 (조건 없이)
+            return partnersRepository.findAll(pageable);
+        } else {
+            // 검색어가 있으면 해당 검색어 포함하는 결과 조회
+            return partnersRepository.findByPnameContaining(pname.trim(), pageable);
+        }
+    }
 }
+
 

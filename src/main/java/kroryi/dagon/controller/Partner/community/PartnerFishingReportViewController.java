@@ -1,9 +1,9 @@
-package kroryi.dagon.controller.board;
+package kroryi.dagon.controller.Partner.community;
 
 import kroryi.dagon.DTO.board.FishingReportDiary.FishingReportDTO;
 import kroryi.dagon.entity.FishingReport;
 import kroryi.dagon.entity.Product;
-import kroryi.dagon.service.board.fishingCenter.FishingReportService;
+import kroryi.dagon.service.community.fishingReportDiary.FishingReportService;
 import kroryi.dagon.service.product.ProductService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/fishing-report")
-public class FishingReportController {
+public class PartnerFishingReportViewController {
 
     private final FishingReportService fishingReportService;
     private final ProductService productService;
@@ -96,4 +96,3 @@ public class FishingReportController {
     }
 
 }
-

@@ -3,13 +3,18 @@ package kroryi.dagon.controller.legacy.Partner;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.persistence.EntityNotFoundException;
 import kroryi.dagon.DTO.PartnerApplicationDTO;
+import kroryi.dagon.DTO.PartnerDTO;
 import kroryi.dagon.component.CustomUserDetails;
+import kroryi.dagon.entity.Partner;
 import kroryi.dagon.service.approval.PartnerApplicationService;
+import kroryi.dagon.service.auth.PartnerService;
 import kroryi.dagon.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -24,7 +29,7 @@ public class ApiPartnerApplicationController {
 
     private final PartnerApplicationService partnerApplicationService;
     private final JwtUtil jwtUtil;
-
+    private final PartnerService partnerService;
 
 
     @Operation(summary = "파트너 등록", description = "파트너 신청 등록 API")
@@ -122,5 +127,16 @@ public class ApiPartnerApplicationController {
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().build();
         }
+    }
+
+    @GetMapping("/all")
+    public Page<PartnerDTO> getPartners(
+            @RequestParam(required = false) String pname,
+            @PageableDefault(size = 10) Pageable pageable) {
+
+        Page<Partner> partnersPage = partnerService.searchPartners(pname, pageable);
+
+        // Partner -> PartnerDTO 변환
+        return partnersPage.map(PartnerDTO::new);
     }
 }

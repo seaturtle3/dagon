@@ -1,9 +1,10 @@
-package kroryi.dagon.controller.api.board;
+package kroryi.dagon.controller.Partner.community;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import kroryi.dagon.DTO.board.FishingReportDiary.ApiFishingReportDTO;
-import kroryi.dagon.service.board.fishingCenter.ApiFishingReportService;
+import kroryi.dagon.service.community.fishingReportDiary.ApiFishingReportService;
+import kroryi.dagon.security.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -13,16 +14,21 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@Tag(name = "Board-Community", description = "조황정보 게시판 글쓰기/수정/삭제 API")
+@Tag(name = "FishingReport", description = "조황정보 API (파트너)")
 @RequestMapping("/api/fishing-report")
 public class ApiFishingReportController {
 
     private final ApiFishingReportService apiFishingReportService;
+    private final JwtTokenProvider jwtTokenProvider;
 
     @Operation(summary = "조황정보 생성")
     @PostMapping("/create")
-    public ApiFishingReportDTO createFishingReport(@RequestBody ApiFishingReportDTO apiFishingReportDTO) {
-        return apiFishingReportService.createFishingReport(apiFishingReportDTO);
+    public ApiFishingReportDTO createFishingReport(
+            @RequestHeader("Authorization") String token,
+            @RequestBody ApiFishingReportDTO apiFishingReportDTO) {
+        String bearerToken = token.substring(7); // "Bearer " 제거
+        Long userUno = jwtTokenProvider.getUserUnoFromToken(bearerToken);
+        return apiFishingReportService.createFishingReport(apiFishingReportDTO, userUno);
     }
 
     @Operation(summary = "조황정보 전체 조회 (페이징)")

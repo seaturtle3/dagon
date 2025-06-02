@@ -2,16 +2,24 @@ package kroryi.dagon.service;
 
 
 import kroryi.dagon.DTO.board.FishingReportDiary.FishingReportDTO;
+
+import kroryi.dagon.DTO.board.PartnerFishingReportDTO;
 import kroryi.dagon.entity.FishingReport;
 import kroryi.dagon.repository.board.FishingReportRepository;
+import kroryi.dagon.service.image.FileStorageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.nio.file.AccessDeniedException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -48,8 +56,9 @@ public class PartnerFishingReportService {
         if (thumbnailFile != null && !thumbnailFile.isEmpty()) {
             String savedPath = fileStorageService.store(thumbnailFile);
             report.setThumbnailUrl(savedPath);
-        } else {
-            report.setThumbnailUrl(dto.getThumbnailUrl()); // 기존 url 유지
+        } else if (dto.getThumbnailUrl() != null && !dto.getThumbnailUrl().isBlank()) {
+            // 클라이언트가 기존 URL을 명시적으로 보낸 경우
+            report.setThumbnailUrl(dto.getThumbnailUrl());
         }
 
         report.setModifyAt(LocalDateTime.now());
@@ -70,10 +79,38 @@ public class PartnerFishingReportService {
         fishingReportRepository.delete(report);
     }
 
-    public List<FishingReportDTO> getMyReports(Long uno) {
+    public List<PartnerFishingReportDTO> getMySimpleReports(Long uno) {
         List<FishingReport> reports = fishingReportRepository.findByUserUno(uno);
         return reports.stream()
-                .map(report -> new FishingReportDTO(report))
+                .map(PartnerFishingReportDTO::new)
                 .collect(Collectors.toList());
     }
+
+
+    public String uploadThumbnail(MultipartFile file) {
+        if (file == null || file.isEmpty()) {
+            return null;
+        }
+
+        // 예: 로컬에 저장 (또는 S3 업로드 등)
+        String filename = UUID.randomUUID() + "_" + file.getOriginalFilename();
+        Path path = Paths.get("uploads/thumbnails", filename);
+
+        try {
+            Files.createDirectories(path.getParent());
+            file.transferTo(path.toFile());
+        } catch (IOException e) {
+            throw new RuntimeException("썸네일 업로드 실패", e);
+        }
+
+        // 실제 서비스에선 URL 리턴 (예: http://localhost:8080/uploads/...)
+        return "/uploads/thumbnails/" + filename;
+    }
+
+
+    public FishingReport save(FishingReport report) {
+        return fishingReportRepository.save(report);
+    }
+
+
 }
