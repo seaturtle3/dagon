@@ -16,8 +16,9 @@ function loadFAQs(page) {
 
     let url = `/api/admin/faq?page=${page}&size=${pageSize}`;
     if (keyword) {
-        url += `&keyword=${keyword}&faqType=${type}`;
+        url += `&keyword=${encodeURIComponent(keyword)}`;
     }
+    url += `&faqType=${encodeURIComponent(type)}`;
 
     fetch(url)
         .then(res => res.json())

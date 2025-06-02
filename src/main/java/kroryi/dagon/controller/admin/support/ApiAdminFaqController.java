@@ -3,6 +3,7 @@ package kroryi.dagon.controller.admin.support;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import kroryi.dagon.DTO.board.BoardSearchDTO;
 import kroryi.dagon.DTO.board.FAQRequestDTO;
 import kroryi.dagon.DTO.board.FAQResponseDTO;
 import kroryi.dagon.entity.FAQ;
@@ -26,9 +27,18 @@ public class ApiAdminFaqController {
     @GetMapping
     public Page<FAQResponseDTO> getPagedFAQ(
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false) String keyword,
+            @RequestParam(required = false) String faqType
     ) {
-        Page<FAQ> faqPage = faqService.findAllPaged(PageRequest.of(page, size));
+        System.out.println("👉 [FAQ 검색 요청] keyword = " + keyword + ", faqType = " + faqType);  // ✅ 이거 추가
+
+
+        BoardSearchDTO dto = new BoardSearchDTO();
+        dto.setKeyword(keyword);
+        dto.setFaqType(faqType);
+
+        Page<FAQ> faqPage = faqService.searchFaq(dto,PageRequest.of(page, size));
         return faqPage.map(FAQResponseDTO::from);
     }
 
