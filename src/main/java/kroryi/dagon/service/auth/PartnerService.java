@@ -197,11 +197,12 @@ public class PartnerService {
 
     public Page<Partner> searchPartners(String pname, Pageable pageable) {
         if (pname == null || pname.trim().isEmpty()) {
-            // 검색어가 없으면 전체 리스트 조회 (조건 없이)
+            // 검색어가 없으면 전체 리스트 조회
             return partnersRepository.findAll(pageable);
         } else {
-            // 검색어가 있으면 해당 검색어 포함하는 결과 조회
-            return partnersRepository.findByPnameContaining(pname.trim(), pageable);
+            // 검색어 앞뒤에 %를 붙여서 넘기기
+            String keyword = "%" + pname.trim() + "%";
+            return partnersRepository.findByPnameContaining(keyword, pageable);
         }
     }
 }
