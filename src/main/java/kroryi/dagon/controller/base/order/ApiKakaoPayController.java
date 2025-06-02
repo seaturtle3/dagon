@@ -1,4 +1,4 @@
-package kroryi.dagon.controller.legacy;
+package kroryi.dagon.controller.base.order;
 
 import kroryi.dagon.service.order.KakaoPayService;
 import lombok.RequiredArgsConstructor;
@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 @Controller
 @RequiredArgsConstructor
 @Log4j2
-public class KakaoPayController {
+public class ApiKakaoPayController {
 
     @Setter(onMethod_ = @Autowired)
     private KakaoPayService kakaoPay;
