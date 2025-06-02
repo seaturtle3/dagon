@@ -1,14 +1,57 @@
 <nav th:fragment="nav">
-    <div class="floating-sidebar">
-        <div>바다 바로 예약</div>
+    <style>
+        .floating-sidebar, .floating-sidebar2, .floating-sidebar3 {
+            width: 160px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            padding: 10px;
+            margin: 10px 0;
+            font-size: 14px;
+            word-break: keep-all;
+            text-align: center;
+        }
+
+        .floating-sidebar div,
+        .floating-sidebar2 div,
+        .floating-sidebar3 div {
+            margin-bottom: 10px;
+            word-break: keep-all;
+            line-height: 1.4;
+        }
+
+        .floating-sidebar2 a,
+        .floating-sidebar3 a {
+            color: #007bff;
+            text-decoration: none;
+        }
+
+        .floating-sidebar2 a:hover,
+        .floating-sidebar3 a:hover {
+            text-decoration: underline;
+        }
+    </style>
+
+    <div class="floating-sidebar d-flex flex-column">
+        <div id="profile_img"></div>
+        <div id="userNo">유저 번호: 로그인 필요</div>
+        <div id="displayName">닉네임: 로그인 필요</div>
+        <div id="level">회원 등급: 로그인 필요</div>
+        <div id="points">보유 포인트: 로그인 필요</div>
     </div>
-    <div class="floating-sidebar2">
-        <div>민물 바로 예약</div>
+
+    <div class="floating-sidebar2 d-flex flex-column">
+        <div>
+            비회원 전용<br>
+            <a href="/fishing/sea">바다낚시 바로 예약</a>
+        </div>
     </div>
+
     <div class="floating-sidebar3 d-flex flex-column">
-        <div id="userNo">유저 번호: 로딩 중...</div>
-        <br>
-        <div id="displayName">닉네임: 로딩 중...</div>
+        <div>
+            비회원 전용<br>
+            <a href="/fishing/freshwater">민물낚시 바로 예약</a>
+        </div>
     </div>
 </nav>
 
