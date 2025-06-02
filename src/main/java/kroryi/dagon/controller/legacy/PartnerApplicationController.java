@@ -26,4 +26,10 @@ public class PartnerApplicationController {
     public String detail(@PathVariable Long id) {
         return "partner/detail";
     }
+
+    @GetMapping("/my_page")
+    public String my_page () {
+
+        return "/partner/partner-my-page";
+    }
 }

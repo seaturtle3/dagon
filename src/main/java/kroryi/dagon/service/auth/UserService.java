@@ -7,6 +7,7 @@ import kroryi.dagon.repository.ReportRepository;
 import kroryi.dagon.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -78,6 +79,10 @@ public class UserService {
     }
 
 
+    public User getUserByUno(Long uno) {
+        return userRepository.findByUno(uno)
+                .orElseThrow(() -> new UsernameNotFoundException("해당 유저를 찾을 수 없습니다."));
+    }
 }
 
 

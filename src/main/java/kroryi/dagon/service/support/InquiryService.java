@@ -21,7 +21,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.nio.file.AccessDeniedException;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -120,6 +122,16 @@ public class InquiryService {
 
         inquiryRepository.delete(inquiry);
         return true;
+    }
+
+
+    public List<Inquiry> getUserToPartnerInquiries(Long userUno, Long partnerUno) {
+        return inquiryRepository.findByUser_UnoAndPartner_Uno(userUno, partnerUno);
+    }
+
+    public List<InquiryResponseDTO> getInquiriesToPartner(Long partnerUno) {
+        List<Inquiry> inquiries = inquiryRepository.findByPartner_Uno(partnerUno);
+        return inquiries.stream().map(this::toResponseDTO).collect(Collectors.toList());
     }
 
 

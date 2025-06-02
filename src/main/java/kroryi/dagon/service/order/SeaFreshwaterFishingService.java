@@ -121,12 +121,14 @@ public class SeaFreshwaterFishingService {
         Reservation reservation = seaFreshwaterFishingRepository.findById(reservationId)
                 .orElseThrow(() -> new RuntimeException("예약을 찾을 수 없습니다."));
 
-        // 해당 예약이 로그인한 사용자 소유인지 확인
-        if (!reservation.getUser().getUno().equals(uno)) {
-            return false; // 본인의 예약이 아님
+        Long userUno = reservation.getUser().getUno();
+        Long partnerUno = reservation.getProduct().getPartner().getUno();
+
+        // 예약 소유자가 uno이거나, 상품의 파트너가 uno일 경우에만 취소 허용
+        if (!userUno.equals(uno) && !partnerUno.equals(uno)) {
+            return false; // 본인의 예약도 아니고 본인 상품도 아님
         }
 
-        // 예약 상태를 취소로 변경
         reservation.setReservationStatus(ReservationStatus.CANCELED);
         seaFreshwaterFishingRepository.save(reservation);
 
