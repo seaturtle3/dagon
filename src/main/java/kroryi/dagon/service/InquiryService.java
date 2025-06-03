@@ -16,6 +16,7 @@ import kroryi.dagon.repository.NotificationRepository;
 import kroryi.dagon.repository.PartnerRepository;
 import kroryi.dagon.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -29,6 +30,7 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
+@Log4j2
 public class InquiryService {
 
     private final InquiryRepository inquiryRepository;
@@ -50,6 +52,8 @@ public class InquiryService {
                 .receiverType(request.getReceiverType());
 
         if (request.getReceiverType() == ReceiverType.PARTNER) {
+
+            log.info("Creating partner inquiry----> {}", request.getPartnerName());
             Partner partner = partnerRepository.findByPname(request.getPartnerName())
                     .orElseThrow(() -> new EntityNotFoundException("Partner (업체명) not found"));
             inquiryBuilder.partner(partner);

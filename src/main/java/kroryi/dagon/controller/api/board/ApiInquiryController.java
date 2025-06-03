@@ -19,6 +19,7 @@ import kroryi.dagon.service.InquiryService;
 import kroryi.dagon.service.NotificationService;
 import kroryi.dagon.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -37,6 +38,7 @@ import java.util.Map;
 @Tag(name = "Board-Inquiry", description = "1:1문의 생성/조회/수정/삭제 API")
 @RequestMapping("/api/inquiries")
 @RequiredArgsConstructor
+@Log4j2
 public class ApiInquiryController {
 
     private final InquiryService inquiryService;
@@ -85,6 +87,7 @@ public class ApiInquiryController {
             @PathVariable Long id,
             @RequestBody @Valid InquiryUpdateRequestDTO request,
             @AuthenticationPrincipal CustomUserDetails userDetails) throws AccessDeniedException {
+
         InquiryResponseDTO response = inquiryService.updateInquiry(userDetails.getUno(), id, request);
         return ResponseEntity.ok(response);
     }
@@ -148,6 +151,9 @@ public class ApiInquiryController {
         // 문의 조회
         Inquiry inquiry = inquiryRepository.findById(inquiryId)
                 .orElseThrow(() -> new RuntimeException("문의가 존재하지 않습니다."));
+
+        log.info("/{inquiryId}/answer1 -<{}", answerContent);
+        log.info("/{inquiryId}/answer2 -<{}", inquiry.getAnsweredAt());
 
         // 답변 저장
         inquiry.setAnswerContent(answerContent);

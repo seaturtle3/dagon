@@ -1,12 +1,14 @@
 package kroryi.dagon.component;
 
 import lombok.Getter;
+import lombok.ToString;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 
 @Getter
+@ToString
 public class CustomUserDetails implements UserDetails {
 
     private final Long uno;

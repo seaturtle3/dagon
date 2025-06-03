@@ -101,7 +101,7 @@ public class ApiReservationController {
             @RequestBody ReservationDTO reservationDTO,
             @AuthenticationPrincipal CustomUserDetails userDetails) {
         try {
-            if (userDetails == null) {
+            if (userDetails == null || userDetails.getUno() == null) {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인이 필요합니다.");
             }
 
