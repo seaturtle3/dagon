@@ -63,17 +63,28 @@ public class ApiKeyFilter extends OncePerRequestFilter {
                         new SimpleGrantedAuthority("ROLE_" + role.toUpperCase())
                 );
 
-                if (!"ADMIN".equalsIgnoreCase(role)) {
-                    Long uno = claims.get("uno", Integer.class).longValue(); // ✅ uno 추출
+                Object principal;
 
-                    CustomUserDetails userDetails = new CustomUserDetails(
-                            uno, uid, "", authorities
-                    );
-                    UsernamePasswordAuthenticationToken authentication =
-                            new UsernamePasswordAuthenticationToken(userDetails, null, authorities);
+                if ("ADMIN".equalsIgnoreCase(role))  {
+                    // 🔵 관리자일 경우 AdminUserDetails 사용
+                    principal = new AdminUserDetails(uid, role);
+                } else {
+                    // 🔵 사용자일 경우 uno 필요
+                    Integer unoInt = claims.get("uno", Integer.class);
+                    if (unoInt == null) {
+                        response.setStatus(HttpStatus.UNAUTHORIZED.value());
+                        response.getWriter().write("Invalid JWT: missing uno for USER");
+                        return;
+                    }
 
-                    SecurityContextHolder.getContext().setAuthentication(authentication);
+                    Long uno = unoInt.longValue();
+                    principal = new CustomUserDetails(uno, uid, "", authorities);
+
                 }
+                UsernamePasswordAuthenticationToken authentication =
+                        new UsernamePasswordAuthenticationToken(principal, null, authorities);
+
+                SecurityContextHolder.getContext().setAuthentication(authentication);
 
             } catch (Exception e) {
                 response.setStatus(HttpStatus.UNAUTHORIZED.value());
