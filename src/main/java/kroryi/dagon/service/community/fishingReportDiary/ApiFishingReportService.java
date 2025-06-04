@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -26,26 +27,24 @@ public class ApiFishingReportService {
     private final UserRepository userRepository;
     private final ProductRepository productRepository;
 
-    public ApiFishingReportDTO createFishingReport(ApiFishingReportDTO apiFishingReportDTO) {
+    @Transactional
+    public ApiFishingReportDTO createFishingReport(ApiFishingReportDTO apiFishingReportDTO, Long userUno) {
         FishingReport fishingReport = new FishingReport();
         fishingReport.setTitle(apiFishingReportDTO.getTitle());
         fishingReport.setContent(apiFishingReportDTO.getContent());
         fishingReport.setFishingAt(apiFishingReportDTO.getFishingAt());
 
-
+        // 상품 설정
         if (apiFishingReportDTO.getProduct() != null) {
             Long prodId = apiFishingReportDTO.getProduct().getProdId();
-            Product product = productRepository.getReferenceById(prodId);
+            Product product = productRepository.findById(prodId)
+                .orElseThrow(() -> new IllegalArgumentException("상품을 찾을 수 없습니다."));
             fishingReport.setProduct(product);
         }
 
-        // 실제 로그인 후 유저 ID, 예약 상품 ID
-//        User user = userRepository.findById(fishingReportDTO.getUserId())
-//                .orElseThrow(() -> new IllegalArgumentException("User not found"));
-
-        // 임시 고정된 user
-        User user = userRepository.findById(1L)
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+        // 사용자 설정
+        User user = userRepository.findById(userUno)
+            .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
         fishingReport.setUser(user);
 
         fishingReport = fishingReportRepository.save(fishingReport);
