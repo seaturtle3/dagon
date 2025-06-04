@@ -92,7 +92,8 @@ public class ProductController {
         }
 
         productService.saveProduct(product); // 상품 저장
-        return "redirect:/fishing-center"; // 등록 후 리스트 페이지로 리다이렉트
+
+        return "redirect:/product/list";
     }
 
     // 배 리스트 페이지
@@ -108,7 +109,5 @@ public class ProductController {
 
         return "product/list";
     }
-
-
 
 }

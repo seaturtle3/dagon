@@ -13,7 +13,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.util.List;
 @Log4j2
 @Controller
 @RequiredArgsConstructor
@@ -33,7 +32,7 @@ public class FishingCenterViewController {
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", products.getTotalPages());
 
-        return "board/fishing-center";
+        return "board/fishing-center/center";
     }
 
 }

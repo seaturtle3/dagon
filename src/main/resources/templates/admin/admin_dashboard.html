@@ -53,6 +53,7 @@
         <div class="sidebar-item" id="notice-link">공지사항</div>
         <div class="sidebar-item" id="faq-link">FAQ</div>
         <div class="sidebar-item" id="inquiry-list-link">1대1 문의</div>
+        <div class="sidebar-item" id="partner-management-link">파트너 관리</div>
         <div class="sidebar-item" id="authButtons">로그아웃</div>
 
 
@@ -523,9 +524,44 @@
 
     <!-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
+    <div id="partner-management" class="page" style="display:none;">
+        <h1>파트너 관리</h1>
+
+        <div class="search-container">
+            <label for="pm-search-type">검색 기준:</label>
+            <select id="pm-search-type">
+                <option value="pname">상호명</option>
+                <option value="ceoName">대표자명</option>
+                <option value="pAddress">주소</option>
+            </select>
+
+            <input type="text" id="pm-search-keyword" placeholder="검색어 입력">
+
+            <button id="pm-search-btn">검색</button>
+        </div>
+
+        <table>
+            <thead>
+            <tr>
+                <th>번호</th>
+                <th>상호명</th>
+                <th>대표자명</th>
+                <th>주소</th>
+                <th>사업자 번호</th>
+                <th>파트너 페이지</th>
+            </tr>
+            </thead>
+            <tbody id="pm-table-body">
+            <!-- 파트너 목록 데이터가 삽입됩니다 -->
+            </tbody>
+        </table>
+
+        <div id="pm-pagination" class="pagination"></div>
+    </div>
+    <!-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
 <div id="swagger" class="page">
-    <h1>API 문서</h1>
-    <div id="swagger-ui"></div> <!-- 여기 Swagger UI 들어갑니다 -->
+   <h1>API 문서</h1>
+   <div id="swagger-ui"></div> <!-- 여기 Swagger UI 들어갑니다 -->
 </div>
 
 
@@ -533,6 +569,7 @@
 
 <script src="/js/admin/app.js"></script>
 <script src="/js/admin/partneradmin.js"></script>
+<script src="/js/admin/partner-management.js"></script>
 <script src="/js/admin/faq.js"></script>
 <script src="/js/admin/report.js"></script>
 <script src="/js/admin/searchNotifications.js"></script>
@@ -600,7 +637,6 @@
 
 <script>
 
-
     const pages = document.querySelectorAll('.page');
     const links = {
         'dashboard-link': 'dashboard',
@@ -612,71 +648,78 @@
         'event-link': 'event-list',
         'notice-link': 'notice-list',
         'faq-link': 'faq-list',
-        'inquiry-list-link' : 'inquiry-list'
-
+        'inquiry-list-link' : 'inquiry-list',
+        'partner-management-link' : 'partner-management'
     };
-    Object.keys(links).forEach(linkId => {
-        document.getElementById(linkId).addEventListener('click', () => {
-            pages.forEach(p => p.classList.remove('visible'));
-            document.getElementById(links[linkId]).classList.add('visible');
 
-            // 회원 상세보기 숨기기
-            const userDetail = document.getElementById('user-detail');
-            if (userDetail) {
-                userDetail.classList.add('hidden');  // 또는 userDetail.style.display = 'none';
-            }
-
-            // FAQ 상세보기 숨기기 추가
-            const faqDetail = document.getElementById('faq-detail');
-            if (faqDetail) {
-                faqDetail.classList.add('hidden');  // 또는 faqDetail.style.display = 'none';
-            }
-        });
-    });
-
-
-    document.addEventListener('DOMContentLoaded', () => {
-        const isPartnerPage = document.getElementById('partner-list') !== null;
-        const isFaqPage = document.getElementById('faq-table-body') !== null;
-
-        if (isPartnerPage) {
+    // 페이지별 초기화 함수 모음
+    const pageInitFunctions = {
+        'partner-management': () => {
+            PartnerManagementModule.init();
+        },
+        // 필요하면 다른 페이지 초기화도 여기에 추가 가능
+        'partner-list': () => {
             loadData(0);
             document.getElementById('partner-search-btn').addEventListener('click', () => loadPartnerData(0));
-        }
-
-        if (isFaqPage) {
+        },
+        'faq-list': () => {
             loadFAQs(0);
             document.getElementById('faq-search-btn').addEventListener('click', () => {
                 faqCurrentPage = 0;
                 loadFAQs(faqCurrentPage);
             });
         }
+    };
+
+    Object.keys(links).forEach(linkId => {
+        document.getElementById(linkId).addEventListener('click', () => {
+            // 모든 페이지 숨기기
+            pages.forEach(p => {
+                p.classList.remove('visible');
+                p.style.display = 'none';  // 확실히 숨김 처리
+            });
+
+            // 선택된 페이지 보이기
+            const pageId = links[linkId];
+            const targetPage = document.getElementById(pageId);
+            if(targetPage) {
+                targetPage.classList.add('visible');
+                targetPage.style.display = 'block';
+            }
+
+            // 상세보기 창 숨기기 (예: user-detail, faq-detail 등)
+            const userDetail = document.getElementById('user-detail');
+            if (userDetail) userDetail.classList.add('hidden');
+
+            const faqDetail = document.getElementById('faq-detail');
+            if (faqDetail) faqDetail.classList.add('hidden');
+
+            // 선택된 페이지에 맞는 초기화 함수 호출
+            if (pageInitFunctions[pageId]) {
+                pageInitFunctions[pageId]();
+            }
+        });
     });
 
-    function openFaqManage() {
-        window.open('/faq', '_blank');
-    }
-
-    function loadSwagger(group) {
-        pages.forEach(p => p.classList.remove('visible'));
-        document.getElementById('swagger').classList.add('visible');
-
-        SwaggerUIBundle({
-            url: location.origin + `/api-docs/${group}`,
-            dom_id: '#swagger-ui',
-            layout: "StandaloneLayout",
-            presets: [
-                SwaggerUIBundle.presets.apis,
-                SwaggerUIStandalonePreset
-            ],
-            deepLinking: true,
-            docExpansion: "none",
-            validatorUrl: null,
-            tagsSorter: "alpha"
+    document.addEventListener('DOMContentLoaded', () => {
+        // 초기 로드 시 첫 페이지 설정 (예: dashboard)
+        const defaultPageId = 'dashboard';
+        pages.forEach(p => {
+            p.classList.remove('visible');
+            p.style.display = 'none';
         });
-    }
+        const defaultPage = document.getElementById(defaultPageId);
+        if(defaultPage) {
+            defaultPage.classList.add('visible');
+            defaultPage.style.display = 'block';
+        }
 
-    document.addEventListener("DOMContentLoaded", function () {
+        // 초기 페이지 함수 있으면 실행
+        if(pageInitFunctions[defaultPageId]) {
+            pageInitFunctions[defaultPageId]();
+        }
+
+        // 기타 DOMContentLoaded 내 기존 코드들 (카운트 조회, 로그아웃 버튼 처리 등)
         fetch("/api/admin/counts", {
             headers: {
                 "Authorization": "Bearer " + localStorage.getItem("authToken")
@@ -688,32 +731,24 @@
                 document.getElementById("application-count").innerText = data.totalApplications;
                 document.getElementById("approved-count").innerText = data.approvedPartners;
             });
-    });
 
-    document.addEventListener("DOMContentLoaded", () => {
         const authToken = localStorage.getItem("authToken");
         const authButtons = document.getElementById("authButtons");
 
         if (authToken) {
-            // 로그인 상태일 때 로그아웃 버튼 클릭 이벤트 부여
-            authButtons.style.cursor = "pointer"; // 마우스 커서 표시
+            authButtons.style.cursor = "pointer";
             authButtons.addEventListener("click", async () => {
                 try {
                     const response = await fetch("/api/auth/logout", {
                         method: "POST",
-                        headers: {
-                            "Authorization": "Bearer " + authToken
-                        }
+                        headers: { "Authorization": "Bearer " + authToken }
                     });
-
                     localStorage.removeItem("authToken");
-
                     if (response.ok) {
                         alert("로그아웃 되었습니다.");
                     } else {
                         console.warn("로그아웃 실패:", await response.text());
                     }
-
                     window.location.href = "/admin";
                 } catch (err) {
                     console.error("로그아웃 요청 실패:", err);
@@ -721,11 +756,9 @@
                 }
             });
         } else {
-            // 비로그인 상태이면 로그아웃 버튼 숨김
             authButtons.style.display = "none";
         }
     });
-
 
 </script>
 

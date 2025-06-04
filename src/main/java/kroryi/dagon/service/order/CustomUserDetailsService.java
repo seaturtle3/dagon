@@ -27,7 +27,9 @@ public class CustomUserDetailsService implements UserDetailsService {
                 user.getUno(),                      // 유저 ID
                 user.getUid(),                      // 로그인 ID (uname)
                 user.getUpw(),                      // 비밀번호
-                List.of(new SimpleGrantedAuthority("ROLE_" + user.getRole().name()))  // 권한
+                List.of(new SimpleGrantedAuthority("ROLE_" + user.getRole().name())),
+                user.getRole().name() // ✅ role 전달// 권한
         );
     }
 }
+

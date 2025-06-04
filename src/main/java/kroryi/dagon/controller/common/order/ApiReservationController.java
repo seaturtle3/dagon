@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import kroryi.dagon.DTO.ReservationDTO;
 import kroryi.dagon.component.CustomUserDetails;
+import kroryi.dagon.entity.Reservation;
 import kroryi.dagon.repository.SeaFreshwaterFishingRepository;
 import kroryi.dagon.service.order.SeaFreshwaterFishingService;
 import kroryi.dagon.util.JwtUtil;
@@ -94,7 +95,7 @@ public class ApiReservationController {
             @RequestBody ReservationDTO reservationDTO,
             @AuthenticationPrincipal CustomUserDetails userDetails) {
         try {
-            if (userDetails == null) {
+            if (userDetails == null || userDetails.getUno() == null) {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인이 필요합니다.");
             }
 

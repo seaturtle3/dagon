@@ -78,7 +78,7 @@ public class ApiKeyFilter extends OncePerRequestFilter {
                     }
 
                     Long uno = unoInt.longValue();
-                    principal = new CustomUserDetails(uno, uid, "", authorities);
+                    principal = new CustomUserDetails(uno, uid, "", authorities, role);
 
                 }
                 UsernamePasswordAuthenticationToken authentication =
