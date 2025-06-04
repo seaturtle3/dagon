@@ -57,6 +57,9 @@ public interface SeaFreshwaterFishingRepository extends JpaRepository<Reservatio
     Page<Reservation> findAllWithDetails(Pageable pageable);
 
 
+    // 파트너 페이지 예악자 조회용
+    @Query("SELECT r FROM Reservation r JOIN FETCH r.user u WHERE u.uno = :uno")
+    List<Reservation> findByUserUno(@Param("uno") Long uno);
 
     // 상품명 검색
     @Query(value = "SELECT r FROM Reservation r JOIN r.product p WHERE LOWER(p.prodName) LIKE LOWER(CONCAT('%', :keyword, '%'))")
@@ -65,4 +68,6 @@ public interface SeaFreshwaterFishingRepository extends JpaRepository<Reservatio
     // 예약자명 검색
     @Query(value = "SELECT r FROM Reservation r JOIN r.user u WHERE LOWER(u.uname) LIKE LOWER(CONCAT('%', :keyword, '%'))")
     Page<Reservation> findByUserNameContainingIgnoreCase(@Param("keyword") String keyword, Pageable pageable);
+
+    List<Reservation> findByProduct_Partner_Uno(Long uno);
 }

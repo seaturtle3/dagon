@@ -1,6 +1,7 @@
 package kroryi.dagon.DTO;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import kroryi.dagon.entity.Partner;
 import kroryi.dagon.entity.User;
 import lombok.*;
 
@@ -32,6 +33,16 @@ public class UsersDTO {
     private String createdAt;
     @JsonProperty("isActive")
     private boolean isActive;// 생성일 추가 (BaseTimeEntity에서 자동 생성되는 값)
+
+
+
+    // 추가: 파트너 정보 필드들 (필요한 것만)
+    private String pname;      // 상호명
+    private String ceoName;    // 대표자명
+    private String pAddress;   // 주소
+    private String pInfo;      // 소개
+    private String license;    // 사업자번호
+    private String licenseImg; // 사업자 등록증 이미지 경로
 
 
     // User 객체를 받는 생성자 추가
@@ -69,3 +80,5 @@ public class UsersDTO {
         return (nickname != null && !nickname.isBlank()) ? nickname : uname;
     }
 }
+
+
