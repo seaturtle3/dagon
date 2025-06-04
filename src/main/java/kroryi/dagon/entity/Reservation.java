@@ -41,7 +41,7 @@ public class Reservation extends BaseTimeEntity {
     @Column(name = "num_person", nullable = false)
     private Integer numPerson;
 
-    // reservationAt은 예약생성시간으로 이름을 createdAt으로 지정하고 BaseTimeEntity 상속
+    // reservationAt은 예약생성시간으로 이름을 createdAt으로 지정하고z BaseTimeEntity 상속
 
     @Column(name = "fishing_at", nullable = false)
     private LocalDateTime fishingAt;

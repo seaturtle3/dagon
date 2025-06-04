@@ -27,4 +27,5 @@ public abstract class BaseTimeEntity {
     public LocalDate getCreatedDate() {
         return this.createdAt != null ? this.createdAt.toLocalDate() : null;
     }
+
 }
