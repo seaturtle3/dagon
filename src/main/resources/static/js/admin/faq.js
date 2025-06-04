@@ -1,12 +1,12 @@
-let currenPage = 0;
+let faqCurrentPage = 0;
 const pageSize = 10;
 
 document.addEventListener('DOMContentLoaded', () => {
-    loadFAQs(currenPage);
+    loadFAQs(faqCurrentPage);
 
     document.getElementById('faq-search-btn').addEventListener('click', () => {
-        currenPage = 0;
-        loadFAQs(currenPage);
+        faqCurrentPage = 0;
+        loadFAQs(faqCurrentPage);
     });
 });
 
@@ -16,8 +16,9 @@ function loadFAQs(page) {
 
     let url = `/api/admin/faq?page=${page}&size=${pageSize}`;
     if (keyword) {
-        url += `&keyword=${keyword}&faqType=${type}`;
+        url += `&keyword=${encodeURIComponent(keyword)}`;
     }
+    url += `&faqType=${encodeURIComponent(type)}`;
 
     fetch(url)
         .then(res => res.json())
@@ -25,7 +26,7 @@ function loadFAQs(page) {
 
             console.log("FAQ API 응답 전체:", data);
             console.log("totalPages:", data.totalPages);  // 여기서 undefined인지 확인
-            console.log("currentPage:", data.number);     // 여기도
+            console.log("faqCurrentPage:", data.number);     // 여기도
 
             renderFAQTable(data.content);
             renderPaginationFAQ(data.totalPages, data.number);
@@ -159,8 +160,8 @@ function saveFAQ(faq) {
         })
         .then(data => {
             alert('수정 완료');
-            currentPage = 0;       // 페이지 1번 설정
-            loadFAQs(currentPage);
+            faqCurrentPage = 0;       // 페이지 1번 설정
+            loadFAQs(faqCurrentPage);
             document.getElementById('faq-detail').classList.add('hidden');
         })
         .catch(err => alert(err.message));

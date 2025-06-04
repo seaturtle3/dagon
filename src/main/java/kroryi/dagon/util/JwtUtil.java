@@ -124,8 +124,6 @@ public class JwtUtil {
         return ((Number) unoObj).longValue(); // 안전하게 형변환
     }
 
-
-
     // isValidToken: 토큰이 유효한지 확인하는 메서드
     public boolean isValidToken(String token) {
         try {
