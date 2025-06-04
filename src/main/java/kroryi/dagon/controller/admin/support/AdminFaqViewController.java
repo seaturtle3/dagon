@@ -33,8 +33,8 @@ public class AdminFaqViewController {
 
         BoardSearchDTO searchDTO = new BoardSearchDTO();
         searchDTO.setKeyword(keyword);
-        searchDTO.setType(type);
-//        searchDTO.setFaqType(type);
+//        searchDTO.setType(type);
+        searchDTO.setFaqType(type);
         searchDTO.setCategoryId(categoryId);
 
 

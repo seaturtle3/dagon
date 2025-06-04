@@ -34,7 +34,7 @@ public class UserFishingDiaryViewController {
         model.addAttribute("totalPages", diaryPage.getTotalPages());
         model.addAttribute("prodId", prodId);
 
-        return "board/fishingDiary/list";
+        return "board/fishing-center/diary/list";
     }
 
     @GetMapping("/form")
@@ -53,7 +53,7 @@ public class UserFishingDiaryViewController {
             model.addAttribute("diary", DiaryDTO);
         }
 
-        return "board/fishingDiary/form";
+        return "board/fishing-center/diary/form";
     }
 
     @PostMapping("/form")
@@ -70,7 +70,7 @@ public class UserFishingDiaryViewController {
             return "redirect:/fishing-diary/detail/" + savedId;
         } else {
             fishingDiaryService.createFishingDiary(fishingDiaryDTO);
-            return"redirect:/fishing-diary/list/" + prodId;
+            return"redirect:/fishing-center/diary/list/" + prodId;
         }
 }
 
@@ -81,13 +81,13 @@ public String showDiaryDetail(@PathVariable Long id,
     model.addAttribute("diary", diary);
     model.addAttribute("prodId", diary.getProduct().getProdId());
 
-    return "board/fishingDiary/detail";
+    return "board/fishing-center/diary/detail";
 }
 
 @PostMapping("/delete/{id}")
 public String deleteDiaryDetail(@PathVariable Long id) {
     Long prodId = fishingDiaryService.deleteAndReturnProdId(id);
-    return "redirect:/fishing-diary/list/" + prodId;
+    return "redirect:/fishing-center/diary/list/" + prodId;
 }
 
 }

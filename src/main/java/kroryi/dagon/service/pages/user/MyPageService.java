@@ -77,6 +77,21 @@ public class MyPageService {
         return "success";
     }
 
+
+    public String changePasswords(String uid, PasswordFormDTO form) {
+        User user = myPageRepository.findByUid(uid)
+                .orElseThrow(() -> new UsernameNotFoundException("유저를 찾을 수 없습니다."));
+
+        if (!passwordEncoder.matches(form.getCurrentPassword(), user.getUpw())) {
+            return "fail";
+        }
+
+        user.setUpw(passwordEncoder.encode(form.getNewPassword()));
+        myPageRepository.save(user);
+
+        return "success";
+    }
+
 // MyPageService.java 안에 아래 메서드를 추가
 
     public Integer getUserPoint(Long uno) {

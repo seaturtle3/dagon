@@ -25,108 +25,37 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@Tag(name = "Reservation", description = "예약 생성/조회/취소 API")
+@Tag(name = "Reservation", description = "예약 생성/조회/삭제 API")
 @RequestMapping("/api/reservation")
 @Log4j2
 public class ApiReservationController {
 
-    private final SeaFreshwaterFishingService seaFreshwaterFishingService;
+    private final SeaFreshwaterFishingService reservationService;
     private final JwtUtil jwtUtil;
-    private final SeaFreshwaterFishingRepository seaFreshwaterFishingRepository;
 
-    @Operation(summary = "예약 전 선택한 옵션 조회", description = "예약 전 선택한 옵션 조회")
-    @GetMapping("/all")
-
-    public String getFindAll() {
-        return seaFreshwaterFishingService.getFindAll();
-    }
-
-    @PostMapping("/post")
-    public ResponseEntity<List<ReservationDTO>> postMyReservations(@AuthenticationPrincipal CustomUserDetails userDetails) {
-        if (userDetails == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);  // 인증되지 않은 경우 처리
-        }
-
-        Long uno = userDetails.getUno();
-        List<ReservationDTO> reservations = seaFreshwaterFishingService.getReservationsByUserId(uno);
-        return ResponseEntity.ok(reservations);
-    }
-
-    @GetMapping("/get")
-    public ResponseEntity<?> getMyReservations(@RequestHeader("Authorization") String authorization) {
-
-        try{
-            // Bearer <token> 형식에서 토큰만 추출
-            String token = authorization.replace("Bearer ", "");
-
-            // JWT 검증 및 데이터 반환
-            if (!jwtUtil.isValidToken(token)) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid Token");
-
-            }
-            // 토큰이 유효하면 예약 정보 반환
-            // uno 추출
-            Claims claims = jwtUtil.parseToken(token);
-            Long uno = Long.parseLong(claims.get("uno").toString());
-
-            log.info("222222222->{}", uno);
-            // 예약 정보 조회
-            List<ReservationDTO> reservations = seaFreshwaterFishingService.getReservationsByUserId(uno);
-
-            log.info("222222223->{}", reservations.toString());
-
-            return ResponseEntity.ok(reservations);
-        }catch (Exception e){
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized");
-        }
-
-
-    }
-
-    @DeleteMapping("/cancel/{reservationId}")
-    public ResponseEntity<?> cancelReservation(
-            @PathVariable Long reservationId,
-            @RequestHeader("Authorization") String authorization) {
+    @Operation(summary = "예약 생성", description = "예약을 생성합니다.")
+    @PostMapping
+    public ResponseEntity<?> createReservation(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @RequestBody ReservationDTO reservationDTO) {
         try {
-            String token = authorization.replace("Bearer ", "");
-
-            if (!jwtUtil.isValidToken(token)) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid Token");
+            if (userDetails == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인이 필요합니다.");
             }
 
-            Claims claims = jwtUtil.parseToken(token);
-            String role = claims.get("role", String.class);
+            reservationDTO.setUno(userDetails.getUno());
 
-            System.out.println("role: " + role);
-            System.out.println("uno from token: " + claims.get("uno"));
-            System.out.println("reservationId: " + reservationId);
-            boolean canceled;
-
-            if ("ADMIN".equals(role)) {
-                canceled = seaFreshwaterFishingService.cancelReservationByAdmin(reservationId);
-            } else if ("USER".equals(role) || "PARTNER".equals(role)) {
-                Long uno = Long.parseLong(claims.get("uno").toString());
-                canceled = seaFreshwaterFishingService.cancelReservationByUser(reservationId, uno);
-            } else {
-                return ResponseEntity.status(HttpStatus.FORBIDDEN).body("권한이 없습니다.");
-            }
-
-            if (canceled) {
-                return ResponseEntity.ok("예약이 성공적으로 취소되었습니다.");
-            } else {
-                return ResponseEntity.status(HttpStatus.FORBIDDEN).body("해당 예약을 취소할 수 없습니다.");
-            }
-
+            ReservationDTO saved = reservationService.createReservation(reservationDTO);
+            return ResponseEntity.status(HttpStatus.CREATED).body(saved);
         } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("예약 취소 중 오류 발생");
+            log.error("예약 생성 오류", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("예약 생성 중 오류가 발생했습니다.");
         }
     }
 
-
-
+    @Operation(summary = "예약 전체/검색 조회", description = "전체 예약 또는 검색 조건에 따라 조회합니다.")
     @GetMapping
-    public ResponseEntity<Page<ReservationDTO>> getReservations(
+    public ResponseEntity<?> getReservations(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "createdAt") String sortBy,
@@ -137,39 +66,78 @@ public class ApiReservationController {
         Pageable pageable = PageRequest.of(page, size,
                 direction.equalsIgnoreCase("asc") ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending());
 
-        Page<ReservationDTO> result;
-
-        if (keyword == null || keyword.isBlank()) {
-            result = seaFreshwaterFishingService.getAllReservations(pageable);
-        } else {
-            result = seaFreshwaterFishingService.searchReservations(searchType, keyword, pageable);
-        }
+        Page<ReservationDTO> result = (keyword == null || keyword.isBlank())
+                ? reservationService.getAllReservations(pageable)
+                : reservationService.searchReservations(searchType, keyword, pageable);
 
         return ResponseEntity.ok(result);
     }
 
-    @GetMapping("/partner")
-    public ResponseEntity<List<ReservationDTO>> getReservationsForPartner(@AuthenticationPrincipal CustomUserDetails userDetails) {
-        Long partnerUno = userDetails.getUno();
-
-        List<Reservation> reservations = seaFreshwaterFishingRepository.findByProduct_Partner_Uno(partnerUno);
-
-        List<ReservationDTO> dtoList = reservations.stream().map(r -> ReservationDTO.builder()
-                .reservationId(r.getReservationId())
-                .productName(r.getProduct().getProdName())
-                .optionName(r.getProductOption() != null ? r.getProductOption().getOptName() : "-")
-                .userName(r.getUser().getUname())
-                .fishingAt(r.getFishingAt())
-                .numPerson(r.getNumPerson())
-                .reservationStatus(r.getReservationStatus())
-                .paymentsMethod(r.getPaymentsMethod())
-                .paidAt(r.getPaidAt())
-                .createdAt(r.getCreatedAt())
-                .build()
-        ).toList();
-
-        return ResponseEntity.ok(dtoList);
+    @Operation(summary = "예약 단건 조회", description = "예약 ID로 예약 정보를 조회합니다.")
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getReservationById(@PathVariable Long id) {
+        try {
+            ReservationDTO dto = reservationService.getReservationById(id);
+            if (dto == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("예약을 찾을 수 없습니다.");
+            }
+            return ResponseEntity.ok(dto);
+        } catch (Exception e) {
+            log.error("예약 조회 오류", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("예약 조회 중 오류 발생");
+        }
     }
 
+    @Operation(summary = "예약 수정", description = "예약 ID에 해당하는 예약을 수정합니다.")
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateReservation(
+            @PathVariable Long id,
+            @RequestBody ReservationDTO reservationDTO,
+            @AuthenticationPrincipal CustomUserDetails userDetails) {
+        try {
+            if (userDetails == null || userDetails.getUno() == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인이 필요합니다.");
+            }
 
+            reservationDTO.setUno(userDetails.getUno());
+            ReservationDTO updated = reservationService.updateReservation(id, reservationDTO);
+
+            return ResponseEntity.ok(updated);
+        } catch (Exception e) {
+            log.error("예약 수정 오류", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("예약 수정 중 오류 발생");
+        }
+    }
+
+    @Operation(summary = "예약 삭제", description = "예약을 취소(삭제)합니다.")
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteReservation(
+            @PathVariable Long id,
+            @RequestHeader("Authorization") String authorization) {
+        try {
+            String token = authorization.replace("Bearer ", "");
+            if (!jwtUtil.isValidToken(token)) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid Token");
+            }
+
+            Claims claims = jwtUtil.parseToken(token);
+            String role = claims.get("role", String.class);
+            Long uno = Long.parseLong(claims.get("uno").toString());
+
+            boolean canceled = switch (role) {
+                case "ADMIN" -> reservationService.cancelReservationByAdmin(id);
+                case "USER" -> reservationService.cancelReservationByUser(id, uno);
+                default -> false;
+            };
+
+            if (canceled) {
+                return ResponseEntity.ok("예약이 성공적으로 취소되었습니다.");
+            } else {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body("해당 예약을 취소할 수 없습니다.");
+            }
+        } catch (Exception e) {
+            log.error("예약 삭제 오류", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("예약 취소 중 오류 발생");
+        }
+    }
 }

@@ -31,21 +31,17 @@ public class RegisterService {
 
         User user = new User();
         user.setUid(usersDTO.getUid());
-
         user.setUpw(passwordEncoder.encode(usersDTO.getUpw()));
-
         user.setUname(usersDTO.getUname());
         user.setEmail(usersDTO.getEmail());
-        user.setPhone(usersDTO.getFullPhone());
+        user.setPhone(usersDTO.getFullPhone());  // 합쳐진 전화번호 저장
 
-        // ✅ 기본 권한 부여 (문자열이라면 그대로, enum이면 .name() 사용)
-        user.setRole(UserRole.valueOf("USER"));
+        user.setRole(UserRole.USER); // enum USER 사용 권장
 
         log.info("저장할 사용자: {}", user);
         log.info("비밀번호 암호화 완료: {}", user.getUpw());
 
         userRepository.save(user);
         log.info("회원가입 완료: {}", user);
-        log.info("DB 저장 완료: {}", user);
     }
 }

@@ -21,14 +21,12 @@
 
 <script>
   // URL에서 쿼리스트링 파싱
-
   const params = new URLSearchParams(window.location.search);
   const fishingAt = params.get("fishingAt");
   const numPerson = params.get("numPerson");
   const amount = params.get("amount");
 
   document.getElementById("fishingAtText").textContent = "출조일: " + fishingAt;
-
   document.getElementById("numPersonText").textContent = "인원 수: " + numPerson + "명";
   document.getElementById("amountText").textContent = "결제 금액: " + amount + "원";
 

@@ -2,6 +2,8 @@ package kroryi.dagon.controller.auth;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpSession;
+import kroryi.dagon.DTO.UsersDTO;
 import kroryi.dagon.entity.User;
 import kroryi.dagon.repository.UserRepository;
 import kroryi.dagon.service.auth.UserService;
@@ -69,13 +71,13 @@ public class ApiUserController {
 
 
     @GetMapping("/find-id")
-    @Operation(summary = "아이디 조회 ", description = "전화번호 이름으로 아이디 조회")
-    public ResponseEntity<?> findUserId(@RequestParam String phone, @RequestParam String uname) {
-        // 1. 전화번호와 이름으로 사용자 정보 조회
-        Optional<User> optionalUser = userRepository.findByPhoneAndUname(phone, uname);
+    @Operation(summary = "아이디 조회", description = "이메일로 아이디 조회")
+    public ResponseEntity<?> findUserId(@RequestParam String email) {
+        // 1. 이메일로 사용자 정보 조회
+        Optional<User> optionalUser = userRepository.findByEmail(email);
 
         if (optionalUser.isEmpty()) {
-            return new ResponseEntity<>("전화번호와 이름에 해당하는 사용자 정보를 찾을 수 없습니다.", HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("이메일에 해당하는 사용자 정보를 찾을 수 없습니다.", HttpStatus.NOT_FOUND);
         }
 
         User user = optionalUser.get();

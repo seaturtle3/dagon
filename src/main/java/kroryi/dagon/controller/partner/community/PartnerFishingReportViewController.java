@@ -35,7 +35,7 @@ public class PartnerFishingReportViewController {
         model.addAttribute("totalPages", reportPage.getTotalPages());
         model.addAttribute("prodId", prodId);
 
-        return "board/fishingReport/list";
+        return "board/fishing-center/report/list";
     }
 
     // 조황정보 폼
@@ -57,7 +57,7 @@ public class PartnerFishingReportViewController {
 
         log.info("----------------------- prodId:{}, id:{}", prodId, id);
 
-        return "board/fishingReport/form";
+        return "board/fishing-center/report/form";
     }
 
     // 조황정보 폼 전송
@@ -86,13 +86,13 @@ public class PartnerFishingReportViewController {
         model.addAttribute("report", report);
         model.addAttribute("prodId", report.getProduct().getProdId());
 
-        return "board/fishingReport/detail";
+        return "board/fishing-center/report/detail";
     }
 
     @PostMapping("/delete/{id}")
     public String deleteReportDetail(@PathVariable Long id) {
         Long prodId = fishingReportService.deleteAndReturnProdId(id);
-        return "redirect:/fishing-report/list/" + prodId;
+        return "redirect:/fishing-center/report/list/" + prodId;
     }
 
 }

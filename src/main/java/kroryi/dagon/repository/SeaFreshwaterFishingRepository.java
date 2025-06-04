@@ -71,4 +71,3 @@ public interface SeaFreshwaterFishingRepository extends JpaRepository<Reservatio
 
     List<Reservation> findByProduct_Partner_Uno(Long uno);
 }
-

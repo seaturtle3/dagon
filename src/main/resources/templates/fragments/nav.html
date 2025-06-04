@@ -1,14 +1,61 @@
 <nav th:fragment="nav">
-    <div class="floating-sidebar">
-        <div>바다 바로 예약</div>
-    </div>
-    <div class="floating-sidebar2">
-        <div>민물 바로 예약</div>
-    </div>
-    <div class="floating-sidebar3 d-flex flex-column">
-        <div id="userNo">유저 번호: 로딩 중...</div>
-        <br>
-        <div id="displayName">닉네임: 로딩 중...</div>
+    <style>
+        .sidebar-fixed-container {
+            position: fixed;
+            top: 90px;
+            right: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+            z-index: 999;
+        }
+
+        .sidebar-box {
+            width: 180px;
+            background-color: #fff;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+            padding: 14px;
+            font-size: 14px;
+            text-align: center;
+            word-break: keep-all;
+        }
+
+        .sidebar-box div {
+            margin-bottom: 8px;
+            line-height: 1.4;
+        }
+
+        .sidebar-box a {
+            color: #007bff;
+            text-decoration: none;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .sidebar-box a:hover {
+            text-decoration: underline;
+        }
+    </style>
+
+    <div class="sidebar-fixed-container">
+        <!-- 사용자 정보 -->
+        <div class="sidebar-box">
+            <div id="userNo">유저 번호: <b>로딩 중...</b></div>
+            <div id="displayName">닉네임: 로딩 중...</div>
+        </div>
+
+        <!-- 바다낚시 -->
+        <div class="sidebar-box">
+            <div>바다낚시</div>
+            <div><a href="/fishing/sea">바로 예약</a></div>
+        </div>
+
+        <!-- 민물낚시 -->
+        <div class="sidebar-box">
+            <div>민물낚시</div>
+            <div><a href="/fishing/freshwater">바로 예약</a></div>
+        </div>
     </div>
 </nav>
-
