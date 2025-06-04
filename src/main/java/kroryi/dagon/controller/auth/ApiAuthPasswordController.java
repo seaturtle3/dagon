@@ -1,17 +1,19 @@
 package kroryi.dagon.controller.auth;
 
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import kroryi.dagon.DTO.FindPasswordRequestDTO;
+import kroryi.dagon.DTO.PasswordFormDTO;
 import kroryi.dagon.entity.User;
 import kroryi.dagon.repository.UserRepository;
+import kroryi.dagon.service.auth.PartnerService;
+import kroryi.dagon.service.image.FileStorageService;
+import kroryi.dagon.service.pages.user.MyPageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -27,6 +29,9 @@ public class ApiAuthPasswordController {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final MyPageService myPageService;
+    private final FileStorageService fileStorageService;
+    private final PartnerService partnerService;
 
     @PostMapping("/find-password")
     public ResponseEntity<?> findPassword(@RequestBody FindPasswordRequestDTO request) {
@@ -50,6 +55,20 @@ public class ApiAuthPasswordController {
         response.put("tempPassword", tempPassword);
 
         return ResponseEntity.ok(response);
+    }
+
+    @PutMapping("/password")
+    @Operation(summary = "비밀번호 변경 ", description = "비밀번호 변경")
+    public ResponseEntity<?> changePasswordWithoutToken(@RequestBody PasswordFormDTO form) {
+        // form 안에 userId (또는 username) 있어야 함
+        String userId = form.getUserId();
+        String result = myPageService.changePassword(Long.valueOf(userId), form);
+
+        if ("success".equals(result)) {
+            return ResponseEntity.ok(Map.of("message", "비밀번호가 성공적으로 변경되었습니다."));
+        } else {
+            return ResponseEntity.badRequest().body(Map.of("error", "비밀번호 변경에 실패했습니다."));
+        }
     }
 }
 

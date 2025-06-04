@@ -5,7 +5,9 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import kroryi.dagon.DTO.PasswordFormDTO;
 import kroryi.dagon.DTO.UsersDTO;
 import kroryi.dagon.component.CustomUserDetails;
+import kroryi.dagon.entity.Partner;
 import kroryi.dagon.entity.User;
+import kroryi.dagon.service.auth.PartnerService;
 import kroryi.dagon.service.image.FileStorageService;
 import kroryi.dagon.service.pages.user.MyPageService;
 import lombok.RequiredArgsConstructor;
@@ -28,22 +30,32 @@ public class ApiMyPageController {
 
     private final MyPageService myPageService;
     private final FileStorageService fileStorageService;
+    private final PartnerService partnerService;
 
 //     내 정보 조회
-    @PostMapping("")
-    @Operation(summary = "내 정보", description = "내 정보")
-    public ResponseEntity<UsersDTO> getMyPage(@AuthenticationPrincipal CustomUserDetails userDetails) {
+@PostMapping("")
+@Operation(summary = "내 정보", description = "내 정보")
+public ResponseEntity<UsersDTO> getMyPage(@AuthenticationPrincipal CustomUserDetails userDetails) {
 
-        log.info("--> {}",userDetails.getUname());
+    log.info("--> {}",userDetails.getUname());
 
-        UsersDTO dto = myPageService.findUserInfo(userDetails.getUno()); // 서비스에서 조회
+    UsersDTO dto = myPageService.findUserInfo(userDetails.getUno()); // 서비스에서 조회
 
-        if (dto.getProfile_image() == null || dto.getProfile_image().isEmpty()) {
-            dto.setProfile_image("/img/default-profile.png");  // 정적 리소스 경로
-        }
-        return ResponseEntity.ok(dto);
+    if (dto.getProfile_image() == null || dto.getProfile_image().isEmpty()) {
+        dto.setProfile_image("/img/default-profile.png");  // 정적 리소스 경로
     }
 
+    Partner partner = partnerService.findPartnerByUserUno(userDetails.getUno());
+    if (partner != null) {
+        dto.setPname(partner.getPname());
+        dto.setCeoName(partner.getCeoName());
+        dto.setPAddress(partner.getPAddress());
+        dto.setPInfo(partner.getPInfo());
+        dto.setLicense(partner.getLicense());
+        dto.setLicenseImg(partner.getLicenseImg());
+    }
+    return ResponseEntity.ok(dto);
+}
 
     @GetMapping("/me")
     @Operation(summary = "이름으로 사용자 정보 조회", description = "uname으로 사용자 정보 조회")

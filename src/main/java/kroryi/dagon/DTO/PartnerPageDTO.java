@@ -3,26 +3,23 @@ package kroryi.dagon.DTO;
 import kroryi.dagon.entity.Partner;
 import lombok.*;
 
-import java.io.Serializable;
-
-/**
- * DTO for {@link kroryi.dagon.entity.Partner}
- */
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class PartnerDTO implements Serializable {
-    Long uno;
-    String pname;
-    String pAddress;
-    String ceoName;
-    String pInfo;
-    String license;
-    String licenseImg;
+public class PartnerPageDTO {
+
+    private Long uno;
+    private String pname;
+    private String pAddress;
+    private String ceoName;
+    private String pInfo;
+    private String license;
+    private String licenseImg;
+    private String uname; // 유저 이름
 
 
-
-    public PartnerDTO (Partner partner) {
+    public PartnerPageDTO(Partner partner) {
         this.uno = partner.getUno();
         this.pname = partner.getPname();
         this.ceoName = partner.getCeoName();
@@ -30,7 +27,6 @@ public class PartnerDTO implements Serializable {
         this.pInfo = partner.getPInfo();
         this.license = partner.getLicense();
         this.licenseImg = partner.getLicenseImg();
+        this.uname = partner.getUser().getUname();  // User와 연관관계가 있다면
     }
-
-
 }

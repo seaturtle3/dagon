@@ -113,4 +113,5 @@ public class FAQService {
         FAQ faq = faqRepository.findById(id).orElseThrow();
         faqRepository.delete(faq);
     }
+
 }
