@@ -1,16 +1,28 @@
 package kroryi.dagon.controller.common.product;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import kroryi.dagon.DTO.ProductDTO;
-import kroryi.dagon.service.product.ProductService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
-
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.bind.annotation.RequestPart;
+import kroryi.dagon.DTO.ProductDTO;
+import kroryi.dagon.service.product.ProductService;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.util.UUID;
 import java.util.List;
 
 @RestController
@@ -18,13 +30,35 @@ import java.util.List;
 @Tag(name = "Product", description = "상품 등록/조회/수정/삭제 API")
 @RequestMapping("/api/product")
 public class ApiProductController {
+    @Value("${app.file.upload-dir}")
+    private String uploadDir;
 
     private final ProductService productService;
 
-    @Operation(summary = "상품 등록", description = "새로운 상품 등록")
-    @PostMapping("/create")
-    public Long addProduct(@RequestBody ProductDTO productDTO) {
-        return productService.addProduct(productDTO);
+    @Operation(summary = "상품 등록", description = "새로운 상품을 JSON + 파일로 등록")
+    @PostMapping(value = "/create", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<Long> addProduct(
+            @RequestPart("product") ProductDTO productDTO,
+            @RequestPart(value = "thumbnailFile", required = false) MultipartFile thumbnailFile
+    ) throws IOException {
+
+        String savedFileName = null;
+
+        if (thumbnailFile != null && !thumbnailFile.isEmpty()) {
+            String originalFilename = thumbnailFile.getOriginalFilename();
+            String safeFilename = UUID.randomUUID() + "_" + originalFilename.replaceAll("[^a-zA-Z0-9\\.\\-_]", "_");
+
+            Path savePath = Paths.get(uploadDir, safeFilename);
+            Files.copy(thumbnailFile.getInputStream(), savePath, StandardCopyOption.REPLACE_EXISTING);
+
+            savedFileName = safeFilename;
+        }
+
+        productDTO.setProdThumbnail(savedFileName); // DTO에 썸네일 파일명 설정
+
+        Long savedId = productService.addProduct(productDTO);
+
+        return ResponseEntity.ok(savedId);
     }
 
     @Operation(summary = "모든 상품 페이징 조회", description = "페이징으로 상품 조회")
