@@ -88,7 +88,12 @@ public class NotificationService {
                 .orElseThrow(() -> new RuntimeException("Notification not found"));
         return convertToDTO(notification);
     }
-
+    public List<NotificationDTO> getNotificationsByUser(String receiverUid) {
+        return notificationRepository.findByReceiver_UidOrderByCreatedAtDesc(receiverUid)
+                .stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
 
     public NotificationDTO markAsRead(Long id) {
         Notification notification = notificationRepository.findById(id)
@@ -143,12 +148,7 @@ public class NotificationService {
         }
     }
 
-    public List<NotificationDTO> getNotificationsByUser(String receiverUid) {
-        return notificationRepository.findByReceiver_UidOrderByCreatedAtDesc(receiverUid)
-                .stream()
-                .map(this::convertToDTO)
-                .collect(Collectors.toList());
-    }
+
 
     public Page<NotificationDTO> getNotifications(String uid, String type, Pageable pageable) {
         // 빈 문자열("")은 null로 변환해서 처리

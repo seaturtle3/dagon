@@ -61,6 +61,7 @@ public class UsersDTO {
         this.role = user.getRole() != null ? user.getRole().name() : null;
         this.profile_image = user.getProfileImg();  // 필요시 수정
         String[] parts = user.getPhone().split("-");
+        this.phone = user.getPhone();
         this.phone1 = parts.length > 0 ? parts[0] : "";
         this.phone2 = parts.length > 1 ? parts[1] : "";
         this.phone3 = parts.length > 2 ? parts[2] : "";
