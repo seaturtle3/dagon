@@ -13,6 +13,7 @@ services:
     container_name: dagon_server
     hostname: dagon_app
     volumes:
+      - ./uploads:/apps/uploads
       - ./build:/opt/tomcat/webapps
     environment:
       SPRING_DATASOURCE_URL: jdbc:mysql://database:3306/dagon?useSSL=false&serverTimezone=UTC&useLegacyDatetimeCode=false&allowPublicKeyRetrieval=true
