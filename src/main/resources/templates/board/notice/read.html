@@ -11,7 +11,7 @@
 <body>
 <div class="container">
     <h1 class="page-title">
-        <a th:href="@{/notices}" style="text-decoration: none; color: inherit;">공지사항</a>
+        <a th:href="@{/admin/notice}" style="text-decoration: none; color: inherit;">공지사항</a>
     </h1>
 <div class="container section-box">
     <h1 class="page-title" th:text="${notice.title}">공지사항</h1>
@@ -22,9 +22,9 @@
 
     <div class="button-group text-end">
         <a th:href="@{'/admin/dashboard'}" class="btn btn-secondary">목록으로</a>
-        <a th:href="@{'/notices/' + ${notice.noticeId} + '/edit?page=' + ${page} + '&size=' + ${size}}" class="btn btn-custom">수정</a>
+        <a th:href="@{'/admin/notice/' + ${notice.noticeId} + '/edit?page=' + ${page} + '&size=' + ${size}}" class="btn btn-custom">수정</a>
 
-        <form th:action="@{'/notices/' + ${notice.noticeId} + '/delete?page=' + ${page} + '&size=' + ${size}}"
+        <form th:action="@{'/admin/notice/' + ${notice.noticeId} + '/delete?page=' + ${page} + '&size=' + ${size}}"
               method="post" style="display:inline;"
               onsubmit="return confirm('정말 삭제하시겠습니까?');">
             <button type="submit" class="btn btn-danger">삭제</button>

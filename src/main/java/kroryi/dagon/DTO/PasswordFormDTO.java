@@ -8,8 +8,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PasswordFormDTO {
+    private String userId;
     private String currentPassword;
     private String newPassword;
     private String confirmPassword;
+
 
 }

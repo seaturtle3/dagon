@@ -7,7 +7,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
-
 import java.util.List;
 import java.util.Optional;
 
@@ -21,4 +20,8 @@ public interface FishingReportRepository extends JpaRepository<FishingReport, Lo
 
     Optional<FishingReport> findById(Long id);
 
+    // 기존: List<FishingReport> findByUser_Uid(String uid);
+    List<FishingReport> findByUser_Uno(Long uno);
+
+    List<FishingReport> findByUserUno(Long uno);
 }

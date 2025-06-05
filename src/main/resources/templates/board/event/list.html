@@ -12,13 +12,13 @@
 
 <div class="container">
     <h1 class="page-title">
-        <a th:href="@{/event}" style="text-decoration: none; color: inherit;">이벤트</a>
+        <a th:href="@{/admin/event}" style="text-decoration: none; color: inherit;">이벤트</a>
     </h1>
 
-    <div th:replace="~{fragments/paging-options :: sizeSelector('/event', ${size}, ${pagination.currentPage}, ${keyword}, ${type})}"></div>
+    <div th:replace="~{fragments/paging-options :: sizeSelector('/admin/event', ${size}, ${pagination.currentPage}, ${keyword}, ${type})}"></div>
 
     <!--  검색  -->
-    <div th:replace="~{fragments/search-form-board :: searchForm('/event', ${type}, ${keyword}, ${size})}"></div>
+    <div th:replace="~{fragments/search-form-board :: searchForm('/admin/event', ${type}, ${keyword}, ${size})}"></div>
 
 
     <table class="board-table">
@@ -41,7 +41,7 @@
             </td>
             <td th:if="${e.thumbnailUrl == null}"></td>
             <td>
-                <a th:href="@{'/event/' + ${e.eventId} + '?page=' + ${pagination.currentPage} + '&size=' + ${size}}"
+                <a th:href="@{'/admin/event/' + ${e.eventId} + '?page=' + ${pagination.currentPage} + '&size=' + ${size}}"
                    th:text="${e.title}">이벤트 제목</a>
             </td>
             <td th:text="${(e.startAt == null and e.endAt == null) ? '상시 이벤트' : e.startAt + ' ~ ' + e.endAt}">기간</td>
@@ -51,7 +51,7 @@
     </table>
 
     <div class="button-group text-end mt-4">
-        <a class="btn btn-custom" th:href="@{'/event/create?page=' + ${pagination.currentPage} + '&size=' + ${size}}">이벤트 작성</a>
+        <a class="btn btn-custom" th:href="@{'/admin/event/create?page=' + ${pagination.currentPage} + '&size=' + ${size}}">이벤트 작성</a>
     </div>
 
     <div th:replace="~{fragments/pagination :: pagination(${pagination}, ${size}, ${keyword}, ${type})}"></div>
