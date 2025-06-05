@@ -2,6 +2,7 @@ package kroryi.dagon.config;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -40,6 +41,27 @@ public class WebMvcConfig implements WebMvcConfigurer {
                 .addResourceLocations(uploadPath); // 물리 경로
 
 
+    }
+
+    @Override
+    public void addCorsMappings(CorsRegistry registry) {
+        registry.addMapping("/api/**")
+                .allowedOrigins("https://docs.yi.or.kr:8095",
+                        "https://192.168.10.47:8095",
+                        "https://localhost:8095",
+                        "http://localhost:5174",
+                        "http://localhost:5173"
+                )
+                .allowedMethods("GET", "POST", "DELETE", "PUT")
+                .allowCredentials(true);
+
+        registry.addMapping("/v3/api-docs/**")
+                .allowedOrigins("https://docs.yi.or.kr:8095", "https://192.168.10.47:8094","https://localhost:8095")
+                .allowedMethods("*");
+
+        registry.addMapping("/swagger-ui/**") // 만약 Swagger UI 경로도 CORS 걸리면 추가
+                .allowedOrigins("https://docs.yi.or.kr:8095", "https://localhost:8095")
+                .allowedMethods("*");
     }
 
 }
