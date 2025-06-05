@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -29,6 +30,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @Tag(name = "Product", description = "상품 등록/조회/수정/삭제 API")
 @RequestMapping("/api/product")
+@Log4j2
 public class ApiProductController {
     @Value("${app.file.upload-dir}")
     private String uploadDir;
@@ -41,6 +43,7 @@ public class ApiProductController {
             @RequestPart("product") ProductDTO productDTO,
             @RequestPart(value = "thumbnailFile", required = false) MultipartFile thumbnailFile
     ) throws IOException {
+        log.info("----/create {}", productDTO);
 
         String savedFileName = null;
 
@@ -55,6 +58,8 @@ public class ApiProductController {
         }
 
         productDTO.setProdThumbnail(savedFileName); // DTO에 썸네일 파일명 설정
+
+        log.info("----2/create {}", productDTO);
 
         Long savedId = productService.addProduct(productDTO);
 
