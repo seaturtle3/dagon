@@ -1,13 +1,16 @@
 # Ubuntu 22.04 기반의 openjdk 이미지 (슬림하지 않음)
 FROM ubuntu:22.04
 
+ENV LANG=ko_KR.UTF-8
+ENV LANGUAGE=ko_KR:ko
+ENV LC_ALL=ko_KR.UTF-8
+
+
 # 필수 패키지 설치
 RUN apt-get update && \
     apt-get install -y openjdk-17-jdk net-tools iputils-ping vim vim && \
+    locale-gen ko_KR.UTF-8 \
     apt-get clean
-
-ENV LANG=ko_KR.UTF-8
-ENV LC_ALL=ko_KR.UTF-8
 
 
 # JAVA 환경 변수 (Ubuntu에서 openjdk 설치 경로는 아래와 같음)
