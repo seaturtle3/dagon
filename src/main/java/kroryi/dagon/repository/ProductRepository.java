@@ -34,5 +34,8 @@ public interface ProductRepository extends JpaRepository<Product, Long>, JpaSpec
             """)
     Page<Product> findAllWithNonEmptyReportOrDiary(Pageable pageable);
 
+//  -------------- 프론트 추가(바다/민물 필터) api ----------------
+
+    Page<Product> findByMainTypeAndDeletedFalse(MainType mainType, Pageable pageable);
 
 }

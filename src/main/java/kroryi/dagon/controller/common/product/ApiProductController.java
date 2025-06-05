@@ -3,6 +3,7 @@ package kroryi.dagon.controller.common.product;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import kroryi.dagon.DTO.ProductDTO;
+import kroryi.dagon.enums.MainType;
 import kroryi.dagon.service.product.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -60,5 +61,38 @@ public class ApiProductController {
     public void deleteProduct(@PathVariable Long id) {
         productService.deleteProduct(id);
     }
+
+//  -------------- 프론트 추가(바다/민물 필터) api ----------------
+
+    @Operation(summary = "바다 상품 페이징 조회", description = "mainType이 '바다'인 상품 페이징 조회")
+    @GetMapping("/get-all/sea")
+    public Page<ProductDTO> getSeaProducts(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "prodId") String sortBy,
+            @RequestParam(defaultValue = "desc") String direction
+    ) {
+        Sort sort = direction.equalsIgnoreCase("desc")
+                ? Sort.by(sortBy).descending()
+                : Sort.by(sortBy).ascending();
+        Pageable pageable = PageRequest.of(page, size, sort);
+        return productService.getProductsByMainType(MainType.valueOf("SEA"), pageable);
+    }
+
+    @Operation(summary = "민물 상품 페이징 조회", description = "mainType이 '민물'인 상품 페이징 조회")
+    @GetMapping("/get-all/freshwater")
+    public Page<ProductDTO> getFreshwaterProducts(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "prodId") String sortBy,
+            @RequestParam(defaultValue = "desc") String direction
+    ) {
+        Sort sort = direction.equalsIgnoreCase("desc")
+                ? Sort.by(sortBy).descending()
+                : Sort.by(sortBy).ascending();
+        Pageable pageable = PageRequest.of(page, size, sort);
+        return productService.getProductsByMainType(MainType.valueOf("FRESHWATER"), pageable);
+    }
+
 
 }

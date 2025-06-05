@@ -6,6 +6,7 @@ import kroryi.dagon.entity.Partner;
 import kroryi.dagon.entity.Product;
 import kroryi.dagon.entity.ProductOption;
 import kroryi.dagon.entity.User;
+import kroryi.dagon.enums.MainType;
 import kroryi.dagon.repository.ProductRepository;
 import kroryi.dagon.repository.SeaFreshwaterFishingRepository;
 import kroryi.dagon.repository.UserRepository;
@@ -153,6 +154,15 @@ public class ProductService {
         return productRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("해당 배가 없습니다. id=" + id));
     }
+
+//  -------------- 프론트 추가(바다/민물 필터) api ----------------
+
+    public Page<ProductDTO> getProductsByMainType(MainType mainType, Pageable pageable) {
+        Page<Product> products = productRepository.findByMainTypeAndDeletedFalse(mainType, pageable);
+        return products.map(ProductDTO::fromEntity);
+    }
+
+
 
 // ------------------------------------------------------------------------------------
 
