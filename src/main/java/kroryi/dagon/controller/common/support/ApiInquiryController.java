@@ -38,7 +38,6 @@ import java.util.Map;
 public class ApiInquiryController {
 
     private final InquiryService inquiryService;
-    private final UserRepository userRepository;
     private final JwtUtil jwtUtil;
     private final NotificationService notificationService;
     private final InquiryRepository inquiryRepository;

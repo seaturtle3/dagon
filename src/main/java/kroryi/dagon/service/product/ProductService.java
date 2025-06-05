@@ -85,6 +85,7 @@ public class ProductService {
         product.setProdDescription(productDTO.getProdDescription());
         product.setProdEvent(productDTO.getProdEvent());
         product.setProdNotice(productDTO.getProdNotice());
+        product.setProdThumbnail(productDTO.getProdThumbnail());
 
         return product.getProdId();
     }
@@ -120,6 +121,7 @@ public class ProductService {
         dto.setProdEvent(product.getProdEvent());
         dto.setProdNotice(product.getProdNotice());
         dto.setCreatedAt(product.getCreatedDate());
+        dto.setProdThumbnail(product.getProdThumbnail());
         return dto;
     }
 
@@ -137,6 +139,7 @@ public class ProductService {
         product.setProdDescription(dto.getProdDescription());
         product.setProdEvent(dto.getProdEvent());
         product.setProdNotice(dto.getProdNotice());
+        product.setProdThumbnail(dto.getProdThumbnail());
 
         return product;
     }
@@ -198,6 +201,7 @@ public class ProductService {
         product.setProdDescription(dto.getProdDescription());
         product.setProdEvent(dto.getProdEvent());
         product.setProdNotice(dto.getProdNotice());
+        product.setProdThumbnail(dto.getProdThumbnail());
         // 필요하다면 prodPrice 등 가격 필드도 추가하세요
 
         productRepository.save(product);
@@ -236,6 +240,7 @@ public class ProductService {
         product.setProdDescription(dto.getProdDescription());
         product.setProdEvent(dto.getProdEvent());
         product.setProdNotice(dto.getProdNotice());
+        product.setProdThumbnail(dto.getProdThumbnail());
 
         // 파트너 (uno 외래키) 연결
         product.setPartner(partner.getPartner());
