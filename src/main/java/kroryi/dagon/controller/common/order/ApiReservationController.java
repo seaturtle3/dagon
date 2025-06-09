@@ -17,11 +17,14 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
@@ -73,20 +76,7 @@ public class ApiReservationController {
         return ResponseEntity.ok(result);
     }
 
-    @Operation(summary = "예약 단건 조회", description = "예약 ID로 예약 정보를 조회합니다.")
-    @GetMapping("/{id}")
-    public ResponseEntity<?> getReservationById(@PathVariable Long id) {
-        try {
-            ReservationDTO dto = reservationService.getReservationById(id);
-            if (dto == null) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("예약을 찾을 수 없습니다.");
-            }
-            return ResponseEntity.ok(dto);
-        } catch (Exception e) {
-            log.error("예약 조회 오류", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("예약 조회 중 오류 발생");
-        }
-    }
+
 
     @Operation(summary = "예약 수정", description = "예약 ID에 해당하는 예약을 수정합니다.")
     @PutMapping("/{id}")
@@ -109,6 +99,45 @@ public class ApiReservationController {
         }
     }
 
+
+    @Operation(summary = "예약 단건 조회", description = "예약 ID로 예약 정보를 조회합니다.")
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getReservationById(@PathVariable Long id) {
+        try {
+            ReservationDTO dto = reservationService.getReservationById(id);
+            if (dto == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("예약을 찾을 수 없습니다.");
+            }
+            return ResponseEntity.ok(dto);
+        } catch (Exception e) {
+            log.error("예약 조회 오류", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("예약 조회 중 오류 발생");
+        }
+    }
+
+
+    @GetMapping("/my")
+    public List<ReservationDTO> getMyReservations(@AuthenticationPrincipal CustomUserDetails currentUser) {
+        Long userUno = currentUser.getUno();
+        List<Reservation> reservations = reservationService.getReservationsByUserUno(userUno);
+
+        return reservations.stream()
+                .map(res -> ReservationDTO.builder()
+                        .uno(res.getUser().getUno())
+                        .reservationId(res.getReservationId())
+                        .productName(res.getProduct().getProdName())
+                        .optionName(res.getProductOption().getOptName())
+                        .userName(res.getUser().getUname())
+                        .fishingAt(res.getFishingAt())
+                        .numPerson(res.getNumPerson())
+                        .reservationStatus(res.getReservationStatus())
+                        .paymentsMethod(res.getPaymentsMethod())
+                        .paidAt(res.getPaidAt())
+                        .createdAt(res.getCreatedAt())
+                        .build())
+                .collect(Collectors.toList());
+    }
+
     @Operation(summary = "예약 삭제", description = "예약을 취소(삭제)합니다.")
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteReservation(
@@ -120,13 +149,16 @@ public class ApiReservationController {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid Token");
             }
 
+
             Claims claims = jwtUtil.parseToken(token);
             String role = claims.get("role", String.class);
             Long uno = Long.parseLong(claims.get("uno").toString());
+            log.info("예약 취소 시도 - 예약ID: {}, 유저Uno: {}, 역할: {}", id, uno, role);
 
             boolean canceled = switch (role) {
                 case "ADMIN" -> reservationService.cancelReservationByAdmin(id);
                 case "USER" -> reservationService.cancelReservationByUser(id, uno);
+                case "PARTNER" -> reservationService.cancelReservationByPartner(id, uno);
                 default -> false;
             };
 

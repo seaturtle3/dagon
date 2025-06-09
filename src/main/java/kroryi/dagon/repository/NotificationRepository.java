@@ -16,9 +16,8 @@ import java.util.Optional;
 public interface NotificationRepository extends JpaRepository<Notification, Long> {
 
 
-    List<Notification> findByReceiver_UnoOrderByCreatedAtDesc(Long uno);
     // uno -> uid로 변경 (receiver.uid 기준으로 조회)
-    List<Notification> findByReceiver_UidOrderByCreatedAtDesc(String receiverUid);
+    List<Notification> findByReceiverOrderByCreatedAtDesc(User receiver);
 
     Page<Notification> findByReceiver_Uid(String receiverUid, Pageable pageable);
 
