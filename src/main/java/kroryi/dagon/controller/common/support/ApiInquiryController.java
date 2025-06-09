@@ -181,4 +181,11 @@ public class ApiInquiryController {
         return ResponseEntity.ok(inquiries);
     }
 
+
+    @GetMapping("/my-inquiries")
+    public List<InquiryResponseDTO> getMyInquiries(@AuthenticationPrincipal CustomUserDetails currentUser) {
+        Long userUno = currentUser.getUno();
+        return inquiryService.getInquiriesByUserUno(userUno);
+    }
+
 }

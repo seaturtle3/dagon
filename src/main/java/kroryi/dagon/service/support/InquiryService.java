@@ -156,5 +156,13 @@ private InquiryResponseDTO toResponseDTO(Inquiry inquiry) {
             .build();
 }
 
+    public List<InquiryResponseDTO> getInquiriesByUserUno(Long userUno) {
+        List<Inquiry> inquiries = inquiryRepository.findByUser_Uno(userUno);
+        return inquiries.stream()
+                .map(this::toResponseDTO)
+                .collect(Collectors.toList());
+    }
+
+
 
 }

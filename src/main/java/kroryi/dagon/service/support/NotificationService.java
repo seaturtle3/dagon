@@ -89,7 +89,10 @@ public class NotificationService {
         return convertToDTO(notification);
     }
     public List<NotificationDTO> getNotificationsByUser(String receiverUid) {
-        return notificationRepository.findByReceiver_UidOrderByCreatedAtDesc(receiverUid)
+        User user = userRepository.findByUno(Long.valueOf(receiverUid))
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        return notificationRepository.findByReceiverOrderByCreatedAtDesc(user)
                 .stream()
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
