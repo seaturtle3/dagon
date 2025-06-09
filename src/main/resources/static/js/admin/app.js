@@ -36,7 +36,7 @@ function showPartnerList() {
     document.getElementById('dashboard').classList.add('hidden');
     document.getElementById('user-info').classList.add('hidden');
     document.getElementById('user-detail').classList.add('hidden');
-    loadData();  // 파트너 목록을 로드하는 함수 (필요에 따라 구현)
+    // loadData();  // 파트너 목록을 로드하는 함수 (필요에 따라 구현)
 }
 
 

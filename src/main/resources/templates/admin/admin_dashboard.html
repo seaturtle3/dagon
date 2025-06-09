@@ -59,11 +59,11 @@
 
         <div class="sidebar-item" onclick="toggleSubmenu('api-submenu')">API 문서 ▼</div>
         <div id="api-submenu" class="submenu" style="display:none;">
-            <div class="submenu-item" onclick="loadSwagger('auth')">회원/권한 API</div>
-            <div class="submenu-item" onclick="loadSwagger('booking')">예약/결제 API</div>
-            <div class="submenu-item" onclick="loadSwagger('product')">상품 관련 API</div>
-            <div class="submenu-item" onclick="loadSwagger('board')">게시판 관련 API</div>
-            <div class="submenu-item" onclick="loadSwagger('etc')">기타 API</div>
+            <div class="submenu-item" onclick="loadSwagger('auth',this)">회원/권한 API</div>
+            <div class="submenu-item" onclick="loadSwagger('booking',this)">예약/결제 API</div>
+            <div class="submenu-item" onclick="loadSwagger('product',this)">상품 관련 API</div>
+            <div class="submenu-item" onclick="loadSwagger('board',this)">게시판 관련 API</div>
+            <div class="submenu-item" onclick="loadSwagger('etc',this)">기타 API</div>
         </div>
     </div>
     <div id="dashboard" class="page visible">
@@ -114,7 +114,7 @@
 
             <div class="dashboard-card">
                 <h2>총 예약 수</h2>
-                <p><span id="future-reservation-count">0</span>건</p>
+                <p><span id="total-reservation-count">0</span>건</p>
             </div>
 
             <!-- 활동 통계 카드들 -->
@@ -133,93 +133,93 @@
                     <!-- JS가 데이터 추가 -->
                 </ol>
             </div>
-    </div>
-</div>
-
-<!-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
-
-
-<!-- 회원 정보 -->
-<div id="user-info" class="page ">
-    <h1>회원 정보</h1>
-    <div class="search-bar">
-        <input type="text" id="search" placeholder="이름, 아이디, 이메일 검색...">
-        <button id="search-btn">검색</button>
-    </div>
-    <table id="user-table">
-        <thead>
-        <tr>
-            <th>번호</th>
-            <th>아이디</th>
-            <th>이름</th>
-            <th>이메일</th>
-            <th>상세보기</th>
-        </tr>
-        </thead>
-        <tbody>
-        <!-- 회원 목록 데이터가 여기 들어옵니다 -->
-        </tbody>
-    </table>
-    <div class="pagination">
-        <!-- 페이징 버튼들 -->
-
-        <!-- ... -->
-    </div>
-</div>
-
-<div id="user-detail" class="hidden popup">
-    <div class="popup-content">
-        <span class="close">&times;</span>
-        <div id="user-details"></div> <!-- ✅ 이 부분 추가 -->
-    </div>
-</div>
-
-
-<!-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
-
-
-<div id="partner-list" class="page ">
-    <h1>파트너 신청 목록</h1>
-
-    <div class="search-container">
-        <label>검색 기준:</label>
-        <select id="searchType">
-            <option value="pname">상호명</option>
-            <option value="uname">신청자 이름</option>
-        </select>
-
-        <input type="text" id="searchKeyword" placeholder="검색어 입력">
-
-        <label>상태:</label>
-        <select id="statusFilter">
-            <option value="">전체</option>
-            <option value="심사중">심사중</option>
-            <option value="반려">반려</option>
-            <option value="승인됨">승인됨</option>
-        </select>
-
-        <button id="partner-search-btn">검색</button>
+        </div>
     </div>
 
-    <table>
-        <thead>
-        <tr>
-            <th>ID</th>
-            <th>상호명</th>
-            <th>아이디</th>
-            <th>신청자</th>
-            <th>상태</th>
-        </tr>
-        </thead>
-        <tbody id="tableBody"></tbody>
-    </table>
-
-    <div id="pagination" class="pagination"></div>
-
-</div>
+    <!-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
 
-<!-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+    <!-- 회원 정보 -->
+    <div id="user-info" class="page">
+        <h1>회원 정보</h1>
+        <div class="search-bar">
+            <input type="text" id="search" placeholder="이름, 아이디, 이메일 검색...">
+            <button id="search-btn">검색</button>
+        </div>
+        <table id="user-table">
+            <thead>
+            <tr>
+                <th>번호</th>
+                <th>아이디</th>
+                <th>이름</th>
+                <th>이메일</th>
+                <th>상세보기</th>
+            </tr>
+            </thead>
+            <tbody>
+            <!-- 회원 목록 데이터가 여기 들어옵니다 -->
+            </tbody>
+        </table>
+        <div class="pagination">
+            <!-- 페이징 버튼들 -->
+
+            <!-- ... -->
+        </div>
+    </div>
+
+    <div id="user-detail" class="hidden popup">
+        <div class="popup-content">
+            <span class="close">&times;</span>
+            <div id="user-details"></div> <!-- ✅ 이 부분 추가 -->
+        </div>
+    </div>
+
+
+    <!-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+
+
+    <div id="partner-list" class="page ">
+        <h1>파트너 신청 목록</h1>
+
+        <div class="search-container">
+            <label>검색 기준:</label>
+            <select id="searchType">
+                <option value="pname">상호명</option>
+                <option value="uname">신청자 이름</option>
+            </select>
+
+            <input type="text" id="searchKeyword" placeholder="검색어 입력">
+
+            <label>상태:</label>
+            <select id="statusFilter">
+                <option value="">전체</option>
+                <option value="심사중">심사중</option>
+                <option value="반려">반려</option>
+                <option value="승인됨">승인됨</option>
+            </select>
+
+            <button id="partner-search-btn">검색</button>
+        </div>
+
+        <table>
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>상호명</th>
+                <th>아이디</th>
+                <th>신청자</th>
+                <th>상태</th>
+            </tr>
+            </thead>
+            <tbody id="tableBody"></tbody>
+        </table>
+
+        <div id="pagination" class="pagination"></div>
+
+    </div>
+
+
+    <!-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
     <!-- 예약 목록 -->
     <div id="reservation-list" class="page">
         <h1>예약 목록</h1>
@@ -262,231 +262,231 @@
 
 
     <!-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
-<!-- 알림 -->
-<div id="notifications" class="page">
-    <h1>알림</h1>
+    <!-- 알림 -->
+    <div id="notifications" class="page">
+        <h1>알림</h1>
 
-    <div id="search-container">
+        <div id="search-container">
 
-    </div>
-    <div id="notification-form-container"></div>
-    <table>
-        <thead>
-        <tr>
-            <th>유저 아이디</th>
-            <th>제목</th>
-            <th>내용</th>
-            <th>보낸 사람</th>
-            <th>유형</th>
-            <th>날짜</th>
-            <th>읽음 여부</th>
-        </tr>
-        </thead>
+        </div>
+        <div id="notification-form-container"></div>
+        <table>
+            <thead>
+            <tr>
+                <th>유저 아이디</th>
+                <th>제목</th>
+                <th>내용</th>
+                <th>보낸 사람</th>
+                <th>유형</th>
+                <th>날짜</th>
+                <th>읽음 여부</th>
+            </tr>
+            </thead>
 
-        <tbody id="notification-table-body">
-        <!-- 알림 데이터 삽입 영역 -->
-        </tbody>
-    </table>
+            <tbody id="notification-table-body">
+            <!-- 알림 데이터 삽입 영역 -->
+            </tbody>
+        </table>
 
-    <div id="notification-pagination" class="mt-4 flex justify-center"></div>
-</div>
-
-
-<!-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
-
-
-<!-- 신고 목록 -->
-<div id="report-list" class="page">
-    <h1>신고 목록</h1>
-    <div class="search-container">
-        <label>검색 기준:</label>
-        <select id="report-search-type">
-            <option value="uname">신고자 이름</option>
-            <option value="reportedName">신고 당한 유저 이름</option>
-        </select>
-
-        <input type="text" id="report-search-keyword" placeholder="검색어 입력">
-
-        <button onclick="loadReportData(0)">검색</button>
+        <div id="notification-pagination" class="mt-4 flex justify-center"></div>
     </div>
 
-    <table>
-        <thead>
-        <tr>
-            <th>신고 ID</th>
-            <th>신고자 이름</th>
-            <th>신고 당한 유저</th>
-            <th>신고 내용</th>
-            <th>활성화</th>
-            <th>비활성화</th>
-            <th>삭제</th>
-        </tr>
-        </thead>
-        <tbody id="report-table-body">
-        <!-- 신고 목록 데이터가 여기에 삽입됩니다 -->
-        </tbody>
-    </table>
 
-    <div id="report-pagination" class="pagination"></div>
-</div>
+    <!-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
 
-<!-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+    <!-- 신고 목록 -->
+    <div id="report-list" class="page">
+        <h1>신고 목록</h1>
+        <div class="search-container">
+            <label>검색 기준:</label>
+            <select id="report-search-type">
+                <option value="uname">신고자 이름</option>
+                <option value="reportedName">신고 당한 유저 이름</option>
+            </select>
 
+            <input type="text" id="report-search-keyword" placeholder="검색어 입력">
 
-<div id="event-list" class="page">
-    <h1>이벤트 목록</h1>
+            <button onclick="loadReportData(0)">검색</button>
+        </div>
 
-    <div class="search-container">
-        <label>검색 기준:</label>
-        <select id="event-search-type">
-            <option value="title">제목</option>
-            <option value="content">내용</option>
-            <option value="title+content">제목+내용</option>
-        </select>
+        <table>
+            <thead>
+            <tr>
+                <th>신고 ID</th>
+                <th>신고자 이름</th>
+                <th>신고 당한 유저</th>
+                <th>신고 내용</th>
+                <th>활성화</th>
+                <th>비활성화</th>
+                <th>삭제</th>
+            </tr>
+            </thead>
+            <tbody id="report-table-body">
+            <!-- 신고 목록 데이터가 여기에 삽입됩니다 -->
+            </tbody>
+        </table>
 
-        <input type="text" id="event-search-keyword" placeholder="검색어 입력">
-
-        <label>상태:</label>
-        <select id="event-status">
-            <option value="">전체</option>
-            <option value="SCHEDULED">진행예정</option>
-            <option value="ONGOING">진행중</option>
-            <option value="COMPLETED">종료</option>
-        </select>
-
-        <button onclick="loadEventData(0)">검색</button>
+        <div id="report-pagination" class="pagination"></div>
     </div>
 
-    <table>
-        <thead>
-        <tr>
-            <th>TOP</th>
-            <th>번호</th>
-            <th>썸네일</th>
-            <th>제목</th>
-            <th>기간</th>
-            <th>상태</th>
-        </tr>
-        </thead>
-        <tbody id="event-table-body">
-        <!-- 이벤트 데이터 삽입 영역 -->
-        </tbody>
-    </table>
 
-    <div id="event-pagination" class="pagination"></div>
-
-    <div class="text-end mt-4">
-        <button onclick="location.href='/admin/event/create'" class="btn btn-primary">이벤트 작성</button>
-    </div>
-</div>
+    <!-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
 
-<!-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+    <div id="event-list" class="page">
+        <h1>이벤트 목록</h1>
 
+        <div class="search-container">
+            <label>검색 기준:</label>
+            <select id="event-search-type">
+                <option value="title">제목</option>
+                <option value="content">내용</option>
+                <option value="title+content">제목+내용</option>
+            </select>
 
-<div id="notice-list" class="page">
-    <h1>공지사항 목록</h1>
+            <input type="text" id="event-search-keyword" placeholder="검색어 입력">
 
-    <!-- 검색 기능 -->
-    <div class="search-bar">
-        <input type="text" id="notice-search-keyword" placeholder="제목 검색...">
-        <select id="notice-search-type">
-            <option value="title">제목</option>
-            <option value="content">내용</option>
-            <option value="title+content">제목+내용</option>
-        </select>
-        <button id="notice-search-btn">검색</button>
-    </div>
+            <label>상태:</label>
+            <select id="event-status">
+                <option value="">전체</option>
+                <option value="SCHEDULED">진행예정</option>
+                <option value="ONGOING">진행중</option>
+                <option value="COMPLETED">종료</option>
+            </select>
 
-    <!-- 공지사항 테이블 -->
-    <table id="notice-table">
-        <thead>
-        <tr>
-            <th>TOP</th>
-            <th>번호</th>
-            <th>제목</th>
-            <th>작성일</th>
-            <th>조회수</th>
-            <th>상세보기</th>
-        </tr>
-        </thead>
-        <tbody id="notices-table">
-        <!-- 공지사항 목록 데이터가 여기 들어옵니다 -->
-        </tbody>
-    </table>
+            <button onclick="loadEventData(0)">검색</button>
+        </div>
 
-    <!-- 페이지네이션 -->
-    <div id="notice-pagination">
-        <button class="page-btn">1</button>
-        <button class="page-btn">2</button>
-        <!-- 추가 페이지 버튼 -->
+        <table>
+            <thead>
+            <tr>
+                <th>TOP</th>
+                <th>번호</th>
+                <th>썸네일</th>
+                <th>제목</th>
+                <th>기간</th>
+                <th>상태</th>
+            </tr>
+            </thead>
+            <tbody id="event-table-body">
+            <!-- 이벤트 데이터 삽입 영역 -->
+            </tbody>
+        </table>
+
+        <div id="event-pagination" class="pagination"></div>
+
+        <div class="text-end mt-4">
+            <button onclick="location.href='/admin/event/create'" class="btn btn-primary">이벤트 작성</button>
+        </div>
     </div>
 
-    <!-- 공지사항 작성 버튼 -->
-    <div class="text-end mt-4">
-        <button onclick="location.href='/admin/notice/create'" class="btn btn-primary">공지사항 작성</button>
-    </div>
-</div>
 
-<!-- 상세보기 페이지 (팝업 형태로 구현 가능) -->
-<div id="notice-detail" class="popup hidden">
-    <h2>공지사항 상세보기</h2>
-    <div id="notice-detail-content">
-        <!-- 상세 내용이 여기에 삽입됩니다 -->
-    </div>
-</div>
+    <!-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
 
-<!-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
-<div id="faq-list" class="page">
-    <h1>FAQ 목록</h1>
+    <div id="notice-list" class="page">
+        <h1>공지사항 목록</h1>
 
-    <!-- 검색 기능 -->
-    <div class="search-bar">
-        <input type="text" id="faq-search-keyword" placeholder="질문 검색...">
-        <select id="faq-search-type">
-            <option value="question">질문</option>
-            <option value="answer">답변</option>
-            <option value="question+answer">질문+답변</option>
-        </select>
-        <button id="faq-search-btn">검색</button>
-    </div>
+        <!-- 검색 기능 -->
+        <div class="search-bar">
+            <input type="text" id="notice-search-keyword" placeholder="제목 검색...">
+            <select id="notice-search-type">
+                <option value="title">제목</option>
+                <option value="content">내용</option>
+                <option value="title+content">제목+내용</option>
+            </select>
+            <button id="notice-search-btn">검색</button>
+        </div>
 
-    <!-- FAQ 테이블 -->
-    <table id="faq-table">
-        <thead>
-        <tr>
-            <th>번호</th>
-            <th>카테고리</th>
-            <th>질문</th>
-            <th>노출순서</th>
-            <th>활성화 여부</th>
-            <th>상세보기</th>
-        </tr>
-        </thead>
-        <tbody id="faq-table-body">
-        <!-- FAQ 목록이 여기에 로딩됩니다 -->
-        </tbody>
-    </table>
+        <!-- 공지사항 테이블 -->
+        <table id="notice-table">
+            <thead>
+            <tr>
+                <th>TOP</th>
+                <th>번호</th>
+                <th>제목</th>
+                <th>작성일</th>
+                <th>조회수</th>
+                <th>상세보기</th>
+            </tr>
+            </thead>
+            <tbody id="notices-table">
+            <!-- 공지사항 목록 데이터가 여기 들어옵니다 -->
+            </tbody>
+        </table>
 
-    <!-- 페이지네이션 -->
-    <div id="faq-pagination" class="pagination">
-        <!-- 페이지 버튼이 여기에 로딩됩니다 -->
+        <!-- 페이지네이션 -->
+        <div id="notice-pagination">
+            <button class="page-btn">1</button>
+            <button class="page-btn">2</button>
+            <!-- 추가 페이지 버튼 -->
+        </div>
+
+        <!-- 공지사항 작성 버튼 -->
+        <div class="text-end mt-4">
+            <button onclick="location.href='/admin/notice/create'" class="btn btn-primary">공지사항 작성</button>
+        </div>
     </div>
 
-    <!-- FAQ 등록 버튼 -->
-    <div class="text-end mt-4">
-        <button onclick="location.href='/admin/faq-categories'" class="btn btn-primary">FAQ 카테고리 관리</button>
+    <!-- 상세보기 페이지 (팝업 형태로 구현 가능) -->
+    <div id="notice-detail" class="popup hidden">
+        <h2>공지사항 상세보기</h2>
+        <div id="notice-detail-content">
+            <!-- 상세 내용이 여기에 삽입됩니다 -->
+        </div>
     </div>
-</div>
 
-<!-- 상세보기 팝업 -->
-<div id="faq-detail" class="popup hidden">
-    <h2>FAQ 상세보기</h2>
-    <div id="faq-detail-content"></div>
-</div>
-<!-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+
+    <!-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+    <div id="faq-list" class="page">
+        <h1>FAQ 목록</h1>
+
+        <!-- 검색 기능 -->
+        <div class="search-bar">
+            <input type="text" id="faq-search-keyword" placeholder="질문 검색...">
+            <select id="faq-search-type">
+                <option value="question">질문</option>
+                <option value="answer">답변</option>
+                <option value="question+answer">질문+답변</option>
+            </select>
+            <button id="faq-search-btn">검색</button>
+        </div>
+
+        <!-- FAQ 테이블 -->
+        <table id="faq-table">
+            <thead>
+            <tr>
+                <th>번호</th>
+                <th>카테고리</th>
+                <th>질문</th>
+                <th>노출순서</th>
+                <th>활성화 여부</th>
+                <th>상세보기</th>
+            </tr>
+            </thead>
+            <tbody id="faq-table-body">
+            <!-- FAQ 목록이 여기에 로딩됩니다 -->
+            </tbody>
+        </table>
+
+        <!-- 페이지네이션 -->
+        <div id="faq-pagination" class="pagination">
+            <!-- 페이지 버튼이 여기에 로딩됩니다 -->
+        </div>
+
+        <!-- FAQ 등록 버튼 -->
+        <div class="text-end mt-4">
+            <button onclick="location.href='/admin/faq-categories'" class="btn btn-primary">FAQ 카테고리 관리</button>
+        </div>
+    </div>
+
+    <!-- 상세보기 팝업 -->
+    <div id="faq-detail" class="popup hidden">
+        <h2>FAQ 상세보기</h2>
+        <div id="faq-detail-content"></div>
+    </div>
+    <!-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
     <div id="inquiry-list" class="page">
         <h1>1:1 문의</h1>
         <div class="search-bar">
@@ -559,10 +559,10 @@
         <div id="pm-pagination" class="pagination"></div>
     </div>
     <!-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
-<div id="swagger" class="page">
-   <h1>API 문서</h1>
-   <div id="swagger-ui"></div> <!-- 여기 Swagger UI 들어갑니다 -->
-</div>
+    <div id="swagger" class="page">
+        <h1>API 문서</h1>
+        <div id="swagger-ui"></div> <!-- 여기 Swagger UI 들어갑니다 -->
+    </div>
 
 
 </div>
@@ -607,17 +607,24 @@
     }
 
     // 하위 메뉴 선택 시 Swagger 불러오고 스타일도 갱신
-    function loadSwagger(group) {
-        pages.forEach(p => p.classList.remove('visible'));
+    const pages2 = document.querySelectorAll('.page');
+
+    function loadSwagger(group, clickedItem) {
+        console.log("loadSwagger:", group, clickedItem);
+
+        // 메뉴 전환
+        pages2.forEach(p => {
+            p.classList.remove('visible');
+            p.style.display = 'none';
+        });
         document.getElementById('swagger').classList.add('visible');
+        document.getElementById('swagger').style.display = 'block';
 
-        // ✅ 기존 submenu-item active 제거
+        // 스타일 업데이트
         document.querySelectorAll('.submenu-item').forEach(item => item.classList.remove('active'));
-
-        // ✅ 현재 클릭한 버튼에 active 추가
-        const clickedItem = event.target;
         clickedItem.classList.add('active');
 
+        // Swagger 렌더링
         SwaggerUIBundle({
             url: location.origin + `/api-docs/${group}`,
             dom_id: '#swagger-ui',
@@ -632,6 +639,8 @@
             tagsSorter: "alpha"
         });
     }
+
+
 </script>
 
 
@@ -642,14 +651,14 @@
         'dashboard-link': 'dashboard',
         'user-info-link': 'user-info',
         'partner-list-link': 'partner-list',
-        'reservation-list-link' : 'reservation-list',
+        'reservation-list-link': 'reservation-list',
         'notification-link': 'notifications',
         'report-link': 'report-list',
         'event-link': 'event-list',
         'notice-link': 'notice-list',
         'faq-link': 'faq-list',
-        'inquiry-list-link' : 'inquiry-list',
-        'partner-management-link' : 'partner-management'
+        'inquiry-list-link': 'inquiry-list',
+        'partner-management-link': 'partner-management'
     };
 
     // 페이지별 초기화 함수 모음
@@ -682,7 +691,7 @@
             // 선택된 페이지 보이기
             const pageId = links[linkId];
             const targetPage = document.getElementById(pageId);
-            if(targetPage) {
+            if (targetPage) {
                 targetPage.classList.add('visible');
                 targetPage.style.display = 'block';
             }
@@ -709,13 +718,13 @@
             p.style.display = 'none';
         });
         const defaultPage = document.getElementById(defaultPageId);
-        if(defaultPage) {
+        if (defaultPage) {
             defaultPage.classList.add('visible');
             defaultPage.style.display = 'block';
         }
 
         // 초기 페이지 함수 있으면 실행
-        if(pageInitFunctions[defaultPageId]) {
+        if (pageInitFunctions[defaultPageId]) {
             pageInitFunctions[defaultPageId]();
         }
 
@@ -727,9 +736,17 @@
         })
             .then(res => res.json())
             .then(data => {
-                document.getElementById("users-count").innerText = data.totalUsers;
-                document.getElementById("application-count").innerText = data.totalApplications;
-                document.getElementById("approved-count").innerText = data.approvedPartners;
+                const usersCountEl = document.getElementById("users-count");
+                if (usersCountEl) usersCountEl.innerText = data.totalUsers;
+
+                const appCountEl = document.getElementById("application-count");
+                if (appCountEl) appCountEl.innerText = data.totalApplications;
+
+                const approvedCountEl = document.getElementById("approved-count");
+                if (approvedCountEl) approvedCountEl.innerText = data.approvedPartners;
+                // document.getElementById("users-count").innerText = data.totalUsers;
+                // document.getElementById("application-count").innerText = data.totalApplications;
+                // document.getElementById("approved-count").innerText = data.approvedPartners;
             });
 
         const authToken = localStorage.getItem("authToken");
@@ -741,7 +758,7 @@
                 try {
                     const response = await fetch("/api/auth/logout", {
                         method: "POST",
-                        headers: { "Authorization": "Bearer " + authToken }
+                        headers: {"Authorization": "Bearer " + authToken}
                     });
                     localStorage.removeItem("authToken");
                     if (response.ok) {
