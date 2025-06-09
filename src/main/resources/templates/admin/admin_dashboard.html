@@ -59,11 +59,11 @@
 
         <div class="sidebar-item" onclick="toggleSubmenu('api-submenu')">API 문서 ▼</div>
         <div id="api-submenu" class="submenu" style="display:none;">
-            <div class="submenu-item" onclick="loadSwagger('auth')">회원/권한 API</div>
-            <div class="submenu-item" onclick="loadSwagger('booking')">예약/결제 API</div>
-            <div class="submenu-item" onclick="loadSwagger('product')">상품 관련 API</div>
-            <div class="submenu-item" onclick="loadSwagger('board')">게시판 관련 API</div>
-            <div class="submenu-item" onclick="loadSwagger('etc')">기타 API</div>
+            <div class="submenu-item" onclick="loadSwagger('auth',this)">회원/권한 API</div>
+            <div class="submenu-item" onclick="loadSwagger('booking',this)">예약/결제 API</div>
+            <div class="submenu-item" onclick="loadSwagger('product',this)">상품 관련 API</div>
+            <div class="submenu-item" onclick="loadSwagger('board',this)">게시판 관련 API</div>
+            <div class="submenu-item" onclick="loadSwagger('etc',this)">기타 API</div>
         </div>
     </div>
     <div id="dashboard" class="page visible">
@@ -114,7 +114,7 @@
 
             <div class="dashboard-card">
                 <h2>총 예약 수</h2>
-                <p><span id="future-reservation-count">0</span>건</p>
+                <p><span id="total-reservation-count">0</span>건</p>
             </div>
 
             <!-- 활동 통계 카드들 -->
@@ -607,17 +607,20 @@
     }
 
     // 하위 메뉴 선택 시 Swagger 불러오고 스타일도 갱신
-    function loadSwagger(group) {
+    const pages = document.querySelectorAll('.page');
+
+    function loadSwagger(group, clickedItem) {
+        console.log("loadSwagger:", group, clickedItem);
+
+        // 메뉴 전환
         pages.forEach(p => p.classList.remove('visible'));
         document.getElementById('swagger').classList.add('visible');
 
-        // ✅ 기존 submenu-item active 제거
+        // 스타일 업데이트
         document.querySelectorAll('.submenu-item').forEach(item => item.classList.remove('active'));
-
-        // ✅ 현재 클릭한 버튼에 active 추가
-        const clickedItem = event.target;
         clickedItem.classList.add('active');
 
+        // Swagger 렌더링
         SwaggerUIBundle({
             url: location.origin + `/api-docs/${group}`,
             dom_id: '#swagger-ui',
@@ -632,6 +635,8 @@
             tagsSorter: "alpha"
         });
     }
+
+
 </script>
 
 
@@ -727,9 +732,17 @@
         })
             .then(res => res.json())
             .then(data => {
-                document.getElementById("users-count").innerText = data.totalUsers;
-                document.getElementById("application-count").innerText = data.totalApplications;
-                document.getElementById("approved-count").innerText = data.approvedPartners;
+                const usersCountEl = document.getElementById("users-count");
+                if (usersCountEl) usersCountEl.innerText = data.totalUsers;
+
+                const appCountEl = document.getElementById("application-count");
+                if (appCountEl) appCountEl.innerText = data.totalApplications;
+
+                const approvedCountEl = document.getElementById("approved-count");
+                if (approvedCountEl) approvedCountEl.innerText = data.approvedPartners;
+                // document.getElementById("users-count").innerText = data.totalUsers;
+                // document.getElementById("application-count").innerText = data.totalApplications;
+                // document.getElementById("approved-count").innerText = data.approvedPartners;
             });
 
         const authToken = localStorage.getItem("authToken");
