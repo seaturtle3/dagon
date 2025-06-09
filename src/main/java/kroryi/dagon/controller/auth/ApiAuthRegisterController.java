@@ -19,10 +19,16 @@ public class ApiAuthRegisterController {
     @Autowired
     private RegisterService registerService;
 
+
     @PostMapping("/register")
     @Operation(summary = "회원 등록 ", description = "회원 등록")
     public ResponseEntity<String> registerUser(@ModelAttribute UsersDTO usersDTO) {
         try {
+            // 전화번호 합치기
+            log.info("phone1: {}, phone2: {}, phone3: {}", usersDTO.getPhone1(), usersDTO.getPhone2(), usersDTO.getPhone3());
+            usersDTO.setPhone();
+            log.info("합쳐진 fullPhone: {}", usersDTO.getFullPhone());
+
             registerService.register(usersDTO);
             return ResponseEntity.ok("회원가입 성공");
         } catch (Exception e) {

@@ -62,7 +62,7 @@ public class ApiAuthPasswordController {
     public ResponseEntity<?> changePasswordWithoutToken(@RequestBody PasswordFormDTO form) {
         // form 안에 userId (또는 username) 있어야 함
         String userId = form.getUserId();
-        String result = myPageService.changePassword(Long.valueOf(userId), form);
+        String result = myPageService.changePasswords(userId, form);
 
         if ("success".equals(result)) {
             return ResponseEntity.ok(Map.of("message", "비밀번호가 성공적으로 변경되었습니다."));

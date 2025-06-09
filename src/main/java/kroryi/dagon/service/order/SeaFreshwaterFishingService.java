@@ -171,6 +171,14 @@ public class SeaFreshwaterFishingService {
         return false;
     }
 
+    public List<ReservationDTO> getReservationsByUno(Long uno) {
+        List<Reservation> reservations = seaFreshwaterFishingRepository.findByUser_Uno(uno);
+        return reservations.stream()
+                .map(this::toDTO) // 인스턴스 메서드 참조
+                .collect(Collectors.toList());
+    }
+
+
     private ReservationDTO toDTO(Reservation reservation) {
         return ReservationDTO.builder()
                 .reservationId(reservation.getReservationId())
@@ -198,6 +206,32 @@ public class SeaFreshwaterFishingService {
             // 기본 검색 안하면 전체 리턴
             return getAllReservations(pageable);
         }
+    }
+
+    public List<Reservation> getReservationsByUserUno(Long uno) {
+        return seaFreshwaterFishingRepository.findByUser_Uno(uno);
+    }
+
+    public boolean cancelReservationByPartner(Long reservationId, Long partnerUno) {
+        Optional<Reservation> resOpt = seaFreshwaterFishingRepository.findById(reservationId);
+        if (resOpt.isEmpty()) return false;
+
+        Reservation res = resOpt.get();
+
+        // 파트너가 관리하는 상품인지 확인
+        if (!res.getProduct().getPartner().getUno().equals(partnerUno)) {
+            return false; // 자기 상품이 아닌 예약이라면 취소 불가
+        }
+
+        // 이미 취소된 예약인지 확인
+        if (res.getReservationStatus() == ReservationStatus.CANCELED) {
+            return false;
+        }
+
+        // 취소 처리
+        res.setReservationStatus(ReservationStatus.CANCELED);
+        seaFreshwaterFishingRepository.save(res);
+        return true;
     }
 }
 

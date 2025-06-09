@@ -27,4 +27,7 @@ public interface InquiryRepository extends JpaRepository<Inquiry, Long> {
     List<Inquiry> findByUser_UnoAndPartner_Uno(Long userUno, Long partnerUno);
 
     List<Inquiry> findByPartner_Uno(Long partnerUno);
+
+
+    List<Inquiry> findByUser_Uno(Long userUno);
 }

@@ -39,4 +39,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     long countRecentlyLoggedInUsers(@Param("weekAgo") LocalDateTime weekAgo);
 
     long countByRole(UserRole role);
+
+    @Query("SELECT u.points FROM User u WHERE u.uno = :uno")
+    Integer findPointsByUno(@Param("uno") String uno);
 }

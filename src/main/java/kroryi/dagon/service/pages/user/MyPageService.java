@@ -3,20 +3,26 @@ package kroryi.dagon.service.pages.user;
 import kroryi.dagon.DTO.PasswordFormDTO;
 import kroryi.dagon.DTO.UsersDTO;
 import kroryi.dagon.entity.User;
+import kroryi.dagon.enums.UserLevel;
 import kroryi.dagon.repository.MyPageRepository;
+import kroryi.dagon.repository.UserRepository;
 import kroryi.dagon.service.image.FileStorageService;
+import kroryi.dagon.util.LevelUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.NoSuchElementException;
 @Service
 @RequiredArgsConstructor
 @Log4j2
 public class MyPageService {
 
+    private final UserRepository userRepository;
     private final MyPageRepository myPageRepository;
     private final PasswordEncoder passwordEncoder;
     private final FileStorageService fileStorageService;
@@ -77,20 +83,57 @@ public class MyPageService {
         return "success";
     }
 
-// MyPageService.java 안에 아래 메서드를 추가
 
-    public Integer getUserPoint(Long uno) {
-        User user = myPageRepository.findById(uno)
-                .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
+    public String changePasswords(String uid, PasswordFormDTO form) {
+        User user = myPageRepository.findByUid(uid)
+                .orElseThrow(() -> new UsernameNotFoundException("유저를 찾을 수 없습니다."));
 
-        return user.getPoints();  // User 엔티티에 point 필드가 있다고 가정
+        if (!passwordEncoder.matches(form.getCurrentPassword(), user.getUpw())) {
+            return "fail";
+        }
+
+        user.setUpw(passwordEncoder.encode(form.getNewPassword()));
+        myPageRepository.save(user);
+
+        return "success";
     }
 
-    // 회원 탈퇴
+// MyPageService.java 안에 아래 메서드를 추가
+public Map<String, Object> getUserPointAndLevel(Long uno) {
+    Integer point = userRepository.findPointsByUno(String.valueOf(uno)); // 기존 포인트
+    UserLevel level = LevelUtil.calculateLevel(point); // 레벨 계산
+
+    Map<String, Object> result = new HashMap<>();
+    result.put("point", point);
+    result.put("level", level.name());
+    result.put("levelKorean", level.getKorean());
+
+    int nextThreshold = LevelUtil.getNextLevelThreshold(level);
+    if (nextThreshold != -1) {
+        result.put("nextLevelPoint", nextThreshold);
+        result.put("pointToNextLevel", nextThreshold - point);
+    } else {
+        result.put("nextLevelPoint", null);
+        result.put("pointToNextLevel", 0);
+    }
+
+    return result;
+}
+
+
+    public boolean verifyPassword(Long uno, String inputPassword) {
+        User user = userRepository.findByUno(uno)
+                .orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다."));
+        return passwordEncoder.matches(inputPassword, user.getUpw());
+    }
+
     public String deleteUserAccount(Long uno) {
-        User user = myPageRepository.findById(uno).orElseThrow(() -> new IllegalArgumentException("User not found"));
-        myPageRepository.delete(user);
-        return "success";
+        try {
+            userRepository.deleteById(uno);
+            return "success";
+        } catch (Exception e) {
+            return "fail";
+        }
     }
 }
 

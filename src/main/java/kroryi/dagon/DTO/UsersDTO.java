@@ -23,10 +23,13 @@ public class UsersDTO {
     private String profile_image;
     private int points;
     private int level;
+    private String phone;
     private String phone1;
     private String phone2;
     private String phone3;
     private String fullPhone;
+
+
     private String role;
     private String levelPoint; // levelPoint 추가
     private String loginType;  // 로그인 타입 추가
@@ -58,6 +61,7 @@ public class UsersDTO {
         this.role = user.getRole() != null ? user.getRole().name() : null;
         this.profile_image = user.getProfileImg();  // 필요시 수정
         String[] parts = user.getPhone().split("-");
+        this.phone = user.getPhone();
         this.phone1 = parts.length > 0 ? parts[0] : "";
         this.phone2 = parts.length > 1 ? parts[1] : "";
         this.phone3 = parts.length > 2 ? parts[2] : "";
@@ -68,17 +72,27 @@ public class UsersDTO {
         this.isActive = user.isActive();
     }
 
-    // 전체 전화번호를 합치는 메서드
-    public String getFullPhone() {
-        String part1 = (phone1 != null) ? phone1 : "";
-        String part2 = (phone2 != null) ? phone2 : "";
-        String part3 = (phone3 != null) ? phone3 : "";
-        return part1 + "-" + part2 + "-" + part3;
+    public void setFullPhoneFromParts() {
+        this.fullPhone = String.format("%s-%s-%s",
+                phone1 != null ? phone1 : "",
+                phone2 != null ? phone2 : "",
+                phone3 != null ? phone3 : "");
     }
 
-    public String getDisplayName() {
-        return (nickname != null && !nickname.isBlank()) ? nickname : uname;
+    public void setPhone() {
+        this.fullPhone = String.format("%s-%s-%s",
+                phone1 != null ? phone1 : "",
+                phone2 != null ? phone2 : "",
+                phone3 != null ? phone3 : "");
     }
+
+    public String getFullPhone() {
+        if (fullPhone == null || fullPhone.isBlank()) {
+            setFullPhoneFromParts();
+        }
+        return fullPhone;
+    }
+
 }
 
 
