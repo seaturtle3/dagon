@@ -1,5 +1,6 @@
 package kroryi.dagon.service.pages.admin;
 
+import kroryi.dagon.DTO.DashboardReservationStatsDTO;
 import kroryi.dagon.DTO.ReservationCountDTO;
 import kroryi.dagon.entity.Admin;
 import kroryi.dagon.enums.ApplicationStatus;
@@ -133,4 +134,20 @@ public class AdminDetailsService implements UserDetailsService {
 
 
     }
+
+    public DashboardReservationStatsDTO getReservationStats() {
+        LocalDateTime startOfToday = LocalDate.now().atStartOfDay();
+        LocalDateTime endOfToday = startOfToday.plusDays(1).minusNanos(1);
+        LocalDateTime now = LocalDateTime.now();
+
+        long total = seaFreshwaterFishingRepository.count();
+
+        long todayCount = seaFreshwaterFishingRepository.countTodayReservations(startOfToday, endOfToday);
+
+        // 오늘 이후 예약은 fishingAt이 오늘 끝난 시간 이후
+        long upcoming = seaFreshwaterFishingRepository.countFutureReservations(endOfToday.plusNanos(1));
+
+        return new DashboardReservationStatsDTO(total, todayCount, upcoming);
+    }
+
 }

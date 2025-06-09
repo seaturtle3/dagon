@@ -2,6 +2,7 @@ package kroryi.dagon.controller.admin.dashboard;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import kroryi.dagon.DTO.DashboardReservationStatsDTO;
 import kroryi.dagon.DTO.ReservationCountDTO;
 import kroryi.dagon.service.pages.admin.AdminDashboardService;
 import kroryi.dagon.service.pages.admin.AdminDetailsService;
@@ -94,6 +95,11 @@ public class ApiAdminDashboardController {
         return adminDetailsService.getReservationCounts();
 
 
+    }
+
+    @GetMapping("/reservations")
+    public DashboardReservationStatsDTO getReservationStats() {
+        return adminDetailsService.getReservationStats();
     }
 
 

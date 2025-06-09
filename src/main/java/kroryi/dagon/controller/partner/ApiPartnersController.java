@@ -7,10 +7,13 @@ import kroryi.dagon.DTO.PartnerDTO;
 import kroryi.dagon.component.CustomUserDetails;
 import kroryi.dagon.entity.Partner;
 
+import kroryi.dagon.service.auth.AdminUserDetails;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,13 +30,16 @@ public class ApiPartnersController {
     private final kroryi.dagon.service.auth.PartnerService partnerService;
 
 
-
-    @Operation(summary = "모든 파트너 정보 조회", description = "모든 파트너 정보 조회")
+    @Operation(summary = "파트너 정보 조회 (페이징 + 검색 + 타입)", description = "파트너 정보 목록을 페이징과 검색(타입별)으로 조회합니다.")
     @GetMapping("/all")
-    public List<PartnerDTO> getAllPartners() {
-        return partnerService.getAllPartners();
+    public Page<PartnerDTO> getAllPartners(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false) String keyword,
+            @RequestParam(required = false, defaultValue = "pname") String searchType
+    ) {
+        return partnerService.getAllPartners(page, size, keyword, searchType);
     }
-
     @Operation(summary = "특정 파트너 정보 조회", description = "ID로 특정 파트너 정보를 조회")
     @GetMapping("/{id}")
     public PartnerDTO getPartner(@PathVariable Long id) {
@@ -74,27 +80,38 @@ public class ApiPartnersController {
     }
 
 
-    @Operation(summary = "파트너 삭제", description = "파트너 삭제 (ADMIN은 ID로 삭제 가능)")
     @DeleteMapping("my_page/{id}")
-    public ResponseEntity<?> deletePartner(@AuthenticationPrincipal CustomUserDetails userDetails,
+    public ResponseEntity<?> deletePartner(@AuthenticationPrincipal Object principal,
                                            @PathVariable Long id) {
 
-        if (userDetails == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build(); // 401 Unauthorized
+        if (principal == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
-        String role = userDetails.getRole(); // "USER", "PARTNER", "ADMIN"
-        Long loginUserUno = userDetails.getUno();
+        String role = null;
+        Long loginUserUno = null;
 
+        if (principal instanceof CustomUserDetails) {
+            CustomUserDetails userDetails = (CustomUserDetails) principal;
+            role = userDetails.getRole();
+            loginUserUno = userDetails.getUno();
+        } else if (principal instanceof AdminUserDetails) {
+            AdminUserDetails adminDetails = (AdminUserDetails) principal;
+            role = adminDetails.getAuthorities().stream()
+                    .findFirst()
+                    .map(GrantedAuthority::getAuthority)
+                    .map(auth -> auth.replace("ROLE_", ""))
+                    .orElse(null);
+            loginUserUno = 1L;  // 어드민 uno 고정값 예시
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
 
-
-        // 1. 관리자면 어떤 파트너든 삭제 가능
         if ("ADMIN".equalsIgnoreCase(role)) {
             partnerService.deletePartner(id);
             return ResponseEntity.ok().build();
         }
 
-        // 2. 일반 사용자면 자신의 uno와 매칭된 파트너만 삭제 가능
         Partner partner = partnerService.findPartnerById(id);
         if (partner == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("해당 파트너를 찾을 수 없습니다.");
@@ -107,8 +124,6 @@ public class ApiPartnersController {
         partnerService.deletePartner(id);
         return ResponseEntity.ok().build();
     }
-
-
 }
 
 

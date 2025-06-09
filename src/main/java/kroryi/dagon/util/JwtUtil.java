@@ -54,14 +54,15 @@ public class JwtUtil {
                 .compact();
     }
 
-    public String generateAdminToken(String aid, String aname, String role) {
+    public String generateAdminToken(String aid, String aname, String role, Long uno) {
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + expirationTime);
 
         return Jwts.builder()
-                .setSubject(aid)
+                .setSubject(aid)// ✅ 추가
                 .claim("aname", aname)
                 .claim("role", role)
+                .claim("uno", uno)
                 .setIssuedAt(now)
                 .setExpiration(expiryDate)
                 .signWith(secretKey, SignatureAlgorithm.HS256)

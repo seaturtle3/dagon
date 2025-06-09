@@ -3,6 +3,7 @@ package kroryi.dagon.repository;
 import kroryi.dagon.DTO.ReservationDTO;
 import kroryi.dagon.entity.Product;
 import kroryi.dagon.entity.Reservation;
+import kroryi.dagon.entity.User;
 import kroryi.dagon.enums.MainType;
 import kroryi.dagon.enums.ProdRegion;
 import org.springframework.data.domain.Page;
@@ -26,7 +27,7 @@ public interface SeaFreshwaterFishingRepository extends JpaRepository<Reservatio
     boolean existsByProductOption_OptId(Long optId);
 
 
-
+    List<Reservation> findTop10ByUserOrderByCreatedAtDesc(User user);
 
     @Query("SELECT COUNT(r) FROM Reservation r WHERE r.fishingAt >= :now")
     long countFutureReservations(@Param("now") LocalDateTime now);

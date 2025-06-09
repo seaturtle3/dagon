@@ -67,7 +67,8 @@ public class ApiAdminController {
             String token = jwtUtil.generateAdminToken(
                     admin.getAid(),
                     admin.getAname(),
-                    admin.getRole().toString()
+                    admin.getRole().toString(),
+                    admin.getUno()
             );
 
             Map<String, String> response = new HashMap<>();

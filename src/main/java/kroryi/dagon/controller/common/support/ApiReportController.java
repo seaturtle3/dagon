@@ -19,6 +19,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
@@ -77,6 +78,19 @@ public class ApiReportController {
                     .body(Map.of("message", "서버 오류: " + e.getMessage()));
         }
     }
+
+    @GetMapping("/{id}")
+    @Operation(summary = "신고 상세조회", description = "신고 ID로 상세 정보를 조회합니다.")
+    public ResponseEntity<?> getReportById(@PathVariable Long id) {
+        Optional<ReportDTO> report = reportService.getReportById(id);  // service에서 DTO 반환하도록 처리
+
+        if (report.isPresent()) {
+            return ResponseEntity.ok(report.get());
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("해당 신고 내역을 찾을 수 없습니다.");
+        }
+    }
+
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
