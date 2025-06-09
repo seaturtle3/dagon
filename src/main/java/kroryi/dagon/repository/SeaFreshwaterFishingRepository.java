@@ -26,6 +26,8 @@ public interface SeaFreshwaterFishingRepository extends JpaRepository<Reservatio
     boolean existsByProductOption_OptId(Long optId);
 
 
+
+
     @Query("SELECT COUNT(r) FROM Reservation r WHERE r.fishingAt >= :now")
     long countFutureReservations(@Param("now") LocalDateTime now);
 
