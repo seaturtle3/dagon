@@ -12,11 +12,11 @@
 
     <div class="mt-4 mb-4 text-start">
         <a th:if="${diary == null}"
-           th:href="@{/fishing-diary/list/{prodId}(prodId=${prodId})}"
+           th:href="@{/fishing-center/diary/list/{prodId}(prodId=${prodId})}"
            class="btn btn-secondary">← 뒤로가기</a>
 
         <a th:if="${diary != null}"
-           th:href="@{/fishing-diary/detail/{id}(id=${diary.fdId})}"
+           th:href="@{/fishing-center/diary/detail/{id}(id=${diary.fdId})}"
            class="btn btn-secondary">← 뒤로가기</a>
     </div>
 
@@ -24,7 +24,7 @@
         <h5>선택된 제품 ID: <span th:text="${product.prodId}"></span></h5>
     </div>
 
-    <form th:action="@{/fishing-diary/form(prodId=${prodId}, id=${diary != null ? diary.fdId : null})}"
+    <form th:action="@{/fishing-center/diary/form(prodId=${prodId}, id=${diary != null ? diary.fdId : null})}"
           method="post">
 
         <!-- ID (수정용) -->

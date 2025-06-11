@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 @Log4j2
 @Controller
 @RequiredArgsConstructor
-@RequestMapping("/fishing-diary")
+@RequestMapping("/fishing-center/diary")
 public class UserFishingDiaryViewController {
 
     private final FishingDiaryService fishingDiaryService;
@@ -67,27 +67,27 @@ public class UserFishingDiaryViewController {
         Long savedId;
         if (id != null) {
             savedId = fishingDiaryService.updateFishingDiary(id, fishingDiaryDTO);
-            return "redirect:/fishing-diary/detail/" + savedId;
+            return "redirect:/fishing-center/diary/detail/" + savedId;
         } else {
             fishingDiaryService.createFishingDiary(fishingDiaryDTO);
-            return"redirect:/fishing-center/diary/list/" + prodId;
+            return "redirect:/fishing-center/diary/list/" + prodId;
         }
-}
+    }
 
-@GetMapping("/detail/{id}")
-public String showDiaryDetail(@PathVariable Long id,
-                              Model model) {
-    FishingDiary diary = fishingDiaryService.findById(id);
-    model.addAttribute("diary", diary);
-    model.addAttribute("prodId", diary.getProduct().getProdId());
+    @GetMapping("/detail/{id}")
+    public String showDiaryDetail(@PathVariable Long id,
+                                  Model model) {
+        FishingDiary diary = fishingDiaryService.findById(id);
+        model.addAttribute("diary", diary);
+        model.addAttribute("prodId", diary.getProduct().getProdId());
 
-    return "board/fishing-center/diary/detail";
-}
+        return "board/fishing-center/diary/detail";
+    }
 
-@PostMapping("/delete/{id}")
-public String deleteDiaryDetail(@PathVariable Long id) {
-    Long prodId = fishingDiaryService.deleteAndReturnProdId(id);
-    return "redirect:/fishing-center/diary/list/" + prodId;
-}
+    @PostMapping("/delete/{id}")
+    public String deleteDiaryDetail(@PathVariable Long id) {
+        Long prodId = fishingDiaryService.deleteAndReturnProdId(id);
+        return "redirect:/fishing-center/diary/list/" + prodId;
+    }
 
 }

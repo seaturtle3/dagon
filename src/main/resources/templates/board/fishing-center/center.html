@@ -22,7 +22,7 @@
             </thead>
             <tbody>
             <tr th:each="product : ${products}"
-                th:onclick="|location.href='@{/fishing-report/list/{id}(id=${product.prodId})}'|"
+                th:onclick="|location.href='@{/fishing-center/report/list/{id}(id=${product.prodId})}'|"
                 style="cursor:pointer">
 
                 <td th:text="${product.prodId}">배 ID</td>
