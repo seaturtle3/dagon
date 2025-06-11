@@ -113,6 +113,7 @@ public class User extends BaseTimeEntity {
     private List<Notification> notifications;
 
     // 신고
+    // 신고
     // 신고한 목록
     @OneToMany(mappedBy = "reporter", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<Report> reportsMade = new ArrayList<>();

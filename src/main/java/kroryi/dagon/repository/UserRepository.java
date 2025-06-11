@@ -1,5 +1,8 @@
 package kroryi.dagon.repository;
 
+import kroryi.dagon.entity.Inquiry;
+import kroryi.dagon.entity.Report;
+import kroryi.dagon.entity.Reservation;
 import kroryi.dagon.entity.User;
 import kroryi.dagon.enums.UserRole;
 import org.springframework.data.domain.Page;
@@ -10,6 +13,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -42,4 +46,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     @Query("SELECT u.points FROM User u WHERE u.uno = :uno")
     Integer findPointsByUno(@Param("uno") String uno);
+
+
+
+
 }

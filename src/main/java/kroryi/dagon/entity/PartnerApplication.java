@@ -45,6 +45,9 @@ public class PartnerApplication extends BaseTimeEntity {
     @Column(name = "p_rejection_reason")
     private String pRejectionReason;
 
+    @Column(name = "business_license_image")
+    private String businessLicenseImage;
+
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "uno", nullable = false)
     private User user; // ✅ uno → user 변경

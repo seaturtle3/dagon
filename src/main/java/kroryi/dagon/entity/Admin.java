@@ -14,6 +14,8 @@ import java.util.List;
 @Entity
 @Table(name = "admin")
 public class Admin {
+
+
     @Id
     @Column(name = "aid", nullable = false, length = 50)
     private String aid;
@@ -27,6 +29,9 @@ public class Admin {
     @Enumerated(EnumType.STRING) // enum을 문자열로 저장
     @Column(name = "role")
     private AdminRole role = AdminRole.ADMIN;
+
+    @Column(name = "uno")
+    private Long uno;
 
     // 공지사항
     @OneToMany(mappedBy = "admin", cascade = CascadeType.ALL, orphanRemoval = true)

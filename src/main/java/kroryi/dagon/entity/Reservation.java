@@ -8,6 +8,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
@@ -36,7 +37,8 @@ public class Reservation extends BaseTimeEntity {
     private ProductOption productOption;
 
 
-
+    @OneToMany(mappedBy = "reservation", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<Notification> notifications;
     // 인원수
     @Column(name = "num_person", nullable = false)
     private Integer numPerson;

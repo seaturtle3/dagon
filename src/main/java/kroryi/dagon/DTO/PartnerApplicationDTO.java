@@ -22,7 +22,9 @@ public class PartnerApplicationDTO {
     private String license;
     private String pstatus;
     private LocalDateTime paReviewedAt;
+    private LocalDateTime createdAt;
     private String paRejectionReason;
+    private String businessLicenseImage;
     private String uname;  // 신청자 이름
     private String displayName;
 }
