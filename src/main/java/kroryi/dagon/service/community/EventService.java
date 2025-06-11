@@ -40,7 +40,7 @@ public class EventService {
     }
 
     @Transactional
-    public Event createEvent(EventRequestDTO dto, String aid){
+    public Event createEvent(EventRequestDTO dto, String aid) {
         Admin admin = adminRepository.findById(aid).orElseThrow();
 
         Event event = new Event();
@@ -57,8 +57,9 @@ public class EventService {
     }
 
     @Transactional
-    public Event updateEvent(Long id, EventRequestDTO dto) {
+    public Event updateEvent(Long id, EventRequestDTO dto, String aid) {
         Event event = eventRepository.findById(id).orElseThrow();
+        Admin admin = adminRepository.findById(aid).orElseThrow();
 
         event.setTitle(dto.getTitle());
         event.setContent(dto.getContent());
@@ -67,14 +68,16 @@ public class EventService {
         event.setEndAt(dto.getEndAt());
         event.setIsTop(dto.getIsTop() != null && dto.getIsTop());
         event.setModifyAt(LocalDateTime.now());
+        event.setAdmin(admin);
         event.updateEventStatus(LocalDate.now());
 
         return eventRepository.save(event);
     }
 
     @Transactional
-    public void deleteEvent(Long id) {
+    public void deleteEvent(Long id, String aid) {
         Event event = eventRepository.findById(id).orElseThrow();
+        Admin admin = adminRepository.findById(aid).orElseThrow();
 
         Set<String> imagesToCheck = imageFileUtil.extractImagePaths(event.getContent());
         eventRepository.delete(event);
