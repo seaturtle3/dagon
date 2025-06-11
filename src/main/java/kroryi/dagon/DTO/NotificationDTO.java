@@ -18,6 +18,4 @@ public class NotificationDTO {
     private String senderName;         // ex: 관리자 이름 or 시스템
     private boolean isRead;            // 읽음 여부
     private String createdAt;
-
-
 }

@@ -3,13 +3,17 @@ package kroryi.dagon.controller.common.support;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import kroryi.dagon.DTO.NotificationDTO;
+import kroryi.dagon.component.CustomUserDetails;
 import kroryi.dagon.service.support.NotificationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -74,6 +78,21 @@ public class ApiNotificationController {
         return ResponseEntity.ok("알림이 성공적으로 전송되었습니다.");
     }
 
+
+    @PostMapping("/partner-to-admin")
+    public ResponseEntity<?> partnerToAdminNotification(@RequestBody NotificationDTO dto, Authentication authentication) {
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+        String senderUid = userDetails.getUsername();  // 토큰에서 꺼낸 UID (문자열)
+
+        dto.setSenderUid(senderUid); // DTO에 senderUid 세팅
+
+        notificationService.sendPartnerToAdminNotification(dto, senderUid); // senderUid도 같이 넘겨야 함
+        return ResponseEntity.ok("Notification sent to admin");
+    }
 
     @GetMapping
     @Operation(summary = "알림 전체/검색 조회", description = "검색 조건에 따라 알림 리스트 조회 (페이징 포함)")

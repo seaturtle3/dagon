@@ -153,6 +153,31 @@ public class NotificationService {
 
 
 
+    public void sendPartnerToAdminNotification(NotificationDTO dto, String senderUid) {
+        User admin = userRepository.findByUno(1L)
+                .orElseThrow(() -> new RuntimeException("Admin user not found"));
+
+        User sender = userRepository.findByUid(senderUid)
+                .orElseThrow(() -> new RuntimeException("Sender not found"));
+
+        Notification notification = new Notification();
+        notification.setReceiver(admin);
+        notification.setSender(sender);
+        notification.setSenderType(SenderType.PARTNER);
+        notification.setType(dto.getType());
+        notification.setTitle(dto.getTitle());
+        notification.setContent(dto.getContent());
+        notification.setCreatedAt(LocalDateTime.now());
+        notification.setRead(false);
+
+        notificationRepository.save(notification);
+    }
+
+
+
+
+
+
     public Page<NotificationDTO> getNotifications(String uid, String type, Pageable pageable) {
         // 빈 문자열("")은 null로 변환해서 처리
         if (uid != null && uid.isBlank()) {

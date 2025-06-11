@@ -63,6 +63,11 @@ public class PartnerService {
     }
 
 
+    public Partner findByUno(String uno) {
+        return (Partner) partnersRepository.findByUno(Long.valueOf(uno))
+                .orElseThrow(() -> new RuntimeException("Partner not found for uno: " + uno));
+    }
+
     public Page<PartnerDTO> getAllPartners(int page, int size, String keyword, String searchType) {
         Pageable pageable = PageRequest.of(page, size);
 
