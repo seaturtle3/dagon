@@ -2,6 +2,7 @@ package kroryi.dagon.service.order;
 
 import kroryi.dagon.DTO.ReservationDTO;
 import kroryi.dagon.enums.ReservationStatus;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
@@ -13,6 +14,7 @@ import java.util.Optional;
 
 @Service
 @Log4j2
+@RequiredArgsConstructor
 public class ReservationService {
 
     private static final List<ReservationDTO> reservations = new ArrayList<>();
