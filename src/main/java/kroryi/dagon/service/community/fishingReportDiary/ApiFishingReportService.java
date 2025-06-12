@@ -16,6 +16,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -60,6 +61,20 @@ public class ApiFishingReportService {
         FishingReport entity = fishingReportRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("조황정보를 찾을 수 없습니다."));
         return convertToDTO(entity);
+    }
+
+    // 특정 제품ID 조황정보 조회
+    public List<ApiFishingReportDTO> getAllByProductId(Long productId) {
+        List<FishingReport> reports = fishingReportRepository.findByProduct_ProdId(productId);
+
+        if (reports.isEmpty()) {
+            return Collections.emptyList(); // 빈 리스트 반환
+        }
+
+        // 전체 리스트를 DTO로 변환
+        return reports.stream()
+                .map(ApiFishingReportDTO::fromEntity)
+                .collect(Collectors.toList());
     }
 
 

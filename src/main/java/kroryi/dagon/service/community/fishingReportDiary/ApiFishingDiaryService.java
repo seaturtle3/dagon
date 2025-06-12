@@ -14,6 +14,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
 
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 @RequiredArgsConstructor
 public class ApiFishingDiaryService {
@@ -53,6 +57,20 @@ public class ApiFishingDiaryService {
 
         // FishingDiary를 ApiFishingDiaryDTO로 변환
         return new ApiFishingDiaryDTO(fishingDiary);
+    }
+
+    // 특정 배 상품 ID 조행기 조회
+    public List<ApiFishingDiaryDTO> getAllByProductId(Long productId) {
+        List<FishingDiary> diaries = fishingDiaryRepository.findByProduct_ProdId(productId);
+
+        if (diaries.isEmpty()) {
+            return Collections.emptyList(); // 빈 리스트 반환
+        }
+
+        // 전체 리스트를 DTO로 변환
+        return diaries.stream()
+                .map(ApiFishingDiaryDTO::fromEntity)
+                .collect(Collectors.toList());
     }
 
     public Long updateFishingDiary(Long fdId, ApiFishingDiaryDTO apiFishingDiaryDTO) {

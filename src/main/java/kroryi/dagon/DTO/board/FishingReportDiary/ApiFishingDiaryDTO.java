@@ -1,6 +1,7 @@
 package kroryi.dagon.DTO.board.FishingReportDiary;
 
 import kroryi.dagon.entity.FishingDiary;
+import kroryi.dagon.entity.FishingReport;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -40,5 +41,8 @@ public class ApiFishingDiaryDTO {
         }
     }
 
-}
+    public static ApiFishingDiaryDTO fromEntity(FishingDiary fishingDiary) {
+        return new ApiFishingDiaryDTO(fishingDiary);
+    }
 
+}

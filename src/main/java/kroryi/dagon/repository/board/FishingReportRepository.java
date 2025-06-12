@@ -24,4 +24,6 @@ public interface FishingReportRepository extends JpaRepository<FishingReport, Lo
     List<FishingReport> findByUser_Uno(Long uno);
 
     List<FishingReport> findByUserUno(Long uno);
+
+    List<FishingReport> findByProduct_ProdId(Long prodId);
 }
