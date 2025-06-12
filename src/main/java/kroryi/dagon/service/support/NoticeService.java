@@ -10,6 +10,7 @@ import kroryi.dagon.repository.board.NoticeRepository;
 
 import kroryi.dagon.util.ImageFileUtil;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Set;
 
+@Log4j2
 @Service
 @RequiredArgsConstructor
 public class NoticeService {
@@ -52,20 +54,25 @@ public class NoticeService {
     }
 
     @Transactional
-    public Notice updateNotice(Long id, NoticeRequestDTO dto) {
+    public Notice updateNotice(Long id, NoticeRequestDTO dto, String aid) {
         Notice notice = noticeRepository.findById(id).orElseThrow();
+        Admin admin = adminRepository.findById(aid).orElseThrow();
 
         notice.setTitle(dto.getTitle());
         notice.setContent(dto.getContent());
         notice.setIsTop(dto.getIsTop() != null && dto.getIsTop());
         notice.setModifyAt(java.time.LocalDateTime.now());
+        notice.setAdmin(admin);
 
         return noticeRepository.save(notice);
     }
 
     @Transactional
-    public void deleteNotice(Long id) {
+    public void deleteNotice(Long id, String aid) {
         Notice notice = noticeRepository.findById(id).orElseThrow();
+        Admin admin = adminRepository.findById(aid).orElseThrow();
+
+        log.info("관리자 {} 가 공지사항 {} 삭제함", admin.getAname(), id);
 
         Set<String> imagesToCheck = imageFileUtil.extractImagePaths(notice.getContent());
         noticeRepository.delete(notice);

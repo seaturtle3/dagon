@@ -1,6 +1,7 @@
 package kroryi.dagon.repository;
 
 import kroryi.dagon.entity.Inquiry;
+import kroryi.dagon.entity.User;
 import kroryi.dagon.enums.ReceiverType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -30,4 +31,6 @@ public interface InquiryRepository extends JpaRepository<Inquiry, Long> {
 
 
     List<Inquiry> findByUser_Uno(Long userUno);
+
+
 }

@@ -94,23 +94,27 @@ public class FAQService {
 
     // 수정
     @Transactional
-    public FAQ updateFAQ(Long id, FAQRequestDTO dto) {
+    public FAQ updateFAQ(Long id, FAQRequestDTO dto, String adminId) {
         FAQ faq = faqRepository.findById(id).orElseThrow();
         FAQCategory category = faqCategoryRepository.findById(dto.getCategoryId()).orElseThrow();
+        Admin admin = adminRepository.findById(adminId).orElseThrow();
 
         faq.setCategory(category);
         faq.setQuestion(dto.getQuestion());
         faq.setAnswer(dto.getAnswer());
         faq.setDisplayOrder(dto.getDisplayOrder());
         faq.setIsActive(dto.getIsActive() != null && dto.getIsActive());
+        faq.setAdmin(admin);
 
         return faq;
     }
 
     // 삭제
     @Transactional
-    public void deleteFAQ(Long id) {
+    public void deleteFAQ(Long id, String adminId) {
+        Admin admin = adminRepository.findById(adminId).orElseThrow();
         FAQ faq = faqRepository.findById(id).orElseThrow();
+
         faqRepository.delete(faq);
     }
 

@@ -4,12 +4,14 @@ import jakarta.validation.Valid;
 import kroryi.dagon.DTO.board.BoardSearchDTO;
 import kroryi.dagon.DTO.board.EventRequestDTO;
 import kroryi.dagon.entity.Event;
+import kroryi.dagon.service.auth.AdminUserDetails;
 import kroryi.dagon.service.community.EventService;
 import kroryi.dagon.util.PaginationUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -79,7 +81,8 @@ public class AdminEventViewController {
                          BindingResult result,
                          @RequestParam(defaultValue = "0") int page,
                          @RequestParam(defaultValue = "10") int size,
-                         Model model) {
+                         Model model,
+                         @AuthenticationPrincipal AdminUserDetails userDetails) {
         if (result.hasErrors()) {
             model.addAttribute("formAction", "/admin/event?page=" + page + "&size=" + size);
             model.addAttribute("page", page);
@@ -87,7 +90,7 @@ public class AdminEventViewController {
             return "board/event/form";
         }
 
-        eventService.createEvent(dto, "admin001");
+        eventService.createEvent(dto, userDetails.getAid());
 
         // ✅ 등록 후 대시보드로 이동
         return "redirect:/admin/dashboard";
@@ -119,15 +122,18 @@ public class AdminEventViewController {
     // 수정 처리
     @PostMapping("/{id}")
     public String update(@PathVariable Long id,
-                         @ModelAttribute EventRequestDTO dto) {
-        eventService.updateEvent(id, dto);
+                         @ModelAttribute EventRequestDTO dto,
+                         @AuthenticationPrincipal AdminUserDetails userDetails) {
+        eventService.updateEvent(id, dto, userDetails.getAid());
         return "redirect:/admin/dashboard";  // ✅ 수정 후 대시보드로 이동
     }
 
     // 삭제 처리
     @PostMapping("/{id}/delete")
-    public String delete(@PathVariable Long id) {
-        eventService.deleteEvent(id);
+    public String delete(@PathVariable Long id,
+                         @AuthenticationPrincipal AdminUserDetails userDetails) {
+        String aid = userDetails.getAid();
+        eventService.deleteEvent(id, aid);
         return "redirect:/admin/dashboard";  // ✅ 원하는 경로로 이동
     }
 

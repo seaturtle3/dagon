@@ -4,12 +4,14 @@ import kroryi.dagon.DTO.board.BoardSearchDTO;
 import kroryi.dagon.DTO.board.FAQRequestDTO;
 import kroryi.dagon.entity.FAQ;
 import kroryi.dagon.entity.FAQCategory;
+import kroryi.dagon.service.auth.AdminUserDetails;
 import kroryi.dagon.service.support.FAQCategoryService;
 import kroryi.dagon.service.support.FAQService;
 import kroryi.dagon.util.PaginationUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -76,8 +78,9 @@ public class AdminFaqViewController {
     @PostMapping
     public String create(@ModelAttribute FAQRequestDTO dto,
                          @RequestParam(defaultValue = "0") int page,
-                         @RequestParam(defaultValue = "10") int size) {
-        faqService.createFAQ(dto, "admin001");
+                         @RequestParam(defaultValue = "10") int size,
+                         @AuthenticationPrincipal AdminUserDetails adminUser) {
+        faqService.createFAQ(dto, adminUser.getAid());
         return "redirect:/admin/faq?page=" + page + "&size=" + size;
     }
 
@@ -99,8 +102,9 @@ public class AdminFaqViewController {
     public String update(@PathVariable Long id,
                          @ModelAttribute FAQRequestDTO dto,
                          @RequestParam(defaultValue = "0") int page,
-                         @RequestParam(defaultValue = "10") int size) {
-        faqService.updateFAQ(id, dto);
+                         @RequestParam(defaultValue = "10") int size,
+                         @AuthenticationPrincipal AdminUserDetails adminUser) {
+        faqService.updateFAQ(id, dto, adminUser.getAid());
         return "redirect:/admin/faq?page=" + page + "&size=" + size;
     }
 }

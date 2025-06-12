@@ -22,11 +22,7 @@ public class ApiPartnerController {
 
 
 
-    @Operation(summary = "모든 파트너 정보 조회", description = "모든 파트너 정보 조회")
-    @GetMapping("/all")
-    public List<PartnerDTO> getAllPartners() {
-        return partnerService.getAllPartners();
-    }
+
 
     @Operation(summary = "특정 파트너 정보 조회", description = "ID로 특정 파트너 정보를 조회")
     @GetMapping("/{id}")

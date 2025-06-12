@@ -4,12 +4,14 @@ import jakarta.validation.Valid;
 import kroryi.dagon.DTO.board.BoardSearchDTO;
 import kroryi.dagon.DTO.board.NoticeRequestDTO;
 import kroryi.dagon.entity.Notice;
+import kroryi.dagon.service.auth.AdminUserDetails;
 import kroryi.dagon.service.support.NoticeService;
 import kroryi.dagon.util.PaginationUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -78,13 +80,14 @@ public class AdminNoticeViewController {
                          BindingResult result,
                          @RequestParam(defaultValue = "0") int page,
                          @RequestParam(defaultValue = "10") int size,
-                         Model model) {
+                         Model model,
+                         @AuthenticationPrincipal AdminUserDetails adminUser) {
         if (result.hasErrors()) {
             model.addAttribute("page", page);
             model.addAttribute("size", size);
             return "board/notice/form";
         }
-        noticeService.createNotice(dto, "admin001");
+        noticeService.createNotice(dto, adminUser.getAid());
         return "redirect:/admin/dashboard";  // ✅ 변경됨
     }
 
@@ -113,8 +116,9 @@ public class AdminNoticeViewController {
     public String update(@PathVariable Long id,
                          @ModelAttribute NoticeRequestDTO dto,
                          @RequestParam(defaultValue = "0") int page,
-                         @RequestParam(defaultValue = "10") int size) {
-        noticeService.updateNotice(id, dto);
+                         @RequestParam(defaultValue = "10") int size,
+                         @AuthenticationPrincipal AdminUserDetails adminUser) {
+        noticeService.updateNotice(id, dto, adminUser.getAid());
         return "redirect:/admin/dashboard";  // ✅ 변경됨
     }
 
@@ -122,8 +126,10 @@ public class AdminNoticeViewController {
     @PostMapping("/{id}/delete")
     public String delete(@PathVariable Long id,
                          @RequestParam(defaultValue = "0") int page,
-                         @RequestParam(defaultValue = "10") int size) {
-        noticeService.deleteNotice(id);
+                         @RequestParam(defaultValue = "10") int size,
+                         @AuthenticationPrincipal AdminUserDetails adminUser) {
+        String aid = adminUser.getAid();
+        noticeService.deleteNotice(id, aid);
         return "redirect:/admin/dashboard";  // ✅ 변경됨
     }
 }

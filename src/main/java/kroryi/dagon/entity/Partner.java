@@ -50,4 +50,7 @@ public class Partner extends BaseTimeEntity {
 
     @OneToMany(mappedBy = "partner", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Product> products = new ArrayList<>();
+
+    @OneToMany(mappedBy = "partner", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<Inquiry> inquiries;
 }

@@ -40,6 +40,7 @@ private final UserRepository userRepository;
         entity.setPAddress(dto.getPaddress());
         entity.setPInfo(dto.getPinfo());
         entity.setLicense(dto.getLicense());
+        entity.setBusinessLicenseImage(dto.getBusinessLicenseImage());
         entity.setPStatus(ApplicationStatus.PENDING); // 기본 상태
         entity.setUser(user);
 
@@ -59,7 +60,9 @@ private final UserRepository userRepository;
                         entity.getLicense(),
                         entity.getPStatus().toString(),
                         entity.getPReviewedAt(),
+                        entity.getCreatedAt(),
                         entity.getPRejectionReason(),
+                        entity.getBusinessLicenseImage(),
                         entity.getUser().getUname(),
                         entity.getUser().getDisplayName()
                 ));
@@ -96,7 +99,9 @@ private final UserRepository userRepository;
                         entity.getLicense(),
                         entity.getPStatus().getKorean(), // 한글로 출력
                         entity.getPReviewedAt(),
+                        entity.getCreatedAt(),
                         entity.getPRejectionReason(),
+                        entity.getBusinessLicenseImage(),
                         entity.getUser().getUname(),
                         entity.getUser().getDisplayName()
                 ));
@@ -119,7 +124,9 @@ private final UserRepository userRepository;
                 entity.getLicense(),
                 entity.getPStatus().getKorean(), // ApplicationStatus -> 한글 문자열 변환
                 entity.getPReviewedAt(),
+                entity.getCreatedAt(),
                 entity.getPRejectionReason(),
+                entity.getBusinessLicenseImage(),
                 entity.getUser().getUname(),
                 entity.getUser().getDisplayName()
         );
