@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import kroryi.dagon.entity.User;
 import kroryi.dagon.enums.InquiryType;
 import kroryi.dagon.enums.ReceiverType;
+import kroryi.dagon.enums.WriterType;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -44,6 +45,11 @@ public class Inquiry {
 
     @Column(length = 1000) // 예시
     private String content;
+
+    // 작성자 유형
+    @Enumerated(EnumType.STRING)
+    @Column(name = "writer_type", nullable = false)
+    private WriterType writerType;
 
     // 문의 유형
     @Enumerated(EnumType.STRING)
