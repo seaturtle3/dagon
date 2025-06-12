@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -31,42 +32,41 @@ public class ApiProductFishingCenterController {
     @Operation(summary = "제품 ID로 조황센터 정보 조회")
     @GetMapping("/fishing-center/{productId}")
     public ApiFishingCenterDTO getFishingCenterByProductId(@PathVariable Long productId) {
-        ApiFishingReportDTO report = Optional.ofNullable(apiFishingReportService.getByProductId(productId))
-                .orElse(null);
-        ApiFishingDiaryDTO diary = Optional.ofNullable(apiFishingDiaryService.getByProductId(productId))
-                .orElse(null);
+        List<ApiFishingReportDTO> reports = apiFishingReportService.getAllByProductId(productId);
+        List<ApiFishingDiaryDTO> diaries = apiFishingDiaryService.getAllByProductId(productId);
 
-        if (report == null && diary == null) {
+        if ((reports == null || reports.isEmpty()) && (diaries == null || diaries.isEmpty())) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "조황정보와 조행기 모두 없습니다.");
         }
 
-        return new ApiFishingCenterDTO(report, diary);
+        return new ApiFishingCenterDTO(reports, diaries);
     }
 
-    // 특정 배 상품 ID 조황정보 조회
-    @Operation(summary = "제품 ID로 조황정보 조회")
-    @GetMapping("/fishing-report/{productId}")
-    public ApiFishingReportDTO getFishingReportByProductId(@PathVariable Long productId) {
-        ApiFishingReportDTO report = apiFishingReportService.getByProductId(productId);
 
-        if (report == null) {
+    // 특정 배 상품 ID 조황정보 조회
+    @Operation(summary = "제품 ID로 조황정보 전체 조회")
+    @GetMapping("/fishing-report/{productId}")
+    public List<ApiFishingReportDTO> getFishingReportByProductId(@PathVariable Long productId) {
+        List<ApiFishingReportDTO> reports = apiFishingReportService.getAllByProductId(productId);
+
+        if (reports == null || reports.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "조황정보가 없습니다.");
         }
 
-        return report;
+        return reports;
     }
 
     // 특정 배 상품 ID 조행기 조회
-    @Operation(summary = "제품 ID로 조행기 조회")
+    @Operation(summary = "제품 ID로 조행기 전체 조회")
     @GetMapping("/fishing-diary/{productId}")
-    public ApiFishingDiaryDTO getFishingDiaryByProductId(@PathVariable Long productId) {
-        ApiFishingDiaryDTO diary = apiFishingDiaryService.getByProductId(productId);
+    public List<ApiFishingDiaryDTO> getFishingDiaryByProductId(@PathVariable Long productId) {
+        List<ApiFishingDiaryDTO> diaries = apiFishingDiaryService.getAllByProductId(productId);
 
-        if (diary == null) {
+        if (diaries == null || diaries.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "조행기가 없습니다.");
         }
 
-        return diary;
+        return diaries;
     }
 
 }
