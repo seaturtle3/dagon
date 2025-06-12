@@ -14,6 +14,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class ApiFishingDiaryService {
@@ -56,11 +58,13 @@ public class ApiFishingDiaryService {
     }
 
     // 특정 배 상품 ID 조행기 조회
+// 특정 배 상품 ID 조행기 조회
     public ApiFishingDiaryDTO getByProductId(Long productId) {
-        FishingDiary diary = fishingDiaryRepository.findByProductId(productId)
-                .orElseThrow(() -> new RuntimeException("조행기 없음"));
-
-        return ApiFishingDiaryDTO.fromEntity(diary);
+        List<FishingDiary> diaries = fishingDiaryRepository.findByProduct_ProdId(productId);
+        if (diaries.isEmpty()) {
+            return null; // 없으면 null 반환 (컨트롤러에서 처리)
+        }
+        return ApiFishingDiaryDTO.fromEntity(diaries.get(0)); // 첫 번째 항목만 반환
     }
 
     public Long updateFishingDiary(Long fdId, ApiFishingDiaryDTO apiFishingDiaryDTO) {

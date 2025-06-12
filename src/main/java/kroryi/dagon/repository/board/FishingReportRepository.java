@@ -25,6 +25,5 @@ public interface FishingReportRepository extends JpaRepository<FishingReport, Lo
 
     List<FishingReport> findByUserUno(Long uno);
 
-    // 특정 상품ID 조황정보
-    Optional<FishingReport> findByProductId(Long productId);
+    List<FishingReport> findByProduct_ProdId(Long prodId);
 }

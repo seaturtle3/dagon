@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ApiFishingCenterDTO {
-
     private ApiFishingReportDTO fishingReport;
     private ApiFishingDiaryDTO fishingDiary;
 }
