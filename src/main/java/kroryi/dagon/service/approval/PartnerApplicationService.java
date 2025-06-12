@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import kroryi.dagon.entity.User;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
 
 
@@ -108,10 +109,14 @@ private final UserRepository userRepository;
     }
 
 
-
     public PartnerApplicationDTO findById(Long id) {
         PartnerApplication entity = partnerApplicationRepository.findByIdWithUser(id)
                 .orElseThrow(() -> new EntityNotFoundException("신청서가 존재하지 않습니다."));
+
+        // 이미지 경로 변환
+        String localPath = entity.getBusinessLicenseImage();
+        String fileName = localPath != null ? Paths.get(localPath).getFileName().toString() : null;
+        String imageUrl = fileName != null ? "http://localhost:8095/uploads/" + fileName : null;
 
         return new PartnerApplicationDTO(
                 entity.getPid(),
@@ -126,7 +131,7 @@ private final UserRepository userRepository;
                 entity.getPReviewedAt(),
                 entity.getCreatedAt(),
                 entity.getPRejectionReason(),
-                entity.getBusinessLicenseImage(),
+                imageUrl, // ✅ 이미지 URL로 반환
                 entity.getUser().getUname(),
                 entity.getUser().getDisplayName()
         );
@@ -137,12 +142,11 @@ private final UserRepository userRepository;
         PartnerApplication app = partnerApplicationRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("신청 정보 없음"));
 
-        System.out.println("== 트랜잭션 상태: " + TransactionSynchronizationManager.isActualTransactionActive());
         app.setPStatus(ApplicationStatus.APPROVED);
         app.setPReviewedAt(LocalDateTime.now());
 
         User user = app.getUser();
-        Long uno = app.getUser().getUno();
+        Long uno = user.getUno();
 
         Partner partner = partnerRepository.findById(uno).orElse(null);
 
@@ -151,22 +155,22 @@ private final UserRepository userRepository;
         if (partner == null) {
             partner = new Partner();
             partner.setUno(uno);
-            partner.setUser(app.getUser());
+            partner.setUser(user);
         }
 
-        // 업데이트 또는 신규 저장에 공통으로 적용
         partner.setPname(app.getPname());
         partner.setPAddress(app.getPAddress());
         partner.setCeoName(app.getCeoName());
         partner.setPInfo(app.getPInfo());
         partner.setLicense(app.getLicense());
 
-        System.out.println("uno: " + uno);
-        System.out.println("partner 존재 여부: " + (partner != null));
-        System.out.println("== 트랜잭션 상태: " + TransactionSynchronizationManager.isActualTransactionActive());
+        // app.getBusinessLicenseImage()가 예를 들어 "9f303bdc-61ce-47c6-b163-5e7f436a56c0_dog1.jpg" 라면
+        // 서버에서 정적 리소스를 /uploads/** 경로로 서빙 중이라고 가정
+        String licenseImgUrl = "/uploads/" + app.getBusinessLicenseImage();
+        partner.setLicenseImg(licenseImgUrl);
 
         partnerRepository.save(partner);
-        partnerRepository.flush(); // 강제 커밋
+        partnerRepository.flush();
     }
 
     @Transactional

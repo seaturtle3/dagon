@@ -27,4 +27,7 @@ public class PartnerApplicationDTO {
     private String businessLicenseImage;
     private String uname;  // 신청자 이름
     private String displayName;
+
+
+
 }
