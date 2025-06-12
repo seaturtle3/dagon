@@ -38,7 +38,10 @@ public class ApiFishingReportDTO {
                     .map(ApiCommentDTO::new)
                     .collect(Collectors.toList());
         }
+    }
 
+    public static ApiFishingReportDTO fromEntity(FishingReport fishingReport) {
+        return new ApiFishingReportDTO(fishingReport);
     }
 
 }

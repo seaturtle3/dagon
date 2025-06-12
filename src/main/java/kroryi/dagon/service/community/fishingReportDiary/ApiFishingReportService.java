@@ -62,6 +62,12 @@ public class ApiFishingReportService {
         return convertToDTO(entity);
     }
 
+    public ApiFishingReportDTO getByProductId(Long productId) {
+        FishingReport report = fishingReportRepository.findByProductId(productId)
+                .orElseThrow(() -> new RuntimeException("조황정보 없음"));
+
+        return ApiFishingReportDTO.fromEntity(report);
+    }
 
     public Long updateFishingReport(Long fdId, ApiFishingReportDTO apiFishingReportDTO) {
         FishingReport fishingReport = fishingReportRepository.findById(fdId)

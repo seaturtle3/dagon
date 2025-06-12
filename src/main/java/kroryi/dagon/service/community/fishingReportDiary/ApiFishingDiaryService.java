@@ -55,6 +55,14 @@ public class ApiFishingDiaryService {
         return new ApiFishingDiaryDTO(fishingDiary);
     }
 
+    // 특정 배 상품 ID 조행기 조회
+    public ApiFishingDiaryDTO getByProductId(Long productId) {
+        FishingDiary diary = fishingDiaryRepository.findByProductId(productId)
+                .orElseThrow(() -> new RuntimeException("조행기 없음"));
+
+        return ApiFishingDiaryDTO.fromEntity(diary);
+    }
+
     public Long updateFishingDiary(Long fdId, ApiFishingDiaryDTO apiFishingDiaryDTO) {
         FishingDiary fishingDiary = fishingDiaryRepository.findById(fdId)
                 .orElseThrow(() -> new RuntimeException("조황정보 없음"));
