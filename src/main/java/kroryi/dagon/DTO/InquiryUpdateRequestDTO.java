@@ -7,5 +7,6 @@ import lombok.Data;
 public class InquiryUpdateRequestDTO {
     private String title;
     private String content;
+    private String writerType;
     private InquiryType inquiryType;
 }
