@@ -48,11 +48,11 @@ public class InquiryService {
                 .user(user)
                 .inquiryType(request.getInquiryType())
                 .title(request.getTitle())
-                .content(request.getContent())
-                .receiverType(request.getReceiverType());
+                .content(request.getContent());
+//                .receiverType(request.getReceiverType());
 
         log.info("000----> {}", request);
-        if ((request.getReceiverType() == ReceiverType.PARTNER) && (request.getPartnerName() != null)){
+        if ((request.getPartnerName() != null)){
 
             log.info("Creating partner inquiry----> {}", request.getPartnerName());
             Partner partner = partnerRepository.findByPname(request.getPartnerName())
@@ -66,8 +66,6 @@ public class InquiryService {
             Inquiry savedInquiry = inquiryRepository.save(inquiryBuilder.build());
             return toResponseDTO(savedInquiry);
         }
-
-
     }
 
     // 2. 문의 리스트 조회 (검색 + 페이징)
@@ -169,7 +167,5 @@ private InquiryResponseDTO toResponseDTO(Inquiry inquiry) {
                 .map(this::toResponseDTO)
                 .collect(Collectors.toList());
     }
-
-
 
 }
