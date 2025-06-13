@@ -9,6 +9,7 @@ import kroryi.dagon.entity.Inquiry;
 import kroryi.dagon.entity.Partner;
 import kroryi.dagon.entity.User;
 import kroryi.dagon.enums.ReceiverType;
+import kroryi.dagon.enums.WriterType;
 import kroryi.dagon.repository.InquiryRepository;
 import kroryi.dagon.repository.NotificationRepository;
 import kroryi.dagon.repository.PartnerRepository;
@@ -50,17 +51,23 @@ public class InquiryService {
                 .content(request.getContent())
                 .receiverType(request.getReceiverType());
 
-        if (request.getReceiverType() == ReceiverType.PARTNER) {
+        log.info("000----> {}", request);
+        if ((request.getReceiverType() == ReceiverType.PARTNER) && (request.getPartnerName() != null)){
 
             log.info("Creating partner inquiry----> {}", request.getPartnerName());
             Partner partner = partnerRepository.findByPname(request.getPartnerName())
                     .orElseThrow(() -> new EntityNotFoundException("Partner (업체명) not found"));
             inquiryBuilder.partner(partner);
+            Inquiry savedInquiry = inquiryRepository.save(inquiryBuilder.build());
+            return toResponseDTO(savedInquiry);
+        }else{
+            inquiryBuilder.writerType(WriterType.valueOf(request.getWriterType()));
+            inquiryBuilder.inquiryType(request.getInquiryType());
+            Inquiry savedInquiry = inquiryRepository.save(inquiryBuilder.build());
+            return toResponseDTO(savedInquiry);
         }
 
-        Inquiry savedInquiry = inquiryRepository.save(inquiryBuilder.build());
 
-        return toResponseDTO(savedInquiry);
     }
 
     // 2. 문의 리스트 조회 (검색 + 페이징)
