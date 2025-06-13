@@ -30,7 +30,8 @@ public class Inquiry {
     // 새 필드 추가
     @Enumerated(EnumType.STRING)
     @Column(name = "receiver_type", nullable = false)
-    private ReceiverType receiverType;
+    @Builder.Default
+    private ReceiverType receiverType = ReceiverType.ADMIN;
 
     // 파트너에게 보낼 경우만 필요하므로 nullable = true로 변경
     @ManyToOne(fetch = FetchType.LAZY)
