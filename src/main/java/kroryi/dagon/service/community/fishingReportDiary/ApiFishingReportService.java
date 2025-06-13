@@ -77,6 +77,13 @@ public class ApiFishingReportService {
                 .collect(Collectors.toList());
     }
 
+//    ---------------------------ApiFishingCenterController-----------------------------------------
+    public List<ApiFishingReportDTO> getAll() {
+        return fishingReportRepository.findAll().stream()
+                .map(ApiFishingReportDTO::new)
+                .collect(Collectors.toList());
+    }
+
 
     public Long updateFishingReport(Long fdId, ApiFishingReportDTO apiFishingReportDTO) {
         FishingReport fishingReport = fishingReportRepository.findById(fdId)
@@ -128,5 +135,6 @@ public class ApiFishingReportService {
 
         return dto;
     }
+
 
 }
