@@ -44,8 +44,6 @@ public class ApiFishingReportController {
     private final FileStorageService fileStorageService;
     private final JwtUtil jwtUtil;
 
-
-
     @Operation(summary = "조황정보 생성")
     @PostMapping("/create")
     public ApiFishingReportDTO createFishingReport(
