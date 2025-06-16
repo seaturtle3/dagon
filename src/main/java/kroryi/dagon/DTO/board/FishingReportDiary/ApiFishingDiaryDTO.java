@@ -25,6 +25,7 @@ public class ApiFishingDiaryDTO {
         this.frId = fishingDiary.getFdId();
         this.title = fishingDiary.getTitle();
         this.content = fishingDiary.getContent();
+        this.fishingAt = fishingDiary.getFishingAt();
 
         if (fishingDiary.getProduct() != null) {
             this.product = new ApiProductDTO(fishingDiary.getProduct());

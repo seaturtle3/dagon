@@ -73,6 +73,14 @@ public class ApiFishingDiaryService {
                 .collect(Collectors.toList());
     }
 
+//    ---------------------------ApiFishingCenterController-----------------------------------------
+    public List<ApiFishingDiaryDTO> getAll() {
+        return fishingDiaryRepository.findAll().stream()
+                .map(ApiFishingDiaryDTO::new)
+                .collect(Collectors.toList());
+    }
+
+
     public Long updateFishingDiary(Long fdId, ApiFishingDiaryDTO apiFishingDiaryDTO) {
         FishingDiary fishingDiary = fishingDiaryRepository.findById(fdId)
                 .orElseThrow(() -> new RuntimeException("조황정보 없음"));
