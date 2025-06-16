@@ -1,8 +1,8 @@
-package kroryi.dagon.service.community.fishingReportDiary;
+package kroryi.dagon.service.community.fishingCenter;
 
-import kroryi.dagon.DTO.board.FishingReportDiary.ApiFishingDiaryDTO;
-import kroryi.dagon.DTO.board.FishingReportDiary.FishingDiaryDTO;
-import kroryi.dagon.entity.FishingDiary;
+import kroryi.dagon.DTO.board.FishingCenter.ApiFishingDiaryDTO;
+import kroryi.dagon.DTO.board.FishingCenter.FishingDiaryDTO;
+import kroryi.dagon.entity.fishingCenter.FishingDiary;
 import kroryi.dagon.entity.Product;
 import kroryi.dagon.entity.User;
 import kroryi.dagon.repository.UserRepository;
@@ -107,22 +107,6 @@ public class ApiFishingDiaryService {
 
     public void deleteFishingDiary(Long fdId) {
         fishingDiaryRepository.deleteById(fdId);
-    }
-
-
-    public FishingDiaryDTO convertToDTO(FishingDiary fishingdiary) {
-        FishingDiaryDTO dto = new FishingDiaryDTO();
-        dto.setFdId(fishingdiary.getFdId());
-        dto.setTitle(fishingdiary.getTitle());
-        dto.setContent(fishingdiary.getContent());
-        dto.setFishingAt(fishingdiary.getFishingAt());
-        dto.setModifyAt(fishingdiary.getModifyAt());
-        dto.setViews(fishingdiary.getViews());
-        dto.setUser(fishingdiary.getUser());
-        dto.setProduct(fishingdiary.getProduct());
-//        dto.setComments(fishingdiary.getComments());
-
-        return dto;
     }
 
 }

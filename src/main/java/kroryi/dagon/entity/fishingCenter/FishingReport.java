@@ -1,8 +1,11 @@
-package kroryi.dagon.entity;
+package kroryi.dagon.entity.fishingCenter;
 
 
 import jakarta.persistence.*;
 
+import kroryi.dagon.entity.BaseTimeEntity;
+import kroryi.dagon.entity.Product;
+import kroryi.dagon.entity.User;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
@@ -56,5 +59,7 @@ public class FishingReport extends BaseTimeEntity {
     @OneToMany(mappedBy = "fishingReport", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<FishingReportComment> comments = new ArrayList<>();
 
-
+    // ✅ 조황 사진 목록 (썸네일 포함)
+    @OneToMany(mappedBy = "fishingReport", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<FishingReportImage> images = new ArrayList<>();
 }

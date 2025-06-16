@@ -1,6 +1,6 @@
 package kroryi.dagon.repository.board;
 
-import kroryi.dagon.entity.FishingReport;
+import kroryi.dagon.entity.fishingCenter.FishingReport;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

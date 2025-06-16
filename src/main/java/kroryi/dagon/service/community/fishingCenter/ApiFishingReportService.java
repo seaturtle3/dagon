@@ -1,10 +1,10 @@
-package kroryi.dagon.service.community.fishingReportDiary;
+package kroryi.dagon.service.community.fishingCenter;
 
-import kroryi.dagon.DTO.board.FishingReportDiary.ApiCommentDTO;
-import kroryi.dagon.DTO.board.FishingReportDiary.ApiFishingReportDTO;
-import kroryi.dagon.DTO.board.FishingReportDiary.ApiProductDTO;
-import kroryi.dagon.DTO.board.FishingReportDiary.ApiUserDTO;
-import kroryi.dagon.entity.FishingReport;
+import kroryi.dagon.DTO.board.FishingCenter.ApiCommentDTO;
+import kroryi.dagon.DTO.board.FishingCenter.ApiFishingReportDTO;
+import kroryi.dagon.DTO.board.FishingCenter.ApiProductDTO;
+import kroryi.dagon.DTO.board.FishingCenter.ApiUserDTO;
+import kroryi.dagon.entity.fishingCenter.FishingReport;
 import kroryi.dagon.entity.Product;
 import kroryi.dagon.entity.User;
 import kroryi.dagon.repository.ProductRepository;
@@ -54,13 +54,13 @@ public class ApiFishingReportService {
 
     public Page<ApiFishingReportDTO> getAllFishingReports(Pageable pageable) {
         Page<FishingReport> fishingReports = fishingReportRepository.findAll(pageable);
-        return fishingReports.map(this::convertToDTO); // map으로 DTO 변환
+        return fishingReports.map(ApiFishingReportDTO::new);  // 생성자 직접 호출
     }
 
     public ApiFishingReportDTO getFishingReportById(Long id) {
         FishingReport entity = fishingReportRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("조황정보를 찾을 수 없습니다."));
-        return convertToDTO(entity);
+        return new ApiFishingReportDTO(entity);  // 생성자 호출
     }
 
     // 특정 제품ID 조황정보 조회
@@ -113,28 +113,5 @@ public class ApiFishingReportService {
                 .orElseThrow(() -> new RuntimeException("조황정보 없음"));
         fishingReportRepository.delete(fishingReport);
     }
-
-
-    public ApiFishingReportDTO convertToDTO(FishingReport fishingReport) {
-        ApiFishingReportDTO dto = new ApiFishingReportDTO();
-        dto.setFrId(fishingReport.getFrId());
-        dto.setTitle(fishingReport.getTitle());
-        dto.setContent(fishingReport.getContent());
-
-        ApiUserDTO userDTO = new ApiUserDTO(fishingReport.getUser());
-        dto.setUser(userDTO);
-
-        // Product 객체 변환
-        ApiProductDTO productDTO = new ApiProductDTO(fishingReport.getProduct());
-        dto.setProduct(productDTO);
-
-        List<ApiCommentDTO> commentDTOs = fishingReport.getComments().stream()
-                .map(ApiCommentDTO::new)
-                .collect(Collectors.toList());
-        dto.setComments(commentDTOs);
-
-        return dto;
-    }
-
 
 }

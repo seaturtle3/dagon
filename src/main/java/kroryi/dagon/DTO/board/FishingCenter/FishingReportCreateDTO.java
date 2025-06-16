@@ -1,10 +1,9 @@
-package kroryi.dagon.DTO.board.FishingReportDiary;
+package kroryi.dagon.DTO.board.FishingCenter;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 
 @Data

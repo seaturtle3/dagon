@@ -1,6 +1,7 @@
-package kroryi.dagon.DTO.board.FishingReportDiary;
+package kroryi.dagon.DTO.board.FishingCenter;
 
-import kroryi.dagon.entity.FishingReport;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import kroryi.dagon.entity.fishingCenter.FishingReport;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -14,6 +15,8 @@ public class ApiFishingReportDTO {
     private Long frId;
     private String title;
     private String content;
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDateTime fishingAt;
 
     private ApiProductDTO product;

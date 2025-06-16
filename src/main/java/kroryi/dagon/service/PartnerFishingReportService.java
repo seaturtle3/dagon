@@ -1,10 +1,10 @@
 package kroryi.dagon.service;
 
 
-import kroryi.dagon.DTO.board.FishingReportDiary.FishingReportDTO;
+import kroryi.dagon.DTO.board.FishingCenter.FishingReportDTO;
 
 import kroryi.dagon.DTO.board.PartnerFishingReportDTO;
-import kroryi.dagon.entity.FishingReport;
+import kroryi.dagon.entity.fishingCenter.FishingReport;
 import kroryi.dagon.repository.board.FishingReportRepository;
 import kroryi.dagon.service.image.FileStorageService;
 import lombok.RequiredArgsConstructor;

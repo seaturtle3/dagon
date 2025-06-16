@@ -1,7 +1,7 @@
-package kroryi.dagon.DTO.board.FishingReportDiary;
+package kroryi.dagon.DTO.board.FishingCenter;
 
-import kroryi.dagon.entity.FishingDiaryComment;
-import kroryi.dagon.entity.FishingReportComment;
+import kroryi.dagon.entity.fishingCenter.FishingDiaryComment;
+import kroryi.dagon.entity.fishingCenter.FishingReportComment;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
