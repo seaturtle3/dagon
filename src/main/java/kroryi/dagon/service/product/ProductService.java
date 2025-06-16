@@ -183,7 +183,7 @@ public class ProductService {
 
 
     public List<ProductDTO> getProductsByPartnerUno(Long partnerUno) {
-        List<Product> products = productRepository.findByPartner_UnoAndDeletedFalse(partnerUno);
+        List<Product> products = productRepository.findByPartner_Uno(partnerUno);
         return products.stream()
                 .map(ProductDTO::fromEntity)
                 .collect(Collectors.toList());
@@ -251,8 +251,21 @@ public class ProductService {
         productRepository.save(product);
     }
 
+    @Transactional(readOnly = true)
+    public Long getProductCountByPartnerId(Long partnerId) {
+        return productRepository.countByPartner_UnoAndDeletedFalse(partnerId);
+    }
 
-
-
+    public Product restoreProduct(Long prodId) {
+        Product product = productRepository.findById(prodId)
+                .orElseThrow(() -> new RuntimeException("상품을 찾을 수 없습니다."));
+        
+        if (!product.isDeleted()) {
+            throw new RuntimeException("이미 복구된 상품입니다.");
+        }
+        
+        product.setDeleted(false);
+        return productRepository.save(product);
+    }
 
 }

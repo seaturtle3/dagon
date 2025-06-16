@@ -15,6 +15,8 @@ public class ApiFishingReportDTO {
     private String title;
     private String content;
     private LocalDateTime fishingAt;
+    private String imageFileName;
+
 
     private ApiProductDTO product;
     private ApiUserDTO user;
@@ -25,6 +27,8 @@ public class ApiFishingReportDTO {
         this.title = fishingReport.getTitle();
         this.content = fishingReport.getContent();
         this.fishingAt = fishingReport.getFishingAt();
+
+        this.imageFileName = fishingReport.getThumbnailUrl(); // 여기에 추가
 
         if (fishingReport.getProduct() != null) {
             this.product = new ApiProductDTO(fishingReport.getProduct());

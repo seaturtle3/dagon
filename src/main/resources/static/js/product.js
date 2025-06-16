@@ -194,7 +194,7 @@ function loadProductRegisterForm() {
         };
 
         try {
-            const response = await fetch("/api/partner/product", {
+            const response = await fetch("/api/partner/product/", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

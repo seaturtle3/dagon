@@ -71,8 +71,14 @@ public class ApiPartnerProductController {
         return ResponseEntity.ok(products);
     }
 
-
-
+    @GetMapping("/all")
+    public ResponseEntity<List<ProductDTO>> getPartnerAllProducts(@RequestHeader("Authorization") String token) {
+        String rawToken = token.replace("Bearer ", "");
+        Long unoFromToken = jwtProvider.getUnoFromToken(rawToken);
+        
+        List<ProductDTO> products = productService.getProductsByPartnerUno(unoFromToken);
+        return ResponseEntity.ok(products);
+    }
 
     @PutMapping("/{prodId}")
     public ResponseEntity<?> updateProduct(@PathVariable Long prodId,
@@ -100,8 +106,10 @@ public class ApiPartnerProductController {
         Long unoFromToken = jwtProvider.getUnoFromToken(rawToken);
         boolean isAdmin = jwtProvider.isAdmin(rawToken); // 관리자 여부 판별
 
+
         // 상품 엔티티 직접 조회 (삭제 대상 상품)
         Product product = productService.getProductEntityById(prodId);
+
 
         // 관리자 아니고, 소유자도 아니면 권한 예외
         if (!isAdmin && !product.getPartner().getUno().equals(unoFromToken)) {
@@ -131,6 +139,21 @@ public class ApiPartnerProductController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("상품 등록 실패: " + e.getMessage());
         }
+    }
+
+    @PutMapping("/restore/{prodId}")
+    public ResponseEntity<?> restoreProduct(@PathVariable Long prodId, HttpServletRequest request) {
+        String token = request.getHeader("Authorization").substring(7);
+        Long unoFromToken = jwtProvider.getUnoFromToken(token);
+        
+        Product product = productService.restoreProduct(prodId);
+        
+        // 권한 확인
+        if (!product.getPartner().getUno().equals(unoFromToken)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("권한이 없습니다.");
+        }
+        
+        return ResponseEntity.ok(product);
     }
 
 

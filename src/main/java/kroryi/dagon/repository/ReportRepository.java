@@ -20,4 +20,5 @@ public interface ReportRepository extends JpaRepository<Report, Long> {
     boolean existsByReporterAndReported(User reporter, User reported);
 
 
+    List<Report> findTop10ByOrderByCreatedAtDesc();
 }
