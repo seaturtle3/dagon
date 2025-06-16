@@ -23,8 +23,8 @@ public class FileStorageUtil {
             Path filePath = uploadPath.resolve(fileName);
             file.transferTo(filePath.toFile());
 
-            // 클라이언트에서 접근할 수 있는 URL 반환
-            return "/static/" + folderName + "/" + fileName;
+            // ✅ 클라이언트에서 접근할 수 있는 URL 경로로 변경
+            return "/uploads/" + folderName + "/" + fileName;
         } catch (IOException e) {
             throw new RuntimeException("이미지 저장 실패", e);
         }

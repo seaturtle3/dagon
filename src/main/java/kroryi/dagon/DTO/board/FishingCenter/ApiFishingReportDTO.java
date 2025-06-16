@@ -50,13 +50,13 @@ public class ApiFishingReportDTO {
                     .collect(Collectors.toList());
         }
 
-        // ✅ 이미지 리스트 매핑
+        // 이미지 리스트 매핑
         if (fishingReport.getImages() != null) {
             this.images = fishingReport.getImages().stream()
                     .map(ApiFishingReportImageDTO::new)
                     .collect(Collectors.toList());
 
-            // ✅ 대표 썸네일 추출
+            // 대표 썸네일 추출
             this.thumbnailUrl = fishingReport.getImages().stream()
                     .filter(FishingReportImage::isThumbnail)
                     .map(FishingReportImage::getImageUrl)

@@ -35,11 +35,26 @@ public class ApiFishingReportService {
     private final FileStorageUtil fileStorageUtil;
     private final FishingReportImageRepository fishingReportImageRepository;
 
-    public void saveImages(List<MultipartFile> images) {
-        for (MultipartFile image : images) {
+    public void saveImages(FishingReport fishingReport, List<MultipartFile> images) {
+        List<FishingReportImage> imageEntities = new ArrayList<>();
+
+        for (int i = 0; i < images.size(); i++) {
+            MultipartFile image = images.get(i);
+
+            // 이미지 저장 → URL 리턴
             String imageUrl = fileStorageUtil.saveImage(image, "fishing-report");
-            // DB 저장 등 추가 로직...
+
+            // DB용 이미지 엔티티 생성
+            FishingReportImage reportImage = new FishingReportImage();
+            reportImage.setImageUrl(imageUrl);
+            reportImage.setFishingReport(fishingReport); // 연관관계 주입
+            reportImage.setThumbnail(i == 0); // 첫 번째 이미지를 썸네일로 지정
+
+            imageEntities.add(reportImage);
         }
+
+        fishingReportImageRepository.saveAll(imageEntities);
+        fishingReport.setImages(imageEntities); // 양방향 매핑일 경우
     }
 
     @Transactional
@@ -65,26 +80,8 @@ public class ApiFishingReportService {
         // 먼저 조황정보 저장 (PK 필요)
         fishingReport = fishingReportRepository.save(fishingReport);
 
-        // 이미지 처리
         if (images != null && !images.isEmpty()) {
-            List<FishingReportImage> imageEntities = new ArrayList<>();
-
-            for (int i = 0; i < images.size(); i++) {
-                MultipartFile image = images.get(i);
-
-                // 로컬 경로 저장 예시 (실제 경로는 환경에 맞게 설정)
-                String imageUrl = fileStorageUtil.saveImage(image, "fishing-report");
-
-                FishingReportImage reportImage = new FishingReportImage();
-                reportImage.setImageUrl(imageUrl);
-                reportImage.setFishingReport(fishingReport);
-                reportImage.setThumbnail(i == 0); // 첫 번째 이미지를 썸네일로 설정
-
-                imageEntities.add(reportImage);
-            }
-
-            fishingReportImageRepository.saveAll(imageEntities);
-            fishingReport.setImages(imageEntities); // 양방향 매핑 시 필요
+            saveImages(fishingReport, images);
         }
 
         return new ApiFishingReportDTO(fishingReport);
