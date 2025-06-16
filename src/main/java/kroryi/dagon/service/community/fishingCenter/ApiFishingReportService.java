@@ -7,15 +7,20 @@ import kroryi.dagon.DTO.board.FishingCenter.ApiUserDTO;
 import kroryi.dagon.entity.fishingCenter.FishingReport;
 import kroryi.dagon.entity.Product;
 import kroryi.dagon.entity.User;
+import kroryi.dagon.entity.fishingCenter.FishingReportImage;
 import kroryi.dagon.repository.ProductRepository;
 import kroryi.dagon.repository.UserRepository;
+import kroryi.dagon.repository.board.FishingReportImageRepository;
 import kroryi.dagon.repository.board.FishingReportRepository;
+import kroryi.dagon.util.FileStorageUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -27,30 +32,64 @@ public class ApiFishingReportService {
     private final FishingReportRepository fishingReportRepository;
     private final UserRepository userRepository;
     private final ProductRepository productRepository;
+    private final FileStorageUtil fileStorageUtil;
+    private final FishingReportImageRepository fishingReportImageRepository;
+
+    public void saveImages(List<MultipartFile> images) {
+        for (MultipartFile image : images) {
+            String imageUrl = fileStorageUtil.saveImage(image, "fishing-report");
+            // DB 저장 등 추가 로직...
+        }
+    }
 
     @Transactional
-    public ApiFishingReportDTO createFishingReport(ApiFishingReportDTO apiFishingReportDTO, Long userUno) {
+    public ApiFishingReportDTO createFishingReport(ApiFishingReportDTO dto, Long userUno, List<MultipartFile> images) {
         FishingReport fishingReport = new FishingReport();
-        fishingReport.setTitle(apiFishingReportDTO.getTitle());
-        fishingReport.setContent(apiFishingReportDTO.getContent());
-        fishingReport.setFishingAt(apiFishingReportDTO.getFishingAt());
+        fishingReport.setTitle(dto.getTitle());
+        fishingReport.setContent(dto.getContent());
+        fishingReport.setFishingAt(dto.getFishingAt());
 
         // 상품 설정
-        if (apiFishingReportDTO.getProduct() != null) {
-            Long prodId = apiFishingReportDTO.getProduct().getProdId();
+        if (dto.getProduct() != null) {
+            Long prodId = dto.getProduct().getProdId();
             Product product = productRepository.findById(prodId)
-                .orElseThrow(() -> new IllegalArgumentException("상품을 찾을 수 없습니다."));
+                    .orElseThrow(() -> new IllegalArgumentException("상품을 찾을 수 없습니다."));
             fishingReport.setProduct(product);
         }
 
         // 사용자 설정
         User user = userRepository.findById(userUno)
-            .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
         fishingReport.setUser(user);
 
+        // 먼저 조황정보 저장 (PK 필요)
         fishingReport = fishingReportRepository.save(fishingReport);
+
+        // 이미지 처리
+        if (images != null && !images.isEmpty()) {
+            List<FishingReportImage> imageEntities = new ArrayList<>();
+
+            for (int i = 0; i < images.size(); i++) {
+                MultipartFile image = images.get(i);
+
+                // 로컬 경로 저장 예시 (실제 경로는 환경에 맞게 설정)
+                String imageUrl = fileStorageUtil.saveImage(image, "fishing-report");
+
+                FishingReportImage reportImage = new FishingReportImage();
+                reportImage.setImageUrl(imageUrl);
+                reportImage.setFishingReport(fishingReport);
+                reportImage.setThumbnail(i == 0); // 첫 번째 이미지를 썸네일로 설정
+
+                imageEntities.add(reportImage);
+            }
+
+            fishingReportImageRepository.saveAll(imageEntities);
+            fishingReport.setImages(imageEntities); // 양방향 매핑 시 필요
+        }
+
         return new ApiFishingReportDTO(fishingReport);
     }
+
 
     public Page<ApiFishingReportDTO> getAllFishingReports(Pageable pageable) {
         Page<FishingReport> fishingReports = fishingReportRepository.findAll(pageable);

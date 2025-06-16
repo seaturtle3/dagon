@@ -59,7 +59,7 @@ public class FishingReport extends BaseTimeEntity {
     @OneToMany(mappedBy = "fishingReport", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<FishingReportComment> comments = new ArrayList<>();
 
-    // ✅ 조황 사진 목록 (썸네일 포함)
+    // 조황 사진 목록 (썸네일 포함)
     @OneToMany(mappedBy = "fishingReport", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<FishingReportImage> images = new ArrayList<>();
 }
