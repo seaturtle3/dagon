@@ -57,4 +57,7 @@ public class FishingDiary extends BaseTimeEntity {
     @OneToMany(mappedBy = "fishingDiary", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<FishingDiaryComment> comments = new ArrayList<>();
 
+    // 조행기 사진 목록 (썸네일 포함)
+    @OneToMany(mappedBy = "fishingDiary", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<FishingDiaryImage> images = new ArrayList<>();
 }

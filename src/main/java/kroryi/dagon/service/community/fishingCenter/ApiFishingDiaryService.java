@@ -1,19 +1,27 @@
 package kroryi.dagon.service.community.fishingCenter;
 
 import kroryi.dagon.DTO.board.FishingCenter.ApiFishingDiaryDTO;
-import kroryi.dagon.DTO.board.FishingCenter.FishingDiaryDTO;
+import kroryi.dagon.DTO.board.FishingCenter.ApiFishingReportDTO;
 import kroryi.dagon.entity.fishingCenter.FishingDiary;
 import kroryi.dagon.entity.Product;
 import kroryi.dagon.entity.User;
+import kroryi.dagon.entity.fishingCenter.FishingDiaryImage;
+import kroryi.dagon.entity.fishingCenter.FishingReport;
+import kroryi.dagon.entity.fishingCenter.FishingReportImage;
 import kroryi.dagon.repository.UserRepository;
+import kroryi.dagon.repository.board.FishingDiaryImageRepository;
 import kroryi.dagon.repository.board.FishingDiaryRepository;
 import kroryi.dagon.service.product.ProductService;
+import kroryi.dagon.util.FileStorageUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -25,24 +33,52 @@ public class ApiFishingDiaryService {
     private final FishingDiaryRepository fishingDiaryRepository;
     private final UserRepository userRepository;
     private final ProductService productService;
+    private final FileStorageUtil fileStorageUtil;
+    private final FishingDiaryImageRepository fishingDiaryImageRepository;
 
-    public ApiFishingDiaryDTO createFishingDiary(ApiFishingDiaryDTO apiFishingDiaryDTO) {
+    // 이미지 저장
+    public void saveImages(FishingDiary fishingDiary, List<MultipartFile> images) {
+        List<FishingDiaryImage> imageEntities = new ArrayList<>();
+
+        for (int i = 0; i < images.size(); i++) {
+            MultipartFile image = images.get(i);
+
+            // 이미지 저장 → URL 리턴
+            String imageUrl = fileStorageUtil.saveImage(image, "fishing-diary");
+
+            // DB용 이미지 엔티티 생성
+            FishingDiaryImage diaryImage = new FishingDiaryImage();
+            diaryImage.setImageUrl(imageUrl);
+            diaryImage.setFishingDiary(fishingDiary); // 연관관계 주입
+            diaryImage.setThumbnail(i == 0); // 첫 번째 이미지를 썸네일로 지정
+
+            imageEntities.add(diaryImage);
+        }
+
+        fishingDiaryImageRepository.saveAll(imageEntities);
+        fishingDiary.setImages(imageEntities); // 양방향 매핑일 경우
+    }
+
+    @Transactional
+    public ApiFishingDiaryDTO createFishingDiary(ApiFishingDiaryDTO dto, Long userUno, List<MultipartFile> images) {
         FishingDiary fishingDiary = new FishingDiary();
-        fishingDiary.setTitle(apiFishingDiaryDTO.getTitle());
-        fishingDiary.setContent(apiFishingDiaryDTO.getContent());
-        fishingDiary.setFishingAt(apiFishingDiaryDTO.getFishingAt());
+        fishingDiary.setTitle(dto.getTitle());
+        fishingDiary.setContent(dto.getContent());
+        fishingDiary.setFishingAt(dto.getFishingAt());
 
-        // prodId로 엔티티 조회해서 세팅
-        Long prodId = apiFishingDiaryDTO.getProduct().getProdId();
-        Product product = productService.findById(prodId);
-        fishingDiary.setProduct(product);
-
-        // 임시 고정된 user
-        User user = userRepository.findById(1L)
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+        // 사용자 설정
+        User user = userRepository.findById(userUno)
+                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
         fishingDiary.setUser(user);
 
+        // 먼저 조행기 저장 (PK 필요)
         fishingDiary = fishingDiaryRepository.save(fishingDiary);
+
+        // 이미지 저장
+        if (images != null && !images.isEmpty()) {
+            saveImages(fishingDiary, images);
+        }
+
         return new ApiFishingDiaryDTO(fishingDiary);
     }
 

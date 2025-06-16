@@ -2,6 +2,8 @@ package kroryi.dagon.DTO.board.FishingCenter;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import kroryi.dagon.entity.fishingCenter.FishingDiary;
+import kroryi.dagon.entity.fishingCenter.FishingDiaryImage;
+import kroryi.dagon.entity.fishingCenter.FishingReportImage;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -23,6 +25,12 @@ public class ApiFishingDiaryDTO {
     private ApiUserDTO user;
     private List<ApiCommentDTO> comments;
 
+    // 이미지 DTO 리스트 추가
+    private List<ApiFishingDiaryImageDTO> images;
+
+    // 대표 썸네일도 따로 뽑아서 담기
+    private String thumbnailUrl;
+
     public ApiFishingDiaryDTO(FishingDiary fishingDiary) {
         this.fdId = fishingDiary.getFdId();
         this.title = fishingDiary.getTitle();
@@ -41,6 +49,20 @@ public class ApiFishingDiaryDTO {
             this.comments = fishingDiary.getComments().stream()
                     .map(ApiCommentDTO::new)
                     .collect(Collectors.toList());
+        }
+
+        // 이미지 리스트 매핑
+        if (fishingDiary.getImages() != null) {
+            this.images = fishingDiary.getImages().stream()
+                    .map(ApiFishingDiaryImageDTO::new)
+                    .collect(Collectors.toList());
+
+            // 대표 썸네일 추출
+            this.thumbnailUrl = fishingDiary.getImages().stream()
+                    .filter(FishingDiaryImage::isThumbnail)
+                    .map(FishingDiaryImage::getImageUrl)
+                    .findFirst()
+                    .orElse(null);
         }
     }
 
