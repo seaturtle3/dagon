@@ -1,9 +1,9 @@
 package kroryi.dagon.controller.partner.community;
 
-import kroryi.dagon.DTO.board.FishingReportDiary.FishingReportDTO;
-import kroryi.dagon.entity.FishingReport;
+import kroryi.dagon.DTO.board.FishingCenter.FishingReportDTO;
+import kroryi.dagon.entity.fishingCenter.FishingReport;
 import kroryi.dagon.entity.Product;
-import kroryi.dagon.service.community.fishingReportDiary.FishingReportService;
+import kroryi.dagon.service.community.fishingCenter.FishingReportService;
 import kroryi.dagon.service.product.ProductService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;

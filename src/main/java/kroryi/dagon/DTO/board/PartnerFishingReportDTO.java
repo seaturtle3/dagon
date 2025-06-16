@@ -1,7 +1,7 @@
 package kroryi.dagon.DTO.board;
 
 
-import kroryi.dagon.entity.FishingReport;
+import kroryi.dagon.entity.fishingCenter.FishingReport;
 import lombok.Data;
 
 import java.time.LocalDateTime;

@@ -3,16 +3,16 @@ package kroryi.dagon.controller.partner.community;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
-import kroryi.dagon.DTO.board.FishingReportDiary.ApiFishingReportDTO;
-import kroryi.dagon.DTO.board.FishingReportDiary.FishingReportCreateDTO;
-import kroryi.dagon.DTO.board.FishingReportDiary.FishingReportDTO;
+import kroryi.dagon.DTO.board.FishingCenter.ApiFishingReportDTO;
+import kroryi.dagon.DTO.board.FishingCenter.FishingReportCreateDTO;
+import kroryi.dagon.DTO.board.FishingCenter.FishingReportDTO;
 import kroryi.dagon.DTO.board.PartnerFishingReportDTO;
-import kroryi.dagon.entity.FishingReport;
+import kroryi.dagon.entity.fishingCenter.FishingReport;
 import kroryi.dagon.entity.Product;
 import kroryi.dagon.entity.User;
 import kroryi.dagon.service.PartnerFishingReportService;
 import kroryi.dagon.service.auth.UserService;
-import kroryi.dagon.service.community.fishingReportDiary.ApiFishingReportService;
+import kroryi.dagon.service.community.fishingCenter.ApiFishingReportService;
 import kroryi.dagon.security.JwtTokenProvider;
 import kroryi.dagon.service.image.FileStorageService;
 import kroryi.dagon.service.product.ProductService;
@@ -24,6 +24,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -51,13 +52,15 @@ public class ApiFishingReportController {
     private final JwtUtil jwtUtil;
 
     @Operation(summary = "조황정보 생성")
-    @PostMapping("/create")
+    @PostMapping(value = "/create", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ApiFishingReportDTO createFishingReport(
             @RequestHeader("Authorization") String token,
-            @RequestBody ApiFishingReportDTO apiFishingReportDTO) {
+            @RequestPart("dto") ApiFishingReportDTO apiFishingReportDTO,
+            @RequestPart(value = "images", required = false) List<MultipartFile> images
+    ) {
         String bearerToken = token.substring(7); // "Bearer " 제거
         Long userUno = jwtTokenProvider.getUserUnoFromToken(bearerToken);
-        return apiFishingReportService.createFishingReport(apiFishingReportDTO, userUno);
+        return apiFishingReportService.createFishingReport(apiFishingReportDTO, userUno, images);
     }
 
     @Operation(summary = "조황정보 전체 조회 (페이징)")

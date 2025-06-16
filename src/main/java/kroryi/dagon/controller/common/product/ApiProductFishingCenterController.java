@@ -2,12 +2,11 @@ package kroryi.dagon.controller.common.product;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import kroryi.dagon.DTO.board.FishingReportDiary.ApiFishingCenterDTO;
-import kroryi.dagon.DTO.board.FishingReportDiary.ApiFishingDiaryDTO;
-import kroryi.dagon.DTO.board.FishingReportDiary.ApiFishingReportDTO;
-import kroryi.dagon.service.community.fishingCenter.ApiFishingCenterService;
-import kroryi.dagon.service.community.fishingReportDiary.ApiFishingDiaryService;
-import kroryi.dagon.service.community.fishingReportDiary.ApiFishingReportService;
+import kroryi.dagon.DTO.board.FishingCenter.ApiFishingCenterDTO;
+import kroryi.dagon.DTO.board.FishingCenter.ApiFishingDiaryDTO;
+import kroryi.dagon.DTO.board.FishingCenter.ApiFishingReportDTO;
+import kroryi.dagon.service.community.fishingCenter.ApiFishingDiaryService;
+import kroryi.dagon.service.community.fishingCenter.ApiFishingReportService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,7 +16,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor

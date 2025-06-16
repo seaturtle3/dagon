@@ -1,6 +1,8 @@
 package kroryi.dagon.entity;
 
 import jakarta.persistence.*;
+import kroryi.dagon.entity.fishingCenter.FishingDiary;
+import kroryi.dagon.entity.fishingCenter.FishingReport;
 import kroryi.dagon.enums.LoginType;
 import kroryi.dagon.enums.UserLevel;
 import kroryi.dagon.enums.UserRole;
