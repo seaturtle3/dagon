@@ -72,5 +72,11 @@ public interface SeaFreshwaterFishingRepository extends JpaRepository<Reservatio
     @Query(value = "SELECT r FROM Reservation r JOIN r.user u WHERE LOWER(u.uname) LIKE LOWER(CONCAT('%', :keyword, '%'))")
     Page<Reservation> findByUserNameContainingIgnoreCase(@Param("keyword") String keyword, Pageable pageable);
 
-    List<Reservation> findByProduct_Partner_Uno(Long uno);
+    List<Reservation> findAllByProduct_Partner_Uno(Long partnerUno);
+
+
+
+    long countByFishingAtAfter(LocalDateTime today);
+
+    long countByFishingAtBetween(LocalDateTime today, LocalDateTime tomorrow);
 }

@@ -18,6 +18,7 @@ import kroryi.dagon.service.image.FileStorageService;
 import kroryi.dagon.service.product.ProductService;
 import kroryi.dagon.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -27,14 +28,19 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.nio.file.AccessDeniedException;
+import java.nio.file.*;
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
 @Tag(name = "FishingReport", description = "조황정보 API (파트너)")
 @RequestMapping("/api/fishing-report")
 public class ApiFishingReportController {
+
+    @Value("${app.file.upload-dir}")
+    private String uploadDir;
+
 
     private final ApiFishingReportService apiFishingReportService;
     private final JwtTokenProvider jwtTokenProvider;
@@ -143,15 +149,23 @@ public class ApiFishingReportController {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).body("해당 상품에 대한 권한이 없습니다.");
             }
 
-            String thumbnailUrl = null;
+            // 이미지 파일 처리
+            String savedFileName = null;
             if (thumbnailFile != null && !thumbnailFile.isEmpty()) {
-                thumbnailUrl = fileStorageService.store(thumbnailFile); // 파일 저장 후 URL 반환
+                String originalFilename = thumbnailFile.getOriginalFilename();
+                String safeFilename = UUID.randomUUID() + "_" + originalFilename.replaceAll("[^a-zA-Z0-9\\.\\-_]", "_");
+
+                Path savePath = Paths.get(uploadDir, safeFilename);
+                Files.copy(thumbnailFile.getInputStream(), savePath, StandardCopyOption.REPLACE_EXISTING);
+
+                savedFileName = safeFilename;
             }
+
             FishingReport report = new FishingReport();
             report.setTitle(dto.getTitle());
             report.setContent(dto.getContent());
             report.setFishingAt(dto.getFishingAt().atStartOfDay());  // 여기서 LocalDate 타입 받아서 넣음
-            report.setThumbnailUrl(thumbnailUrl);
+            report.setThumbnailUrl(savedFileName);
             report.setUser(user);
             report.setProduct(product);
 
@@ -162,6 +176,7 @@ public class ApiFishingReportController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("조황 등록 실패: " + e.getMessage());
         }
     }
+
 
 
 

@@ -58,11 +58,13 @@ public class ApiAdminDashboardController {
         return ResponseEntity.ok(adminDetailsService.getTotalReservationCount());
     }
 
-    // 일별 예약 수 API (최근 7일)
+    // 일별 예약 수 API (현재 날짜부터 앞으로 7일)
     @GetMapping("/reservation/daily")
     public ResponseEntity<List<Map<String, Object>>> getDailyReservationCount() {
-        LocalDateTime oneWeekAgo = LocalDateTime.now().minusDays(7);
-        return ResponseEntity.ok(adminDetailsService.getDailyReservationCount(oneWeekAgo));
+        // 오늘 날짜의 시작(00:00:00)부터 앞으로 7일
+        LocalDateTime today = LocalDateTime.now().withHour(0).withMinute(0).withSecond(0);
+        LocalDateTime sevenDaysLater = today.plusDays(6); // 6일을 더하면 7일이 됨 (오늘 포함)
+        return ResponseEntity.ok(adminDetailsService.getDailyReservationCount(today, sevenDaysLater));
     }
 
     // 가장 많이 예약된 파트너 TOP3 API
@@ -90,11 +92,8 @@ public class ApiAdminDashboardController {
     }
 
     @GetMapping("/reservations/counts")
-    public ReservationCountDTO getReservationCounts() {
-        System.out.println("🎯 [예약] /reservation/total 호출됨");
-        return adminDetailsService.getReservationCounts();
-
-
+    public ResponseEntity<Map<String, Long>> getReservationCounts() {
+        return ResponseEntity.ok(adminDetailsService.getReservationStatistics());
     }
 
     @GetMapping("/reservations")
@@ -102,5 +101,10 @@ public class ApiAdminDashboardController {
         return adminDetailsService.getReservationStats();
     }
 
+    @GetMapping("/activities")
+    @Operation(summary = "최근 활동 조회", description = "예약, 문의, 회원가입, 신고 등의 최근 활동을 조회합니다.")
+    public ResponseEntity<List<Map<String, Object>>> getRecentActivities() {
+        return ResponseEntity.ok(adminDetailsService.getRecentActivities());
+    }
 
 }

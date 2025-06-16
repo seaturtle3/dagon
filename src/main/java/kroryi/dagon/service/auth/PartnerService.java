@@ -10,9 +10,7 @@ import kroryi.dagon.entity.Product;
 import kroryi.dagon.entity.User;
 import kroryi.dagon.enums.ApplicationStatus;
 import kroryi.dagon.enums.UserRole;
-import kroryi.dagon.repository.PartnerApplicationRepository;
-import kroryi.dagon.repository.PartnerRepository;
-import kroryi.dagon.repository.UserRepository;
+import kroryi.dagon.repository.*;
 import kroryi.dagon.DTO.PartnerDTO;
 import kroryi.dagon.entity.Partner;
 import lombok.RequiredArgsConstructor;
@@ -24,8 +22,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import kroryi.dagon.util.JwtUtil;
+import jakarta.servlet.http.HttpServletRequest;
+import kroryi.dagon.entity.Reservation;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -38,6 +40,11 @@ public class PartnerService {
     private final PartnerApplicationRepository partnerApplicationRepository;
     private final UserRepository userRepository;
     private final PartnerRepository partnersRepository;
+    private final ReservationRepository reservationRepository;
+    private final ProductRepository productRepository;
+    private final JwtUtil jwtUtil;
+    private final HttpServletRequest request;
+
 
 
     // 파트너 신청 적용
@@ -229,6 +236,30 @@ public class PartnerService {
             default:
                 return partnersRepository.findByPnameContaining(likeKeyword, pageable);
         }
+    }
+
+
+
+    public Long getCurrentPartnerId() {
+        String token = jwtUtil.resolveToken(request);
+        return jwtUtil.getUnoFromToken(token);
+    }
+
+    @Transactional
+    public Long getReservationCountByPartnerId(Long partnerId) {
+        return reservationRepository.countByProduct_Partner_Uno(partnerId);
+    }
+
+    @Transactional
+    public Long getTodayReservationCountByPartnerId(Long partnerId) {
+        LocalDateTime startOfDay = LocalDateTime.now().with(LocalTime.MIN);
+        LocalDateTime endOfDay = LocalDateTime.now().with(LocalTime.MAX);
+        return reservationRepository.countByProduct_Partner_UnoAndFishingAtBetween(partnerId, startOfDay, endOfDay);
+    }
+
+    @Transactional
+    public List<Reservation> getRecentReservationsByPartnerId(Long partnerId) {
+        return reservationRepository.findTop3ByProduct_Partner_UnoOrderByCreatedAtDesc(partnerId);
     }
 }
 

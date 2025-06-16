@@ -48,6 +48,5 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Integer findPointsByUno(@Param("uno") String uno);
 
 
-
-
+    List<User> findTop10ByOrderByCreatedAtDesc();
 }

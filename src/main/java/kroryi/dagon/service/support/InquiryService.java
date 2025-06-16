@@ -168,4 +168,8 @@ private InquiryResponseDTO toResponseDTO(Inquiry inquiry) {
                 .collect(Collectors.toList());
     }
 
+    public Long getUnansweredInquiryCount(Long partnerUno) {
+        return inquiryRepository.countByPartner_UnoAndIsAnsweredFalse(partnerUno);
+    }
+
 }

@@ -1,9 +1,11 @@
 package kroryi.dagon.service.order;
 
 import kroryi.dagon.DTO.ReservationDTO;
+import kroryi.dagon.entity.Reservation;
 import kroryi.dagon.enums.ReservationStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -11,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Log4j2
@@ -101,4 +104,7 @@ public class ReservationService {
                 .sorted(Comparator.comparing(ReservationDTO::getFishingAt))
                 .toList();
     }
+
+
+
 }

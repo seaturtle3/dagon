@@ -26,6 +26,7 @@ public class ProductDTO {
     private String prodNotice;
     private LocalDate createdAt;
     private String prodThumbnail;
+    private boolean deleted;
 
 
     public static ProductDTO fromEntity(Product product) {
@@ -42,6 +43,7 @@ public class ProductDTO {
         dto.setProdDescription(product.getProdDescription());
         dto.setProdEvent(product.getProdEvent());
         dto.setProdNotice(product.getProdNotice());
+        dto.setDeleted(product.isDeleted());
 
         // LocalDateTime -> LocalDate 변환
         if (product.getCreatedAt() != null) {
