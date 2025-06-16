@@ -32,5 +32,9 @@ public interface InquiryRepository extends JpaRepository<Inquiry, Long> {
 
     List<Inquiry> findByUser_Uno(Long userUno);
 
+    Long countByPartner_UnoAndIsAnsweredFalse(Long partnerUno);
+
+
+
 
 }

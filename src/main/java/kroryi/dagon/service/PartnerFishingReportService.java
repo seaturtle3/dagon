@@ -30,7 +30,7 @@ public class PartnerFishingReportService {
     private final FileStorageService fileStorageService;
 
     public FishingReportDTO getMyReport(Long frId, Long uno) throws AccessDeniedException {
-        FishingReport report = fishingReportRepository.findById(frId)
+        FishingReport report = fishingReportRepository.findWithUserAndProductByIdAndUno(frId)
                 .orElseThrow(() -> new RuntimeException("조황 정보를 찾을 수 없습니다."));
 
         if (!report.getUser().getUno().equals(uno)) {
