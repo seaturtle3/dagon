@@ -27,11 +27,15 @@ public interface FishingReportRepository extends JpaRepository<FishingReport, Lo
     Page<FishingReport> findByProductProdId(Long prodId, Pageable pageable);
 
 
-
     // 기존: List<FishingReport> findByUser_Uid(String uid);
     List<FishingReport> findByUser_Uno(Long uno);
 
     List<FishingReport> findByUserUno(Long uno);
 
     List<FishingReport> findByProduct_ProdId(Long prodId);
+    
+    // 조황정보 댓글 가져오기
+    @Query("SELECT fr FROM FishingReport fr LEFT JOIN FETCH fr.comments WHERE fr.frId = :id")
+    Optional<FishingReport> findByIdWithComments(@Param("id") Long id);
+
 }
