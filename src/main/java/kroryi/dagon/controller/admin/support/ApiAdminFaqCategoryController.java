@@ -1,18 +1,21 @@
 package kroryi.dagon.controller.admin.support;
 
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
+//import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.web.bind.annotation.RequestBody;
 import kroryi.dagon.entity.FAQCategory;
 import kroryi.dagon.service.support.FAQCategoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
+@PreAuthorize("hasRole('ADMIN')")
 @RequestMapping("/api/admin/faq-categories")
 @Tag(name = "FAQ", description = "FAQ 카테고리 관리 API (관리자)")
 public class ApiAdminFaqCategoryController {

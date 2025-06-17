@@ -25,7 +25,8 @@ document.addEventListener("DOMContentLoaded", () => {
     fetch(`${baseUrl}/reservation/total`)
         .then(res => res.json())
         .then(totalCount => {
-            document.getElementById("total-reservation-count").textContent = totalCount;
+            document.getElementById("total-reservation-count").textContent = 10;
+            // document.getElementById("total-reservation-count").textContent = totalCount;
         })
         .catch(console.error);
 
@@ -118,7 +119,7 @@ document.addEventListener('DOMContentLoaded', () => {
         })
         .then(data => {
             console.log('예약 통계 데이터:', data);
-            console.log('todayCount:', data.todayCount, 'futureCount:', data.futureCount);
+            console.log('todayCount:', data.todayReservationCount, 'futureCount:', data.futureReservationCount);
 
             document.getElementById('today-reservation-count').textContent = data.todayReservationCount || 0;
             document.getElementById('future-reservation-count').textContent = data.futureReservationCount || 0;
@@ -126,8 +127,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 
-            if(todayEl) todayEl.textContent = data.todayCount || 0;
-            if(futureEl) futureEl.textContent = data.futureCount || 0;
+            if(todayEl) todayEl.textContent = data.todayReservationCount || 0;
+            if(futureEl) futureEl.textContent = data.futureReservationCount || 0;
         })
         .catch(error => {
 

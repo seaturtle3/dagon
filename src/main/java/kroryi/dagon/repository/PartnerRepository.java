@@ -26,4 +26,17 @@ public interface PartnerRepository extends JpaRepository<Partner, Long> {
 
     @Query("SELECT p FROM Partner p WHERE (:pname IS NULL OR p.pname LIKE :pname)")
     Page<Partner> findByPnameContaining(@Param("pname") String pname, Pageable pageable);
+
+
+
+
+    // 변경 (대소문자 무시, 부분 일치)
+    Page<Partner> findByPnameContainingIgnoreCase(String pname, Pageable pageable);
+    Page<Partner> findByCeoNameContainingIgnoreCase(String ceoName, Pageable pageable);
+    Page<Partner> findBypAddressContainingIgnoreCase(String pAddress, Pageable pageable);
+
+
+
+
+
 }

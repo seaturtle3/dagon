@@ -11,8 +11,8 @@
 
     <!-- 탭 버튼 -->
     <div class="mb-4">
-        <a th:href="@{/fishing-report/list/{prodId}(prodId=${prodId})}" class="btn btn-outline-primary me-2">조황정보</a>
-        <a th:href="@{/fishing-diary/list/{prodId}(prodId=${prodId})}" class="btn btn-primary">조행기</a>
+        <a th:href="@{/fishing-center/report/list/{prodId}(prodId=${prodId})}" class="btn btn-outline-primary me-2">조황정보</a>
+        <a th:href="@{/fishing-center/diary/list/{prodId}(prodId=${prodId})}" class="btn btn-primary">조행기</a>
     </div>
 
     <!-- 테이블 -->
@@ -36,7 +36,7 @@
                     <img th:src="${diary.thumbnailUrl}" alt="썸네일" class="img-thumbnail" style="width: 100px;">
                 </td>
                 <td>
-                    <a th:href="@{'/fishing-diary/detail/' + ${diary.fdId}}"
+                    <a th:href="@{'/fishing-center/diary/detail/' + ${diary.fdId}}"
                        th:text="${diary.title}">제목</a>
                 </td>
                 <td th:text="${diary.views}">조회수</td>
@@ -55,24 +55,24 @@
     <nav th:if="${totalPages > 1}" class="mt-3">
         <ul class="pagination justify-content-center">
             <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
-                <a class="page-link" th:href="@{'/fishing-diary/list/' + ${prodId} + '?page=' + ${currentPage - 1}}">이전</a>
+                <a class="page-link" th:href="@{'/fishing-center/diary/list/' + ${prodId} + '?page=' + ${currentPage - 1}}">이전</a>
             </li>
 
             <li class="page-item" th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
                 th:classappend="${i == currentPage} ? 'active'">
-                <a class="page-link" th:href="@{'/fishing-diary/list/' + ${prodId} + '?page=' + ${i}}"
+                <a class="page-link" th:href="@{'/fishing-center/diary/list/' + ${prodId} + '?page=' + ${i}}"
                    th:text="${i + 1}">1</a>
             </li>
 
             <li class="page-item" th:classappend="${currentPage + 1 == totalPages} ? 'disabled'">
-                <a class="page-link" th:href="@{'/fishing-diary/list/' + ${prodId} + '?page=' + ${currentPage + 1}}">다음</a>
+                <a class="page-link" th:href="@{'/fishing-center/diary/list/' + ${prodId} + '?page=' + ${currentPage + 1}}">다음</a>
             </li>
         </ul>
     </nav>
 
     <div class="mt-4 d-flex gap-2">
         <!-- 글쓰기 버튼 -->
-        <form th:action="@{/fishing-diary/form(prodId=${prodId})}" method="get">
+        <form th:action="@{/fishing-center/diary/form(prodId=${prodId})}" method="get">
             <input type="hidden" name="prodId" th:value="${prodId}" />
             <button type="submit" class="btn btn-success">글쓰기</button>
         </form>

@@ -17,9 +17,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.nio.file.AccessDeniedException;
+import java.io.IOException;
+import java.nio.file.*;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -180,7 +183,7 @@ public class ProductService {
 
 
     public List<ProductDTO> getProductsByPartnerUno(Long partnerUno) {
-        List<Product> products = productRepository.findByPartner_UnoAndDeletedFalse(partnerUno);
+        List<Product> products = productRepository.findByPartner_Uno(partnerUno);
         return products.stream()
                 .map(ProductDTO::fromEntity)
                 .collect(Collectors.toList());
@@ -248,5 +251,21 @@ public class ProductService {
         productRepository.save(product);
     }
 
+    @Transactional(readOnly = true)
+    public Long getProductCountByPartnerId(Long partnerId) {
+        return productRepository.countByPartner_UnoAndDeletedFalse(partnerId);
+    }
+
+    public Product restoreProduct(Long prodId) {
+        Product product = productRepository.findById(prodId)
+                .orElseThrow(() -> new RuntimeException("상품을 찾을 수 없습니다."));
+        
+        if (!product.isDeleted()) {
+            throw new RuntimeException("이미 복구된 상품입니다.");
+        }
+        
+        product.setDeleted(false);
+        return productRepository.save(product);
+    }
 
 }

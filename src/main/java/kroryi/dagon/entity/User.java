@@ -1,6 +1,8 @@
 package kroryi.dagon.entity;
 
 import jakarta.persistence.*;
+import kroryi.dagon.entity.fishingCenter.FishingDiary;
+import kroryi.dagon.entity.fishingCenter.FishingReport;
 import kroryi.dagon.enums.LoginType;
 import kroryi.dagon.enums.UserLevel;
 import kroryi.dagon.enums.UserRole;
@@ -112,6 +114,7 @@ public class User extends BaseTimeEntity {
     @OneToMany(mappedBy = "receiver", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Notification> notifications;
 
+    // 신고
     // 신고
     // 신고한 목록
     @OneToMany(mappedBy = "reporter", cascade = CascadeType.REMOVE, orphanRemoval = true)

@@ -20,19 +20,22 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.Map;
 import java.util.UUID;
+
 @Tag(name = "Image", description = "이미지 업로드 및 조회 API")
 @RestController
 @Log4j2
+@RequestMapping("/api/images")
 public class ImageController {
 
     @Value("${app.board.file.upload-dir}")
     private String baseUploadDir;
 
     @Operation(summary = "이미지 업로드", description = "이미지 업로드 API")
-    @PostMapping(value = "/uploadImage", consumes = "multipart/form-data")
+    @PostMapping(value = "/upload", consumes = "multipart/form-data")
     public ResponseEntity<String> uploadImage(@Parameter(description = "업로드할 이미지 파일", required = true)
-                                              @RequestPart("file") MultipartFile file) throws IOException {
+                                              @RequestPart("image") MultipartFile file) throws IOException {
 
         if (file.isEmpty()) {
             return ResponseEntity.badRequest().body("빈파일");
@@ -49,10 +52,11 @@ public class ImageController {
             Path targetPath = uploadPath.resolve(storedFileName);
             Files.copy(file.getInputStream(), targetPath, StandardCopyOption.REPLACE_EXISTING);
 
-            String url = "/images/" + dateFolder + "/" + storedFileName;
+            String url = dateFolder + "/" + storedFileName;
             return ResponseEntity.ok(url);
         } catch (IOException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("저장 실패");
+
         }
 
     }

@@ -53,12 +53,12 @@ public class ApiMyPageController {
 
         log.info("--> {}", userDetails.getUname());
 
-        UsersDTO dto = myPageService.findUserInfo(userDetails.getUno()); // 서비스에서 조회
+        UsersDTO dto = myPageService.findUserInfo(userDetails.getUno()); // 사용자 정보 조회
 
         log.info("----------> {}", dto.getProfile_image());
 
         if (dto.getProfile_image() == null || dto.getProfile_image().isEmpty()) {
-            dto.setProfile_image("/img/default-profile.png");  // 정적 리소스 경로
+            dto.setProfile_image("/img/default-profile.png");  // 기본 프로필 이미지 설정
         }
 
         Partner partner = partnerService.findPartnerByUserUno(userDetails.getUno());
@@ -68,10 +68,23 @@ public class ApiMyPageController {
             dto.setPAddress(partner.getPAddress());
             dto.setPInfo(partner.getPInfo());
             dto.setLicense(partner.getLicense());
-            dto.setLicenseImg(partner.getLicenseImg());
-        }
+
+            String licenseImg = partner.getLicenseImg();
+
+            if (licenseImg != null && !licenseImg.trim().isEmpty()) {
+                // 만약 licenseImg가 절대 경로라면, 파일명만 추출
+                String fileName = licenseImg.replaceAll("^.*[\\\\/]", ""); // 경로 제거하고 파일명만
+                String licenseImgUrl = "/uploads/" + fileName;
+                dto.setLicenseImg(licenseImgUrl);
+                log.info("licenseImgUrl set to {}", licenseImgUrl);
+            } else {
+                log.warn("파트너 라이센스 이미지가 없습니다.");
+            }
+            }
+
         return ResponseEntity.ok(dto);
     }
+
 
     @GetMapping("/me")
     @Operation(summary = "이름으로 사용자 정보 조회", description = "uname으로 사용자 정보 조회")

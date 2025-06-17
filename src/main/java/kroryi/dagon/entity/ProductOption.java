@@ -5,12 +5,16 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Getter
 @Setter
 @Entity
 @Table(name = "prod_option")
 public class ProductOption {
+
+    @OneToMany(mappedBy = "productOption", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Reservation> reservations;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

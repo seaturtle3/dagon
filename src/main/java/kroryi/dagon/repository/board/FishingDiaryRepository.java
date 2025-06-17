@@ -1,6 +1,6 @@
 package kroryi.dagon.repository.board;
 
-import kroryi.dagon.entity.FishingDiary;
+import kroryi.dagon.entity.fishingCenter.FishingDiary;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -16,5 +16,8 @@ public interface FishingDiaryRepository extends JpaRepository<FishingDiary, Long
     List<FishingDiary> findAllWithComments();
 
     Page<FishingDiary> findByProductProdId(Long prodId, Pageable pageable);
+
+    // 특정 배 상품ID 조행기 조회
+    List<FishingDiary> findByProduct_ProdId(Long prodId);
 
 }

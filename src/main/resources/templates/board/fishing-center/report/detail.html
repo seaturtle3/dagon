@@ -12,7 +12,7 @@
 
     <!-- 뒤로가기 버튼 -->
     <div class="mt-4 mb-4 text-start">
-        <a th:href="@{/fishing-report/list/{prodId}(prodId=${prodId})}" class="btn btn-secondary">← 뒤로가기</a>
+        <a th:href="@{/fishing-center/report/list/{prodId}(prodId=${prodId})}" class="btn btn-secondary">← 뒤로가기</a>
     </div>
 
     <div class="table-responsive">
@@ -59,8 +59,8 @@
 
         <!-- 수정/삭제 버튼 -->
         <div class="mt-3 mb-4 text-end">
-            <a th:href="@{/fishing-report/form(prodId=${report.product.prodId}, id=${report.frId})}" class="btn btn-primary me-2">수정</a>
-            <form th:action="@{/fishing-report/delete/{id}(id=${report.frId})}" method="post" style="display:inline;">
+            <a th:href="@{/fishing-center/report/form(prodId=${report.product.prodId}, id=${report.frId})}" class="btn btn-primary me-2">수정</a>
+            <form th:action="@{/fishing-center/report/delete/{id}(id=${report.frId})}" method="post" style="display:inline;">
                 <button type="submit" class="btn btn-danger" onclick="return confirm('삭제하시겠습니까?');">삭제</button>
             </form>
         </div>

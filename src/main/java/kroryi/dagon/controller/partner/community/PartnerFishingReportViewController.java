@@ -1,9 +1,9 @@
 package kroryi.dagon.controller.partner.community;
 
-import kroryi.dagon.DTO.board.FishingReportDiary.FishingReportDTO;
-import kroryi.dagon.entity.FishingReport;
+import kroryi.dagon.DTO.board.FishingCenter.FishingReportDTO;
+import kroryi.dagon.entity.fishingCenter.FishingReport;
 import kroryi.dagon.entity.Product;
-import kroryi.dagon.service.community.fishingReportDiary.FishingReportService;
+import kroryi.dagon.service.community.fishingCenter.FishingReportService;
 import kroryi.dagon.service.product.ProductService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 @Log4j2
 @Controller
 @RequiredArgsConstructor
-@RequestMapping("/fishing-report")
+@RequestMapping("/fishing-center/report")
 public class PartnerFishingReportViewController {
 
     private final FishingReportService fishingReportService;
@@ -72,10 +72,10 @@ public class PartnerFishingReportViewController {
         Long savedId;
         if (id != null) {
             savedId = fishingReportService.updateFishingReport(id, fishingReportDTO);
-            return "redirect:/fishing-report/detail/" + savedId;
+            return "redirect:/fishing-center/report/detail/" + savedId;
         } else {
             fishingReportService.createFishingReport(fishingReportDTO);
-            return "redirect:/fishing-report/list/" + prodId;
+            return "redirect:/fishing-center/report/list/" + prodId;
         }
     }
 

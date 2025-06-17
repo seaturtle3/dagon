@@ -1,10 +1,11 @@
 package kroryi.dagon.DTO.board;
 
 
-import kroryi.dagon.entity.FishingReport;
+import kroryi.dagon.entity.fishingCenter.FishingReport;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+
 
 @Data
 public class PartnerFishingReportDTO {
@@ -13,6 +14,7 @@ public class PartnerFishingReportDTO {
     private String content;
     private String thumbnailUrl;
     private LocalDateTime fishingAt;
+    private String prodName;
 
     public PartnerFishingReportDTO(FishingReport report) {
         this.frId = report.getFrId();
@@ -20,6 +22,11 @@ public class PartnerFishingReportDTO {
         this.content = report.getContent();
         this.thumbnailUrl = report.getThumbnailUrl();
         this.fishingAt = report.getFishingAt();
+        if (report.getProduct() != null) {
+            this.prodName = report.getProduct().getProdName();
+        } else {
+            this.prodName = null;
+        }
     }
 }
 

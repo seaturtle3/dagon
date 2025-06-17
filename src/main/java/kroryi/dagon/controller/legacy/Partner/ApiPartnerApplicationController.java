@@ -15,11 +15,18 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Map;
+import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
@@ -31,27 +38,37 @@ public class ApiPartnerApplicationController {
     private final JwtUtil jwtUtil;
     private final PartnerService partnerService;
 
-
-    @Operation(summary = "파트너 등록", description = "파트너 신청 등록 API")
-    @PostMapping("/register")
+    @PostMapping(value = "/register", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> registerPartnerApplication(
-            @RequestBody PartnerApplicationDTO dto,
+            @RequestPart("data") PartnerApplicationDTO dto,
+            @RequestPart("businessLicenseImage") MultipartFile businessLicenseImage,
             @RequestHeader("Authorization") String authToken
     ) {
-        // 1. 토큰에서 유저 정보 추출
-        String token = authToken.replace("Bearer ", "");
-        Long uno = jwtUtil.getUnoFromToken(token);
-        String uname = jwtUtil.parseToken(token).get("uname", String.class);
+        try {
+            String token = authToken.replace("Bearer ", "");
+            Long uno = jwtUtil.getUnoFromToken(token);
+            String uname = jwtUtil.parseToken(token).get("uname", String.class);
 
-        // 2. 유저 정보 설정
-        dto.setUno(uno);
-        dto.setUname(uname);
+            dto.setUno(uno);
+            dto.setUname(uname);
 
-        // 3. 서비스로 전달
-        partnerApplicationService.register(dto);
+            String uploadDir = "C:/Users/edu002/IdeaProjects/dagon/uploads";
+            String filename = UUID.randomUUID() + "_" + businessLicenseImage.getOriginalFilename();
+            Path filePath = Paths.get(uploadDir, filename);
+            Files.createDirectories(filePath.getParent());
+            businessLicenseImage.transferTo(filePath.toFile());
 
-        return ResponseEntity.ok("파트너 신청이 완료되었습니다.");
+            dto.setBusinessLicenseImage(filePath.toString());
+
+            partnerApplicationService.register(dto);
+
+            return ResponseEntity.ok("파트너 신청이 완료되었습니다.");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("파트너 신청 중 오류 발생: " + e.getMessage());
+        }
     }
+
 
 
     /**

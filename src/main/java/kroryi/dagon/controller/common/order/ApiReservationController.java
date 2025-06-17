@@ -172,4 +172,46 @@ public class ApiReservationController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("예약 취소 중 오류 발생");
         }
     }
+
+    @GetMapping("/partner")
+    public List<ReservationDTO> getPartnerReservations(@AuthenticationPrincipal CustomUserDetails currentUser) {
+        Long partnerUno = currentUser.getUno();
+        List<Reservation> reservations = reservationService.getReservationsByPartnerUno(partnerUno);
+
+        return reservations.stream()
+                .map(res -> ReservationDTO.builder()
+                        .uno(res.getUser().getUno())
+                        .reservationId(res.getReservationId())
+                        .productName(res.getProduct().getProdName())
+                        .optionName(res.getProductOption().getOptName())
+                        .userName(res.getUser().getUname())
+                        .fishingAt(res.getFishingAt())
+                        .numPerson(res.getNumPerson())
+                        .reservationStatus(res.getReservationStatus())
+                        .paymentsMethod(res.getPaymentsMethod())
+                        .paidAt(res.getPaidAt())
+                        .createdAt(res.getCreatedAt())
+                        .deleted(res.getProduct().isDeleted())
+                        .build())
+                .collect(Collectors.toList());
+    }
+
+    @GetMapping("/reservation/{reservationId}")
+    public ResponseEntity<ReservationDTO> getReservationDetail(
+            @PathVariable Long reservationId,
+            @RequestHeader("Authorization") String authorizationHeader) {
+
+        try {
+            // 토큰에서 uno 추출 (필요하다면 사용)
+            String token = authorizationHeader.replace("Bearer ", "");
+            Long uno = jwtUtil.getUnoFromToken(token);
+
+            ReservationDTO dto = reservationService.getReservationDetail(reservationId);
+
+            return ResponseEntity.ok(dto);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+    }
+
 }

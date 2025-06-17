@@ -34,7 +34,7 @@ import java.util.Map;
 @Tag(name = "User-Inquiry", description = "1:1 문의 API (사용자)")
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/inquiries")
+@RequestMapping("/api/inquiry")
 public class ApiInquiryController {
 
     private final InquiryService inquiryService;

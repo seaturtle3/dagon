@@ -49,12 +49,12 @@ public class ApiKeyFilter extends OncePerRequestFilter {
                 Claims claims = jwtTokenUtil.parseToken(jwt); // JWT 파싱
 
                 String role = claims.get("role", String.class);
-                String uid = claims.getSubject(); // ✅ sub 필드에서 꺼냄
+                String subject = claims.getSubject(); // ✅ sub 필드에서 꺼냄
                 String uname = claims.get("uname", String.class); // 이름
 
-                if (role == null || uid == null) {
+                if (role == null || subject == null) {
                     response.setStatus(HttpStatus.UNAUTHORIZED.value());
-                    response.getWriter().write("Invalid JWT: missing role or uid");
+                    response.getWriter().write("Invalid JWT: missing role or subject");
                     return;
                 }
 
@@ -67,7 +67,7 @@ public class ApiKeyFilter extends OncePerRequestFilter {
 
                 if ("ADMIN".equalsIgnoreCase(role))  {
                     // 🔵 관리자일 경우 AdminUserDetails 사용
-                    principal = new AdminUserDetails(uid, role);
+                    principal = new AdminUserDetails(subject, role);
                 } else {
                     // 🔵 사용자일 경우 uno 필요
                     Integer unoInt = claims.get("uno", Integer.class);
@@ -78,7 +78,7 @@ public class ApiKeyFilter extends OncePerRequestFilter {
                     }
 
                     Long uno = unoInt.longValue();
-                    principal = new CustomUserDetails(uno, uid, "", authorities, role);
+                    principal = new CustomUserDetails(uno, subject, "", authorities, role);
 
                 }
                 UsernamePasswordAuthenticationToken authentication =

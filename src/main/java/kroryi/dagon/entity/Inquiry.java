@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import kroryi.dagon.entity.User;
 import kroryi.dagon.enums.InquiryType;
 import kroryi.dagon.enums.ReceiverType;
+import kroryi.dagon.enums.WriterType;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -29,7 +30,8 @@ public class Inquiry {
     // 새 필드 추가
     @Enumerated(EnumType.STRING)
     @Column(name = "receiver_type", nullable = false)
-    private ReceiverType receiverType;
+    @Builder.Default
+    private ReceiverType receiverType = ReceiverType.ADMIN;
 
     // 파트너에게 보낼 경우만 필요하므로 nullable = true로 변경
     @ManyToOne(fetch = FetchType.LAZY)
@@ -44,6 +46,11 @@ public class Inquiry {
 
     @Column(length = 1000) // 예시
     private String content;
+
+    // 작성자 유형
+    @Enumerated(EnumType.STRING)
+    @Column(name = "writer_type", nullable = false)
+    private WriterType writerType;
 
     // 문의 유형
     @Enumerated(EnumType.STRING)
@@ -79,4 +86,6 @@ public class Inquiry {
     protected void onUpdate() {
         this.updatedAt = LocalDateTime.now();
     }
+
+
 }

@@ -233,5 +233,30 @@ public class SeaFreshwaterFishingService {
         seaFreshwaterFishingRepository.save(res);
         return true;
     }
+
+    public List<Reservation> getReservationsByPartnerUno(Long partnerUno) {
+        return seaFreshwaterFishingRepository.findAllByProduct_Partner_Uno(partnerUno);
+    }
+
+
+    public ReservationDTO getReservationDetail(Long reservationId) {
+        Reservation reservation = seaFreshwaterFishingRepository.findById(reservationId)
+                .orElseThrow(() -> new RuntimeException("예약 정보를 찾을 수 없습니다."));
+
+        return ReservationDTO.builder()
+                .uno(reservation.getUser().getUno())
+                .reservationId(reservation.getReservationId())
+                .productName(reservation.getProduct().getProdName())
+                .optionName(reservation.getProductOption().getOptName())
+                .userName(reservation.getUser().getUname())
+                .fishingAt(reservation.getFishingAt())
+                .numPerson(reservation.getNumPerson())
+                .reservationStatus(reservation.getReservationStatus())
+                .paymentsMethod(reservation.getPaymentsMethod())
+                .paidAt(reservation.getPaidAt())
+                .createdAt(reservation.getCreatedAt())
+                .build();
+    }
+
 }
 

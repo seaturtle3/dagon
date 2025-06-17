@@ -1,10 +1,10 @@
 package kroryi.dagon.service;
 
 
-import kroryi.dagon.DTO.board.FishingReportDiary.FishingReportDTO;
+import kroryi.dagon.DTO.board.FishingCenter.FishingReportDTO;
 
 import kroryi.dagon.DTO.board.PartnerFishingReportDTO;
-import kroryi.dagon.entity.FishingReport;
+import kroryi.dagon.entity.fishingCenter.FishingReport;
 import kroryi.dagon.repository.board.FishingReportRepository;
 import kroryi.dagon.service.image.FileStorageService;
 import lombok.RequiredArgsConstructor;
@@ -30,7 +30,7 @@ public class PartnerFishingReportService {
     private final FileStorageService fileStorageService;
 
     public FishingReportDTO getMyReport(Long frId, Long uno) throws AccessDeniedException {
-        FishingReport report = fishingReportRepository.findById(frId)
+        FishingReport report = fishingReportRepository.findWithUserAndProductByIdAndUno(frId)
                 .orElseThrow(() -> new RuntimeException("조황 정보를 찾을 수 없습니다."));
 
         if (!report.getUser().getUno().equals(uno)) {

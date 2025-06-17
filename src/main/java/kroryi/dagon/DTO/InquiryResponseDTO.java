@@ -12,7 +12,9 @@ public class InquiryResponseDTO {
     private Long id;
     private String title;
     private String content;
+    private String writerType;
     private InquiryType inquiryType;
+    private String status;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private String userName;       // 작성자 이름

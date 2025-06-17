@@ -59,11 +59,11 @@
 
         <div class="sidebar-item" onclick="toggleSubmenu('api-submenu')">API 문서 ▼</div>
         <div id="api-submenu" class="submenu" style="display:none;">
-            <div class="submenu-item" onclick="loadSwagger('auth')">회원/권한 API</div>
-            <div class="submenu-item" onclick="loadSwagger('booking')">예약/결제 API</div>
-            <div class="submenu-item" onclick="loadSwagger('product')">상품 관련 API</div>
-            <div class="submenu-item" onclick="loadSwagger('board')">게시판 관련 API</div>
-            <div class="submenu-item" onclick="loadSwagger('etc')">기타 API</div>
+            <div class="submenu-item" onclick="loadSwagger('auth',this)">회원/권한 API</div>
+            <div class="submenu-item" onclick="loadSwagger('booking',this)">예약/결제 API</div>
+            <div class="submenu-item" onclick="loadSwagger('product',this)">상품 관련 API</div>
+            <div class="submenu-item" onclick="loadSwagger('board',this)">게시판 관련 API</div>
+            <div class="submenu-item" onclick="loadSwagger('etc',this)">기타 API</div>
         </div>
     </div>
     <div id="dashboard" class="page visible">
@@ -114,7 +114,7 @@
 
             <div class="dashboard-card">
                 <h2>총 예약 수</h2>
-                <p><span id="future-reservation-count">0</span>건</p>
+                <p><span id="total-reservation-count">0</span>건</p>
             </div>
 
             <!-- 활동 통계 카드들 -->
@@ -607,17 +607,24 @@
     }
 
     // 하위 메뉴 선택 시 Swagger 불러오고 스타일도 갱신
-    function loadSwagger(group) {
-        pages.forEach(p => p.classList.remove('visible'));
+    const pages2 = document.querySelectorAll('.page');
+
+    function loadSwagger(group, clickedItem) {
+        console.log("loadSwagger:", group, clickedItem);
+
+        // 메뉴 전환
+        pages2.forEach(p => {
+            p.classList.remove('visible');
+            p.style.display = 'none';
+        });
         document.getElementById('swagger').classList.add('visible');
+        document.getElementById('swagger').style.display = 'block';
 
-        // ✅ 기존 submenu-item active 제거
+        // 스타일 업데이트
         document.querySelectorAll('.submenu-item').forEach(item => item.classList.remove('active'));
-
-        // ✅ 현재 클릭한 버튼에 active 추가
-        const clickedItem = event.target;
         clickedItem.classList.add('active');
 
+        // Swagger 렌더링
         SwaggerUIBundle({
             url: location.origin + `/api-docs/${group}`,
             dom_id: '#swagger-ui',
@@ -632,6 +639,8 @@
             tagsSorter: "alpha"
         });
     }
+
+
 </script>
 
 
@@ -642,14 +651,14 @@
         'dashboard-link': 'dashboard',
         'user-info-link': 'user-info',
         'partner-list-link': 'partner-list',
-        'reservation-list-link' : 'reservation-list',
+        'reservation-list-link': 'reservation-list',
         'notification-link': 'notifications',
         'report-link': 'report-list',
         'event-link': 'event-list',
         'notice-link': 'notice-list',
         'faq-link': 'faq-list',
-        'inquiry-list-link' : 'inquiry-list',
-        'partner-management-link' : 'partner-management'
+        'inquiry-list-link': 'inquiry-list',
+        'partner-management-link': 'partner-management'
     };
 
     // 페이지별 초기화 함수 모음
@@ -682,7 +691,7 @@
             // 선택된 페이지 보이기
             const pageId = links[linkId];
             const targetPage = document.getElementById(pageId);
-            if(targetPage) {
+            if (targetPage) {
                 targetPage.classList.add('visible');
                 targetPage.style.display = 'block';
             }
@@ -709,13 +718,13 @@
             p.style.display = 'none';
         });
         const defaultPage = document.getElementById(defaultPageId);
-        if(defaultPage) {
+        if (defaultPage) {
             defaultPage.classList.add('visible');
             defaultPage.style.display = 'block';
         }
 
         // 초기 페이지 함수 있으면 실행
-        if(pageInitFunctions[defaultPageId]) {
+        if (pageInitFunctions[defaultPageId]) {
             pageInitFunctions[defaultPageId]();
         }
 
@@ -727,9 +736,17 @@
         })
             .then(res => res.json())
             .then(data => {
-                document.getElementById("users-count").innerText = data.totalUsers;
-                document.getElementById("application-count").innerText = data.totalApplications;
-                document.getElementById("approved-count").innerText = data.approvedPartners;
+                const usersCountEl = document.getElementById("users-count");
+                if (usersCountEl) usersCountEl.innerText = data.totalUsers;
+
+                const appCountEl = document.getElementById("application-count");
+                if (appCountEl) appCountEl.innerText = data.totalApplications;
+
+                const approvedCountEl = document.getElementById("approved-count");
+                if (approvedCountEl) approvedCountEl.innerText = data.approvedPartners;
+                // document.getElementById("users-count").innerText = data.totalUsers;
+                // document.getElementById("application-count").innerText = data.totalApplications;
+                // document.getElementById("approved-count").innerText = data.approvedPartners;
             });
 
         const authToken = localStorage.getItem("authToken");
@@ -741,7 +758,7 @@
                 try {
                     const response = await fetch("/api/auth/logout", {
                         method: "POST",
-                        headers: { "Authorization": "Bearer " + authToken }
+                        headers: {"Authorization": "Bearer " + authToken}
                     });
                     localStorage.removeItem("authToken");
                     if (response.ok) {

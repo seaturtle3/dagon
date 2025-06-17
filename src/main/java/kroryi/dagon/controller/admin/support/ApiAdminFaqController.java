@@ -7,17 +7,21 @@ import kroryi.dagon.DTO.board.BoardSearchDTO;
 import kroryi.dagon.DTO.board.FAQRequestDTO;
 import kroryi.dagon.DTO.board.FAQResponseDTO;
 import kroryi.dagon.entity.FAQ;
+import kroryi.dagon.service.auth.AdminUserDetails;
 import kroryi.dagon.service.support.FAQService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
+@PreAuthorize("hasRole('ADMIN')")
 @Tag(name = "FAQ", description = "FAQ 관리 API (관리자)")
 @RequestMapping("/api/admin/faq")
 public class ApiAdminFaqController {
@@ -38,7 +42,7 @@ public class ApiAdminFaqController {
         dto.setKeyword(keyword);
         dto.setFaqType(faqType);
 
-        Page<FAQ> faqPage = faqService.searchFaq(dto,PageRequest.of(page, size));
+        Page<FAQ> faqPage = faqService.searchFaq(dto, PageRequest.of(page, size));
         return faqPage.map(FAQResponseDTO::from);
     }
 
@@ -51,22 +55,37 @@ public class ApiAdminFaqController {
 
     @Operation(summary = "FAQ 등록", description = "새로운 FAQ 등록")
     @PostMapping
-    public ResponseEntity<FAQResponseDTO> create(@Valid FAQRequestDTO dto) {
-        FAQ faq = faqService.createFAQ(dto, "admin001"); // 관리자 ID는 테스트용
+    public ResponseEntity<FAQResponseDTO> create(
+            @Valid FAQRequestDTO dto,
+            @AuthenticationPrincipal AdminUserDetails userDetails) {
+
+        String adminId = userDetails.getAid();
+        FAQ faq = faqService.createFAQ(dto, adminId);
+
         return ResponseEntity.ok(FAQResponseDTO.from(faq));
     }
 
     @Operation(summary = "FAQ 수정", description = "기존 FAQ 내용 수정")
     @PutMapping("/{id}")
-    public ResponseEntity<FAQResponseDTO> update(@PathVariable Long id,@RequestBody FAQRequestDTO dto) {
-        FAQ faq = faqService.updateFAQ(id, dto);
+    public ResponseEntity<FAQResponseDTO> update(
+            @PathVariable Long id,
+            @RequestBody FAQRequestDTO dto,
+            @AuthenticationPrincipal AdminUserDetails userDetails) {
+
+        String adminId = userDetails.getAid();
+        FAQ faq = faqService.updateFAQ(id, dto, adminId);
+
         return ResponseEntity.ok(FAQResponseDTO.from(faq));
     }
 
     @Operation(summary = "FAQ 삭제", description = "FAQ 삭제")
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
-        faqService.deleteFAQ(id);
+    public ResponseEntity<Void> delete(
+            @PathVariable Long id,
+            @AuthenticationPrincipal AdminUserDetails userDetails) {
+
+        String adminId = userDetails.getAid();
+        faqService.deleteFAQ(id, adminId);
         return ResponseEntity.noContent().build();
     }
 

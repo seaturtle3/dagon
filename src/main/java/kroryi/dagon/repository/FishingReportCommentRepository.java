@@ -1,6 +1,6 @@
 package kroryi.dagon.repository;
 
-import kroryi.dagon.entity.FishingReportComment;
+import kroryi.dagon.entity.fishingCenter.FishingReportComment;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

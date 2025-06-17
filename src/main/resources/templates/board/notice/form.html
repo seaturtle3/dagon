@@ -48,12 +48,13 @@
             callbacks: {
                 onImageUpload: function (files) {
                     let formData = new FormData();
-                    formData.append("file", files[0]);
+                    formData.append("image", files[0]);
 
-                    axios.post("/uploadImage", formData, {
+                    axios.post("/api/images/upload", formData, {
                         headers: {'Content-Type': 'multipart/form-data'}
                     }).then(res => {
-                        $('#summernote').summernote('insertImage', res.data);
+                        const imageUrl = `/images/${res.data}`; // res.data는 dateFolder + filename
+                        $('#summernote').summernote('insertImage', imageUrl);
                     }).catch(err => {
                         alert("이미지 업로드 실패");
                     });

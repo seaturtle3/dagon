@@ -15,6 +15,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 @Log4j2
@@ -38,6 +40,12 @@ public class ReportService {
         }
 
         return reports.map(ReportDTO::new);
+    }
+
+
+    public Optional<ReportDTO> getReportById(Long id) {
+        return reportRepository.findById(id)
+                .map(ReportDTO::new);  // 바로 생성자 사용
     }
 
     @Transactional

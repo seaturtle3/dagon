@@ -6,22 +6,28 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import kroryi.dagon.DTO.PartnerApplicationDTO;
 import kroryi.dagon.entity.PartnerApplication;
+import kroryi.dagon.entity.Product;
 import kroryi.dagon.entity.User;
 import kroryi.dagon.enums.ApplicationStatus;
-import kroryi.dagon.repository.PartnerApplicationRepository;
-import kroryi.dagon.repository.PartnerRepository;
-import kroryi.dagon.repository.UserRepository;
+import kroryi.dagon.enums.UserRole;
+import kroryi.dagon.repository.*;
 import kroryi.dagon.DTO.PartnerDTO;
 import kroryi.dagon.entity.Partner;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import kroryi.dagon.util.JwtUtil;
+import jakarta.servlet.http.HttpServletRequest;
+import kroryi.dagon.entity.Reservation;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -34,6 +40,11 @@ public class PartnerService {
     private final PartnerApplicationRepository partnerApplicationRepository;
     private final UserRepository userRepository;
     private final PartnerRepository partnersRepository;
+    private final ReservationRepository reservationRepository;
+    private final ProductRepository productRepository;
+    private final JwtUtil jwtUtil;
+    private final HttpServletRequest request;
+
 
 
     // 파트너 신청 적용
@@ -59,11 +70,42 @@ public class PartnerService {
     }
 
 
-    public List<PartnerDTO> getAllPartners() {
-        return partnersRepository.findAll().stream()
-                .map(this::convertToDTO)
-                .toList();
+    public Partner findByUno(String uno) {
+        return (Partner) partnersRepository.findByUno(Long.valueOf(uno))
+                .orElseThrow(() -> new RuntimeException("Partner not found for uno: " + uno));
     }
+
+    public Page<PartnerDTO> getAllPartners(int page, int size, String keyword, String searchType) {
+        Pageable pageable = PageRequest.of(page, size);
+
+        if (keyword == null || keyword.trim().isEmpty()) {
+            return partnersRepository.findAll(pageable).map(PartnerDTO::new);
+        }
+
+        switch (searchType) {
+            case "ceoName":
+                return partnersRepository.findByCeoNameContainingIgnoreCase(keyword, pageable).map(PartnerDTO::new);
+            case "paddress":
+            case "pAddress": // 혹시 프론트에서 paddress로 오면 pAddress로 매핑
+                return partnersRepository.findBypAddressContainingIgnoreCase(keyword, pageable).map(PartnerDTO::new);
+            case "pname":
+            default:
+                return partnersRepository.findByPnameContainingIgnoreCase(keyword, pageable).map(PartnerDTO::new);
+        }
+    }
+
+    private PartnerDTO toDTO(Partner partner) {
+        return new PartnerDTO(
+                partner.getUno(),
+                partner.getPname(),
+                partner.getPAddress(),
+                partner.getCeoName(),
+                partner.getPInfo(),
+                partner.getLicense(),
+                partner.getLicenseImg()
+        );
+    }
+
 
     public PartnerDTO getPartnerById(Long id) {
         Partner partner = partnersRepository.findById(id)
@@ -115,32 +157,6 @@ public class PartnerService {
     }
 
 
-    @Transactional
-    public void approve(Long id) {
-        PartnerApplication app = partnerApplicationRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("신청 정보 없음"));
-
-        app.setPStatus(ApplicationStatus.APPROVED);
-        app.setPReviewedAt(LocalDateTime.now());
-
-        Long uno = app.getUser().getUno();
-
-        Partner partner = partnersRepository.findById(uno).orElse(null);
-
-        if (partner == null) {
-            partner = new Partner();
-            partner.setUno(uno);
-            partner.setUser(app.getUser());
-        }
-
-        partner.setPname(app.getPname());
-        partner.setPAddress(app.getPAddress());
-        partner.setCeoName(app.getCeoName());
-        partner.setPInfo(app.getPInfo());
-        partner.setLicense(app.getLicense());
-
-        partnersRepository.save(partner);
-    }
 
 
     @Transactional
@@ -175,12 +191,21 @@ public class PartnerService {
     private EntityManager em;
 
     @Transactional
-    public void deletePartner(Long uno) {
-        Partner partner = partnersRepository.findById(uno)
-                .orElseThrow(() -> new EntityNotFoundException("파트너 없음"));
+    public void deletePartner(Long partnerId) {
+        Partner partner = partnersRepository.findById(partnerId)
+                .orElseThrow(() -> new EntityNotFoundException("파트너를 찾을 수 없습니다."));
 
-        em.remove(partner);
-        em.flush();
+        User user = partner.getUser();
+
+        // User와 Partner 연관관계 끊기
+        if (user != null) {
+            user.setPartner(null);
+            user.setRole(UserRole.USER);
+            userRepository.save(user);
+        }
+
+        // Partner 삭제 - cascade + orphanRemoval로 관련된 Product, 하위 엔티티도 모두 삭제됨
+        partnersRepository.delete(partner);
     }
 
 
@@ -211,6 +236,30 @@ public class PartnerService {
             default:
                 return partnersRepository.findByPnameContaining(likeKeyword, pageable);
         }
+    }
+
+
+
+    public Long getCurrentPartnerId() {
+        String token = jwtUtil.resolveToken(request);
+        return jwtUtil.getUnoFromToken(token);
+    }
+
+    @Transactional
+    public Long getReservationCountByPartnerId(Long partnerId) {
+        return reservationRepository.countByProduct_Partner_Uno(partnerId);
+    }
+
+    @Transactional
+    public Long getTodayReservationCountByPartnerId(Long partnerId) {
+        LocalDateTime startOfDay = LocalDateTime.now().with(LocalTime.MIN);
+        LocalDateTime endOfDay = LocalDateTime.now().with(LocalTime.MAX);
+        return reservationRepository.countByProduct_Partner_UnoAndFishingAtBetween(partnerId, startOfDay, endOfDay);
+    }
+
+    @Transactional
+    public List<Reservation> getRecentReservationsByPartnerId(Long partnerId) {
+        return reservationRepository.findTop3ByProduct_Partner_UnoOrderByCreatedAtDesc(partnerId);
     }
 }
 
