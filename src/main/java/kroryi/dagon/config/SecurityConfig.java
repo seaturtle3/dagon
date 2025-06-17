@@ -26,7 +26,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import java.util.Arrays;
 import java.util.List;
 
 @Configuration
@@ -48,6 +52,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http, ApiKeyFilter apiKeyFilter) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))  // CORS 설정 추가
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
@@ -64,16 +69,13 @@ public class SecurityConfig {
                                 "/api/users/me",
                                 "/admin/login",
                                 "/register",
-                                "/admin/registration"
-
-
-
+                                "/admin/registration",
+                                "/oauth2/authorization/**",  // OAuth2 인증 시작
+                                "/login/oauth2/code/**"      // OAuth2 콜백
                         ).permitAll()
                         .requestMatchers("/api/mypage").authenticated()
                         .requestMatchers("/partner/api").authenticated()
                         .requestMatchers("/partner/review").authenticated()
-                        .requestMatchers("/login/oauth2/code/kakao").permitAll()
-
                         .anyRequest().authenticated()
                 )
                 .formLogin(formLogin -> { // 기존 폼 로그인 설정 유지
@@ -94,6 +96,52 @@ public class SecurityConfig {
         ;
 
         return http.build();
+    }
+
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        
+        // 허용할 오리진 설정
+        configuration.setAllowedOriginPatterns(Arrays.asList(
+            "http://localhost:5173",  // Vite 개발 서버
+            "http://localhost:3000",  // React 개발 서버
+            "http://localhost:8080",  // Vue 개발 서버
+            "http://127.0.0.1:5173",
+            "http://127.0.0.1:3000",
+            "http://127.0.0.1:8080"
+        ));
+        
+        // 허용할 HTTP 메서드 설정
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        
+        // 허용할 헤더 설정
+        configuration.setAllowedHeaders(Arrays.asList(
+            "Authorization", 
+            "Content-Type", 
+            "X-Requested-With",
+            "Accept",
+            "Origin",
+            "Access-Control-Request-Method",
+            "Access-Control-Request-Headers"
+        ));
+        
+        // 인증 정보 포함 허용
+        configuration.setAllowCredentials(true);
+        
+        // 노출할 헤더 설정
+        configuration.setExposedHeaders(Arrays.asList(
+            "Access-Control-Allow-Origin",
+            "Access-Control-Allow-Credentials"
+        ));
+        
+        // 프리플라이트 요청 캐시 시간 설정 (1시간)
+        configuration.setMaxAge(3600L);
+        
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        
+        return source;
     }
 
     @Bean
