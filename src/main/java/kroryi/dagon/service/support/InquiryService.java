@@ -69,7 +69,7 @@ public class InquiryService {
     }
 
     // 2. 문의 리스트 조회 (검색 + 페이징)
-    public Page<InquiryResponseDTO> getAdminInquiries(Pageable pageable, String keyword) {
+    public Page<InquiryResponseDTO> getAdminInquiries(Pageable pageable, String keyword, Boolean status) {
         Page<Inquiry> page;
         if (keyword == null || keyword.isBlank()) {
             page = inquiryRepository.findByReceiverType(ReceiverType.ADMIN, pageable);

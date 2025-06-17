@@ -59,10 +59,11 @@ public class ApiInquiryController {
     public ResponseEntity<Page<InquiryResponseDTO>> getAdminInquiries(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false) Boolean status,
             @RequestParam(required = false) String keyword) {
 
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
-        Page<InquiryResponseDTO> responses = inquiryService.getAdminInquiries(pageable, keyword);
+        Page<InquiryResponseDTO> responses = inquiryService.getAdminInquiries(pageable, keyword,status);
 
         return ResponseEntity.ok(responses);
     }

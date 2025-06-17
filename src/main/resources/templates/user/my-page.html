@@ -80,7 +80,7 @@
                 <div class="flex items-center gap-4">
                     <label for="fileInput" class="cursor-pointer">
                         <img id="profilePreview" class="w-24 h-24 rounded-full object-cover border hover:brightness-75"
-                             src="${profileImagePath}" alt="프로필 이미지" />
+                             src="" alt="프로필 이미지" />
                     </label>
                     <input type="file" id="fileInput" name="profile_image" accept="image/*"
                            onchange="previewImage(event)"
@@ -265,7 +265,7 @@
             document.getElementById("phone1").value = userData.phone1;
             document.getElementById("phone2").value = userData.phone2;
             document.getElementById("phone3").value = userData.phone3;
-            document.getElementById('profilePreview').src = userData.profile_image;
+            document.getElementById("profilePreview").src = userData.profile_image;
 
             console.log("레벨:", userData.level);
             renderUserLevelBadge(userData.level); // 레벨에 맞는 뱃지 출력
@@ -646,6 +646,14 @@
 
     // 페이지 로드 시 사용자 정보 불러오기
     window.onload = function() {
+        // 소셜 로그인 리다이렉트로 token이 쿼리파라미터로 온 경우 localStorage에 저장
+        const params = new URLSearchParams(window.location.search);
+        const token = params.get('token');
+        if (token) {
+            localStorage.setItem('authToken', token);
+            // 주소창에서 쿼리스트링 제거 (히스토리만 변경)
+            window.history.replaceState({}, document.title, window.location.pathname);
+        }
         loadUserInfo(); // 사용자 정보 로드
     };
 

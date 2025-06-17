@@ -4,6 +4,8 @@ package kroryi.dagon.service.order;
 import kroryi.dagon.DTO.MemberSecurityDTO;
 import kroryi.dagon.entity.User;
 import kroryi.dagon.enums.LoginType;
+import kroryi.dagon.enums.UserLevel;
+import kroryi.dagon.enums.UserRole;
 import kroryi.dagon.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -27,79 +29,104 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     private final PasswordEncoder passwordEncoder;
 
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
-        log.info("----------------userRequest: {}", userRequest);
+        log.info("[OAuth2] userRequest: {}", userRequest);
 
         ClientRegistration clientRegistration = userRequest.getClientRegistration();
         String clientName = clientRegistration.getClientName();
-        log.info("-------------clientName: {}", clientName);
+        log.info("[OAuth2] clientName: {}", clientName);
 
         OAuth2User oAuth2User = super.loadUser(userRequest);
-        Map<String, Object> paramMap = oAuth2User.getAttributes();
+        Map<String, Object> attributes = oAuth2User.getAttributes();
 
         String email = null;
-        switch (clientName) {
-            case "kakao":
-                email = getKakaoEmail(paramMap);
-                break;
-            case "google":
+        String nickname = null;
+        String profileImg = null;
+        LoginType loginType = null;
 
-                break;
-            default:
+        if ("kakao".equalsIgnoreCase(clientName)) {
+            KakaoProfile kakaoProfile = extractKakaoProfile(attributes);
+            email = kakaoProfile.email;
+            nickname = kakaoProfile.nickname;
+            profileImg = kakaoProfile.profileImg;
+            loginType = LoginType.KAKAO;
+        } else if ("google".equalsIgnoreCase(clientName)) {
+            // TODO: 구글 등 다른 공급자 확장시 여기에 추가
+            throw new OAuth2AuthenticationException("Google OAuth2 is not implemented yet");
+        } else {
+            throw new OAuth2AuthenticationException("Unsupported OAuth2 provider: " + clientName);
         }
 
-        return generateDTO(email, paramMap);
+        return generateDTO(email, nickname, profileImg, loginType, attributes);
     }
 
-    public MemberSecurityDTO generateDTO(String email, Map<String, Object> params) {
+    private static class KakaoProfile {
+        String email;
+        String nickname;
+        String profileImg;
+        KakaoProfile(String email, String nickname, String profileImg) {
+            this.email = email;
+            this.nickname = nickname;
+            this.profileImg = profileImg;
+        }
+    }
 
+    private KakaoProfile extractKakaoProfile(Map<String, Object> attributes) {
+        Object accountObj = attributes.get("kakao_account");
+        if (!(accountObj instanceof Map)) {
+            throw new OAuth2AuthenticationException("Invalid kakao_account structure");
+        }
+        Map<?, ?> accountMap = (Map<?, ?>) accountObj;
+        String email = (String) accountMap.get("email");
+        Object profileObj = accountMap.get("profile");
+        String nickname = null;
+        String profileImg = null;
+        if (profileObj instanceof Map) {
+            Map<?, ?> profileMap = (Map<?, ?>) profileObj;
+            nickname = (String) profileMap.get("nickname");
+            profileImg = (String) profileMap.get("profile_image_url");
+        }
+        return new KakaoProfile(email, nickname, profileImg);
+    }
+
+    public MemberSecurityDTO generateDTO(String email, String nickname, String profileImg, LoginType loginType, Map<String, Object> attributes) {
+        if (email == null) {
+            throw new OAuth2AuthenticationException("Email not found from OAuth2 provider");
+        }
         Optional<User> result = userRepository.findByEmail(email);
-
         if (result.isEmpty()) {
             User member = User.builder()
                     .uid(email)
                     .upw(passwordEncoder.encode("1111"))
                     .email(email)
-                    .loginType(LoginType.KAKAO)
+                    .loginType(loginType)
+                    .phone("")
+                    .points(0)
+                    .nickname(nickname != null ? nickname : "")
+                    .profileImg(profileImg)
+                    .role(UserRole.USER)
+                    .level(UserLevel.SILVER)
                     .build();
-
             userRepository.save(member);
-
             MemberSecurityDTO memberSecurityDTO = new MemberSecurityDTO(
                     email,
                     "1111",
                     email,
-                    false,
+                    loginType == LoginType.KAKAO,
                     Arrays.asList(new SimpleGrantedAuthority("ROLE_USER")));
-            memberSecurityDTO.setProps(params);
+            memberSecurityDTO.setProps(attributes);
             return memberSecurityDTO;
         } else {
-// 기존에 email로 가입되어 있는 경우
-// SimpleGrantedAuthority 문자열 기반 권한(ROLE)를 저장하는 클래스
             User member = result.get();
             MemberSecurityDTO memberSecurityDTO = new MemberSecurityDTO(
                     member.getUid(),
                     member.getUpw(),
                     member.getEmail(),
-                    member.getLoginType().equals(LoginType.KAKAO),
+                    member.getLoginType() == LoginType.KAKAO,
                     Collections.singletonList(
                             new SimpleGrantedAuthority("ROLE_" + member.getRole().name())
                     )
             );
             return memberSecurityDTO;
         }
-
-    }
-
-
-    private String getKakaoEmail(Map<String, Object> paramMap) {
-        log.info("-------------KAKAO paramMap: {}", paramMap);
-        Object value = paramMap.get("kakao_account");
-        log.info("-------------value: {}", value);
-
-        LinkedHashMap accountmap = (LinkedHashMap) value;
-        String email = (String) accountmap.get("email");
-        log.info("-------------email: {}", email);
-        return email;
-
     }
 }
