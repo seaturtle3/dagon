@@ -78,7 +78,7 @@ public class ApiFishingReportController {
     }
 
     @Operation(summary = "조황정보 ID 조회")
-    @GetMapping("/{id}")
+    @GetMapping("/get/{id}")
     public ApiFishingReportDTO getFishingReport(@PathVariable Long id) {
         return apiFishingReportService.getFishingReportById(id);
     }
