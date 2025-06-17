@@ -60,6 +60,7 @@ public class JwtUtil {
 
         return Jwts.builder()
                 .setSubject(aid)// ✅ 추가
+                .claim("aid", aid)
                 .claim("aname", aname)
                 .claim("role", role)
                 .claim("uno", uno)
