@@ -6,6 +6,7 @@ import kroryi.dagon.service.ApiKeyService;
 
 
 import kroryi.dagon.util.JwtUtil;
+import kroryi.dagon.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
@@ -36,6 +37,7 @@ public class SecurityConfig {
     private final kroryi.dagon.service.pages.admin.AdminDetailsService adminDetailsService;
     private final kroryi.dagon.service.order.CustomUserDetailsService userDetailsService;
     private final JwtUtil jwtUtil; // JWT 유틸리티 주입
+    private final UserRepository userRepository;
 
     @Bean
     public ApiKeyFilter apiKeyFilter(ApiKeyService apiKeyService, JwtUtil jwtTokenUtil) {
@@ -102,7 +104,7 @@ public class SecurityConfig {
 
     @Bean
     public AuthenticationSuccessHandler socialLoginSuccessHandler() {
-        return new CustomSocialLoginSuccessHandler(passwordEncoder());
+        return new CustomSocialLoginSuccessHandler(passwordEncoder(), jwtUtil, userRepository);
     }
 
     @Bean
