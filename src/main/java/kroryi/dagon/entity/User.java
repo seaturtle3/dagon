@@ -57,6 +57,7 @@ public class User extends BaseTimeEntity {
     private UserLevel level = UserLevel.SILVER;
 
     @ColumnDefault("0")
+    @Builder.Default
     @Column(name = "level_point", nullable = false)
     private Integer levelPoint = 0;
 
