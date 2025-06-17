@@ -646,6 +646,14 @@
 
     // 페이지 로드 시 사용자 정보 불러오기
     window.onload = function() {
+        // 소셜 로그인 리다이렉트로 token이 쿼리파라미터로 온 경우 localStorage에 저장
+        const params = new URLSearchParams(window.location.search);
+        const token = params.get('token');
+        if (token) {
+            localStorage.setItem('authToken', token);
+            // 주소창에서 쿼리스트링 제거 (히스토리만 변경)
+            window.history.replaceState({}, document.title, window.location.pathname);
+        }
         loadUserInfo(); // 사용자 정보 로드
     };
 

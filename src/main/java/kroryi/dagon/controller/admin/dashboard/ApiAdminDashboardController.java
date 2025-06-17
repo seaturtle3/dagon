@@ -8,6 +8,7 @@ import kroryi.dagon.service.pages.admin.AdminDashboardService;
 import kroryi.dagon.service.pages.admin.AdminDetailsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -26,6 +27,8 @@ public class ApiAdminDashboardController {
 
     private final AdminDashboardService dashboardService;
     private final AdminDetailsService adminDetailsService;
+
+
 
     @GetMapping("/counts")
     @Operation(summary = "회원 숫자, 파트너 숫자 조회 ", description = "회원 숫자,파트너 숫자 조회")
