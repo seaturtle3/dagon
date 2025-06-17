@@ -1,7 +1,9 @@
-package kroryi.dagon.DTO.board.FishingReportDiary;
+package kroryi.dagon.DTO.board.FishingCenter;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import kroryi.dagon.entity.*;
+import kroryi.dagon.entity.fishingCenter.FishingDiary;
+import kroryi.dagon.entity.fishingCenter.FishingReportComment;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 

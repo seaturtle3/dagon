@@ -3,38 +3,45 @@ package kroryi.dagon.controller.partner.community;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
-import kroryi.dagon.DTO.board.FishingReportDiary.ApiFishingReportDTO;
-import kroryi.dagon.DTO.board.FishingReportDiary.FishingReportCreateDTO;
-import kroryi.dagon.DTO.board.FishingReportDiary.FishingReportDTO;
+import kroryi.dagon.DTO.board.FishingCenter.ApiFishingReportDTO;
+import kroryi.dagon.DTO.board.FishingCenter.FishingReportCreateDTO;
+import kroryi.dagon.DTO.board.FishingCenter.FishingReportDTO;
 import kroryi.dagon.DTO.board.PartnerFishingReportDTO;
-import kroryi.dagon.entity.FishingReport;
+import kroryi.dagon.entity.fishingCenter.FishingReport;
 import kroryi.dagon.entity.Product;
 import kroryi.dagon.entity.User;
 import kroryi.dagon.service.PartnerFishingReportService;
 import kroryi.dagon.service.auth.UserService;
-import kroryi.dagon.service.community.fishingReportDiary.ApiFishingReportService;
+import kroryi.dagon.service.community.fishingCenter.ApiFishingReportService;
 import kroryi.dagon.security.JwtTokenProvider;
 import kroryi.dagon.service.image.FileStorageService;
 import kroryi.dagon.service.product.ProductService;
 import kroryi.dagon.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.nio.file.AccessDeniedException;
+import java.nio.file.*;
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
 @Tag(name = "FishingReport", description = "조황정보 API (파트너)")
 @RequestMapping("/api/fishing-report")
 public class ApiFishingReportController {
+
+    @Value("${app.file.upload-dir}")
+    private String uploadDir;
+
 
     private final ApiFishingReportService apiFishingReportService;
     private final JwtTokenProvider jwtTokenProvider;
@@ -45,13 +52,15 @@ public class ApiFishingReportController {
     private final JwtUtil jwtUtil;
 
     @Operation(summary = "조황정보 생성")
-    @PostMapping("/create")
+    @PostMapping(value = "/create", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ApiFishingReportDTO createFishingReport(
             @RequestHeader("Authorization") String token,
-            @RequestBody ApiFishingReportDTO apiFishingReportDTO) {
+            @RequestPart("dto") ApiFishingReportDTO apiFishingReportDTO,
+            @RequestPart(value = "images", required = false) List<MultipartFile> images
+    ) {
         String bearerToken = token.substring(7); // "Bearer " 제거
         Long userUno = jwtTokenProvider.getUserUnoFromToken(bearerToken);
-        return apiFishingReportService.createFishingReport(apiFishingReportDTO, userUno);
+        return apiFishingReportService.createFishingReport(apiFishingReportDTO, userUno, images);
     }
 
     @Operation(summary = "조황정보 전체 조회 (페이징)")
@@ -143,15 +152,23 @@ public class ApiFishingReportController {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).body("해당 상품에 대한 권한이 없습니다.");
             }
 
-            String thumbnailUrl = null;
+            // 이미지 파일 처리
+            String savedFileName = null;
             if (thumbnailFile != null && !thumbnailFile.isEmpty()) {
-                thumbnailUrl = fileStorageService.store(thumbnailFile); // 파일 저장 후 URL 반환
+                String originalFilename = thumbnailFile.getOriginalFilename();
+                String safeFilename = UUID.randomUUID() + "_" + originalFilename.replaceAll("[^a-zA-Z0-9\\.\\-_]", "_");
+
+                Path savePath = Paths.get(uploadDir, safeFilename);
+                Files.copy(thumbnailFile.getInputStream(), savePath, StandardCopyOption.REPLACE_EXISTING);
+
+                savedFileName = safeFilename;
             }
+
             FishingReport report = new FishingReport();
             report.setTitle(dto.getTitle());
             report.setContent(dto.getContent());
             report.setFishingAt(dto.getFishingAt().atStartOfDay());  // 여기서 LocalDate 타입 받아서 넣음
-            report.setThumbnailUrl(thumbnailUrl);
+            report.setThumbnailUrl(savedFileName);
             report.setUser(user);
             report.setProduct(product);
 
@@ -162,6 +179,7 @@ public class ApiFishingReportController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("조황 등록 실패: " + e.getMessage());
         }
     }
+
 
 
 

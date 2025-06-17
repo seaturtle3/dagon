@@ -2,14 +2,18 @@ package kroryi.dagon.controller.user.community;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import kroryi.dagon.DTO.board.FishingReportDiary.ApiFishingDiaryDTO;
-import kroryi.dagon.service.community.fishingReportDiary.ApiFishingDiaryService;
+import kroryi.dagon.DTO.board.FishingCenter.ApiFishingDiaryDTO;
+import kroryi.dagon.service.community.fishingCenter.ApiFishingDiaryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -20,9 +24,13 @@ public class ApiUserFishingDiaryController {
     private final ApiFishingDiaryService apiFishingDiaryService;
 
     @Operation(summary = "조행기 생성")
-    @PostMapping("/create")
-    public ApiFishingDiaryDTO createFishingDiary(@RequestBody ApiFishingDiaryDTO apiFishingDiaryDTO) {
-        return apiFishingDiaryService.createFishingDiary(apiFishingDiaryDTO);
+    @PostMapping(value = "/create", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ApiFishingDiaryDTO createFishingDiary(
+            @RequestPart("fishingDiary") ApiFishingDiaryDTO apiFishingDiaryDTO,
+            @RequestPart(value = "images", required = false) List<MultipartFile> images,
+            @RequestParam("userUno") Long userUno
+    ) {
+        return apiFishingDiaryService.createFishingDiary(apiFishingDiaryDTO, userUno, images);
     }
 
     @Operation(summary = "조행기 모두 조회 (페이징)")

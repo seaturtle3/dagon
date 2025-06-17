@@ -2,12 +2,16 @@ package kroryi.dagon.controller.partner;
 
 import io.swagger.v3.oas.annotations.Operation;
 
+import kroryi.dagon.DTO.InquiryResponseDTO;
 import kroryi.dagon.DTO.PartnerDTO;
 
+import kroryi.dagon.DTO.ProductDTO;
+import kroryi.dagon.DTO.ReservationDTO;
 import kroryi.dagon.component.CustomUserDetails;
 import kroryi.dagon.entity.Partner;
 
 import kroryi.dagon.service.auth.AdminUserDetails;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
@@ -28,6 +32,8 @@ import java.util.List;
 public class ApiPartnersController {
 
     private final kroryi.dagon.service.auth.PartnerService partnerService;
+
+
 
 
     @Operation(summary = "파트너 정보 조회 (페이징 + 검색 + 타입)", description = "파트너 정보 목록을 페이징과 검색(타입별)으로 조회합니다.")
@@ -124,6 +130,10 @@ public class ApiPartnersController {
         partnerService.deletePartner(id);
         return ResponseEntity.ok().build();
     }
+
+
+
+
 }
 
 

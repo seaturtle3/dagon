@@ -38,4 +38,5 @@ public interface ProductRepository extends JpaRepository<Product, Long>, JpaSpec
 
     Page<Product> findByMainTypeAndDeletedFalse(MainType mainType, Pageable pageable);
 
+    Long countByPartner_UnoAndDeletedFalse(Long partnerId);
 }

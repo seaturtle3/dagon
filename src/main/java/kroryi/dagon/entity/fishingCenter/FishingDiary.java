@@ -1,8 +1,9 @@
-package kroryi.dagon.entity;
-
+package kroryi.dagon.entity.fishingCenter;
 
 import jakarta.persistence.*;
-
+import kroryi.dagon.entity.BaseTimeEntity;
+import kroryi.dagon.entity.Product;
+import kroryi.dagon.entity.User;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
@@ -14,13 +15,13 @@ import java.util.List;
 @Getter
 @Setter
 @Entity
-@Table(name = "fishing_report")
-public class FishingReport extends BaseTimeEntity {
+@Table(name = "fishing_diary")
+public class FishingDiary extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "fr_id", nullable = false)
-    private Long frId;
+    @Column(name = "fd_id", nullable = false)
+    private Long fdId;
 
     @Column(name = "title", nullable = false)
     private String title;
@@ -52,9 +53,11 @@ public class FishingReport extends BaseTimeEntity {
     @JoinColumn(name = "prod_id", nullable = false)
     private Product product;
 
-    // 조황정보 댓글
-    @OneToMany(mappedBy = "fishingReport", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<FishingReportComment> comments = new ArrayList<>();
+    // 조행기 댓글
+    @OneToMany(mappedBy = "fishingDiary", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<FishingDiaryComment> comments = new ArrayList<>();
 
-
+    // 조행기 사진 목록 (썸네일 포함)
+    @OneToMany(mappedBy = "fishingDiary", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<FishingDiaryImage> images = new ArrayList<>();
 }

@@ -1,8 +1,8 @@
-package kroryi.dagon.service.community.fishingReportDiary;
+package kroryi.dagon.service.community.fishingCenter;
 
 import jakarta.persistence.EntityNotFoundException;
-import kroryi.dagon.DTO.board.FishingReportDiary.FishingReportDTO;
-import kroryi.dagon.entity.FishingReport;
+import kroryi.dagon.DTO.board.FishingCenter.FishingReportDTO;
+import kroryi.dagon.entity.fishingCenter.FishingReport;
 import kroryi.dagon.entity.User;
 import kroryi.dagon.repository.UserRepository;
 import kroryi.dagon.repository.board.FishingReportRepository;

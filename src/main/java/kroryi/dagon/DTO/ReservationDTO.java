@@ -29,7 +29,7 @@ public class ReservationDTO {
     private LocalDateTime paidAt; // 결제 시간
     @JsonFormat
     private LocalDateTime createdAt; // 예약 생성 시간
-
+    private boolean deleted;
 
 
 }

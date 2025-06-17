@@ -86,4 +86,6 @@ public class Inquiry {
     protected void onUpdate() {
         this.updatedAt = LocalDateTime.now();
     }
+
+
 }
