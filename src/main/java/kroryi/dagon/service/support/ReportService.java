@@ -113,7 +113,7 @@ public class ReportService {
      * 신고 대상 타입과 ID를 통해 피신고자(User)를 찾는 메서드
      */
     private User findReportedUserByTarget(TargetType targetType, Long targetId) {
-        return switch (targetType) {
+        User reportedUser = switch (targetType) {
             case PRODUCT -> {
                 Product product = productRepository.findById(targetId)
                         .orElseThrow(() -> new IllegalArgumentException("상품을 찾을 수 없습니다."));
@@ -140,6 +140,12 @@ public class ReportService {
                 yield comment.getUser();
             }
         };
+        
+        // 로깅 추가
+        log.info("신고 대상 조회 - 타입: {}, 대상ID: {}, 피신고자: {} (uno: {})", 
+                targetType, targetId, reportedUser.getUname(), reportedUser.getUno());
+        
+        return reportedUser;
     }
 }
 
