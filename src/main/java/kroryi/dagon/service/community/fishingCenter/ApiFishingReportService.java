@@ -94,7 +94,7 @@ public class ApiFishingReportService {
     }
 
     public ApiFishingReportDTO getFishingReportById(Long id) {
-        FishingReport entity = fishingReportRepository.findById(id)
+        FishingReport entity = fishingReportRepository.findByIdWithComments(id)
                 .orElseThrow(() -> new RuntimeException("조황정보를 찾을 수 없습니다."));
         return new ApiFishingReportDTO(entity);  // 생성자 호출
     }

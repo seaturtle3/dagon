@@ -41,6 +41,8 @@ public class ApiMyPageController {
 
     @Value("${app.file.upload-dir}")
     private String uploadDir;
+    @Value("${app.server.base-url}")
+    private String uploadBaseUrl;
 
     private final MyPageService myPageService;
     private final FileStorageService fileStorageService;
@@ -59,6 +61,8 @@ public class ApiMyPageController {
 
         if (dto.getProfile_image() == null || dto.getProfile_image().isEmpty()) {
             dto.setProfile_image("/img/default-profile.png");  // 기본 프로필 이미지 설정
+        }else{
+            dto.setProfile_image(uploadBaseUrl + uploadDir +"/"+ dto.getProfile_image());
         }
 
         Partner partner = partnerService.findPartnerByUserUno(userDetails.getUno());
@@ -71,16 +75,17 @@ public class ApiMyPageController {
 
             String licenseImg = partner.getLicenseImg();
 
+
             if (licenseImg != null && !licenseImg.trim().isEmpty()) {
                 // 만약 licenseImg가 절대 경로라면, 파일명만 추출
                 String fileName = licenseImg.replaceAll("^.*[\\\\/]", ""); // 경로 제거하고 파일명만
-                String licenseImgUrl = "/uploads/" + fileName;
+                String licenseImgUrl = uploadDir + "/uploads/" + fileName;
                 dto.setLicenseImg(licenseImgUrl);
                 log.info("licenseImgUrl set to {}", licenseImgUrl);
             } else {
                 log.warn("파트너 라이센스 이미지가 없습니다.");
             }
-            }
+        }
 
         return ResponseEntity.ok(dto);
     }

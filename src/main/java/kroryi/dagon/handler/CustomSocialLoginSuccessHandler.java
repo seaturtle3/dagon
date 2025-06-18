@@ -30,23 +30,21 @@ public class CustomSocialLoginSuccessHandler implements AuthenticationSuccessHan
             throws IOException, ServletException {
         log.info("------------- 소셜 로그인 성공 처리 -----------");
         MemberSecurityDTO memberSecurityDTO = (MemberSecurityDTO) authentication.getPrincipal();
-        String encodedPw = memberSecurityDTO.getMpw();
-
-        // 비밀번호가 1111이어도 무조건 JWT 발급
+        
+        // 사용자 정보 조회
         String email = memberSecurityDTO.getEmail();
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException("User not found for email: " + email));
+        
+        // JWT 토큰 생성
         String jwt = jwtUtil.generateToken(user);
+        log.info("Generated JWT token: {}", jwt);
 
-        String accept = request.getHeader("Accept");
-        if (accept != null && accept.contains("application/json")) {
-            // API 방식: JSON으로 토큰 반환
-            response.setContentType("application/json");
-            response.setCharacterEncoding("UTF-8");
-            response.getWriter().write("{\"authToken\": \"" + jwt + "\", \"message\": \"로그인 성공\"}");
-        } else {
-            // 웹(Thymeleaf) 방식: my-page로 토큰을 쿼리파라미터로 전달하며 리다이렉트
-            response.sendRedirect("/my-page?token=" + jwt);
-        }
+        // 프론트엔드로 리다이렉트 (JWT 토큰을 쿼리 파라미터로 전달)
+        String frontendUrl = "http://localhost:5173/oauth/callback";
+        String redirectUrl = frontendUrl + "?token=" + jwt + "&success=true";
+        
+        log.info("Redirecting to frontend: {}", redirectUrl);
+        response.sendRedirect(redirectUrl);
     }
 }
