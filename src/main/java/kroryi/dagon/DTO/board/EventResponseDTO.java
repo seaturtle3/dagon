@@ -33,10 +33,14 @@ public class EventResponseDTO {
                 .endAt(e.getEndAt())
                 .createdAt(e.getCreatedAt())
                 .modifyAt(e.getModifyAt())
-                .eventStatus(e.getEventStatus().getKorean())
+                .eventStatus(
+                        e.getEventStatus() != null ? e.getEventStatus().getKorean() : "미정"
+                )
                 .views(e.getViews())
                 .isTop(e.getIsTop())
-                .adminName(e.getAdmin().getAname())
+                .adminName(
+                        e.getAdmin() != null ? e.getAdmin().getAname() : "미지정 관리자"
+                )
                 .build();
     }
 

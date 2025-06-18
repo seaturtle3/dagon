@@ -12,6 +12,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 @Tag(name = "Event", description = "이벤트 조회 API (사용자)")
@@ -30,6 +32,13 @@ public class ApiEventController {
         Pageable pageable = PageRequest.of(page, size);
         return eventService.searchEvents(searchDTO, pageable)
                 .map(EventResponseDTO::from);
+    }
+
+    @GetMapping("/list")
+    public List<EventResponseDTO> getAllEvents() {
+        return eventService.getAllEvent().stream()
+                .map(EventResponseDTO::from)
+                .toList();
     }
 
     @Operation(summary = "이벤트 단건 조회", description = "이벤트 상세 내용을 조회 조회수를 1 증가")

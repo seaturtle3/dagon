@@ -38,9 +38,19 @@ public class Event extends BaseTimeEntity {
     @Column(name = "modify_at")
     private LocalDateTime modifyAt;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "event_status", nullable = false)
-    private EventStatus eventStatus = EventStatus.SCHEDULED;
+    public EventStatus getEventStatus() {
+        LocalDate today = LocalDate.now();
+
+        if (startAt != null && today.isBefore(startAt)) {
+            return EventStatus.SCHEDULED;
+        }
+
+        if (endAt != null && today.isAfter(endAt)) {
+            return EventStatus.COMPLETED;
+        }
+
+        return EventStatus.ONGOING;
+    }
 
     @Column(name = "views", nullable = false)
     @ColumnDefault("0")
@@ -58,24 +68,7 @@ public class Event extends BaseTimeEntity {
     private Admin admin;
 
 
-    /**
-     * 현재 시간(now)을 기준으로 이벤트 상태(eventStatus)를 자동으로 설정
-     * - 시작일과 종료일이 모두 없으면: 상시 진행 중
-     * - 현재 시간이 시작일 이전이면: 진행 예정
-     * - 현재 시간이 종료일 이후이면: 종료
-     * - 그 외(시작일 ~ 종료일 사이): 진행 중
-     */
-    public void updateEventStatus(LocalDate today) {
-        if (startAt == null && endAt == null) {
-            this.eventStatus = EventStatus.ONGOING; // 상시이벤트:진행중
-        } else if (startAt != null && today.isBefore(startAt)) {
-            this.eventStatus = EventStatus.SCHEDULED; // 시작전:진행예정
-        } else if (endAt != null && today.isAfter(endAt)) {
-            this.eventStatus = EventStatus.COMPLETED; // 종료:종료
-        } else {
-            this.eventStatus = EventStatus.ONGOING; // 진행중:진행중
-        }
-    }
+
 
 
 }

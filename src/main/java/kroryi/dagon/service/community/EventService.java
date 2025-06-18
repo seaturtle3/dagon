@@ -1,5 +1,6 @@
 package kroryi.dagon.service.community;
-
+import org.springframework.data.domain.PageImpl;
+import java.util.stream.Collectors;
 import jakarta.transaction.Transactional;
 import kroryi.dagon.DTO.board.BoardSearchDTO;
 import kroryi.dagon.DTO.board.EventRequestDTO;
@@ -51,7 +52,6 @@ public class EventService {
         event.setEndAt(dto.getEndAt());
         event.setIsTop(dto.getIsTop() != null && dto.getIsTop());
         event.setAdmin(admin);
-        event.updateEventStatus(LocalDate.now());
 
         return eventRepository.save(event);
     }
@@ -69,7 +69,6 @@ public class EventService {
         event.setIsTop(dto.getIsTop() != null && dto.getIsTop());
         event.setModifyAt(LocalDateTime.now());
         event.setAdmin(admin);
-        event.updateEventStatus(LocalDate.now());
 
         return eventRepository.save(event);
     }
@@ -103,21 +102,36 @@ public class EventService {
     public Page<Event> searchEvents(BoardSearchDTO dto, Pageable pageable) {
         String keyword = dto.getKeyword();
         String type = dto.getType();
-        String statusStr = dto.getStatus(); // 상태 문자열 받기
 
-        EventStatus status = null;
-        if (statusStr != null && !statusStr.isEmpty()) {
-            status = EventStatus.valueOf(statusStr.toUpperCase()); // String을 Enum으로 변환
-        }
+        Page<Event> base;
 
         if (keyword == null || keyword.isBlank()) {
-            if (status != null) {
-                return eventRepository.findByEventStatus(status, pageable); // 상태로 필터링
+            base = eventRepository.findAllByOrderByIsTopDescCreatedAtDesc(pageable);
+        } else {
+            if ("title".equalsIgnoreCase(type)) {
+                base = eventRepository.findByTitleContainingIgnoreCase(keyword, pageable);
+            } else if ("content".equalsIgnoreCase(type)) {
+                base = eventRepository.findByContentContaining(keyword, pageable);
+            } else {
+                base = eventRepository.findByTitleContainingIgnoreCaseOrContentContaining(keyword, keyword, pageable);
             }
-            return eventRepository.findAllByOrderByIsTopDescCreatedAtDesc(pageable); // 기본 전체 검색
         }
 
-        // 키워드와 상태로 필터링
-        return eventRepository.searchByKeywordAndStatus(keyword, type, status, pageable);
+        // 🔽 상태 필터링 (자바단 처리)
+        if (dto.getStatus() != null && !dto.getStatus().isBlank()) {
+            try {
+                EventStatus desired = EventStatus.valueOf(dto.getStatus().toUpperCase());
+                List<Event> filtered = base.getContent().stream()
+                        .filter(e -> e.getEventStatus() == desired)
+                        .collect(Collectors.toList());
+
+                return new PageImpl<>(filtered, pageable, filtered.size());
+            } catch (IllegalArgumentException e) {
+                // 잘못된 status 값 방어
+                return Page.empty();
+            }
+        }
+
+        return base;
     }
 }
