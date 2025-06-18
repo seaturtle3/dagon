@@ -16,6 +16,7 @@ public class ApiFishingReportDTO {
     private Long frId;
     private String title;
     private String content;
+    private String prodName;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDateTime fishingAt;
@@ -39,6 +40,11 @@ public class ApiFishingReportDTO {
         this.fishingAt = fishingReport.getFishingAt();
 
         this.imageFileName = fishingReport.getThumbnailUrl(); // 여기에 추가
+
+        if (fishingReport.getProduct() != null) {
+            this.product = new ApiProductDTO(fishingReport.getProduct());
+            this.prodName = fishingReport.getProduct().getProdName();
+        }
 
         if (fishingReport.getProduct() != null) {
             this.product = new ApiProductDTO(fishingReport.getProduct());
