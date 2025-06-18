@@ -23,4 +23,6 @@ public class InquiryResponseDTO {
     private LocalDateTime answeredAt;  // 답변 완료 시간 (있으면)
     // 추가: 답변 내용
     private String answerContent;
+    private Boolean isAnswered;
+    private LocalDateTime answeredAt;  // 답변 완료 시간 (있으면)
 }
