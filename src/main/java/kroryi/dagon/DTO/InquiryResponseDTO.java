@@ -20,7 +20,6 @@ public class InquiryResponseDTO {
     private String userName;       // 작성자 이름
     private String userUid;        // 작성자 아이디
     private String partnerName;    // 문의 대상 파트너명
-    private LocalDateTime answeredAt;  // 답변 완료 시간 (있으면)
     // 추가: 답변 내용
     private String answerContent;
     private Boolean isAnswered;
