@@ -120,6 +120,7 @@ public class ApiReservationController {
     public List<ReservationDTO> getMyReservations(@AuthenticationPrincipal CustomUserDetails currentUser) {
         Long userUno = currentUser.getUno();
         List<Reservation> reservations = reservationService.getReservationsByUserUno(userUno);
+        log.info("getMyReservations---> {}", userUno);
 
         return reservations.stream()
                 .map(res -> ReservationDTO.builder()
