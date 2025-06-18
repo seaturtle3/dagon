@@ -42,14 +42,14 @@ public class FishingReportService {
         fishingReport.setProduct(fishingReportDTO.getProduct());
         fishingReport.setComments(fishingReportDTO.getComments());
 
-        // 실제 로그인 후 유저 ID, 예약 상품 ID
-//        User user = userRepository.findById(fishingReportDTO.getUserId())
-//                .orElseThrow(() -> new IllegalArgumentException("User not found"));
-
-        // 임시 고정된 user
-        User user = userRepository.findById(1L)
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
-        fishingReport.setUser(user);
+        // 사용자 설정 - DTO에서 사용자 정보를 받아서 설정
+        if (fishingReportDTO.getUser() != null && fishingReportDTO.getUser().getUno() != null) {
+            User user = userRepository.findById(fishingReportDTO.getUser().getUno())
+                    .orElseThrow(() -> new IllegalArgumentException("User not found"));
+            fishingReport.setUser(user);
+        } else {
+            throw new IllegalArgumentException("사용자 정보가 필요합니다.");
+        }
 
         fishingReport = fishingReportRepository.save(fishingReport);
         return fishingReport.getFrId();

@@ -49,10 +49,14 @@ public class FishingDiaryService {
         Product product = productService.findById(prodId);  // <- 이거 중요
         fishingDiary.setProduct(product);
 
-        // 임시 고정된 user
-        User user = userRepository.findById(1L)
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
-        fishingDiary.setUser(user);
+        // 사용자 설정 - DTO에서 사용자 정보를 받아서 설정
+        if (fishingDiaryDTO.getUser() != null && fishingDiaryDTO.getUser().getUno() != null) {
+            User user = userRepository.findById(fishingDiaryDTO.getUser().getUno())
+                    .orElseThrow(() -> new IllegalArgumentException("User not found"));
+            fishingDiary.setUser(user);
+        } else {
+            throw new IllegalArgumentException("사용자 정보가 필요합니다.");
+        }
 
         fishingDiary = fishingDiaryRepository.save(fishingDiary);
         return new FishingDiaryDTO(fishingDiary);
