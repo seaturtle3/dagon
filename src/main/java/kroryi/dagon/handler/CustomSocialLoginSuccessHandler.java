@@ -9,6 +9,7 @@ import kroryi.dagon.entity.User;
 import kroryi.dagon.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
@@ -18,6 +19,10 @@ import java.io.IOException;
 @Log4j2
 @RequiredArgsConstructor
 public class CustomSocialLoginSuccessHandler implements AuthenticationSuccessHandler {
+
+
+    @Value("${app.server.base-url}")
+    private String baseUrl;
 
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
@@ -40,10 +45,24 @@ public class CustomSocialLoginSuccessHandler implements AuthenticationSuccessHan
         String jwt = jwtUtil.generateToken(user);
         log.info("Generated JWT token: {}", jwt);
 
-        // 프론트엔드로 리다이렉트 (JWT 토큰을 쿼리 파라미터로 전달)
-        String frontendUrl = "http://localhost:5173/oauth/callback";
-        String redirectUrl = frontendUrl + "?token=" + jwt + "&success=true";
-        
+        // state 파라미터에서 baseUrl 추출
+        String baseUrl = request.getParameter("state");
+
+        // 허용된 baseUrl 목록
+        java.util.List<String> allowedBaseUrls = java.util.List.of(
+            "http://localhost:8095",
+            "http://localhost:5173"
+            // 필요시 추가
+        );
+
+        // baseUrl 검증 및 기본값 처리
+        if (baseUrl == null || allowedBaseUrls.stream().noneMatch(baseUrl::equals)) {
+            baseUrl = this.baseUrl;
+        }
+
+        // baseUrl에 경로 및 파라미터 추가
+        String redirectUrl = "http://localhost:5173/" + "oauth/callback?token=" + jwt + "&success=true";
+
         log.info("Redirecting to frontend: {}", redirectUrl);
         response.sendRedirect(redirectUrl);
     }
