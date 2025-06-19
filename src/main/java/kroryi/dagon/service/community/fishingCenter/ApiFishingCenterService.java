@@ -1,8 +1,8 @@
 package kroryi.dagon.service.community.fishingCenter;
 
 import kroryi.dagon.DTO.product.ProductDTO;
-import kroryi.dagon.entity.Product;
-import kroryi.dagon.repository.ProductRepository;
+import kroryi.dagon.entity.product.Product;
+import kroryi.dagon.repository.product.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

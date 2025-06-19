@@ -4,6 +4,9 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import kroryi.dagon.enums.MainType;
+import kroryi.dagon.enums.ProdRegion;
+import kroryi.dagon.enums.SubType;
+import kroryi.dagon.repository.product.ProductRepository;
 import kroryi.dagon.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -12,6 +15,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.MediaType;
@@ -25,6 +29,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.time.LocalDate;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @RestController
@@ -38,6 +46,7 @@ public class ApiProductController {
 
     private final ProductService productService;
     private final JwtUtil jwtUtil;
+    private final ProductRepository productRepository;
 
     @Operation(summary = "상품 등록", description = "토큰 기반 인증 후, 상품 정보를 JSON과 썸네일 파일로 등록합니다.")
     @PostMapping(value = "/create", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -79,7 +88,7 @@ public class ApiProductController {
 
     @Operation(summary = "모든 상품 페이징 조회", description = "페이징으로 상품 조회")
     @GetMapping("/get-all")
-    public Page<ProductDTO> getAllProducts (
+    public Page<ProductDTO> getAllProducts(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "prodId") String sortBy,
@@ -111,8 +120,7 @@ public class ApiProductController {
         productService.deleteProduct(id);
     }
 
-//  -------------- 프론트 추가(바다/민물 필터) api ----------------
-
+//  -------------- 프론트 추가 api (바다/민물 필터) ----------------
     @Operation(summary = "바다 상품 페이징 조회", description = "mainType이 '바다'인 상품 페이징 조회")
     @GetMapping("/get-all/sea")
     public Page<ProductDTO> getSeaProducts(
@@ -143,5 +151,38 @@ public class ApiProductController {
         return productService.getProductsByMainType(MainType.valueOf("FRESHWATER"), pageable);
     }
 
+    //  -------------- 프론트 추가 api (바다/민물에서 날짜, 지역, 상세 장소, 어종 필터) ----------------
+    @Operation(summary = "바다 상품 필터 조회", description = "날짜, 지역, 상세 장소, 어종에 따라 바다 상품 필터 조회")
+    @GetMapping("/get-all/sea/detail")
+    public List<ProductDTO> getSeaProductsByFilter(
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
+            @RequestParam(required = false) ProdRegion region,
+            @RequestParam(required = false) String subType,
+            @RequestParam(required = false) String species
+    ) {
+        return productService.getSeaProductsByFilters(date, region, subType, species);
+    }
+
+    //  -------------- 프론트 추가(바다/민물에서 날짜, 지역, 상세 장소, 어종 필터) api ----------------
+    @GetMapping("/sea/filters")
+    public Map<String, List<String>> getSeaFilterOptions() {
+        List<LocalDate> availableDates = productRepository.findDistinctAvailableDates();
+        List<String> regions = productRepository.findDistinctRegions().stream()
+                .map(ProdRegion::getKorean)
+                .toList();
+
+        List<String> subTypes = productRepository.findDistinctSubTypes().stream()
+                .map(SubType::getKorean)
+                .toList();
+
+        List<String> species = productRepository.findDistinctFishSpecies();
+
+        Map<String, List<String>> filters = new HashMap<>();
+        filters.put("availableDates", availableDates.stream().map(LocalDate::toString).toList()); // 문자열로
+        filters.put("regions", regions);
+        filters.put("subTypes", subTypes);
+        filters.put("fishSpecies", species);
+        return filters;
+    }
 
 }

@@ -1,8 +1,10 @@
-package kroryi.dagon.entity;
+package kroryi.dagon.entity.product;
 
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
+import kroryi.dagon.entity.BaseTimeEntity;
+import kroryi.dagon.entity.Partner;
 import kroryi.dagon.entity.fishingCenter.FishingDiary;
 import kroryi.dagon.entity.fishingCenter.FishingReport;
 import kroryi.dagon.enums.MainType;
@@ -42,8 +44,6 @@ public class Product extends BaseTimeEntity {
     @Column(name = "main_type", nullable = false)
     private MainType mainType;
 
-
-    
     @Enumerated(EnumType.STRING)
     @Schema(description = "바다/민물 세부 사항")
     @Column(name = "sub_type", nullable = false)
@@ -60,7 +60,6 @@ public class Product extends BaseTimeEntity {
 
     @Column(name = "prod_address")
     private String prodAddress;
-
 
     @Lob
     @Column(name = "prod_description")
@@ -87,7 +86,6 @@ public class Product extends BaseTimeEntity {
     @Column(name = "prod_thumbnail")
     private String prodThumbnail; // 저장된 파일명 or URL
 
-
     // 옵션
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ProductOption> options = new ArrayList<>();
@@ -105,9 +103,7 @@ public class Product extends BaseTimeEntity {
     private List<ProdFacilityMapping> facilityMappings = new ArrayList<>();
 
     // 조황정보
-
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
-
     private List<FishingReport> fishingReports = new ArrayList<>();
 
     // 조행기

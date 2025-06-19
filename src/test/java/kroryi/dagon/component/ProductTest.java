@@ -1,9 +1,8 @@
 package kroryi.dagon.component;
 
 import jakarta.transaction.Transactional;
-import kroryi.dagon.entity.Product;
-import kroryi.dagon.repository.ProductRepository;
-import lombok.RequiredArgsConstructor;
+import kroryi.dagon.entity.product.Product;
+import kroryi.dagon.repository.product.ProductRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

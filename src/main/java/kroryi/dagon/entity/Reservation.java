@@ -1,6 +1,8 @@
 package kroryi.dagon.entity;
 
 import jakarta.persistence.*;
+import kroryi.dagon.entity.product.Product;
+import kroryi.dagon.entity.product.ProductOption;
 import kroryi.dagon.enums.PaymentsMethod;
 import kroryi.dagon.enums.ReservationStatus;
 import lombok.Getter;

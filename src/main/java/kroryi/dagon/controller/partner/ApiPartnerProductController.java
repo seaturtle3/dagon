@@ -2,8 +2,8 @@ package kroryi.dagon.controller.partner;
 
 import jakarta.servlet.http.HttpServletRequest;
 import kroryi.dagon.DTO.product.ProductDTO;
-import kroryi.dagon.entity.Product;
-import kroryi.dagon.repository.ProductRepository;
+import kroryi.dagon.entity.product.Product;
+import kroryi.dagon.repository.product.ProductRepository;
 import kroryi.dagon.repository.board.FishingReportRepository;
 import kroryi.dagon.service.product.ProductService;
 import kroryi.dagon.util.JwtUtil;

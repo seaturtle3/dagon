@@ -3,7 +3,7 @@ package kroryi.dagon.service.community.fishingCenter;
 import jakarta.persistence.EntityNotFoundException;
 import kroryi.dagon.DTO.board.FishingCenter.FishingDiaryDTO;
 import kroryi.dagon.entity.fishingCenter.FishingDiary;
-import kroryi.dagon.entity.Product;
+import kroryi.dagon.entity.product.Product;
 import kroryi.dagon.entity.User;
 import kroryi.dagon.repository.UserRepository;
 import kroryi.dagon.repository.board.FishingDiaryRepository;

@@ -1,6 +1,7 @@
-package kroryi.dagon.entity;
+package kroryi.dagon.entity.product;
 
 import jakarta.persistence.*;
+import kroryi.dagon.entity.Reservation;
 import lombok.Getter;
 import lombok.Setter;
 

@@ -1,6 +1,6 @@
 package kroryi.dagon.component;
 
-import kroryi.dagon.entity.ProductFishSpecies;
+import kroryi.dagon.entity.product.ProductFishSpecies;
 import kroryi.dagon.enums.MainType;
 import kroryi.dagon.repository.FishSpeciesRepository;
 import lombok.RequiredArgsConstructor;

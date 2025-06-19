@@ -1,8 +1,8 @@
 package kroryi.dagon.controller.legacy;
 
 import jakarta.servlet.http.HttpServletRequest;
-import kroryi.dagon.entity.Product;
-import kroryi.dagon.entity.ProductFishSpecies;
+import kroryi.dagon.entity.product.Product;
+import kroryi.dagon.entity.product.ProductFishSpecies;
 import kroryi.dagon.enums.MainType;
 import kroryi.dagon.enums.ProdRegion;
 import kroryi.dagon.enums.SubType;

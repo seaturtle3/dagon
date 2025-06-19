@@ -3,11 +3,13 @@ package kroryi.dagon.service.product;
 import jakarta.persistence.EntityNotFoundException;
 import kroryi.dagon.DTO.product.ProductDTO;
 import kroryi.dagon.entity.Partner;
-import kroryi.dagon.entity.Product;
-import kroryi.dagon.entity.ProductOption;
+import kroryi.dagon.entity.product.Product;
+import kroryi.dagon.entity.product.ProductOption;
 import kroryi.dagon.entity.User;
 import kroryi.dagon.enums.MainType;
-import kroryi.dagon.repository.ProductRepository;
+import kroryi.dagon.enums.ProdRegion;
+import kroryi.dagon.enums.SubType;
+import kroryi.dagon.repository.product.ProductRepository;
 import kroryi.dagon.repository.SeaFreshwaterFishingRepository;
 import kroryi.dagon.repository.UserRepository;
 import kroryi.dagon.service.auth.PartnerService;
@@ -18,6 +20,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -44,7 +47,7 @@ public class ProductService {
     }
 
     // [Read] 전체 상품 조회
-    public Page<ProductDTO> getAllProductsApi (Pageable pageable) {
+    public Page<ProductDTO> getAllProductsApi(Pageable pageable) {
         Page<Product> products = productRepository.findAll(pageable);
         return products.map(ProductDTO::fromEntity);  // 생성자 대신 정적 메서드 사용
     }
@@ -114,12 +117,32 @@ public class ProductService {
                 .orElseThrow(() -> new IllegalArgumentException("해당 배가 없습니다. id=" + id));
     }
 
-//  -------------- 프론트 추가(바다/민물 필터) api ----------------
-
+    //  -------------- 프론트 api 추가(바다/민물 필터) ----------------
     public Page<ProductDTO> getProductsByMainType(MainType mainType, Pageable pageable) {
         Page<Product> products = productRepository.findByMainTypeAndDeletedFalse(mainType, pageable);
         return products.map(ProductDTO::fromEntity);
     }
+
+    //  -------------- 프론트 api 상단 필터 선택 시 상품 결과  ----------------
+
+    //  -------------- 프론트 api 추가(날짜, 지역, 상세 장소, 어종에 따라 바다 상품 필터 조회) ----------------
+    public List<ProductDTO> getSeaProductsByFilters(LocalDate date, ProdRegion region, String subType, String species) {
+        List<Product> products = productRepository.findSeaProductsByFilters(date, region, subType, species);
+
+        return products.stream().map(product -> {
+            ProductDTO dto = ProductDTO.fromEntity(product);
+
+            // fishSpecies 이름 리스트 추가
+            List<String> fishSpeciesNames = product.getFishSpeciesMappings().stream()
+                    .map(mapping -> mapping.getFs().getFsName())
+                    .toList();
+
+            dto.setFishSpeciesNames(fishSpeciesNames);  // 이 필드를 DTO에 추가해야 함
+
+            return dto;
+        }).toList();
+    }
+
 
 // ------------------------------------------------------------------------------------
 
@@ -136,6 +159,7 @@ public class ProductService {
                 .map(ProductDTO::fromEntity)
                 .collect(Collectors.toList());
     }
+
     public void updateProducts(Long prodId, ProductDTO dto) {
         Product product = productRepository.findById(prodId)
                 .orElseThrow(() -> new EntityNotFoundException("상품을 찾을 수 없습니다."));
@@ -205,11 +229,11 @@ public class ProductService {
     public Product restoreProduct(Long prodId) {
         Product product = productRepository.findById(prodId)
                 .orElseThrow(() -> new RuntimeException("상품을 찾을 수 없습니다."));
-        
+
         if (!product.isDeleted()) {
             throw new RuntimeException("이미 복구된 상품입니다.");
         }
-        
+
         product.setDeleted(false);
         return productRepository.save(product);
     }

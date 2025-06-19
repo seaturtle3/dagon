@@ -1,6 +1,6 @@
 package kroryi.dagon.DTO.board.FishingCenter;
 
-import kroryi.dagon.entity.Product;
+import kroryi.dagon.entity.product.Product;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 

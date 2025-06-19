@@ -1,6 +1,6 @@
 package kroryi.dagon.DTO.product;
 
-import kroryi.dagon.entity.ProductFishSpecies;
+import kroryi.dagon.entity.product.ProductFishSpecies;
 import kroryi.dagon.enums.MainType;
 import lombok.Getter;
 import lombok.Setter;
