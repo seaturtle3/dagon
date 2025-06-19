@@ -1,6 +1,6 @@
 package kroryi.dagon.service.product;
 
-import kroryi.dagon.DTO.ProductOptionDTO;
+import kroryi.dagon.DTO.product.ProductOptionDTO;
 import kroryi.dagon.entity.Product;
 import kroryi.dagon.entity.ProductOption;
 import kroryi.dagon.repository.ProductOptionRepository;

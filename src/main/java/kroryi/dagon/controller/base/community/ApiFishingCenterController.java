@@ -2,7 +2,7 @@ package kroryi.dagon.controller.base.community;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import kroryi.dagon.DTO.ProductDTO;
+import kroryi.dagon.DTO.product.ProductDTO;
 import kroryi.dagon.DTO.board.FishingCenter.ApiFishingCenterDTO;
 import kroryi.dagon.DTO.board.FishingCenter.ApiFishingDiaryDTO;
 import kroryi.dagon.DTO.board.FishingCenter.ApiFishingReportDTO;

@@ -1,4 +1,4 @@
-package kroryi.dagon.DTO;
+package kroryi.dagon.DTO.product;
 
 import lombok.Getter;
 import lombok.Setter;

@@ -1,8 +1,7 @@
 package kroryi.dagon.controller.partner;
 
 import jakarta.servlet.http.HttpServletRequest;
-import kroryi.dagon.DTO.ProductDTO;
-import kroryi.dagon.entity.Partner;
+import kroryi.dagon.DTO.product.ProductDTO;
 import kroryi.dagon.entity.Product;
 import kroryi.dagon.repository.ProductRepository;
 import kroryi.dagon.repository.board.FishingReportRepository;
@@ -11,13 +10,9 @@ import kroryi.dagon.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.nio.file.AccessDeniedException;
 import java.util.List;
 

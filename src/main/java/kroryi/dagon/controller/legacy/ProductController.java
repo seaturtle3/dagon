@@ -1,6 +1,6 @@
 package kroryi.dagon.controller.legacy;
 
-import kroryi.dagon.DTO.ProductDTO;
+import kroryi.dagon.DTO.product.ProductDTO;
 import kroryi.dagon.entity.Partner;
 import kroryi.dagon.entity.Product;
 import kroryi.dagon.enums.MainType;

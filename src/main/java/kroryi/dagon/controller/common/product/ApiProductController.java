@@ -16,18 +16,16 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.bind.annotation.RequestPart;
-import kroryi.dagon.DTO.ProductDTO;
+import kroryi.dagon.DTO.product.ProductDTO;
 import kroryi.dagon.service.product.ProductService;
-import java.io.IOException;
+
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.UUID;
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor

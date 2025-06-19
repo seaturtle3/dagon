@@ -2,11 +2,8 @@ package kroryi.dagon.controller.partner;
 
 import io.swagger.v3.oas.annotations.Operation;
 
-import kroryi.dagon.DTO.InquiryResponseDTO;
 import kroryi.dagon.DTO.PartnerDTO;
 
-import kroryi.dagon.DTO.ProductDTO;
-import kroryi.dagon.DTO.ReservationDTO;
 import kroryi.dagon.component.CustomUserDetails;
 import kroryi.dagon.entity.Partner;
 
@@ -20,8 +17,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 
 //            파트너 등록 컨트롤

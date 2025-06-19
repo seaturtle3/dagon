@@ -1,6 +1,6 @@
 package kroryi.dagon.service.order;
 
-import kroryi.dagon.DTO.ProductDTO;
+import kroryi.dagon.DTO.product.ProductDTO;
 import kroryi.dagon.DTO.ReservationDTO;
 import kroryi.dagon.entity.Product;
 import kroryi.dagon.entity.Reservation;
