@@ -1,6 +1,6 @@
-package kroryi.dagon.repository;
+package kroryi.dagon.repository.product;
 
-import kroryi.dagon.entity.ProductOption;
+import kroryi.dagon.entity.product.ProductOption;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

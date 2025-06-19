@@ -1,11 +1,7 @@
 package kroryi.dagon.repository;
 
-import kroryi.dagon.DTO.ReservationDTO;
-import kroryi.dagon.entity.Product;
 import kroryi.dagon.entity.Reservation;
 import kroryi.dagon.entity.User;
-import kroryi.dagon.enums.MainType;
-import kroryi.dagon.enums.ProdRegion;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -13,10 +9,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 @Repository
 public interface SeaFreshwaterFishingRepository extends JpaRepository<Reservation, Long> {

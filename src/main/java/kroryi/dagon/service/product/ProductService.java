@@ -1,13 +1,15 @@
 package kroryi.dagon.service.product;
 
 import jakarta.persistence.EntityNotFoundException;
-import kroryi.dagon.DTO.ProductDTO;
+import kroryi.dagon.DTO.product.ProductDTO;
 import kroryi.dagon.entity.Partner;
-import kroryi.dagon.entity.Product;
-import kroryi.dagon.entity.ProductOption;
+import kroryi.dagon.entity.product.Product;
+import kroryi.dagon.entity.product.ProductOption;
 import kroryi.dagon.entity.User;
 import kroryi.dagon.enums.MainType;
-import kroryi.dagon.repository.ProductRepository;
+import kroryi.dagon.enums.ProdRegion;
+import kroryi.dagon.enums.SubType;
+import kroryi.dagon.repository.product.ProductRepository;
 import kroryi.dagon.repository.SeaFreshwaterFishingRepository;
 import kroryi.dagon.repository.UserRepository;
 import kroryi.dagon.service.auth.PartnerService;
@@ -17,12 +19,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
-import java.nio.file.*;
+import java.time.LocalDate;
 import java.util.List;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -32,27 +31,23 @@ public class ProductService {
     private final ProductRepository productRepository;
     private final UserRepository userRepository;
     private final PartnerService partnerService;
-
-
     private final SeaFreshwaterFishingRepository seaFreshwaterFishingRepository;
 
     @Transactional
     public Long addProduct(ProductDTO productDTO) {
-        Product product = convertToEntity(productDTO);
+        Product product = productDTO.toEntity();
 
         if (product.getPartner() == null) {
             Partner defaultPartner = partnerService.getDefaultPartner();
             product.setPartner(defaultPartner);
         }
-
         Product savedProduct = productRepository.save(product);
+
         return savedProduct.getProdId();
     }
 
-
-
     // [Read] 전체 상품 조회
-    public Page<ProductDTO> getAllProductsApi (Pageable pageable) {
+    public Page<ProductDTO> getAllProductsApi(Pageable pageable) {
         Page<Product> products = productRepository.findAll(pageable);
         return products.map(ProductDTO::fromEntity);  // 생성자 대신 정적 메서드 사용
     }
@@ -62,13 +57,12 @@ public class ProductService {
                 .map(ProductDTO::fromEntity);
     }
 
-
     // [Read] id로 단건 조회
     @Transactional(readOnly = true)
     public ProductDTO getProductById(Long id) {
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("상품을 찾을 수 없습니다. id=" + id));
-        return convertToDTO(product);
+        return ProductDTO.fromEntity(product);
     }
 
     // [Update] 상품 수정
@@ -109,44 +103,6 @@ public class ProductService {
         productRepository.delete(product);
     }
 
-    // Entity -> DTO 변환
-    private ProductDTO convertToDTO(Product product) {
-        ProductDTO dto = new ProductDTO();
-        dto.setProdName(product.getProdName());
-        dto.setProdRegion(product.getProdRegion());
-        dto.setMainType(product.getMainType());
-        dto.setSubType(product.getSubType());
-        dto.setMaxPerson(product.getMaxPerson());
-        dto.setMinPerson(product.getMinPerson());
-        dto.setWeight(product.getWeight());
-        dto.setProdAddress(product.getProdAddress());
-        dto.setProdDescription(product.getProdDescription());
-        dto.setProdEvent(product.getProdEvent());
-        dto.setProdNotice(product.getProdNotice());
-        dto.setCreatedAt(product.getCreatedDate());
-        dto.setProdThumbnail(product.getProdThumbnail());
-        return dto;
-    }
-
-    // DTO -> Entity 변환
-    private Product convertToEntity(ProductDTO dto) {
-        Product product = new Product();
-        product.setProdName(dto.getProdName());
-        product.setProdRegion(dto.getProdRegion());
-        product.setMainType(dto.getMainType());
-        product.setSubType(dto.getSubType());
-        product.setMaxPerson(dto.getMaxPerson());
-        product.setMinPerson(dto.getMinPerson());
-        product.setWeight(dto.getWeight());
-        product.setProdAddress(dto.getProdAddress());
-        product.setProdDescription(dto.getProdDescription());
-        product.setProdEvent(dto.getProdEvent());
-        product.setProdNotice(dto.getProdNotice());
-        product.setProdThumbnail(dto.getProdThumbnail());
-
-        return product;
-    }
-
     public void saveProduct(Product product) {
 
         if (product.getPartner() == null) {
@@ -161,13 +117,31 @@ public class ProductService {
                 .orElseThrow(() -> new IllegalArgumentException("해당 배가 없습니다. id=" + id));
     }
 
-//  -------------- 프론트 추가(바다/민물 필터) api ----------------
-
+    //  -------------- 프론트 api 추가(바다/민물 필터) ----------------
     public Page<ProductDTO> getProductsByMainType(MainType mainType, Pageable pageable) {
         Page<Product> products = productRepository.findByMainTypeAndDeletedFalse(mainType, pageable);
         return products.map(ProductDTO::fromEntity);
     }
 
+    //  -------------- 프론트 api 상단 필터 선택 시 상품 결과  ----------------
+
+    //  -------------- 프론트 api 추가(날짜, 지역, 상세 장소, 어종에 따라 바다 상품 필터 조회) ----------------
+    public List<ProductDTO> getSeaProductsByFilters(LocalDate date, ProdRegion region, String subType, String species) {
+        List<Product> products = productRepository.findSeaProductsByFilters(date, region, subType, species);
+
+        return products.stream().map(product -> {
+            ProductDTO dto = ProductDTO.fromEntity(product);
+
+            // fishSpecies 이름 리스트 추가
+            List<String> fishSpeciesNames = product.getFishSpeciesMappings().stream()
+                    .map(mapping -> mapping.getFs().getFsName())
+                    .toList();
+
+            dto.setFishSpeciesNames(fishSpeciesNames);  // 이 필드를 DTO에 추가해야 함
+
+            return dto;
+        }).toList();
+    }
 
 
 // ------------------------------------------------------------------------------------
@@ -175,12 +149,9 @@ public class ProductService {
     // 파트너 uno로 상품 리스트 조회
     public List<ProductDTO> getProductsByPartnerUno(String uno) {
         return productRepository.findByPartner_Uno(Long.valueOf(uno)).stream()
-                .map(this::convertToDTO)
+                .map(ProductDTO::fromEntity)
                 .collect(Collectors.toList());
     }
-
-
-
 
     public List<ProductDTO> getProductsByPartnerUno(Long partnerUno) {
         List<Product> products = productRepository.findByPartner_Uno(partnerUno);
@@ -188,6 +159,7 @@ public class ProductService {
                 .map(ProductDTO::fromEntity)
                 .collect(Collectors.toList());
     }
+
     public void updateProducts(Long prodId, ProductDTO dto) {
         Product product = productRepository.findById(prodId)
                 .orElseThrow(() -> new EntityNotFoundException("상품을 찾을 수 없습니다."));
@@ -209,8 +181,6 @@ public class ProductService {
 
         productRepository.save(product);
     }
-
-
 
     public Product getProductEntityById(Long prodId) throws ChangeSetPersister.NotFoundException {
         return productRepository.findById(prodId)
@@ -259,11 +229,11 @@ public class ProductService {
     public Product restoreProduct(Long prodId) {
         Product product = productRepository.findById(prodId)
                 .orElseThrow(() -> new RuntimeException("상품을 찾을 수 없습니다."));
-        
+
         if (!product.isDeleted()) {
             throw new RuntimeException("이미 복구된 상품입니다.");
         }
-        
+
         product.setDeleted(false);
         return productRepository.save(product);
     }

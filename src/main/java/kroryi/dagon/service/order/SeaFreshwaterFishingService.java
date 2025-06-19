@@ -1,14 +1,14 @@
 package kroryi.dagon.service.order;
 
-import kroryi.dagon.DTO.ProductDTO;
+import kroryi.dagon.DTO.product.ProductDTO;
 import kroryi.dagon.DTO.ReservationDTO;
-import kroryi.dagon.entity.Product;
+import kroryi.dagon.entity.product.Product;
 import kroryi.dagon.entity.Reservation;
 import kroryi.dagon.enums.MainType;
 import kroryi.dagon.enums.ProdRegion;
 import kroryi.dagon.enums.ReservationStatus;
 import kroryi.dagon.enums.SubType;
-import kroryi.dagon.repository.ProductRepository;
+import kroryi.dagon.repository.product.ProductRepository;
 import kroryi.dagon.repository.SeaFreshwaterFishingRepository;
 import lombok.*;
 import org.springframework.data.domain.Page;

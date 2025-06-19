@@ -1,10 +1,9 @@
-package kroryi.dagon.DTO;
+package kroryi.dagon.DTO.product;
 
-import kroryi.dagon.entity.ProductFishSpecies;
+import kroryi.dagon.entity.product.ProductFishSpecies;
 import kroryi.dagon.enums.MainType;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.web.bind.annotation.GetMapping;
 
 @Getter
 @Setter

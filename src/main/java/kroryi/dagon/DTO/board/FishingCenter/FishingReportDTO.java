@@ -3,7 +3,7 @@ package kroryi.dagon.DTO.board.FishingCenter;
 import io.swagger.v3.oas.annotations.media.Schema;
 import kroryi.dagon.entity.fishingCenter.FishingReport;
 import kroryi.dagon.entity.fishingCenter.FishingReportComment;
-import kroryi.dagon.entity.Product;
+import kroryi.dagon.entity.product.Product;
 import kroryi.dagon.entity.User;
 import lombok.Data;
 import lombok.NoArgsConstructor;

@@ -1,10 +1,10 @@
 package kroryi.dagon.service.product;
 
-import kroryi.dagon.DTO.ProductOptionDTO;
-import kroryi.dagon.entity.Product;
-import kroryi.dagon.entity.ProductOption;
-import kroryi.dagon.repository.ProductOptionRepository;
-import kroryi.dagon.repository.ProductRepository;
+import kroryi.dagon.DTO.product.ProductOptionDTO;
+import kroryi.dagon.entity.product.Product;
+import kroryi.dagon.entity.product.ProductOption;
+import kroryi.dagon.repository.product.ProductOptionRepository;
+import kroryi.dagon.repository.product.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

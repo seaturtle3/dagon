@@ -4,7 +4,7 @@ package kroryi.dagon.entity.fishingCenter;
 import jakarta.persistence.*;
 
 import kroryi.dagon.entity.BaseTimeEntity;
-import kroryi.dagon.entity.Product;
+import kroryi.dagon.entity.product.Product;
 import kroryi.dagon.entity.User;
 import lombok.Getter;
 import lombok.Setter;

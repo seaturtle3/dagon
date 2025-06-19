@@ -1,14 +1,11 @@
 package kroryi.dagon.service.community.fishingCenter;
 
-import kroryi.dagon.DTO.board.FishingCenter.ApiCommentDTO;
 import kroryi.dagon.DTO.board.FishingCenter.ApiFishingReportDTO;
-import kroryi.dagon.DTO.board.FishingCenter.ApiProductDTO;
-import kroryi.dagon.DTO.board.FishingCenter.ApiUserDTO;
 import kroryi.dagon.entity.fishingCenter.FishingReport;
-import kroryi.dagon.entity.Product;
+import kroryi.dagon.entity.product.Product;
 import kroryi.dagon.entity.User;
 import kroryi.dagon.entity.fishingCenter.FishingReportImage;
-import kroryi.dagon.repository.ProductRepository;
+import kroryi.dagon.repository.product.ProductRepository;
 import kroryi.dagon.repository.UserRepository;
 import kroryi.dagon.repository.board.FishingReportImageRepository;
 import kroryi.dagon.repository.board.FishingReportRepository;

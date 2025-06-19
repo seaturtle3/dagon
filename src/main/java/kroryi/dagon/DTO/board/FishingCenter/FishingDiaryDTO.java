@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import kroryi.dagon.entity.*;
 import kroryi.dagon.entity.fishingCenter.FishingDiary;
 import kroryi.dagon.entity.fishingCenter.FishingReportComment;
+import kroryi.dagon.entity.product.Product;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 

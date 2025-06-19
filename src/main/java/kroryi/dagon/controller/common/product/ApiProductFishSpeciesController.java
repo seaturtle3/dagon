@@ -2,7 +2,7 @@ package kroryi.dagon.controller.common.product;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import kroryi.dagon.entity.ProductFishSpecies;
+import kroryi.dagon.entity.product.ProductFishSpecies;
 import kroryi.dagon.enums.MainType;
 import kroryi.dagon.repository.FishSpeciesRepository;
 import lombok.RequiredArgsConstructor;

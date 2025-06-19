@@ -2,7 +2,7 @@ package kroryi.dagon.controller.partner.community;
 
 import kroryi.dagon.DTO.board.FishingCenter.FishingReportDTO;
 import kroryi.dagon.entity.fishingCenter.FishingReport;
-import kroryi.dagon.entity.Product;
+import kroryi.dagon.entity.product.Product;
 import kroryi.dagon.service.community.fishingCenter.FishingReportService;
 import kroryi.dagon.service.product.ProductService;
 import lombok.RequiredArgsConstructor;

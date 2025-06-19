@@ -1,6 +1,6 @@
 package kroryi.dagon.repository;
 
-import kroryi.dagon.entity.ProductFishSpecies;
+import kroryi.dagon.entity.product.ProductFishSpecies;
 import kroryi.dagon.enums.MainType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

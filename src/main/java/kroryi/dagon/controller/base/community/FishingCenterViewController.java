@@ -1,7 +1,7 @@
 package kroryi.dagon.controller.base.community;
 
-import kroryi.dagon.entity.Product;
-import kroryi.dagon.repository.ProductRepository;
+import kroryi.dagon.entity.product.Product;
+import kroryi.dagon.repository.product.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
