@@ -130,13 +130,6 @@ public class PartnerService {
         return convertToDTO(updatedPartner);
     }
 
-    public void deletePartner(long id) {
-        Partner partner = partnersRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("파트너를 찾을 수 없습니다."));
-
-        partnersRepository.delete(partner);
-    }
-
     private PartnerDTO convertToDTO(Partner partner) {
         PartnerDTO dto = new PartnerDTO();
         dto.setUno(partner.getUno());
@@ -147,6 +140,13 @@ public class PartnerService {
         dto.setLicense(partner.getLicense());
         dto.setLicenseImg(partner.getLicenseImg());
         return dto;
+    }
+
+    public void deletePartner(long id) {
+        Partner partner = partnersRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("파트너를 찾을 수 없습니다."));
+
+        partnersRepository.delete(partner);
     }
 
     // PartnersService.java
@@ -197,17 +197,75 @@ public class PartnerService {
 
         User user = partner.getUser();
 
+        // 삭제 전 연관 데이터 확인 및 로깅
+        Long reservationCount = reservationRepository.countByProduct_Partner_Uno(partnerId);
+        Long productCount = productRepository.countByPartner_UnoAndDeletedFalse(partnerId);
+        
+        log.info("파트너 삭제 시작 - 파트너ID: {}, 예약 수: {}, 상품 수: {}", 
+                partnerId, reservationCount, productCount);
+
         // User와 Partner 연관관계 끊기
         if (user != null) {
             user.setPartner(null);
             user.setRole(UserRole.USER);
             userRepository.save(user);
+            log.info("사용자 역할을 USER로 변경 - 사용자ID: {}", user.getUno());
         }
 
-        // Partner 삭제 - cascade + orphanRemoval로 관련된 Product, 하위 엔티티도 모두 삭제됨
+        // Partner 삭제 - cascade + orphanRemoval로 관련된 모든 하위 엔티티도 자동 삭제됨
+        // Product -> ProductOption -> Reservation -> Notification 순서로 CASCADE 삭제
         partnersRepository.delete(partner);
+        
+        log.info("파트너 및 연관 데이터 삭제 완료 - 파트너ID: {}", partnerId);
     }
 
+    /**
+     * 파트너 삭제 가능 여부를 확인하는 메서드
+     * @param partnerId 파트너 ID
+     * @return 삭제 가능 여부와 메시지
+     */
+    public DeleteCheckResult checkPartnerDeletion(Long partnerId) {
+        Partner partner = partnersRepository.findById(partnerId)
+                .orElseThrow(() -> new EntityNotFoundException("파트너를 찾을 수 없습니다."));
+
+        Long reservationCount = reservationRepository.countByProduct_Partner_Uno(partnerId);
+        Long productCount = productRepository.countByPartner_UnoAndDeletedFalse(partnerId);
+
+        boolean canDelete = true;
+        String message = "삭제 가능합니다.";
+
+        if (reservationCount > 0) {
+            canDelete = false;
+            message = String.format("예약 내역이 %d건 남아있어 삭제할 수 없습니다. 모든 예약을 먼저 삭제하세요.", reservationCount);
+        } else if (productCount > 0) {
+            // 상품이 있어도 삭제 가능 (CASCADE로 함께 삭제됨)
+            message = String.format("상품 %d건이 함께 삭제됩니다.", productCount);
+        }
+
+        return new DeleteCheckResult(canDelete, message, reservationCount, productCount);
+    }
+
+    /**
+     * 파트너 삭제 확인 결과를 담는 내부 클래스
+     */
+    public static class DeleteCheckResult {
+        private final boolean canDelete;
+        private final String message;
+        private final Long reservationCount;
+        private final Long productCount;
+
+        public DeleteCheckResult(boolean canDelete, String message, Long reservationCount, Long productCount) {
+            this.canDelete = canDelete;
+            this.message = message;
+            this.reservationCount = reservationCount;
+            this.productCount = productCount;
+        }
+
+        public boolean isCanDelete() { return canDelete; }
+        public String getMessage() { return message; }
+        public Long getReservationCount() { return reservationCount; }
+        public Long getProductCount() { return productCount; }
+    }
 
     public boolean isOwner(Long uno, Long partnerId) {
         Optional<Partner> optionalPartner = partnersRepository.findById(partnerId);

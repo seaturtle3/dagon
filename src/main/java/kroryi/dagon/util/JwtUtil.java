@@ -139,7 +139,51 @@ public class JwtUtil {
         }
     }
 
+    // 파트너 위임 토큰 생성 (관리자가 파트너 권한으로 접근)
+    public String generatePartnerImpersonationToken(String uid, String uname, String role, Long partnerUno, Long originalAdminUno) {
+        Date now = new Date();
+        Date expiryDate = new Date(now.getTime() + expirationTime);
 
+        return Jwts.builder()
+                .setSubject(uid)
+                .claim("uid", uid)
+                .claim("uname", uname)
+                .claim("role", role)
+                .claim("uno", partnerUno)
+                .claim("originalAdminUno", originalAdminUno) // 원본 관리자 uno 저장
+                .claim("isImpersonated", true) // 위임 토큰임을 표시
+                .setIssuedAt(now)
+                .setExpiration(expiryDate)
+                .signWith(secretKey, SignatureAlgorithm.HS256)
+                .compact();
+    }
+
+    // 위임 토큰에서 원본 관리자 uno 추출
+    public Long getOriginalAdminUnoFromToken(String token) {
+        try {
+            Claims claims = parseToken(token);
+            Object originalAdminUnoObj = claims.get("originalAdminUno");
+            if (originalAdminUnoObj != null) {
+                return ((Number) originalAdminUnoObj).longValue();
+            }
+            return null;
+        } catch (JwtException e) {
+            log.error("위임 토큰에서 원본 관리자 uno 추출 실패: {}", e.getMessage());
+            return null;
+        }
+    }
+
+    // 위임 토큰인지 확인
+    public boolean isImpersonatedToken(String token) {
+        try {
+            Claims claims = parseToken(token);
+            Boolean isImpersonated = claims.get("isImpersonated", Boolean.class);
+            return isImpersonated != null && isImpersonated;
+        } catch (JwtException e) {
+            log.error("위임 토큰 확인 실패: {}", e.getMessage());
+            return false;
+        }
+    }
 
 }
 

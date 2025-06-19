@@ -105,6 +105,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
                     .profileImg(profileImg)
                     .role(UserRole.USER)
                     .level(UserLevel.SILVER)
+                    .isActive(true)
                     .build();
             userRepository.save(member);
             MemberSecurityDTO memberSecurityDTO = new MemberSecurityDTO(

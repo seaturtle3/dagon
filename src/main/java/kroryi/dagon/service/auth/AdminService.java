@@ -89,13 +89,26 @@ public class AdminService {
         user.setUname(dto.getUname());
         user.setNickname(dto.getNickname());
         user.setEmail(dto.getEmail());
-        user.setPhone(dto.getFullPhone());
+        
+        // 전화번호 처리 - fullPhone이 있으면 사용, 없으면 개별 번호 조합
+        if (dto.getFullPhone() != null && !dto.getFullPhone().isEmpty()) {
+            user.setPhone(dto.getFullPhone());
+        } else if (dto.getPhone1() != null && dto.getPhone2() != null && dto.getPhone3() != null) {
+            String fullPhone = dto.getPhone1() + "-" + dto.getPhone2() + "-" + dto.getPhone3();
+            user.setPhone(fullPhone);
+        }
+        
         user.setPoints(dto.getPoints());
         user.setLevel(UserLevel.values()[dto.getLevel()]);
         user.setLevelPoint(Integer.valueOf(dto.getLevelPoint())); // 새 필드 처리
         user.setLoginType(LoginType.valueOf(dto.getLoginType())); // 새 필드 처리
         user.setRole(UserRole.valueOf(dto.getRole()));
-        user.setProfileImg(dto.getProfile_image()); // 프로필 이미지 업데이트
+        
+        // 프로필 이미지 업데이트 - null이 아닐 때만 업데이트
+        if (dto.getProfile_image() != null && !dto.getProfile_image().isEmpty()) {
+            user.setProfileImg(dto.getProfile_image());
+        }
+        
         user.setIsActive(dto.isActive());
 
         return new UsersDTO(userRepository.save(user)); // 수정된 User 객체 저장
