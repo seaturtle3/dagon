@@ -41,14 +41,11 @@ public class ApiFishingReportController {
 
     @Value("${app.file.upload-dir}")
     private String uploadDir;
-
-
     private final ApiFishingReportService apiFishingReportService;
     private final JwtTokenProvider jwtTokenProvider;
     private final PartnerFishingReportService partnerFishingReportService;
     private final UserService userService;
     private final ProductService productService;
-    private final FileStorageService fileStorageService;
     private final JwtUtil jwtUtil;
 
     @Operation(summary = "조황정보 생성")
@@ -60,6 +57,15 @@ public class ApiFishingReportController {
     ) {
         String bearerToken = token.substring(7); // "Bearer " 제거
         Long userUno = jwtTokenProvider.getUserUnoFromToken(bearerToken);
+
+        if (apiFishingReportDTO.getTitle() == null || apiFishingReportDTO.getContent() == null) {
+            throw new IllegalArgumentException("제목 또는 내용이 누락되었습니다.");
+        }
+
+        if (images == null || images.isEmpty()) {
+            throw new IllegalArgumentException("이미지는 최소 1장 필요합니다.");
+        }
+
         return apiFishingReportService.createFishingReport(apiFishingReportDTO, userUno, images);
     }
 

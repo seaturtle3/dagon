@@ -14,7 +14,7 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
-public class FileStorageService {
+public abstract class FileStorageService {
 
     @Value("${app.file.upload-dir}")
     private String uploadDir;
@@ -33,4 +33,6 @@ public class FileStorageService {
         // 브라우저에서 접근할 경로 반환
         return "/uploads/" + fileName;
     }
+
+    public abstract String save(MultipartFile file);
 }
