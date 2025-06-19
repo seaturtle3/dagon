@@ -6,6 +6,7 @@ import kroryi.dagon.entity.fishingCenter.FishingReportImage;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -19,7 +20,7 @@ public class ApiFishingReportDTO {
     private String prodName;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-    private LocalDateTime fishingAt;
+    private LocalDate fishingAt;
     private String imageFileName;
 
 
@@ -37,7 +38,7 @@ public class ApiFishingReportDTO {
         this.frId = fishingReport.getFrId();
         this.title = fishingReport.getTitle();
         this.content = fishingReport.getContent();
-        this.fishingAt = fishingReport.getFishingAt();
+        this.fishingAt = LocalDate.from(fishingReport.getFishingAt());
 
         this.imageFileName = fishingReport.getThumbnailUrl(); // 여기에 추가
 

@@ -12,6 +12,7 @@ import kroryi.dagon.repository.ProductRepository;
 import kroryi.dagon.repository.UserRepository;
 import kroryi.dagon.repository.board.FishingReportImageRepository;
 import kroryi.dagon.repository.board.FishingReportRepository;
+import kroryi.dagon.service.image.FileStorageService;
 import kroryi.dagon.util.FileStorageUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -34,6 +35,7 @@ public class ApiFishingReportService {
     private final ProductRepository productRepository;
     private final FileStorageUtil fileStorageUtil;
     private final FishingReportImageRepository fishingReportImageRepository;
+    private final FileStorageService fileStorageService;
 
     public void saveImages(FishingReport fishingReport, List<MultipartFile> images) {
         List<FishingReportImage> imageEntities = new ArrayList<>();
@@ -62,14 +64,15 @@ public class ApiFishingReportService {
         FishingReport fishingReport = new FishingReport();
         fishingReport.setTitle(dto.getTitle());
         fishingReport.setContent(dto.getContent());
-        fishingReport.setFishingAt(dto.getFishingAt());
+        fishingReport.setFishingAt(dto.getFishingAt().atStartOfDay());
 
         // 상품 설정
         if (dto.getProduct() != null) {
             Long prodId = dto.getProduct().getProdId();
             Product product = productRepository.findById(prodId)
                     .orElseThrow(() -> new IllegalArgumentException("상품을 찾을 수 없습니다."));
-            fishingReport.setProduct(product);
+        } else {
+            fishingReport.setProduct(null); // 명시적 처리
         }
 
         // 사용자 설정
@@ -77,15 +80,27 @@ public class ApiFishingReportService {
                 .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
         fishingReport.setUser(user);
 
-        // 먼저 조황정보 저장 (PK 필요)
+        // 조황정보 저장 (PK 확보)
         fishingReport = fishingReportRepository.save(fishingReport);
 
+        // ✅ 이미지 저장 처리 (중복 제거 + 썸네일 처리)
         if (images != null && !images.isEmpty()) {
-            saveImages(fishingReport, images);
-        }
+            for (int i = 0; i < images.size(); i++) {
+                MultipartFile file = images.get(i);
+                String savedUrl = fileStorageService.save(file);
 
+                FishingReportImage image = new FishingReportImage();
+                image.setImageUrl(savedUrl);
+                image.setThumbnail(i == 0); // 첫 번째 이미지를 썸네일로
+                image.setOrderIndex(i);
+                image.setFishingReport(fishingReport); // ✅ 올바른 객체 연결
+
+                fishingReportImageRepository.save(image);
+            }
+        }
         return new ApiFishingReportDTO(fishingReport);
     }
+
 
 
     public Page<ApiFishingReportDTO> getAllFishingReports(Pageable pageable) {
@@ -127,7 +142,7 @@ public class ApiFishingReportService {
 
         fishingReport.setTitle(apiFishingReportDTO.getTitle());
         fishingReport.setContent(apiFishingReportDTO.getContent());
-        fishingReport.setFishingAt(apiFishingReportDTO.getFishingAt());
+        fishingReport.setFishingAt(apiFishingReportDTO.getFishingAt().atStartOfDay());
 
         // User 객체 설정
         User user = userRepository.findById(apiFishingReportDTO.getUser().getUno())
@@ -149,5 +164,20 @@ public class ApiFishingReportService {
                 .orElseThrow(() -> new RuntimeException("조황정보 없음"));
         fishingReportRepository.delete(fishingReport);
     }
+
+    public void saveFishingReportImages(List<MultipartFile> files, FishingReport report) {
+        for (int i = 0; i < files.size(); i++) {
+            MultipartFile file = files.get(i);
+            String savedUrl = fileStorageService.save(file); // 파일 저장 → URL 반환
+
+            FishingReportImage image = new FishingReportImage();
+            image.setImageUrl(savedUrl);
+            image.setThumbnail(i == 0); // 첫 번째 이미지를 썸네일로 간주
+            image.setFishingReport(report);
+
+            fishingReportImageRepository.save(image);
+        }
+    }
+
 
 }
