@@ -16,6 +16,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.validation.BindingResult;
+
 
 import java.util.List;
 
@@ -56,7 +58,7 @@ public class ApiAdminFaqController {
     @Operation(summary = "FAQ 등록", description = "새로운 FAQ 등록")
     @PostMapping
     public ResponseEntity<FAQResponseDTO> create(
-            @Valid FAQRequestDTO dto,
+            @Valid @RequestBody FAQRequestDTO dto, BindingResult result,
             @AuthenticationPrincipal AdminUserDetails userDetails) {
 
         String adminId = userDetails.getAid();
