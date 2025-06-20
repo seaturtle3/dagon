@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @Entity
-@Table(name = "freeboard_comments")
+@Table(name = "free_board_comments")
 public class FreeBoardComment {
 
     @Id

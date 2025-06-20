@@ -28,7 +28,7 @@ public class ProductOption {
     @Column(name = "opt_description", nullable = false)
     private String optDescription;
 
-    @Column(name = "price", precision = 7)
+    @Column(name = "opt_price", precision = 7)
     private BigDecimal price;
 
     @Column(name = "opt_time", nullable = false)
