@@ -34,6 +34,10 @@ public class FAQService {
         return faqRepository.findByIsActiveTrueOrderByDisplayOrderAsc(pageable);
     }
 
+    // 특정 카테고리의 활성화된 FAQ만 조회 (사용자용)
+    public Page<FAQ> findActiveByCategory(Long categoryId, Pageable pageable) {
+        return faqRepository.findByCategoryIdAndIsActiveTrueOrderByDisplayOrderAsc(categoryId, pageable);
+    }
 
     // 단건 조회
     public FAQ findById(Long id) {
