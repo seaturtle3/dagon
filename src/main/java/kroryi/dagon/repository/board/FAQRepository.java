@@ -17,6 +17,9 @@ public interface FAQRepository extends JpaRepository<FAQ, Long> {
     // 활성화된 FAQ만 가져오기 (사용자페이지용)
     Page<FAQ> findByIsActiveTrueOrderByDisplayOrderAsc(Pageable pageable);
 
+    // 특정 카테고리의 활성화된 FAQ만 가져오기 (사용자페이지용)
+    Page<FAQ> findByCategoryIdAndIsActiveTrueOrderByDisplayOrderAsc(Long categoryId, Pageable pageable);
+
     @Query("SELECT f FROM FAQ f WHERE "
             + "(:categoryId IS NULL OR f.category.id = :categoryId) AND "
             + "(:keyword IS NULL OR f.question LIKE %:keyword%)")
