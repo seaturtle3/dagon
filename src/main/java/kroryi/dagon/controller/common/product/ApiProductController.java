@@ -3,6 +3,7 @@ package kroryi.dagon.controller.common.product;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import kroryi.dagon.entity.product.Product;
 import kroryi.dagon.enums.MainType;
 import kroryi.dagon.enums.ProdRegion;
 import kroryi.dagon.enums.SubType;
@@ -150,18 +151,15 @@ public class ApiProductController {
 
     //  -------------- 프론트 추가 api 바다 낚시 상품들 ----------------
     @GetMapping("/get-all/sea/filter")
-    public List<ProductDTO> getSeaProductsByFilter(
-            @RequestParam(required = false) ProdRegion region,
+    public List<ProductDTO> getSeaProductsByFilters(
             @RequestParam(required = false) String subType,
-            @RequestParam(required = false) String species
-    ) {
-        log.info("백단 바다 필터 제품: {}, {}, {}", region, subType, species);
-        try {
-            return productService.getSeaProductsByFilters(region, subType, species);
-        } catch (Exception e) {
-            log.error("getSeaProductsByFilter 예외 발생", e);
-            throw e; // 혹은 원하는 예외 처리 로직
-        }
+            @RequestParam(required = false) String region,
+            @RequestParam(required = false) String species) {
+
+        SubType subTypeEnum = (subType == null || subType.isEmpty()) ? null : SubType.valueOf(subType);
+        ProdRegion regionEnum = (region == null || region.isEmpty()) ? null : ProdRegion.valueOf(region);
+
+        return productService.getSeaProductsByFilters(regionEnum, subTypeEnum, species);
     }
 
     //  -------------- 프론트 추가 api 바다 낚시 상단 필터 ----------------

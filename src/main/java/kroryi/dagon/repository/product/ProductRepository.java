@@ -63,7 +63,7 @@ public interface ProductRepository extends JpaRepository<Product, Long>, JpaSpec
             """)
     List<Product> findSeaProductsByFilters(
             @Param("region") ProdRegion region,
-            @Param("subType") String subType,
+            @Param("subType") SubType subType,
             @Param("species") String species
     );
 
