@@ -126,8 +126,8 @@ public class ProductService {
     //  -------------- 프론트 api 상단 필터 선택 시 상품 결과  ----------------
 
     //  -------------- 프론트 api 추가(날짜, 지역, 상세 장소, 어종에 따라 바다 상품 필터 조회) ----------------
-    public List<ProductDTO> getSeaProductsByFilters(LocalDate date, ProdRegion region, String subType, String species) {
-        List<Product> products = productRepository.findSeaProductsByFilters(date, region, subType, species);
+    public List<ProductDTO> getSeaProductsByFilters(ProdRegion region, String subType, String species) {
+        List<Product> products = productRepository.findSeaProductsByFilters(region, subType, species);
 
         return products.stream().map(product -> {
             ProductDTO dto = ProductDTO.fromEntity(product);

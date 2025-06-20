@@ -57,29 +57,22 @@ public interface ProductRepository extends JpaRepository<Product, Long>, JpaSpec
             LEFT JOIN FETCH p.fishSpeciesMappings m
             LEFT JOIN FETCH m.fs fs
             WHERE p.mainType = kroryi.dagon.enums.MainType.SEA
-            AND (:date IS NULL OR p.availableDate = :date)
             AND (:region IS NULL OR p.prodRegion = :region)
             AND (:subType IS NULL OR p.subType = :subType)
             AND (:species IS NULL OR fs.fsName = :species)
             """)
     List<Product> findSeaProductsByFilters(
-            @Param("date") LocalDate date,
             @Param("region") ProdRegion region,
             @Param("subType") String subType,
             @Param("species") String species
     );
 
-    // 프론트 바다 상단 필터 제어
-    @Query("SELECT DISTINCT p.availableDate FROM Product p WHERE p.mainType = 'SEA' AND p.availableDate IS NOT NULL")
-    List<LocalDate> findDistinctAvailableDates();
-
+    // 프론트 SEA 상단 필터 제어
     // 한글로 지역, 세부 장소 받기
     @Query("SELECT DISTINCT p.prodRegion FROM Product p WHERE p.mainType = 'SEA'")
     List<ProdRegion> findDistinctRegions();
-
     @Query("SELECT DISTINCT p.subType FROM Product p WHERE p.mainType = 'SEA'")
     List<SubType> findDistinctSubTypes();
-
     @Query("""
                 SELECT DISTINCT fs.fsName
                 FROM ProdFishSpeciesMapping m

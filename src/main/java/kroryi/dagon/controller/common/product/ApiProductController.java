@@ -151,22 +151,21 @@ public class ApiProductController {
         return productService.getProductsByMainType(MainType.valueOf("FRESHWATER"), pageable);
     }
 
-    //  -------------- 프론트 추가 api (바다/민물에서 날짜, 지역, 상세 장소, 어종 필터) ----------------
-    @Operation(summary = "바다 상품 필터 조회", description = "날짜, 지역, 상세 장소, 어종에 따라 바다 상품 필터 조회")
+    //  -------------- 프론트 추가 api 바다 낚시 상품들 ----------------
+    @Operation(summary = "바다 상품 필터 조회", description = "지역, 상세 장소, 어종에 따라 바다 상품 필터 조회")
     @GetMapping("/get-all/sea/detail")
     public List<ProductDTO> getSeaProductsByFilter(
-            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
             @RequestParam(required = false) ProdRegion region,
             @RequestParam(required = false) String subType,
             @RequestParam(required = false) String species
     ) {
-        return productService.getSeaProductsByFilters(date, region, subType, species);
+        log.info("========백단 바다 필터 제품: {}, {}, {}", region, subType, species);
+        return productService.getSeaProductsByFilters(region, subType, species);
     }
 
-    //  -------------- 프론트 추가(바다/민물에서 날짜, 지역, 상세 장소, 어종 필터) api ----------------
+    //  -------------- 프론트 추가 api 바다 낚시 상단 필터 ----------------
     @GetMapping("/sea/filters")
     public Map<String, List<String>> getSeaFilterOptions() {
-        List<LocalDate> availableDates = productRepository.findDistinctAvailableDates();
         List<String> regions = productRepository.findDistinctRegions().stream()
                 .map(ProdRegion::getKorean)
                 .toList();
@@ -178,7 +177,6 @@ public class ApiProductController {
         List<String> species = productRepository.findDistinctFishSpecies();
 
         Map<String, List<String>> filters = new HashMap<>();
-        filters.put("availableDates", availableDates.stream().map(LocalDate::toString).toList()); // 문자열로
         filters.put("regions", regions);
         filters.put("subTypes", subTypes);
         filters.put("fishSpecies", species);
