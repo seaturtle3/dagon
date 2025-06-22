@@ -510,6 +510,34 @@ CROSS JOIN (
 ) fd
 LIMIT 1000;
 
+-- 11-1. 조황정보 이미지 데이터 생성 (각 조황정보별 1~3장 랜덤)
+INSERT INTO fishing_report_image (image_url, is_thumbnail, order_index, fr_id)
+SELECT
+    CONCAT(
+        '/uploads/',
+        DATE_FORMAT(DATE_SUB(NOW(), INTERVAL fr.fr_id DAY), '%Y/%m/%d'),
+        '/fishing_report_',
+        CASE 
+            WHEN fr.fr_id <= 20 THEN 'haewoondae'
+            WHEN fr.fr_id <= 40 THEN 'cheongpyeong'
+            WHEN fr.fr_id <= 60 THEN 'jeju'
+            WHEN fr.fr_id <= 80 THEN 'hangang'
+            ELSE 'hwacheon'
+        END,
+        '_', fr.fr_id, '_', img_idx.n, '.jpg'
+    ) as image_url,
+    (img_idx.n = 1) as is_thumbnail,
+    (img_idx.n - 1) as order_index,
+    fr.fr_id
+FROM (
+    SELECT fr_id, FLOOR(1 + RAND(fr_id) * 3) AS img_count
+    FROM fishing_report
+) fr
+JOIN (
+    SELECT 1 as n UNION ALL SELECT 2 UNION ALL SELECT 3
+) img_idx
+ON img_idx.n <= fr.img_count;
+
 -- 11. 조황정보 데이터 생성 (100개)
 SET @rownum := 0;
 INSERT INTO fishing_report (title, content, thumbnail_url, fishing_at, modify_at, views, uid, prod_id, created_at)
