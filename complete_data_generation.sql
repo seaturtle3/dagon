@@ -494,21 +494,81 @@ INSERT INTO fishing_report (title, content, thumbnail_url, fishing_at, modify_at
 SELECT 
     CONCAT(
         CASE 
-            WHEN @rownum <= 20 THEN '해운대 방파제 조황정보'
-            WHEN @rownum <= 40 THEN '청평호수 조황정보'
-            WHEN @rownum <= 60 THEN '제주 해상낚시 조황정보'
-            WHEN @rownum <= 80 THEN '한강 조황정보'
-            ELSE '화천호수 조황정보'
+            WHEN @rownum <= 20 THEN 
+                CASE 
+                    WHEN @rownum % 4 = 1 THEN '🐟 해운대 방파제 대박 조황! 도미 폭탄!'
+                    WHEN @rownum % 4 = 2 THEN '🌊 해운대에서 농어가 미쳤어요!'
+                    WHEN @rownum % 4 = 3 THEN '🎣 해운대 방파제 오늘은 도미의 날!'
+                    ELSE '⚡ 해운대에서 고등어 대량 출현!'
+                END
+            WHEN @rownum <= 40 THEN 
+                CASE 
+                    WHEN @rownum % 4 = 1 THEN '🐠 청평호수 잉어 대폭발! 2kg급 연속!'
+                    WHEN @rownum % 4 = 2 THEN '🌿 청평에서 붕어가 미쳤어요!'
+                    WHEN @rownum % 4 = 3 THEN '🎯 청평호수 메기 잡기 좋은 날!'
+                    ELSE '💎 청평에서 은어 대박 조황!'
+                END
+            WHEN @rownum <= 60 THEN 
+                CASE 
+                    WHEN @rownum % 4 = 1 THEN '🦈 제주 해상에서 참치 출현!'
+                    WHEN @rownum % 4 = 2 THEN '🐟 제주 고등어 대량 어획!'
+                    WHEN @rownum % 4 = 3 THEN '🌊 제주 삼치 폭탄 조황!'
+                    ELSE '⚡ 제주 해상 전갱이 대박!'
+                END
+            WHEN @rownum <= 80 THEN 
+                CASE 
+                    WHEN @rownum % 4 = 1 THEN '🐠 한강 붕어 대폭발! 도시 낚시의 정석!'
+                    WHEN @rownum % 4 = 2 THEN '🌊 한강 잉어 미쳤어요!'
+                    WHEN @rownum % 4 = 3 THEN '🎣 한강 메기 잡기 좋은 날!'
+                    ELSE '💎 한강에서 은어 대박!'
+                END
+            ELSE 
+                CASE 
+                    WHEN @rownum % 4 = 1 THEN '🐟 화천호수 송어 대폭발! 1.5kg급 연속!'
+                    WHEN @rownum % 4 = 2 THEN '🌿 화천에서 은어가 미쳤어요!'
+                    WHEN @rownum % 4 = 3 THEN '🎯 화천호수 잉어 잡기 좋은 날!'
+                    ELSE '💎 화천에서 송어 대박 조황!'
+                END
         END,
         ' ', DATE_FORMAT(DATE_SUB(NOW(), INTERVAL @rownum DAY), '%Y-%m-%d')
     ) as title,
     CONCAT(
         CASE 
-            WHEN @rownum <= 20 THEN '해운대 방파제에서 도미, 농어, 고등어가 잘 잡히고 있습니다. 아침 일찍이나 저녁 시간대가 좋습니다.'
-            WHEN @rownum <= 40 THEN '청평호수에서 잉어, 붕어, 메기 등 민물고기가 활발하게 활동하고 있습니다. 미끼는 옥수수나 빵이 효과적입니다.'
-            WHEN @rownum <= 60 THEN '제주 해상에서 고등어, 전갱이, 갈치 등이 잘 잡히고 있습니다. 선상낚시는 예약 필수입니다.'
-            WHEN @rownum <= 80 THEN '한강에서 붕어, 잉어, 메기가 잘 잡히고 있습니다. 도시 한가운데서 즐길 수 있는 낚시입니다.'
-            ELSE '화천호수에서 송어, 은어, 잉어가 잘 잡히고 있습니다. 깨끗한 물에서 즐기는 프리미엄 낚시입니다.'
+            WHEN @rownum <= 20 THEN 
+                CASE 
+                    WHEN @rownum % 4 = 1 THEN '해운대 방파제에서 도미가 정말 미쳤어요! 오늘 아침부터 도미 5마리 연속으로 잡았습니다. 30cm 이상 대물들이 줄줄이 걸려서 정말 신났어요! 🎣'
+                    WHEN @rownum % 4 = 2 THEN '해운대에서 농어가 대박이에요! 저녁 시간대에 농어가 활발하게 활동하고 있어서 연속으로 잡았습니다. 미끼는 오징어가 최고! 🐟'
+                    WHEN @rownum % 4 = 3 THEN '해운대 방파제 오늘은 도미의 날이었어요! 아침 일찍 가서 도미 3마리 잡았는데 모두 25cm 이상이었습니다. 날씨도 완벽했어요! 🌊'
+                    WHEN @rownum % 4 = 0 THEN '해운대에서 고등어가 대량으로 출현하고 있어요! 오후 시간대에 고등어가 연속으로 걸려서 정말 즐거웠습니다. 회로 먹기 딱 좋은 사이즈! ⚡'
+                END
+            WHEN @rownum <= 40 THEN 
+                CASE 
+                    WHEN @rownum % 4 = 1 THEN '청평호수에서 잉어가 정말 미쳤어요! 2kg급 잉어를 연속으로 잡아서 정말 신났습니다. 민물낚시의 묘미를 제대로 느낄 수 있었어요! 🐠'
+                    WHEN @rownum % 4 = 2 THEN '청평에서 붕어가 대박이에요! 오전 시간대에 붕어가 활발하게 활동하고 있어서 연속으로 잡았습니다. 미끼는 옥수수가 최고! 🌿'
+                    WHEN @rownum % 4 = 3 THEN '청평호수 메기 잡기 정말 좋은 날이었어요! 저녁 시간대에 메기가 연속으로 걸려서 정말 즐거웠습니다. 민물고기의 맛을 제대로 느낄 수 있었어요! 🎯'
+                    WHEN @rownum % 4 = 0 THEN '청평에서 은어가 대박이에요! 오후 시간대에 은어가 활발하게 활동하고 있어서 연속으로 잡았습니다. 회로 먹기 딱 좋은 사이즈! 💎'
+                END
+            WHEN @rownum <= 60 THEN 
+                CASE 
+                    WHEN @rownum % 4 = 1 THEN '제주 해상에서 참치가 출현했어요! 선상낚시 중에 참치가 걸려서 정말 신났습니다. 대형 어종을 잡는 기분이 정말 특별했어요! 🦈'
+                    WHEN @rownum % 4 = 2 THEN '제주에서 고등어가 대량으로 어획되고 있어요! 오전 시간대에 고등어가 연속으로 걸려서 정말 즐거웠습니다. 바다의 넓이를 느끼며 낚시하는 기분이 정말 좋았어요! 🐟'
+                    WHEN @rownum % 4 = 3 THEN '제주 해상 삼치 폭탄 조황이에요! 오후 시간대에 삼치가 활발하게 활동하고 있어서 연속으로 잡았습니다. 선상낚시의 묘미를 제대로 느낄 수 있었어요! 🌊'
+                    WHEN @rownum % 4 = 0 THEN '제주 해상에서 전갱이가 대박이에요! 저녁 시간대에 전갱이가 연속으로 걸려서 정말 신났습니다. 바다낚시의 재미를 제대로 느낄 수 있었어요! ⚡'
+                END
+            WHEN @rownum <= 80 THEN 
+                CASE 
+                    WHEN @rownum % 4 = 1 THEN '한강에서 붕어가 정말 미쳤어요! 도시 한가운데서 붕어를 연속으로 잡아서 정말 신났습니다. 도시 낚시의 정석을 제대로 느낄 수 있었어요! 🐠'
+                    WHEN @rownum % 4 = 2 THEN '한강 잉어가 대박이에요! 오전 시간대에 잉어가 활발하게 활동하고 있어서 연속으로 잡았습니다. 도시에서 즐기는 낚시의 묘미를 느낄 수 있었어요! 🌊'
+                    WHEN @rownum % 4 = 3 THEN '한강 메기 잡기 정말 좋은 날이었어요! 저녁 시간대에 메기가 연속으로 걸려서 정말 즐거웠습니다. 도시 한가운데서 즐기는 특별한 낚시였어요! 🎣'
+                    WHEN @rownum % 4 = 0 THEN '한강에서 은어가 대박이에요! 오후 시간대에 은어가 활발하게 활동하고 있어서 연속으로 잡았습니다. 도시에서 즐기는 프리미엄 낚시였어요! 💎'
+                END
+            ELSE 
+                CASE 
+                    WHEN @rownum % 4 = 1 THEN '화천호수에서 송어가 정말 미쳤어요! 1.5kg급 송어를 연속으로 잡아서 정말 신났습니다. 민물고기 중 최고의 맛을 느낄 수 있었어요! 🐟'
+                    WHEN @rownum % 4 = 2 THEN '화천에서 은어가 대박이에요! 오전 시간대에 은어가 활발하게 활동하고 있어서 연속으로 잡았습니다. 깨끗한 물에서 즐기는 프리미엄 낚시였어요! 🌿'
+                    WHEN @rownum % 4 = 3 THEN '화천호수 잉어 잡기 정말 좋은 날이었어요! 저녁 시간대에 잉어가 연속으로 걸려서 정말 즐거웠습니다. 자연 속에서 즐기는 평화로운 낚시였어요! 🎯'
+                    WHEN @rownum % 4 = 0 THEN '화천에서 송어가 대박이에요! 오후 시간대에 송어가 활발하게 활동하고 있어서 연속으로 잡았습니다. 맑은 물과 함께하는 건강한 낚시였어요! 💎'
+                END
         END,
         ' #조황정보 #', @rownum
     ) as content,
@@ -545,7 +605,31 @@ LIMIT 100;
 -- 12. 조황정보 댓글 데이터 생성 (200개)
 INSERT INTO fishing_report_comments (comment_content, uid, fr_id, modify_at)
 SELECT 
-    CONCAT('조황정보 댓글 ', @rownum) as comment_content,
+    CONCAT(
+        CASE 
+            WHEN @rownum % 20 = 1 THEN '와! 정말 대박이네요! 저도 다음에 가보고 싶어요! 🎣'
+            WHEN @rownum % 20 = 2 THEN '도미 5마리라니... 정말 부럽습니다! 축하해요! 🐟'
+            WHEN @rownum % 20 = 3 THEN '해운대 조황 정말 좋네요! 저도 이번 주말에 가볼게요! 🌊'
+            WHEN @rownum % 20 = 4 THEN '농어가 미쳤다니... 정말 신기해요! 미끼는 뭘 썼나요? 🎯'
+            WHEN @rownum % 20 = 5 THEN '고등어 대량 출현이라니! 회로 먹기 딱 좋겠네요! ⚡'
+            WHEN @rownum % 20 = 6 THEN '잉어 2kg급이라니... 정말 대단해요! 민물낚시의 묘미를 느낄 수 있겠네요! 🐠'
+            WHEN @rownum % 20 = 7 THEN '청평 붕어가 미쳤다니... 옥수수 미끼가 효과적이었나요? 🌿'
+            WHEN @rownum % 20 = 8 THEN '메기 잡기 좋은 날이라니... 저녁 시간대가 핵심이었나요? 🎣'
+            WHEN @rownum % 20 = 9 THEN '은어 대박 조황이라니... 회로 먹기 딱 좋겠네요! 💎'
+            WHEN @rownum % 20 = 10 THEN '제주에서 참치라니... 정말 대박이네요! 선상낚시는 처음이었나요? 🦈'
+            WHEN @rownum % 20 = 11 THEN '고등어 대량 어획이라니... 바다의 넓이를 느끼며 낚시하는 기분이 정말 좋았겠네요! 🐟'
+            WHEN @rownum % 20 = 12 THEN '삼치 폭탄 조황이라니... 선상낚시의 묘미를 제대로 느낄 수 있었겠네요! 🌊'
+            WHEN @rownum % 20 = 13 THEN '전갱이 대박이라니... 바다낚시의 재미를 제대로 느낄 수 있었겠네요! ⚡'
+            WHEN @rownum % 20 = 14 THEN '한강 붕어 대폭발이라니... 도시 한가운데서 낚시하는 것도 나쁘지 않네요! 🐠'
+            WHEN @rownum % 20 = 15 THEN '한강 잉어가 미쳤다니... 도시에서 즐기는 낚시의 묘미를 느낄 수 있었겠네요! 🌊'
+            WHEN @rownum % 20 = 16 THEN '한강 메기 잡기 좋은 날이라니... 도시 한가운데서 즐기는 특별한 낚시였겠네요! 🎣'
+            WHEN @rownum % 20 = 17 THEN '화천 송어 1.5kg급이라니... 민물고기 중 최고의 맛을 느낄 수 있었겠네요! 🐟'
+            WHEN @rownum % 20 = 18 THEN '화천 은어가 미쳤다니... 깨끗한 물에서 즐기는 프리미엄 낚시였겠네요! 🌿'
+            WHEN @rownum % 20 = 19 THEN '화천 잉어 잡기 좋은 날이라니... 자연 속에서 즐기는 평화로운 낚시였겠네요! 🎯'
+            ELSE '화천 송어 대박 조황이라니... 맑은 물과 함께하는 건강한 낚시였겠네요! 💎'
+        END,
+        ' #', @rownum
+    ) as comment_content,
     u.uno as uid,
     fr.fr_id,
     NULL as modify_at
@@ -553,10 +637,10 @@ FROM (
     SELECT @rownum := @rownum + 1 AS rownum FROM (SELECT 1 as n UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9 UNION SELECT 10) a, (SELECT @rownum := 0) r
 ) numbers
 CROSS JOIN (
-    SELECT uno FROM users WHERE role = 'USER' LIMIT 100
+    SELECT uno FROM users WHERE role = 'USER' ORDER BY RAND() LIMIT 200
 ) u
 CROSS JOIN (
-    SELECT fr_id FROM fishing_report LIMIT 100
+    SELECT fr_id FROM fishing_report ORDER BY RAND() LIMIT 200
 ) fr
 LIMIT 200;
 
