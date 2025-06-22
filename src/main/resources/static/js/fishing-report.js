@@ -231,7 +231,7 @@ document.addEventListener('DOMContentLoaded', function() {
             };
 
             try {
-                const response = await fetch('/api/fishing-report/create', {
+                const response = await fetch('/api/fishing-report/create-json', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
