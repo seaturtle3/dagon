@@ -244,71 +244,93 @@ FROM (
 SET @rownum := 0;
 INSERT INTO product (prod_name, prod_region, main_type, sub_type, max_person, min_person, weight, prod_address, prod_description, prod_event, prod_notice, uno, deleted, available_date, prod_thumbnail, created_at)
 SELECT 
-    CONCAT(
-        CASE 
-            WHEN @rownum <= 200 THEN '해운대 방파제 낚시'
-            WHEN @rownum <= 400 THEN '청평호수 민물낚시'
-            WHEN @rownum <= 600 THEN '제주 해상낚시 투어'
-            WHEN @rownum <= 800 THEN '한강 강낚시 체험'
-            ELSE '화천호수 호수낚시'
-        END,
-        ' #', @rownum
-    ) as prod_name,
-    CASE 
-        WHEN @rownum <= 200 THEN 'BUSAN'
-        WHEN @rownum <= 400 THEN 'GYEONGGI'
-        WHEN @rownum <= 600 THEN 'JEJU'
-        WHEN @rownum <= 800 THEN 'SEOUL'
-        ELSE 'GANGWON'
+    -- prod_name
+    CASE FLOOR(RAND() * 10)
+        WHEN 0 THEN '해운대 방파제 도미 대박 체험'
+        WHEN 1 THEN '광안리 야간 농어 트롤링'
+        WHEN 2 THEN '송정 갯바위 감성돔 원정'
+        WHEN 3 THEN '다대포 가족 우럭낚시'
+        WHEN 4 THEN '기장 참돔 선상낚시'
+        WHEN 5 THEN '태종대 볼락 밤낚시'
+        WHEN 6 THEN '오륙도 방파제 볼락 밤낚시'
+        WHEN 7 THEN '영도 선상 우럭낚시'
+        WHEN 8 THEN '송도 갯바위 농어 원정'
+        ELSE '민락수변공원 가족 체험낚시'
+    END as prod_name,
+    -- prod_region
+    CASE FLOOR(RAND() * 16)
+        WHEN 0 THEN 'BUSAN'
+        WHEN 1 THEN 'INCHEON'
+        WHEN 2 THEN 'DAEGU'
+        WHEN 3 THEN 'GWANGJU'
+        WHEN 4 THEN 'DAEJEON'
+        WHEN 5 THEN 'ULSAN'
+        WHEN 6 THEN 'SEJONG'
+        WHEN 7 THEN 'JEONBUK'
+        WHEN 8 THEN 'JEONNAM'
+        WHEN 9 THEN 'CHUNGBUK'
+        WHEN 10 THEN 'CHUNGNAM'
+        WHEN 11 THEN 'GYEONGBUK'
+        WHEN 12 THEN 'GYEONGNAM'
+        WHEN 13 THEN 'GANGWON'
+        WHEN 14 THEN 'JEJU'
+        ELSE 'SEOUL'
     END as prod_region,
-    CASE 
-        WHEN @rownum <= 200 THEN 'SEA'
-        WHEN @rownum <= 400 THEN 'FRESHWATER'
-        WHEN @rownum <= 600 THEN 'SEA'
-        WHEN @rownum <= 800 THEN 'FRESHWATER'
-        ELSE 'FRESHWATER'
-    END as main_type,
-    CASE 
-        WHEN @rownum <= 200 THEN 'BREAK_WATER'
-        WHEN @rownum <= 400 THEN 'RESERVOIR'
-        WHEN @rownum <= 600 THEN 'BOAT'
-        WHEN @rownum <= 800 THEN 'RIVER'
-        ELSE 'RESERVOIR'
-    END as sub_type,
+    -- main_type
+    CASE WHEN FLOOR(RAND() * 16) IN (0,1,5,8,11,12,14) THEN 'SEA' ELSE 'FRESHWATER' END as main_type,
+    -- sub_type
+    CASE FLOOR(RAND() * 10) % 4 WHEN 0 THEN 'BREAK_WATER' WHEN 1 THEN 'RESERVOIR' WHEN 2 THEN 'BOAT' ELSE 'RIVER' END as sub_type,
     FLOOR(RAND() * 10) + 5 as max_person,
     FLOOR(RAND() * 3) + 1 as min_person,
     0.00 as weight,
-    CONCAT(
-        CASE 
-            WHEN @rownum <= 200 THEN '부산광역시 해운대구 해운대해변로 '
-            WHEN @rownum <= 400 THEN '경기도 가평군 청평면 청평로 '
-            WHEN @rownum <= 600 THEN '제주특별자치도 제주시 애월읍 애월로 '
-            WHEN @rownum <= 800 THEN '서울특별시 강남구 한강대로 '
-            ELSE '강원도 화천군 화천읍 화천로 '
-        END,
-        @rownum
-    ) as prod_address,
-    CONCAT(
-        CASE 
-            WHEN @rownum <= 200 THEN '해운대 방파제에서 즐기는 바다낚시입니다. 도미, 농어, 감성돔 등 다양한 어종을 잡을 수 있습니다.'
-            WHEN @rownum <= 400 THEN '청평호수에서 즐기는 민물낚시입니다. 잉어, 붕어, 메기 등 민물고기를 잡을 수 있습니다.'
-            WHEN @rownum <= 600 THEN '제주 바다에서 즐기는 해상낚시 투어입니다. 고등어, 삼치, 참치 등 대형 어종을 잡을 수 있습니다.'
-            WHEN @rownum <= 800 THEN '한강에서 즐기는 강낚시 체험입니다. 잉어, 붕어, 메기 등 다양한 민물고기를 잡을 수 있습니다.'
-            ELSE '화천호수에서 즐기는 호수낚시입니다. 송어, 은어, 잉어 등 맛있는 민물고기를 잡을 수 있습니다.'
-        END,
-        ' #', @rownum
-    ) as prod_description,
+    -- prod_address
+    CASE FLOOR(RAND() * 10)
+        WHEN 0 THEN '부산광역시 해운대구 해운대해변로'
+        WHEN 1 THEN '부산광역시 수영구 광안해변로'
+        WHEN 2 THEN '부산광역시 해운대구 송정해변로'
+        WHEN 3 THEN '부산광역시 사하구 다대포해변로'
+        WHEN 4 THEN '부산광역시 기장군 기장해안로'
+        WHEN 5 THEN '부산광역시 영도구 태종로'
+        WHEN 6 THEN '부산광역시 남구 오륙도로'
+        WHEN 7 THEN '부산광역시 영도구 절영로'
+        WHEN 8 THEN '부산광역시 서구 송도해변로'
+        ELSE '부산광역시 수영구 민락수변로'
+    END as prod_address,
+    -- prod_description
+    CASE FLOOR(RAND() * 10)
+        WHEN 0 THEN '해운대 방파제에서 도미와 농어를 동시에! 오늘은 대물의 날!'
+        WHEN 1 THEN '광안리 야경과 함께하는 농어 트롤링, 짜릿한 손맛 보장!'
+        WHEN 2 THEN '송정 갯바위에서 감성돔 원정대 모집!'
+        WHEN 3 THEN '다대포에서 가족과 함께 우럭낚시, 추억을 만드세요!'
+        WHEN 4 THEN '기장 앞바다에서 참돔 선상낚시, 대물 도전!'
+        WHEN 5 THEN '태종대에서 볼락 밤낚시, 랜턴 필수!'
+        WHEN 6 THEN '오륙도 방파제에서 볼락 밤낚시, 손맛 최고!'
+        WHEN 7 THEN '영도 선상에서 우럭낚시, 바다의 짜릿함!'
+        WHEN 8 THEN '송도 갯바위에서 농어 원정, 회거리 득템!'
+        ELSE '민락수변공원에서 가족 체험낚시, 어린이 강추!'
+    END as prod_description,
+    -- prod_event, prod_notice 기존과 동일
     CASE 
-        WHEN RAND() > 0.7 THEN '신규 고객 20% 할인'
+        WHEN RAND() > 0.9 THEN 'SNS 인증시 루어 증정!'
+        WHEN RAND() > 0.8 THEN '주말 한정 선상낚시 1만원 할인'
+        WHEN RAND() > 0.7 THEN '가족 동반시 어린이 무료'
+        WHEN RAND() > 0.6 THEN '신규 고객 20% 할인'
         WHEN RAND() > 0.5 THEN '주말 패키지 30% 할인'
-        WHEN RAND() > 0.3 THEN '평일 할인 이벤트'
-        ELSE '겨울 얼음낚시 특별가'
+        WHEN RAND() > 0.4 THEN '평일 할인 이벤트'
+        WHEN RAND() > 0.3 THEN '선착순 예약시 쿨러 증정'
+        WHEN RAND() > 0.2 THEN '단체 예약시 추가 할인'
+        ELSE '참가자 전원 기념품 증정'
     END as prod_event,
     CASE 
-        WHEN RAND() > 0.7 THEN '안전장비 착용 필수, 날씨에 따라 취소될 수 있습니다.'
-        WHEN RAND() > 0.5 THEN '낚시도구 대여 가능, 생선회 제공'
-        WHEN RAND() > 0.3 THEN '선박 안전교육 필수, 구명조끼 착용'
-        ELSE '온수 샤워장 완비, 숙박시설 연계 가능'
+        WHEN RAND() > 0.9 THEN '구명조끼 필수! 안전이 최우선입니다.'
+        WHEN RAND() > 0.8 THEN '우천시 일정이 변경될 수 있습니다.'
+        WHEN RAND() > 0.7 THEN '주차장 완비, 샤워실 무료!'
+        WHEN RAND() > 0.6 THEN '낚시도구 대여 가능, 생선회 제공'
+        WHEN RAND() > 0.5 THEN '선박 안전교육 필수, 구명조끼 착용'
+        WHEN RAND() > 0.4 THEN '온수 샤워장 완비, 숙박시설 연계 가능'
+        WHEN RAND() > 0.3 THEN '어린이 보호자 동반 필수'
+        WHEN RAND() > 0.2 THEN '음주 낚시 금지, 안전수칙 준수'
+        ELSE '현장 결제 가능, 카드 환영'
     END as prod_notice,
     p.uno,
     false as deleted,
@@ -539,35 +561,35 @@ SELECT
                     WHEN @rownum % 4 = 1 THEN '해운대 방파제에서 도미가 정말 미쳤어요! 오늘 아침부터 도미 5마리 연속으로 잡았습니다. 30cm 이상 대물들이 줄줄이 걸려서 정말 신났어요! 🎣'
                     WHEN @rownum % 4 = 2 THEN '해운대에서 농어가 대박이에요! 저녁 시간대에 농어가 활발하게 활동하고 있어서 연속으로 잡았습니다. 미끼는 오징어가 최고! 🐟'
                     WHEN @rownum % 4 = 3 THEN '해운대 방파제 오늘은 도미의 날이었어요! 아침 일찍 가서 도미 3마리 잡았는데 모두 25cm 이상이었습니다. 날씨도 완벽했어요! 🌊'
-                    WHEN @rownum % 4 = 0 THEN '해운대에서 고등어가 대량으로 출현하고 있어요! 오후 시간대에 고등어가 연속으로 걸려서 정말 즐거웠습니다. 회로 먹기 딱 좋은 사이즈! ⚡'
+                    ELSE '해운대에서 고등어가 대량으로 출현하고 있어요! 오후 시간대에 고등어가 연속으로 걸려서 정말 즐거웠습니다. 회로 먹기 딱 좋은 사이즈! ⚡'
                 END
             WHEN @rownum <= 40 THEN 
                 CASE 
                     WHEN @rownum % 4 = 1 THEN '청평호수에서 잉어가 정말 미쳤어요! 2kg급 잉어를 연속으로 잡아서 정말 신났습니다. 민물낚시의 묘미를 제대로 느낄 수 있었어요! 🐠'
                     WHEN @rownum % 4 = 2 THEN '청평에서 붕어가 대박이에요! 오전 시간대에 붕어가 활발하게 활동하고 있어서 연속으로 잡았습니다. 미끼는 옥수수가 최고! 🌿'
                     WHEN @rownum % 4 = 3 THEN '청평호수 메기 잡기 정말 좋은 날이었어요! 저녁 시간대에 메기가 연속으로 걸려서 정말 즐거웠습니다. 민물고기의 맛을 제대로 느낄 수 있었어요! 🎯'
-                    WHEN @rownum % 4 = 0 THEN '청평에서 은어가 대박이에요! 오후 시간대에 은어가 활발하게 활동하고 있어서 연속으로 잡았습니다. 회로 먹기 딱 좋은 사이즈! 💎'
+                    ELSE '청평에서 은어가 대박이에요! 오후 시간대에 은어가 활발하게 활동하고 있어서 연속으로 잡았습니다. 회로 먹기 딱 좋은 사이즈! 💎'
                 END
             WHEN @rownum <= 60 THEN 
                 CASE 
                     WHEN @rownum % 4 = 1 THEN '제주 해상에서 참치가 출현했어요! 선상낚시 중에 참치가 걸려서 정말 신났습니다. 대형 어종을 잡는 기분이 정말 특별했어요! 🦈'
                     WHEN @rownum % 4 = 2 THEN '제주에서 고등어가 대량으로 어획되고 있어요! 오전 시간대에 고등어가 연속으로 걸려서 정말 즐거웠습니다. 바다의 넓이를 느끼며 낚시하는 기분이 정말 좋았어요! 🐟'
                     WHEN @rownum % 4 = 3 THEN '제주 해상 삼치 폭탄 조황이에요! 오후 시간대에 삼치가 활발하게 활동하고 있어서 연속으로 잡았습니다. 선상낚시의 묘미를 제대로 느낄 수 있었어요! 🌊'
-                    WHEN @rownum % 4 = 0 THEN '제주 해상에서 전갱이가 대박이에요! 저녁 시간대에 전갱이가 연속으로 걸려서 정말 신났습니다. 바다낚시의 재미를 제대로 느낄 수 있었어요! ⚡'
+                    ELSE '제주 해상에서 전갱이가 대박이에요! 저녁 시간대에 전갱이가 연속으로 걸려서 정말 신났습니다. 바다낚시의 재미를 제대로 느낄 수 있었어요! ⚡'
                 END
             WHEN @rownum <= 80 THEN 
                 CASE 
                     WHEN @rownum % 4 = 1 THEN '한강에서 붕어가 정말 미쳤어요! 도시 한가운데서 붕어를 연속으로 잡아서 정말 신났습니다. 도시 낚시의 정석을 제대로 느낄 수 있었어요! 🐠'
                     WHEN @rownum % 4 = 2 THEN '한강 잉어가 대박이에요! 오전 시간대에 잉어가 활발하게 활동하고 있어서 연속으로 잡았습니다. 도시에서 즐기는 낚시의 묘미를 느낄 수 있었어요! 🌊'
                     WHEN @rownum % 4 = 3 THEN '한강 메기 잡기 정말 좋은 날이었어요! 저녁 시간대에 메기가 연속으로 걸려서 정말 즐거웠습니다. 도시 한가운데서 즐기는 특별한 낚시였어요! 🎣'
-                    WHEN @rownum % 4 = 0 THEN '한강에서 은어가 대박이에요! 오후 시간대에 은어가 활발하게 활동하고 있어서 연속으로 잡았습니다. 도시에서 즐기는 프리미엄 낚시였어요! 💎'
+                    ELSE '한강에서 은어가 대박이에요! 오후 시간대에 은어가 활발하게 활동하고 있어서 연속으로 잡았습니다. 도시에서 즐기는 프리미엄 낚시였어요! 💎'
                 END
             ELSE 
                 CASE 
                     WHEN @rownum % 4 = 1 THEN '화천호수에서 송어가 정말 미쳤어요! 1.5kg급 송어를 연속으로 잡아서 정말 신났습니다. 민물고기 중 최고의 맛을 느낄 수 있었어요! 🐟'
                     WHEN @rownum % 4 = 2 THEN '화천에서 은어가 대박이에요! 오전 시간대에 은어가 활발하게 활동하고 있어서 연속으로 잡았습니다. 깨끗한 물에서 즐기는 프리미엄 낚시였어요! 🌿'
                     WHEN @rownum % 4 = 3 THEN '화천호수 잉어 잡기 정말 좋은 날이었어요! 저녁 시간대에 잉어가 연속으로 걸려서 정말 즐거웠습니다. 자연 속에서 즐기는 평화로운 낚시였어요! 🎯'
-                    WHEN @rownum % 4 = 0 THEN '화천에서 송어가 대박이에요! 오후 시간대에 송어가 활발하게 활동하고 있어서 연속으로 잡았습니다. 맑은 물과 함께하는 건강한 낚시였어요! 💎'
+                    ELSE '화천 송어가 대박이에요! 오후 시간대에 송어가 활발하게 활동하고 있어서 연속으로 잡았습니다. 맑은 물과 함께하는 건강한 낚시였어요! 💎'
                 END
         END,
         ' #조황정보 #', @rownum
@@ -585,7 +607,7 @@ SELECT
         END,
         '_', @rownum, '.jpg'
     ) as thumbnail_url,
-    DATE_SUB(NOW(), INTERVAL @rownum DAY) as fishing_at,
+    DATE_ADD('2021-01-01', INTERVAL FLOOR(RAND() * DATEDIFF(NOW(), '2021-01-01')) DAY) as fishing_at,
     NULL as modify_at,
     FLOOR(RAND() * 100) + 10 as views,
     u.uno as uid,
@@ -603,7 +625,7 @@ CROSS JOIN (
 LIMIT 100;
 
 -- 12. 조황정보 댓글 데이터 생성 (200개)
-INSERT INTO fishing_report_comments (comment_content, uid, fr_id, modify_at)
+INSERT INTO fishing_report_comments (comment_content, uid, fr_id, created_at, modify_at)
 SELECT 
     CONCAT(
         CASE 
@@ -632,7 +654,8 @@ SELECT
     ) as comment_content,
     u.uno as uid,
     fr.fr_id,
-    NULL as modify_at
+    DATE_ADD('2021-01-01', INTERVAL FLOOR(RAND() * DATEDIFF(NOW(), '2021-01-01')) DAY) as created_at,
+    DATE_ADD('2021-01-01', INTERVAL FLOOR(RAND() * DATEDIFF(NOW(), '2021-01-01')) DAY) as modify_at
 FROM (
     SELECT @rownum := @rownum + 1 AS rownum FROM (SELECT 1 as n UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9 UNION SELECT 10) a, (SELECT @rownum := 0) r
 ) numbers

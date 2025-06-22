@@ -84,9 +84,9 @@ public class ApiFishingReportController {
             throw new IllegalArgumentException("제목 또는 내용이 누락되었습니다.");
         }
 
-        if (images == null || images.isEmpty()) {
-            throw new IllegalArgumentException("이미지는 최소 1장 필요합니다.");
-        }
+        // if (images == null || images.isEmpty()) {
+        //     throw new IllegalArgumentException("이미지는 최소 1장 필요합니다.");
+        // }
 
         return apiFishingReportService.createFishingReport(apiFishingReportDTO, userUno, images);
     }

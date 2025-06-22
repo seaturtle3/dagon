@@ -238,4 +238,10 @@ public class ProductService {
         return productRepository.save(product);
     }
 
+    // 키워드로 상품 검색 (페이징)
+    public Page<ProductDTO> searchProductsByKeyword(String keyword, Pageable pageable) {
+        Page<Product> products = productRepository.searchByKeyword(keyword, pageable);
+        return products.map(ProductDTO::fromEntity);
+    }
+
 }

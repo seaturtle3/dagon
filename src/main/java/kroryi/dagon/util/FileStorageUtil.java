@@ -1,5 +1,6 @@
 package kroryi.dagon.util;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -12,6 +13,9 @@ import java.util.UUID;
 @Component
 public class FileStorageUtil {
 
+    @Value("${app.file.upload-dir}")
+    private String uploadDir;
+
     public String saveImage(MultipartFile file, String folderName) {
         try {
             // 날짜별 디렉토리 생성 (YYYY/MM/DD 형식)
@@ -20,8 +24,8 @@ public class FileStorageUtil {
             // 고유 파일명 생성
             String fileName = UUID.randomUUID() + "_" + file.getOriginalFilename();
 
-            // 저장 경로 구성 (날짜별 디렉토리 포함)
-            Path uploadPath = Paths.get("uploads/" + folderName + "/" + dateFolder);
+            // 저장 경로를 프로퍼티에서 읽어온 값으로 조합
+            Path uploadPath = Paths.get(uploadDir, folderName, dateFolder);
             Files.createDirectories(uploadPath);
 
             // 실제 파일 저장

@@ -1,6 +1,7 @@
 package kroryi.dagon.service.storage;
 
 import kroryi.dagon.service.image.FileStorageService;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -14,6 +15,9 @@ import java.util.UUID;
 
 @Service
 public class LocalFileStorageService extends FileStorageService {
+
+    @Value("${app.file.upload-dir}")
+    private String uploadDir;
 
     @Override
     public String save(MultipartFile file) {
@@ -34,7 +38,6 @@ public class LocalFileStorageService extends FileStorageService {
 
             String newFilename = UUID.randomUUID() + extension;
             // 실제 경로로 바꿔줘 (날짜별 디렉토리 포함)
-            String uploadDir = "D:/project/dagon/uploads/fishing-report/";
             Path datePath = Paths.get(uploadDir, dateFolder);
             Path filePath = datePath.resolve(newFilename);
 

@@ -183,4 +183,20 @@ public class ApiProductController {
         return filters;
     }
 
+    @Operation(summary = "상품 키워드 검색", description = "검색어(keyword)로 상품을 페이징 조회")
+    @GetMapping("/search")
+    public Page<ProductDTO> searchProducts(
+            @RequestParam String keyword,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "prodId") String sortBy,
+            @RequestParam(defaultValue = "desc") String direction) {
+
+        Sort sort = direction.equalsIgnoreCase("desc")
+                ? Sort.by(sortBy).descending()
+                : Sort.by(sortBy).ascending();
+        Pageable pageable = PageRequest.of(page, size, sort);
+        return productService.searchProductsByKeyword(keyword, pageable);
+    }
+
 }
