@@ -8,12 +8,14 @@ import kroryi.dagon.DTO.board.FishingCenter.FishingReportCreateDTO;
 import kroryi.dagon.DTO.board.FishingCenter.FishingReportDTO;
 import kroryi.dagon.DTO.board.PartnerFishingReportDTO;
 import kroryi.dagon.entity.fishingCenter.FishingReport;
-import kroryi.dagon.entity.product.Product;
 import kroryi.dagon.entity.User;
+import kroryi.dagon.entity.product.Product;
 import kroryi.dagon.service.PartnerFishingReportService;
 import kroryi.dagon.service.auth.UserService;
 import kroryi.dagon.service.community.fishingCenter.ApiFishingReportService;
+import kroryi.dagon.service.image.FileStorageService;
 import kroryi.dagon.service.product.ProductService;
+import kroryi.dagon.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -23,20 +25,12 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.nio.file.*;
 import java.util.List;
 import java.util.UUID;
-import java.io.IOException;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import net.coobird.thumbnailator.Thumbnails;
-import java.awt.image.BufferedImage;
-import javax.imageio.ImageIO;
 
 @RestController
 @RequiredArgsConstructor
@@ -50,49 +44,25 @@ public class ApiFishingReportController {
     private final PartnerFishingReportService partnerFishingReportService;
     private final UserService userService;
     private final ProductService productService;
-
-    // 현재 인증된 사용자의 uno를 가져오는 헬퍼 메서드
-    private Long getCurrentUserUno() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication != null && authentication.getPrincipal() instanceof kroryi.dagon.component.CustomUserDetails) {
-            return ((kroryi.dagon.component.CustomUserDetails) authentication.getPrincipal()).getUno();
-        }
-        throw new RuntimeException("인증된 사용자 정보를 찾을 수 없습니다.");
-    }
-
-    @Operation(summary = "조황정보 생성 (JSON)")
-    @PostMapping(value = "/create-json", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> createFishingReportJson(@RequestBody ApiFishingReportDTO apiFishingReportDTO) {
-        try {
-            Long userUno = getCurrentUserUno();
-
-            if (apiFishingReportDTO.getTitle() == null || apiFishingReportDTO.getContent() == null) {
-                return ResponseEntity.badRequest().body("제목 또는 내용이 누락되었습니다.");
-            }
-
-            // 이미지 없이 조황정보 생성
-            ApiFishingReportDTO createdReport = apiFishingReportService.createFishingReport(apiFishingReportDTO, userUno, null);
-            return ResponseEntity.ok(createdReport);
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body("조황정보 생성 실패: " + e.getMessage());
-        }
-    }
+    private final JwtUtil jwtUtil;
 
     @Operation(summary = "조황정보 생성")
     @PostMapping(value = "/create", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ApiFishingReportDTO createFishingReport(
+            @RequestHeader("Authorization") String token,
             @RequestPart("dto") ApiFishingReportDTO apiFishingReportDTO,
             @RequestPart(value = "images", required = false) List<MultipartFile> images
     ) {
-        Long userUno = getCurrentUserUno();
+        String bearerToken = token.substring(7); // "Bearer " 제거
+        Long userUno = jwtUtil.getUnoFromToken(bearerToken);
 
         if (apiFishingReportDTO.getTitle() == null || apiFishingReportDTO.getContent() == null) {
             throw new IllegalArgumentException("제목 또는 내용이 누락되었습니다.");
         }
 
-        // if (images == null || images.isEmpty()) {
-        //     throw new IllegalArgumentException("이미지는 최소 1장 필요합니다.");
-        // }
+        if (images == null || images.isEmpty()) {
+            throw new IllegalArgumentException("이미지는 최소 1장 필요합니다.");
+        }
 
         return apiFishingReportService.createFishingReport(apiFishingReportDTO, userUno, images);
     }
@@ -132,14 +102,17 @@ public class ApiFishingReportController {
 
     //====================================================================================================
     @GetMapping("/mine")
-    public List<PartnerFishingReportDTO> getMyReports() {
-        Long uno = getCurrentUserUno();
+    public List<PartnerFishingReportDTO> getMyReports(HttpServletRequest request) {
+        String token = jwtUtil.resolveToken(request);
+        Long uno = jwtUtil.getUnoFromToken(token);
         return partnerFishingReportService.getMySimpleReports(uno);
     }
 
+
     @GetMapping("/{frId}")
-    public FishingReportDTO getMyReport(@PathVariable Long frId) throws AccessDeniedException {
-        Long uno = getCurrentUserUno();
+    public FishingReportDTO getMyReport(@PathVariable Long frId, HttpServletRequest request) throws AccessDeniedException {
+        String token = jwtUtil.resolveToken(request);
+        Long uno = jwtUtil.getUnoFromToken(token);
         return partnerFishingReportService.getMyReport(frId, uno);
     }
 
@@ -147,29 +120,36 @@ public class ApiFishingReportController {
     public ResponseEntity<?> updateMyReport(
             @PathVariable Long frId,
             @RequestPart("dto") FishingReportDTO dto,
-            @RequestPart(value = "thumbnailFile", required = false) MultipartFile thumbnailFile) throws AccessDeniedException {
+            @RequestPart(value = "thumbnailFile", required = false) MultipartFile thumbnailFile,
+            HttpServletRequest request) throws AccessDeniedException {
 
-        Long uno = getCurrentUserUno();
+        String token = jwtUtil.resolveToken(request);
+        Long uno = jwtUtil.getUnoFromToken(token);
+
         FishingReportDTO updatedReport = partnerFishingReportService.updateMyReportWithFile(frId, uno, dto, thumbnailFile);
         return ResponseEntity.ok(updatedReport);
     }
 
     @DeleteMapping("/{frId}")
-    public void deleteMyReport(@PathVariable Long frId) throws AccessDeniedException {
-        Long uno = getCurrentUserUno();
+    public void deleteMyReport(@PathVariable Long frId, HttpServletRequest request) throws AccessDeniedException {
+        String token = jwtUtil.resolveToken(request);
+        Long uno = jwtUtil.getUnoFromToken(token);
         partnerFishingReportService.deleteMyReport(frId, uno);
     }
 
     @PostMapping("")
     public ResponseEntity<?> createFishingReport(
             @RequestPart("dto") FishingReportCreateDTO dto,
-            @RequestPart(value = "thumbnailFile", required = false) MultipartFile thumbnailFile) {
+            @RequestPart(value = "thumbnailFile", required = false) MultipartFile thumbnailFile,
+            @RequestHeader("Authorization") String authorizationHeader) {
 
         try {
-            Long uno = getCurrentUserUno();
+            // 토큰에서 USER NO 추출
+            String token = authorizationHeader.replace("Bearer ", "");
+            Long uno = jwtUtil.getUnoFromToken(token);
 
             User user = userService.getUserByUno(uno);
-            Product product = productService.getProductEntityById(dto.getProdId());
+            kroryi.dagon.entity.product.Product product = productService.getProductEntityById(dto.getProdId());
 
             // 권한 체크: 로그인 사용자와 상품 파트너가 일치하는지
             if (!product.getPartner().getUno().equals(uno)) {
@@ -204,30 +184,7 @@ public class ApiFishingReportController {
         }
     }
 
-    public String saveImageWithThumbnail(MultipartFile file, String folderName) {
-        try {
-            String dateFolder = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd"));
-            String fileName = UUID.randomUUID() + "_" + file.getOriginalFilename();
-            Path uploadPath = Paths.get(uploadDir, folderName, dateFolder);
-            Files.createDirectories(uploadPath);
 
-            // 원본 저장
-            Path filePath = uploadPath.resolve(fileName);
-            file.transferTo(filePath.toFile());
 
-            // 썸네일 생성 및 저장
-            String thumbFileName = "thumb_" + fileName;
-            Path thumbPath = uploadPath.resolve(thumbFileName);
 
-            BufferedImage originalImage = ImageIO.read(filePath.toFile());
-            Thumbnails.of(originalImage)
-                .size(400, 300) // 원하는 썸네일 크기
-                .toFile(thumbPath.toFile());
-
-            // 원본 이미지 URL 반환 (필요시 썸네일 URL도 함께 반환 가능)
-            return "/uploads/" + folderName + "/" + dateFolder + "/" + fileName;
-        } catch (IOException e) {
-            throw new RuntimeException("이미지 저장/썸네일 생성 실패", e);
-        }
-    }
 }

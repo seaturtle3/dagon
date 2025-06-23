@@ -17,6 +17,7 @@ public class ApiFishingDiaryDTO {
     private Long fdId;
     private String title;
     private String content;
+    private LocalDateTime createdAt;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDateTime fishingAt;
@@ -36,6 +37,7 @@ public class ApiFishingDiaryDTO {
         this.title = fishingDiary.getTitle();
         this.content = fishingDiary.getContent();
         this.fishingAt = fishingDiary.getFishingAt();
+        this.createdAt = fishingDiary.getCreatedAt();
 
         if (fishingDiary.getProduct() != null) {
             this.product = new ApiProductDTO(fishingDiary.getProduct());

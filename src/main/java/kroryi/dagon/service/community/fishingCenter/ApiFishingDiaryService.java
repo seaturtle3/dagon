@@ -113,7 +113,6 @@ public class ApiFishingDiaryService {
                 .collect(Collectors.toList());
     }
 
-
     public Long updateFishingDiary(Long fdId, ApiFishingDiaryDTO apiFishingDiaryDTO) {
         FishingDiary fishingDiary = fishingDiaryRepository.findById(fdId)
                 .orElseThrow(() -> new RuntimeException("조황정보 없음"));
@@ -140,6 +139,13 @@ public class ApiFishingDiaryService {
 
     public void deleteFishingDiary(Long fdId) {
         fishingDiaryRepository.deleteById(fdId);
+    }
+
+    public List<ApiFishingDiaryDTO> getMyDiaries(Long userUno) {
+        List<FishingDiary> diaries = fishingDiaryRepository.findByUser_Uno(userUno);
+        return diaries.stream()
+                .map(ApiFishingDiaryDTO::new)
+                .collect(Collectors.toList());
     }
 
 }
