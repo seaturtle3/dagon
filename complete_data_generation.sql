@@ -818,7 +818,7 @@ LIMIT 10;
 
 -- 18. 공지사항 데이터 생성 (10개)
 INSERT INTO notice (title, content, aid, created_at)
-SELECT 
+SELECT
     CONCAT('공지사항 제목 ', @rownum) as title,
     CONCAT('공지사항 내용 ', @rownum) as content,
     'dagon_admin_001' as aid,
@@ -834,29 +834,152 @@ INSERT IGNORE INTO faq_category (name, display_order) VALUES
 ('파트너', 1),
 ('관리자', 2);
 
--- 19. FAQ 데이터 생성 (10개)
+-- 19. FAQ 데이터 생성 (50개)
+SET @rownum := 0;
 INSERT INTO faq (question, answer, category_id, aid, is_active, created_at)
-SELECT 
-    CONCAT('FAQ 질문 ', @rownum) as question,
-    CONCAT('FAQ 답변 ', @rownum) as answer,
-    1 as category_id,
-    'dagon_admin_001' as aid,
+SELECT
+    -- question
+    CASE (@rownum := @rownum + 1)
+        -- 예약/결제 (1-10)
+        WHEN 1 THEN '예약 취소는 어떻게 하나요?'
+        WHEN 2 THEN '결제 수단에는 어떤 것들이 있나요?'
+        WHEN 3 THEN '예약 변경은 가능한가요?'
+        WHEN 4 THEN '환불 규정은 어떻게 되나요?'
+        WHEN 5 THEN '예약 확인은 어디서 하나요?'
+        WHEN 6 THEN '카카오페이 결제가 안 돼요.'
+        WHEN 7 THEN '무통장 입금 시 입금 확인은 언제 되나요?'
+        WHEN 8 THEN '현장 결제도 가능한가요?'
+        WHEN 9 THEN '예약 시 인원 추가는 어떻게 하나요?'
+        WHEN 10 THEN '결제 영수증은 어떻게 발급받나요?'
+        -- 계정/회원정보 (11-20)
+        WHEN 11 THEN '회원가입은 어떻게 하나요?'
+        WHEN 12 THEN '아이디/비밀번호를 잊어버렸어요.'
+        WHEN 13 THEN '회원 정보를 수정하고 싶어요.'
+        WHEN 14 THEN '회원 탈퇴는 어떻게 하나요?'
+        WHEN 15 THEN '닉네임 변경이 가능한가요?'
+        WHEN 16 THEN '이메일 주소를 변경하고 싶어요.'
+        WHEN 17 THEN 'SNS 계정으로 가입했는데 비밀번호를 모르겠어요.'
+        WHEN 18 THEN '휴면 계정은 어떻게 풀 수 있나요?'
+        WHEN 19 THEN '본인인증이 되지 않아요.'
+        WHEN 20 THEN '다른 사람 명의로 가입할 수 있나요?'
+        -- 파트너 관련 (21-30)
+        WHEN 21 THEN '파트너 신청은 어떻게 하나요?'
+        WHEN 22 THEN '상품 등록은 어떻게 하나요?'
+        WHEN 23 THEN '파트너 수수료는 얼마인가요?'
+        WHEN 24 THEN '정산은 언제 이루어지나요?'
+        WHEN 25 THEN '예약 관리는 어떻게 하나요?'
+        WHEN 26 THEN '고객 문의는 어떻게 확인하나요?'
+        WHEN 27 THEN '파트너 정보를 수정하고 싶어요.'
+        WHEN 28 THEN '광고를 진행하고 싶어요.'
+        WHEN 29 THEN '등록한 상품의 노출 순서는 어떻게 결정되나요?'
+        WHEN 30 THEN '파트너 등급은 무엇인가요?'
+        -- 서비스 이용 (31-40)
+        WHEN 31 THEN '조행기는 어떻게 작성하나요?'
+        WHEN 32 THEN '커뮤니티 이용 규칙은 무엇인가요?'
+        WHEN 33 THEN '물때 정보는 정확한가요?'
+        WHEN 34 THEN '신고 기능은 어떻게 사용하나요?'
+        WHEN 35 THEN '찜한 상품은 어디서 보나요?'
+        WHEN 36 THEN '어떤 어종 정보를 제공하나요?'
+        WHEN 37 THEN '알림 설정은 어떻게 변경하나요?'
+        WHEN 38 THEN '검색이 제대로 되지 않아요.'
+        WHEN 39 THEN '앱에서도 이용할 수 있나요?'
+        WHEN 40 THEN '후기 작성은 어떻게 하나요?'
+        -- 포인트 및 기타 (41-50)
+        WHEN 41 THEN '포인트는 어떻게 적립되나요?'
+        WHEN 42 THEN '포인트는 어떻게 사용하나요?'
+        WHEN 43 THEN '쿠폰은 어디서 확인할 수 있나요?'
+        WHEN 44 THEN '포인트 유효기간이 있나요?'
+        WHEN 45 THEN '고객센터 운영시간은 어떻게 되나요?'
+        WHEN 46 THEN '이벤트는 어디서 확인하나요?'
+        WHEN 47 THEN '제휴 문의는 어떻게 하나요?'
+        WHEN 48 THEN '오류가 발생했어요.'
+        WHEN 49 THEN '친구 초대 이벤트는 없나요?'
+        ELSE '탈퇴 시 포인트는 어떻게 되나요?'
+    END as question,
+    -- answer
+    CASE @rownum
+        -- 예약/결제 (1-10)
+        WHEN 1 THEN '마이페이지 > 예약 내역에서 "예약 취소" 버튼을 통해 직접 취소하실 수 있습니다. 단, 파트너가 설정한 취소 수수료 정책에 따라 수수료가 부과될 수 있습니다.'
+        WHEN 2 THEN '현재 카카오페이, 신용카드, 계좌이체 등 다양한 결제 수단을 지원하고 있습니다. 상품별로 지원하는 결제 수단이 다를 수 있습니다.'
+        WHEN 3 THEN '예약 변경 기능은 현재 지원되지 않습니다. 번거로우시겠지만 기존 예약을 취소하신 후 새로 예약해주시기 바랍니다.'
+        WHEN 4 THEN '환불은 각 파트너사의 규정에 따라 처리됩니다. 예약 페이지의 환불 규정을 반드시 확인해주세요.'
+        WHEN 5 THEN '마이페이지 > 예약 내역에서 상세한 예약 정보를 확인하실 수 있습니다.'
+        WHEN 6 THEN '카카오페이 앱 또는 네트워크 문제일 수 있습니다. 잠시 후 다시 시도해보시거나 다른 결제 수단을 이용해주세요.'
+        WHEN 7 THEN '입금 확인은 자동화 시스템을 통해 10분 이내에 처리됩니다. 1시간 이상 확인이 되지 않을 경우 고객센터로 문의해주세요.'
+        WHEN 8 THEN '현장 결제 가능 여부는 파트너가 등록한 상품 정보에 따라 다릅니다. 상품 상세 페이지를 확인해주세요.'
+        WHEN 9 THEN '예약 완료 후에는 인원 추가가 불가능합니다. 예약을 취소하고 인원을 포함하여 새로 예약해주셔야 합니다.'
+        WHEN 10 THEN '결제 영수증은 결제 대행사(PG)를 통해 발급되며, 마이페이지 > 예약 내역에서 출력할 수 있습니다.'
+        -- 계정/회원정보 (11-20)
+        WHEN 11 THEN '홈페이지 상단의 "회원가입" 메뉴를 통해 약관 동의 및 정보 입력을 하시면 가입이 완료됩니다. SNS 계정을 통한 간편가입도 가능합니다.'
+        WHEN 12 THEN '로그인 페이지 하단의 "아이디/비밀번호 찾기" 기능을 이용해주세요. 가입 시 인증한 이메일 또는 휴대폰 번호로 정보를 보내드립니다.'
+        WHEN 13 THEN '마이페이지 > 회원정보 수정 메뉴에서 비밀번호 재확인 후 정보를 수정할 수 있습니다.'
+        WHEN 14 THEN '마이페이지 > 회원정보 수정 페이지 하단의 "회원 탈퇴" 버튼을 통해 진행할 수 있습니다. 탈퇴 시 모든 정보는 복구되지 않으니 신중하게 결정해주세요.'
+        WHEN 15 THEN '네, 마이페이지 > 회원정보 수정에서 닉네임을 변경할 수 있습니다. 닉네임은 30일에 한 번만 변경 가능합니다.'
+        WHEN 16 THEN '마이페이지 > 회원정보 수정에서 이메일 주소를 변경할 수 있습니다. 이메일 인증이 필요합니다.'
+        WHEN 17 THEN 'SNS 간편가입 회원은 별도의 비밀번호가 없습니다. SNS 계정으로 로그인해주시기 바랍니다.'
+        WHEN 18 THEN '1년 이상 로그인하지 않은 계정은 휴면 처리됩니다. 로그인 시 자동으로 휴면이 해제됩니다.'
+        WHEN 19 THEN '본인인증 서비스 제공업체의 일시적인 오류일 수 있습니다. 잠시 후 다시 시도해보시거나 고객센터로 문의해주세요.'
+        WHEN 20 THEN '가입은 반드시 본인 명의로 해야 합니다. 타인 명의 도용 시 법적 처벌을 받을 수 있습니다.'
+        -- 파트너 관련 (21-30)
+        WHEN 21 THEN '홈페이지 하단의 "파트너 센터"를 통해 신청할 수 있습니다. 사업자 정보 및 관련 서류 제출 후 관리자 승인을 거쳐 가입이 완료됩니다.'
+        WHEN 22 THEN '파트너 센터 로그인 후, "상품 관리 > 새 상품 등록" 메뉴에서 상품 정보, 가격, 사진 등을 등록할 수 있습니다.'
+        WHEN 23 THEN '파트너 수수료는 계약 조건에 따라 다르며, 파트너 센터에서 확인하거나 담당자에게 문의해주시기 바랍니다.'
+        WHEN 24 THEN '정산은 매월 지정된 날짜에 이루어집니다. 자세한 정산일과 내역은 파트너 센터 > 정산 관리에서 확인하실 수 있습니다.'
+        WHEN 25 THEN '파트너 센터의 "예약 관리" 메뉴에서 실시간 예약 현황을 확인하고, 예약 확정 및 취소 처리를 할 수 있습니다.'
+        WHEN 26 THEN '고객이 상품에 대해 남긴 문의는 파트너 센터의 "고객 문의 관리" 메뉴에서 확인하고 답변할 수 있습니다.'
+        WHEN 27 THEN '파트너 센터 > "계정 관리" 메뉴에서 업체 정보, 담당자 정보 등을 수정할 수 있습니다.'
+        WHEN 28 THEN '다양한 광고 상품을 운영하고 있습니다. 파트너 센터의 "광고 관리" 메뉴를 참고하시거나 광고 담당자에게 문의해주세요.'
+        WHEN 29 THEN '상품 노출 순서는 판매량, 후기, 평점 등 다양한 요소를 종합한 랭킹 알고리즘에 따라 결정됩니다.'
+        WHEN 30 THEN '파트너 등급은 판매 실적, 고객 만족도 등을 기준으로 부여되며, 등급에 따라 다양한 혜택이 제공됩니다.'
+        -- 서비스 이용 (31-40)
+        WHEN 31 THEN '커뮤니티 > 조행기 게시판에서 "글쓰기" 버튼을 통해 작성할 수 있습니다. 풍부한 내용과 사진을 공유하면 다른 회원들에게 큰 도움이 됩니다.'
+        WHEN 32 THEN '욕설, 비방, 광고 등 커뮤니티 분위기를 해치는 행위는 금지되며, 위반 시 서비스 이용이 제한될 수 있습니다. 자세한 내용은 공지사항을 확인해주세요.'
+        WHEN 33 THEN '물때 정보는 국립해양조사원의 공공 데이터를 기반으로 제공되지만, 기상 상황에 따라 실제와 다소 차이가 있을 수 있습니다.'
+        WHEN 34 THEN '부적절한 게시물이나 댓글 발견 시, 해당 게시물의 신고 버튼을 통해 신고할 수 있습니다. 신고된 내용은 관리자 검토 후 처리됩니다.'
+        WHEN 35 THEN '마이페이지 > 찜 목록에서 찜한 상품들을 모아볼 수 있습니다.'
+        WHEN 36 THEN '국내 주요 바다, 민물 어종에 대한 정보와 금어기, 주요 출몰 지역 등의 정보를 제공합니다.'
+        WHEN 37 THEN '마이페이지 > 알림 설정에서 원하는 종류의 알림(예약, 마케팅 등)만 받도록 설정하거나 모든 알림을 끌 수 있습니다.'
+        WHEN 38 THEN '검색어의 오타를 확인해보시거나, 필터 조건을 변경하여 다시 검색해보세요. 지속적으로 문제가 발생하면 고객센터로 문의해주세요.'
+        WHEN 39 THEN '네, 모바일 웹 및 전용 앱(안드로이드/iOS)을 통해 모든 서비스를 동일하게 이용하실 수 있습니다.'
+        WHEN 40 THEN '실제로 이용한 상품에 대해서만 후기를 작성할 수 있습니다. 마이페이지 > 예약 내역에서 "후기 작성" 버튼을 눌러주세요.'
+        -- 포인트 및 기타 (41-50)
+        WHEN 41 THEN '상품 구매 확정 시 결제 금액의 일부가 포인트로 적립됩니다. 또한 다양한 이벤트를 통해 추가 포인트를 얻을 수 있습니다.'
+        WHEN 42 THEN '결제 페이지에서 보유 포인트를 사용하여 결제 금액을 할인받을 수 있습니다. 1000포인트 이상부터 사용 가능합니다.'
+        WHEN 43 THEN '마이페이지 > 쿠폰함에서 보유한 쿠폰을 확인할 수 있습니다. 쿠폰마다 사용 조건과 유효기간이 다르니 확인 후 사용해주세요.'
+        WHEN 44 THEN '네, 포인트의 유효기간은 적립일로부터 1년입니다. 기간 내에 사용하지 않은 포인트는 자동 소멸됩니다.'
+        WHEN 45 THEN '고객센터는 평일 오전 9시부터 오후 6시까지 운영됩니다. (점심시간 12시~1시, 주말/공휴일 휴무)'
+        WHEN 46 THEN '홈페이지 상단의 "이벤트" 메뉴에서 진행 중인 다양한 이벤트를 확인하고 참여할 수 있습니다.'
+        WHEN 47 THEN '홈페이지 하단의 "제휴 문의" 링크를 통해 문의 내용을 남겨주시면 담당자가 검토 후 연락드립니다.'
+        WHEN 48 THEN '서비스 이용 중 오류가 발생하면, 오류 화면 캡쳐와 함께 구체적인 상황을 고객센터로 알려주시면 신속하게 해결해드리겠습니다.'
+        WHEN 49 THEN '현재 친구 초대 이벤트는 진행하고 있지 않지만, 앞으로 더 좋은 이벤트를 준비하겠습니다.'
+        ELSE '회원 탈퇴 시 보유하고 있던 포인트와 쿠폰은 모두 소멸되며, 복구되지 않습니다.'
+    END as answer,
+    -- category_id
+    CASE
+        WHEN @rownum BETWEEN 21 AND 30 THEN 2 -- 파트너
+        ELSE 1 -- 일반회원
+    END as category_id,
+    -- aid
+    CONCAT('dagon_admin_00', FLOOR(RAND() * 9) + 1) as aid,
     true as is_active,
-    DATE_SUB(NOW(), INTERVAL @rownum DAY) as created_at
+    DATE_SUB(NOW(), INTERVAL FLOOR(RAND() * 365) DAY) as created_at
 FROM (
-    SELECT @rownum := @rownum + 1 AS rownum FROM (SELECT 1 as n UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9 UNION SELECT 10) a, (SELECT @rownum := 0) r
-) numbers
-LIMIT 10;
+    SELECT 1 as n UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9 UNION ALL SELECT 10
+    UNION ALL SELECT 11 UNION ALL SELECT 12 UNION ALL SELECT 13 UNION ALL SELECT 14 UNION ALL SELECT 15 UNION ALL SELECT 16 UNION ALL SELECT 17 UNION ALL SELECT 18 UNION ALL SELECT 19 UNION ALL SELECT 20
+    UNION ALL SELECT 21 UNION ALL SELECT 22 UNION ALL SELECT 23 UNION ALL SELECT 24 UNION ALL SELECT 25 UNION ALL SELECT 26 UNION ALL SELECT 27 UNION ALL SELECT 28 UNION ALL SELECT 29 UNION ALL SELECT 30
+    UNION ALL SELECT 31 UNION ALL SELECT 32 UNION ALL SELECT 33 UNION ALL SELECT 34 UNION ALL SELECT 35 UNION ALL SELECT 36 UNION ALL SELECT 37 UNION ALL SELECT 38 UNION ALL SELECT 39 UNION ALL SELECT 40
+    UNION ALL SELECT 41 UNION ALL SELECT 42 UNION ALL SELECT 43 UNION ALL SELECT 44 UNION ALL SELECT 45 UNION ALL SELECT 46 UNION ALL SELECT 47 UNION ALL SELECT 48 UNION ALL SELECT 49 UNION ALL SELECT 50
+) numbers;
 
 -- 20. 이벤트 데이터 생성 (5개)
 INSERT INTO event (title, content, start_at, end_at, aid, created_at)
-SELECT 
+SELECT
     CONCAT('이벤트 제목 ', @rownum) as title,
     CONCAT('이벤트 내용 ', @rownum) as content,
     DATE_SUB(NOW(), INTERVAL @rownum DAY) as start_at,
     DATE_ADD(NOW(), INTERVAL @rownum DAY) as end_at,
     'dagon_admin_001' as aid,
-    DATE_SUB(NOW(), INTERVAL @rownum DAY) as created_at
+    DATE_SUB(NOW(), INTERVAL FLOOR(RAND() * 365) DAY) as created_at
 FROM (
     SELECT @rownum := @rownum + 1 AS rownum FROM (SELECT 1 as n UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5) a, (SELECT @rownum := 0) r
 ) numbers
@@ -938,7 +1061,7 @@ CROSS JOIN (
 ) u
 LIMIT 5;
 
--- 27. 상품-어종 매핑 데이터 생성 (10개)
+-- 27. 상품-어구 매핑 데이터 생성 (10개)
 INSERT INTO prod_fish_species_mapping (prod_id, fs_id) VALUES
 (1, 1), (2, 2), (3, 3), (4, 4), (5, 5), (6, 1), (7, 2), (8, 3), (9, 4), (10, 5);
 
