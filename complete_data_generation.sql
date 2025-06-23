@@ -1,3 +1,4 @@
+SET NAMES 'utf8mb4';
 -- 완전한 대량 데이터 생성 스크립트
 -- 모든 테이블에 샘플 데이터 생성
 
@@ -64,7 +65,7 @@ ALTER TABLE prod_fish_species_mapping AUTO_INCREMENT = 1;
 ALTER TABLE prod_fishing_gear_mapping AUTO_INCREMENT = 1;
 ALTER TABLE prod_facility_mapping AUTO_INCREMENT = 1;
 
-3. 관리자 데이터 생성 (10개)
+-- 3. 관리자 데이터 생성 (10개)
 INSERT INTO admin (aid, apw, aname, role, uno) VALUES
 ('admin', '$2a$10$zRA2sR7SU0NZBlqFt/ewFuvYnPqtlSTMArezEiBkP8qoGLwrGwkxO', '슈퍼관리자', 'SUPER_ADMIN', 1),
 ('dagon_admin_001', '$2a$10$zRA2sR7SU0NZBlqFt/ewFuvYnPqtlSTMArezEiBkP8qoGLwrGwkxO', '김관리자', 'ADMIN', 2),
@@ -288,17 +289,23 @@ SELECT
     FLOOR(RAND() * 3) + 1 as min_person,
     0.00 as weight,
     -- prod_address
-    CASE FLOOR(RAND() * 10)
+    CASE FLOOR(RAND() * 16)
         WHEN 0 THEN '부산광역시 해운대구 해운대해변로'
-        WHEN 1 THEN '부산광역시 수영구 광안해변로'
-        WHEN 2 THEN '부산광역시 해운대구 송정해변로'
-        WHEN 3 THEN '부산광역시 사하구 다대포해변로'
-        WHEN 4 THEN '부산광역시 기장군 기장해안로'
-        WHEN 5 THEN '부산광역시 영도구 태종로'
-        WHEN 6 THEN '부산광역시 남구 오륙도로'
-        WHEN 7 THEN '부산광역시 영도구 절영로'
-        WHEN 8 THEN '부산광역시 서구 송도해변로'
-        ELSE '부산광역시 수영구 민락수변로'
+        WHEN 1 THEN '인천광역시 연수구 컨벤시아대로'
+        WHEN 2 THEN '대구광역시 중구 동성로'
+        WHEN 3 THEN '광주광역시 서구 상무중앙로'
+        WHEN 4 THEN '대전광역시 서구 둔산로'
+        WHEN 5 THEN '울산광역시 남구 삼산로'
+        WHEN 6 THEN '세종특별자치시 한누리대로'
+        WHEN 7 THEN '전라북도 전주시 완산구 홍산로'
+        WHEN 8 THEN '전라남도 목포시 영산로'
+        WHEN 9 THEN '충청북도 청주시 상당구 상당로'
+        WHEN 10 THEN '충청남도 천안시 서북구 불당로'
+        WHEN 11 THEN '경상북도 포항시 남구 시청로'
+        WHEN 12 THEN '경상남도 창원시 성산구 중앙대로'
+        WHEN 13 THEN '강원도 춘천시 중앙로'
+        WHEN 14 THEN '제주특별자치도 제주시 연동'
+        ELSE '서울특별시 강남구 테헤란로'
     END as prod_address,
     -- prod_description
     CASE FLOOR(RAND() * 10)
@@ -441,44 +448,67 @@ SET @rownum := 0;
 INSERT INTO fishing_diary (title, content, thumbnail_url, fishing_at, modify_at, views, uid, prod_id, created_at)
 SELECT 
     CONCAT(
-        CASE 
-            WHEN @rownum <= 100 THEN '해운대에서 잡은 도미'
-            WHEN @rownum <= 200 THEN '청평호수 잉어낚시'
-            WHEN @rownum <= 300 THEN '제주 해상낚시 투어'
-            WHEN @rownum <= 400 THEN '한강 붕어낚시'
-            ELSE '화천호수 송어낚시'
+        CASE FLOOR(RAND() * 10)
+            WHEN 0 THEN '해운대' WHEN 1 THEN '서해안' WHEN 2 THEN '남해' WHEN 3 THEN '동해' WHEN 4 THEN '제주도'
+            WHEN 5 THEN '가평' WHEN 6 THEN '양평' WHEN 7 THEN '한강' WHEN 8 THEN '낙동강' ELSE '금강'
         END,
-        ' #', @rownum
+        '에서 잡은 ',
+        CASE FLOOR(RAND() * 12)
+            WHEN 0 THEN '도미' WHEN 1 THEN '우럭' WHEN 2 THEN '광어' WHEN 3 THEN '농어' WHEN 4 THEN '감성돔'
+            WHEN 5 THEN '참돔' WHEN 6 THEN '고등어' WHEN 7 THEN '갈치' WHEN 8 THEN '배스' WHEN 9 THEN '붕어'
+            WHEN 10 THEN '잉어' ELSE '송어'
+        END,
+        ' ',
+        CASE FLOOR(RAND() * 5)
+            WHEN 0 THEN '대박 조행기!' WHEN 1 THEN '손맛 최고!' WHEN 2 THEN '인생고기 잡았어요' WHEN 3 THEN '짜릿한 하루' ELSE '가족과 함께 즐거운 시간'
+        END
     ) as title,
     CONCAT(
-        CASE 
-            WHEN @rownum <= 100 THEN '오늘 해운대 방파제에서 도미를 잡았습니다! 날씨도 좋고 물도 맑아서 정말 즐거운 낚시였어요. 도미는 3마리 잡았는데 모두 30cm 이상이었습니다.'
-            WHEN @rownum <= 200 THEN '청평호수에서 잉어를 잡았습니다. 2kg짜리 잉어를 잡아서 정말 기뻤어요. 민물낚시의 묘미를 제대로 느낄 수 있었습니다.'
-            WHEN @rownum <= 300 THEN '제주 바다에서 고등어를 잡았습니다! 선상낚시는 처음이었는데 정말 재미있었어요. 바다의 넓이를 느끼며 낚시하는 기분이 정말 좋았습니다.'
-            WHEN @rownum <= 400 THEN '한강에서 붕어를 잡았습니다. 도시 한가운데서 낚시하는 것도 나쁘지 않네요. 붕어는 5마리 잡았는데 모두 맛있게 먹었습니다.'
-            ELSE '화천호수에서 송어를 잡았습니다! 송어는 민물고기 중에서도 가장 맛있는 고기 중 하나죠. 1.5kg짜리 송어를 잡아서 정말 만족스러웠습니다.'
+        CASE FLOOR(RAND() * 5)
+            WHEN 0 THEN '오늘은 정말 최고의 하루였습니다. '
+            WHEN 1 THEN '오랜만에 떠난 낚시 여행, 정말 즐거웠어요. '
+            WHEN 2 THEN '날씨도 좋고 모든 것이 완벽했던 날! '
+            WHEN 3 THEN '힘들었지만 보람찬 낚시였습니다. '
+            ELSE '잊지 못할 추억을 만들고 왔습니다. '
         END,
-        ' #', @rownum
+        '오늘 ',
+        CASE FLOOR(RAND() * 10)
+            WHEN 0 THEN '해운대' WHEN 1 THEN '서해안' WHEN 2 THEN '남해' WHEN 3 THEN '동해' WHEN 4 THEN '제주도'
+            WHEN 5 THEN '가평' WHEN 6 THEN '양평' WHEN 7 THEN '한강' WHEN 8 THEN '낙동강' ELSE '금강'
+        END,
+        '에서 ',
+        CASE FLOOR(RAND() * 12)
+            WHEN 0 THEN '도미' WHEN 1 THEN '우럭' WHEN 2 THEN '광어' WHEN 3 THEN '농어' WHEN 4 THEN '감성돔'
+            WHEN 5 THEN '참돔' WHEN 6 THEN '고등어' WHEN 7 THEN '갈치' WHEN 8 THEN '배스' WHEN 9 THEN '붕어'
+            WHEN 10 THEN '잉어' ELSE '송어'
+        END,
+        '를 잡았어요. ',
+        CASE FLOOR(RAND() * 5)
+            WHEN 0 THEN '사이즈가 어마어마해서 끌어올리는데 한참 걸렸네요. '
+            WHEN 1 THEN '마릿수는 많지 않았지만 손맛은 최고였습니다. '
+            WHEN 2 THEN '함께 간 친구들과 나눠먹으니 더 맛있었어요. '
+            WHEN 3 THEN '처음 가본 포인트인데, 앞으로 자주 가게 될 것 같습니다. '
+            ELSE '가족들도 모두 좋아해서 뿌듯한 하루였습니다. '
+        END,
+        '#낚시 #조행기 #',
+        CASE FLOOR(RAND() * 12)
+            WHEN 0 THEN '도미' WHEN 1 THEN '우럭' WHEN 2 THEN '광어' WHEN 3 THEN '농어' WHEN 4 THEN '감성돔'
+            WHEN 5 THEN '참돔' WHEN 6 THEN '고등어' WHEN 7 THEN '갈치' WHEN 8 THEN '배스' WHEN 9 THEN '붕어'
+            WHEN 10 THEN '잉어' ELSE '송어'
+        END
     ) as content,
     CONCAT(
         '/uploads/',
-        DATE_FORMAT(DATE_SUB(NOW(), INTERVAL FLOOR(RAND() * 30) DAY), '%Y/%m/%d'),
+        DATE_FORMAT(DATE_ADD('2022-01-01', INTERVAL FLOOR(RAND() * DATEDIFF(NOW(), '2022-01-01')) DAY), '%Y/%m/%d'),
         '/fishing_diary_',
-        CASE 
-            WHEN @rownum <= 100 THEN 'haewoondae'
-            WHEN @rownum <= 200 THEN 'cheongpyeong'
-            WHEN @rownum <= 300 THEN 'jeju'
-            WHEN @rownum <= 400 THEN 'hangang'
-            ELSE 'hwacheon'
-        END,
-        '_', @rownum, '.jpg'
+        @rownum, '.jpg'
     ) as thumbnail_url,
-    DATE_SUB(NOW(), INTERVAL FLOOR(RAND() * 30) DAY) as fishing_at,
+    DATE_ADD('2022-01-01', INTERVAL FLOOR(RAND() * DATEDIFF(NOW(), '2022-01-01')) DAY) as fishing_at,
     NULL as modify_at,
-    FLOOR(RAND() * 100) + 10 as views,
+    FLOOR(RAND() * 300) + 10 as views,
     u.uno as uid,
     p.prod_id,
-    DATE_SUB(NOW(), INTERVAL FLOOR(RAND() * 30) DAY) as created_at
+    DATE_ADD('2022-01-01', INTERVAL FLOOR(RAND() * DATEDIFF(NOW(), '2022-01-01')) DAY) as created_at
 FROM (
     SELECT @rownum := @rownum + 1 AS rownum, u.uno FROM (SELECT uno FROM users WHERE role = 'USER' LIMIT 500) u, (SELECT @rownum := 0) r
 ) u
