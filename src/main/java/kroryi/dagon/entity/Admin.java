@@ -23,7 +23,7 @@ public class Admin {
     @Column(name = "apw", nullable = false)
     private String apw;
 
-    @Column(name = "aname")
+    @Column(name = "aname", columnDefinition = "VARCHAR(255) CHARACTER SET utf8mb4")
     private String aname;
 
     @Enumerated(EnumType.STRING) // enum을 문자열로 저장

@@ -1,12 +1,14 @@
 -- 완전한 대량 데이터 생성 스크립트
 -- 모든 테이블에 샘플 데이터 생성
 
+SET FOREIGN_KEY_CHECKS = 0;
+
 -- 1. 기존 데이터 삭제 (외래키 순서 고려)
+DELETE FROM fishing_report_comments;
+DELETE FROM fishing_report_image;
 DELETE FROM prod_fish_species_mapping;
 DELETE FROM prod_fishing_gear_mapping;
 DELETE FROM prod_facility_mapping;
-DELETE FROM fishing_report_comments;
-DELETE FROM fishing_report_image;
 DELETE FROM fishing_diary_comment;
 DELETE FROM fishing_diary_image;
 DELETE FROM free_board_comments;
@@ -29,6 +31,8 @@ DELETE FROM prod_option;
 DELETE FROM product;
 DELETE FROM partners;
 DELETE FROM users;
+
+SET FOREIGN_KEY_CHECKS = 1;
 
 -- 2. auto_increment 초기화
 ALTER TABLE users AUTO_INCREMENT = 1;
@@ -60,7 +64,7 @@ ALTER TABLE prod_fish_species_mapping AUTO_INCREMENT = 1;
 ALTER TABLE prod_fishing_gear_mapping AUTO_INCREMENT = 1;
 ALTER TABLE prod_facility_mapping AUTO_INCREMENT = 1;
 
--- 3. 관리자 데이터 생성 (10개)
+3. 관리자 데이터 생성 (10개)
 INSERT INTO admin (aid, apw, aname, role, uno) VALUES
 ('admin', '$2a$10$zRA2sR7SU0NZBlqFt/ewFuvYnPqtlSTMArezEiBkP8qoGLwrGwkxO', '슈퍼관리자', 'SUPER_ADMIN', 1),
 ('dagon_admin_001', '$2a$10$zRA2sR7SU0NZBlqFt/ewFuvYnPqtlSTMArezEiBkP8qoGLwrGwkxO', '김관리자', 'ADMIN', 2),
