@@ -63,7 +63,7 @@ public interface ProductRepository extends JpaRepository<Product, Long>, JpaSpec
             """)
     List<Product> findSeaProductsByFilters(
             @Param("region") ProdRegion region,
-            @Param("subType") String subType,
+            @Param("subType") SubType subType,
             @Param("species") String species
     );
 
@@ -71,16 +71,16 @@ public interface ProductRepository extends JpaRepository<Product, Long>, JpaSpec
     // 한글로 지역, 세부 장소 받기
     @Query("SELECT DISTINCT p.prodRegion FROM Product p WHERE p.mainType = 'SEA'")
     List<ProdRegion> findDistinctRegions();
+
     @Query("SELECT DISTINCT p.subType FROM Product p WHERE p.mainType = 'SEA'")
     List<SubType> findDistinctSubTypes();
+
     @Query("""
-                SELECT DISTINCT fs.fsName
-                FROM ProdFishSpeciesMapping m
-                JOIN m.fs fs
-                JOIN m.product p
-                WHERE p.mainType = kroryi.dagon.enums.MainType.SEA
+                SELECT fs.fsName
+                FROM ProductFishSpecies fs
+                WHERE fs.mainType = kroryi.dagon.enums.MainType.SEA
             """)
-    List<String> findDistinctFishSpecies();
+    List<String> findAllSeaFishSpecies();
 
     // 키워드 검색 (상품명, 설명, 주소, 이벤트, 공지)
     @Query("""

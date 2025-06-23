@@ -3,6 +3,7 @@ package kroryi.dagon.controller.common.product;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import kroryi.dagon.entity.product.Product;
 import kroryi.dagon.enums.MainType;
 import kroryi.dagon.enums.ProdRegion;
 import kroryi.dagon.enums.SubType;
@@ -30,10 +31,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.time.LocalDate;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -152,29 +150,30 @@ public class ApiProductController {
     }
 
     //  -------------- 프론트 추가 api 바다 낚시 상품들 ----------------
-    @Operation(summary = "바다 상품 필터 조회", description = "지역, 상세 장소, 어종에 따라 바다 상품 필터 조회")
-    @GetMapping("/get-all/sea/detail")
-    public List<ProductDTO> getSeaProductsByFilter(
-            @RequestParam(required = false) ProdRegion region,
+    @GetMapping("/get-all/sea/filter")
+    public List<ProductDTO> getSeaProductsByFilters(
             @RequestParam(required = false) String subType,
-            @RequestParam(required = false) String species
-    ) {
-        log.info("========백단 바다 필터 제품: {}, {}, {}", region, subType, species);
-        return productService.getSeaProductsByFilters(region, subType, species);
+            @RequestParam(required = false) String region,
+            @RequestParam(required = false) String species) {
+
+        SubType subTypeEnum = (subType == null || subType.isEmpty()) ? null : SubType.valueOf(subType);
+        ProdRegion regionEnum = (region == null || region.isEmpty()) ? null : ProdRegion.valueOf(region);
+
+        return productService.getSeaProductsByFilters(regionEnum, subTypeEnum, species);
     }
 
     //  -------------- 프론트 추가 api 바다 낚시 상단 필터 ----------------
-    @GetMapping("/sea/filters")
+    @GetMapping("/sea/filter")
     public Map<String, List<String>> getSeaFilterOptions() {
-        List<String> regions = productRepository.findDistinctRegions().stream()
-                .map(ProdRegion::getKorean)
+        List<String> regions = Arrays.stream(ProdRegion.values())
+                .map(Enum::name)
                 .toList();
 
-        List<String> subTypes = productRepository.findDistinctSubTypes().stream()
-                .map(SubType::getKorean)
+        List<String> subTypes = Arrays.stream(SubType.values())
+                .map(Enum::name)
                 .toList();
 
-        List<String> species = productRepository.findDistinctFishSpecies();
+        List<String> species = productRepository.findAllSeaFishSpecies(); // <-- 여기를 새 메서드로 변경
 
         Map<String, List<String>> filters = new HashMap<>();
         filters.put("regions", regions);
