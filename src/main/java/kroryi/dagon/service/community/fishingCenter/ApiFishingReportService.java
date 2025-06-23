@@ -9,7 +9,6 @@ import kroryi.dagon.repository.product.ProductRepository;
 import kroryi.dagon.repository.UserRepository;
 import kroryi.dagon.repository.board.FishingReportImageRepository;
 import kroryi.dagon.repository.board.FishingReportRepository;
-import kroryi.dagon.service.image.FileStorageService;
 import kroryi.dagon.util.FileStorageUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -35,47 +34,25 @@ public class ApiFishingReportService {
     private final ProductRepository productRepository;
     private final FileStorageUtil fileStorageUtil;
     private final FishingReportImageRepository fishingReportImageRepository;
-    private final FileStorageService fileStorageService;
-
-    public void saveImages(FishingReport fishingReport, List<MultipartFile> images) {
-        List<FishingReportImage> imageEntities = new ArrayList<>();
-
-        for (int i = 0; i < images.size(); i++) {
-            MultipartFile image = images.get(i);
-
-            // 이미지 저장 → URL 리턴
-            String imageUrl = fileStorageUtil.saveImage(image, "fishing-report");
-
-            // DB용 이미지 엔티티 생성
-            FishingReportImage reportImage = new FishingReportImage();
-            reportImage.setImageUrl(imageUrl);
-            reportImage.setFishingReport(fishingReport); // 연관관계 주입
-            reportImage.setThumbnail(i == 0); // 첫 번째 이미지를 썸네일로 지정
-
-            imageEntities.add(reportImage);
-        }
-
-        fishingReportImageRepository.saveAll(imageEntities);
-        fishingReport.setImages(imageEntities); // 양방향 매핑일 경우
-    }
 
     @Transactional
     public ApiFishingReportDTO createFishingReport(ApiFishingReportDTO dto, Long userUno, List<MultipartFile> images) {
         FishingReport fishingReport = new FishingReport();
         fishingReport.setTitle(dto.getTitle());
         fishingReport.setContent(dto.getContent());
-        fishingReport.setFishingAt(dto.getFishingAt().atStartOfDay());
+
+        if (dto.getFishingAt() != null) {
+            fishingReport.setFishingAt(dto.getFishingAt().atStartOfDay());
+        }
 
         log.info("dto.product:---> {}", dto.getProduct());
 
         // 상품 설정
-        if (dto.getProduct() != null) {
+        if (dto.getProduct() != null && dto.getProduct().getProdId() != null) {
             Long prodId = dto.getProduct().getProdId();
             Product product = productRepository.findById(prodId)
                     .orElseThrow(() -> new IllegalArgumentException("상품을 찾을 수 없습니다."));
             fishingReport.setProduct(product);
-        } else {
-            fishingReport.setProduct(null); // 명시적 처리
         }
 
         // 사용자 설정
@@ -86,7 +63,7 @@ public class ApiFishingReportService {
         // 조황정보 저장 (PK 확보)
         fishingReport = fishingReportRepository.save(fishingReport);
 
-        // ✅ 이미지 저장 처리 (중복 제거 + 썸네일 처리)
+        // 이미지 저장 처리
         if (images != null && !images.isEmpty()) {
             for (int i = 0; i < images.size(); i++) {
                 MultipartFile file = images.get(i);
@@ -103,8 +80,6 @@ public class ApiFishingReportService {
         }
         return new ApiFishingReportDTO(fishingReport);
     }
-
-
 
     public Page<ApiFishingReportDTO> getAllFishingReports(Pageable pageable) {
         Page<FishingReport> fishingReports = fishingReportRepository.findAll(pageable);
@@ -138,21 +113,23 @@ public class ApiFishingReportService {
                 .collect(Collectors.toList());
     }
 
-
-    public Long updateFishingReport(Long fdId, ApiFishingReportDTO apiFishingReportDTO) {
-        FishingReport fishingReport = fishingReportRepository.findById(fdId)
+    public Long updateFishingReport(Long frId, ApiFishingReportDTO apiFishingReportDTO) {
+        FishingReport fishingReport = fishingReportRepository.findById(frId)
                 .orElseThrow(() -> new RuntimeException("조황정보 없음"));
 
         fishingReport.setTitle(apiFishingReportDTO.getTitle());
         fishingReport.setContent(apiFishingReportDTO.getContent());
-        fishingReport.setFishingAt(apiFishingReportDTO.getFishingAt().atStartOfDay());
+        
+        if(apiFishingReportDTO.getFishingAt() != null) {
+            fishingReport.setFishingAt(apiFishingReportDTO.getFishingAt().atStartOfDay());
+        }
 
         // User 객체 설정
         User user = userRepository.findById(apiFishingReportDTO.getUser().getUno())
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
         fishingReport.setUser(user);
 
-        if (apiFishingReportDTO.getProduct() != null) {
+        if (apiFishingReportDTO.getProduct() != null && apiFishingReportDTO.getProduct().getProdId() != null) {
             Long prodId = apiFishingReportDTO.getProduct().getProdId();
             Product product = productRepository.getReferenceById(prodId);  // 영속성 컨텍스트에서 참조
             fishingReport.setProduct(product);
@@ -167,20 +144,4 @@ public class ApiFishingReportService {
                 .orElseThrow(() -> new RuntimeException("조황정보 없음"));
         fishingReportRepository.delete(fishingReport);
     }
-
-    public void saveFishingReportImages(List<MultipartFile> files, FishingReport report) {
-        for (int i = 0; i < files.size(); i++) {
-            MultipartFile file = files.get(i);
-            String savedUrl = fileStorageService.save(file); // 파일 저장 → URL 반환
-
-            FishingReportImage image = new FishingReportImage();
-            image.setImageUrl(savedUrl);
-            image.setThumbnail(i == 0); // 첫 번째 이미지를 썸네일로 간주
-            image.setFishingReport(report);
-
-            fishingReportImageRepository.save(image);
-        }
-    }
-
-
 }

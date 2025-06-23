@@ -2,7 +2,6 @@ package kroryi.dagon.controller.partner.community;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.servlet.http.HttpServletRequest;
 import kroryi.dagon.DTO.board.FishingCenter.ApiFishingReportDTO;
 import kroryi.dagon.DTO.board.FishingCenter.FishingReportCreateDTO;
 import kroryi.dagon.DTO.board.FishingCenter.FishingReportDTO;
@@ -62,7 +61,9 @@ public class ApiFishingReportController {
 
     @Operation(summary = "조황정보 생성 (JSON)")
     @PostMapping(value = "/create-json", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> createFishingReportJson(@RequestBody ApiFishingReportDTO apiFishingReportDTO) {
+    public ResponseEntity<?> createFishingReportJson(
+            @RequestBody ApiFishingReportDTO apiFishingReportDTO
+    ) {
         try {
             Long userUno = getCurrentUserUno();
 
