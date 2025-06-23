@@ -82,4 +82,17 @@ public interface ProductRepository extends JpaRepository<Product, Long>, JpaSpec
             """)
     List<String> findAllSeaFishSpecies();
 
+    // 키워드 검색 (상품명, 설명, 주소, 이벤트, 공지)
+    @Query("""
+        SELECT p FROM Product p
+        WHERE (
+            LOWER(p.prodName) LIKE LOWER(CONCAT('%', :keyword, '%'))
+            OR p.prodDescription LIKE CONCAT('%', :keyword, '%')
+            OR LOWER(p.prodAddress) LIKE LOWER(CONCAT('%', :keyword, '%'))
+            OR p.prodEvent LIKE CONCAT('%', :keyword, '%')
+            OR p.prodNotice LIKE CONCAT('%', :keyword, '%')
+        )
+    """)
+    Page<Product> searchByKeyword(@Param("keyword") String keyword, Pageable pageable);
+
 }

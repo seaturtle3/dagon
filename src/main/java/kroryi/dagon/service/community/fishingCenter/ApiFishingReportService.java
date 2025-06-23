@@ -12,6 +12,8 @@ import kroryi.dagon.repository.board.FishingReportRepository;
 import kroryi.dagon.service.image.FileStorageService;
 import kroryi.dagon.util.FileStorageUtil;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -25,6 +27,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Log4j2
 public class ApiFishingReportService {
 
     private final FishingReportRepository fishingReportRepository;
@@ -63,11 +66,14 @@ public class ApiFishingReportService {
         fishingReport.setContent(dto.getContent());
         fishingReport.setFishingAt(dto.getFishingAt().atStartOfDay());
 
+        log.info("dto.product:---> {}", dto.getProduct());
+
         // 상품 설정
         if (dto.getProduct() != null) {
             Long prodId = dto.getProduct().getProdId();
             Product product = productRepository.findById(prodId)
                     .orElseThrow(() -> new IllegalArgumentException("상품을 찾을 수 없습니다."));
+            fishingReport.setProduct(product);
         } else {
             fishingReport.setProduct(null); // 명시적 처리
         }
@@ -84,13 +90,13 @@ public class ApiFishingReportService {
         if (images != null && !images.isEmpty()) {
             for (int i = 0; i < images.size(); i++) {
                 MultipartFile file = images.get(i);
-                String savedUrl = fileStorageService.save(file);
+                String savedUrl = fileStorageUtil.saveImage(file, "fishing-report");
 
                 FishingReportImage image = new FishingReportImage();
                 image.setImageUrl(savedUrl);
                 image.setThumbnail(i == 0); // 첫 번째 이미지를 썸네일로
                 image.setOrderIndex(i);
-                image.setFishingReport(fishingReport); // ✅ 올바른 객체 연결
+                image.setFishingReport(fishingReport);
 
                 fishingReportImageRepository.save(image);
             }

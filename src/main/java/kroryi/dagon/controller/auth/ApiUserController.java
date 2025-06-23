@@ -2,73 +2,62 @@ package kroryi.dagon.controller.auth;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.servlet.http.HttpSession;
-import kroryi.dagon.DTO.UsersDTO;
 import kroryi.dagon.entity.User;
 import kroryi.dagon.repository.UserRepository;
 import kroryi.dagon.service.auth.UserService;
-import kroryi.dagon.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/users")
 @RequiredArgsConstructor
+@Tag(name = "User", description = "사용자 관련 API")
+@RequestMapping("/api/users")
 @Log4j2
-@Tag(name = "User", description = "회원가입, 로그인, 마이페이지, 계정 관리 API")
 public class ApiUserController {
 
     private final UserRepository userRepository;
     private final UserService userService;
-    private final JwtUtil jwtUtil;
 
     @GetMapping("/me")
-    @Operation(summary = "아이디 조회 ", description = "전화번호 이름으로 아이디 조회")
-    public ResponseEntity<?> getCurrentUser(@RequestHeader("Authorization") String authorizationHeader) {
-        // 1. JWT 추출
-        String token = null;
-        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
-            token = authorizationHeader.substring(7);
+    @Operation(summary = "현재 사용자 정보 조회", description = "JWT 토큰을 통해 현재 로그인한 사용자 정보를 조회합니다.")
+    public ResponseEntity<?> getCurrentUser() {
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            if (authentication != null && authentication.getPrincipal() instanceof kroryi.dagon.component.CustomUserDetails) {
+                kroryi.dagon.component.CustomUserDetails userDetails = 
+                    (kroryi.dagon.component.CustomUserDetails) authentication.getPrincipal();
+                
+                String uid = userDetails.getUsername();
+                Long uno = userDetails.getUno();
+                
+                log.info("현재 사용자 정보: uid={}, uno={}", uid, uno);
+                
+                Optional<User> optionalUser = userRepository.findByUid(uid);
+                if (optionalUser.isEmpty()) {
+                    return new ResponseEntity<>("사용자 정보를 찾을 수 없습니다.", HttpStatus.NOT_FOUND);
+                }
+                
+                User user = optionalUser.get();
+                log.info("조회된 사용자: {}", user);
+                
+                return ResponseEntity.ok(new UserInfoResponseDTO(user.getUno(), user.getDisplayName()));
+            } else {
+                return new ResponseEntity<>("인증된 사용자 정보를 찾을 수 없습니다.", HttpStatus.UNAUTHORIZED);
+            }
+        } catch (Exception e) {
+            log.error("사용자 정보 조회 중 오류 발생: {}", e.getMessage());
+            return new ResponseEntity<>("사용자 정보 조회 중 오류가 발생했습니다.", HttpStatus.INTERNAL_SERVER_ERROR);
         }
-
-        if (token == null) {
-            return new ResponseEntity<>("JWT 토큰이 없습니다.", HttpStatus.UNAUTHORIZED);
-        }
-
-        // 2. 토큰 파싱
-        String uid = jwtUtil.getUidFromToken(token);
-        log.info("uid---->: " + uid);
-
-        if (uid == null) {
-            return new ResponseEntity<>("유효하지 않은 JWT 토큰입니다.", HttpStatus.UNAUTHORIZED);
-        }
-
-        // 3. 사용자 조회
-        Optional<User> optionalUser = userRepository.findByUid(uid);
-
-        if (optionalUser.isEmpty()) {
-            return new ResponseEntity<>("사용자 정보를 찾을 수 없습니다.", HttpStatus.NOT_FOUND);
-        }
-
-        User user = optionalUser.get();
-        log.info("user-----> {}", user);
-
-
-        // 4. 유저가 비활성화 상태인 경우 로그인 거부
-
-
-        // 5. 응답
-        return ResponseEntity.ok(new UserInfoResponseDTO(user.getUno(), user.getDisplayName()));
     }
 
     record UserInfoResponseDTO(Long uno, String displayName) {}
-
-
 
     @GetMapping("/find-id")
     @Operation(summary = "아이디 조회", description = "이메일로 아이디 조회")

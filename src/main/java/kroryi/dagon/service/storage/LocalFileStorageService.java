@@ -1,6 +1,7 @@
 package kroryi.dagon.service.storage;
 
 import kroryi.dagon.service.image.FileStorageService;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -8,10 +9,15 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.UUID;
 
 @Service
 public class LocalFileStorageService extends FileStorageService {
+
+    @Value("${app.file.upload-dir}")
+    private String uploadDir;
 
     @Override
     public String save(MultipartFile file) {
@@ -20,6 +26,9 @@ public class LocalFileStorageService extends FileStorageService {
         }
 
         try {
+            // 날짜별 디렉토리 생성 (YYYY/MM/DD 형식)
+            String dateFolder = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd"));
+            
             String originalFilename = file.getOriginalFilename();
             String extension = "";
 
@@ -28,16 +37,16 @@ public class LocalFileStorageService extends FileStorageService {
             }
 
             String newFilename = UUID.randomUUID() + extension;
-            // 실제 경로로 바꿔줘
-            String uploadDir = "D:/project/dagon/uploads/fishing-report/";
-            Path filePath = Paths.get(uploadDir, newFilename);
+            // 실제 경로로 바꿔줘 (날짜별 디렉토리 포함)
+            Path datePath = Paths.get(uploadDir, dateFolder);
+            Path filePath = datePath.resolve(newFilename);
 
-            // 디렉토리 없으면 생성
-            Files.createDirectories(filePath.getParent());
+            // 날짜별 디렉토리 생성
+            Files.createDirectories(datePath);
             file.transferTo(filePath.toFile());
 
-            // 반환할 URL 경로 (예: 서버에서 /uploads/...로 접근 가능)
-            return "/uploads/fishing-report/" + newFilename;
+            // 반환할 URL 경로 (날짜별 디렉토리 포함)
+            return "/uploads/fishing-report/" + dateFolder + "/" + newFilename;
         } catch (IOException e) {
             throw new RuntimeException("파일 저장 실패", e);
         }
