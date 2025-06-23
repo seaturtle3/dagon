@@ -794,6 +794,12 @@ FROM (
 ) numbers
 LIMIT 10;
 
+-- 26. FAQ 카테고리 데이터 생성 (3개)
+INSERT IGNORE INTO faq_category (name, display_order) VALUES
+('일반회원', 0),
+('파트너', 1),
+('관리자', 2);
+
 -- 19. FAQ 데이터 생성 (10개)
 INSERT INTO faq (question, answer, category_id, aid, is_active, created_at)
 SELECT 
@@ -809,11 +815,10 @@ FROM (
 LIMIT 10;
 
 -- 20. 이벤트 데이터 생성 (5개)
-INSERT INTO event (title, content, event_status, start_at, end_at, aid, created_at)
+INSERT INTO event (title, content, start_at, end_at, aid, created_at)
 SELECT 
     CONCAT('이벤트 제목 ', @rownum) as title,
     CONCAT('이벤트 내용 ', @rownum) as content,
-    'ONGOING' as event_status,
     DATE_SUB(NOW(), INTERVAL @rownum DAY) as start_at,
     DATE_ADD(NOW(), INTERVAL @rownum DAY) as end_at,
     'dagon_admin_001' as aid,
@@ -898,12 +903,6 @@ CROSS JOIN (
     SELECT uno FROM users WHERE role = 'USER' LIMIT 5
 ) u
 LIMIT 5;
-
--- 26. FAQ 카테고리 데이터 생성 (3개)
-INSERT IGNORE INTO faq_category (name, display_order) VALUES
-('일반회원', 0),
-('파트너', 1),
-('관리자', 2);
 
 -- 27. 상품-어종 매핑 데이터 생성 (10개)
 INSERT INTO prod_fish_species_mapping (prod_id, fs_id) VALUES
