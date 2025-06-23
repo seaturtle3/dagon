@@ -65,12 +65,12 @@ ALTER TABLE prod_fish_species_mapping AUTO_INCREMENT = 1;
 ALTER TABLE prod_fishing_gear_mapping AUTO_INCREMENT = 1;
 ALTER TABLE prod_facility_mapping AUTO_INCREMENT = 1;
 
--- 3. 관리자 데이터 생성 (10개)
+-- 3. 관리자 데이터 생성 (11개)
 INSERT INTO admin (aid, apw, aname, role, uno) VALUES
 ('admin', '$2a$10$zRA2sR7SU0NZBlqFt/ewFuvYnPqtlSTMArezEiBkP8qoGLwrGwkxO', '슈퍼관리자', 'SUPER_ADMIN', 1),
 ('dagon_admin_001', '$2a$10$zRA2sR7SU0NZBlqFt/ewFuvYnPqtlSTMArezEiBkP8qoGLwrGwkxO', '김관리자', 'ADMIN', 2),
 ('dagon_admin_002', '$2a$10$zRA2sR7SU0NZBlqFt/ewFuvYnPqtlSTMArezEiBkP8qoGLwrGwkxO', '이관리자', 'ADMIN', 3),
-('dagon_super_admin', '$2a$10$zRA2sR7SU0NZBlqFt/ewFuvYnPqtlSTMArezEiBkP8qoGLwrGwkxO', '슈퍼관리자', 'SUPER_ADMIN', 4),
+('dagon_admin_003', '$2a$10$zRA2sR7SU0NZBlqFt/ewFuvYnPqtlSTMArezEiBkP8qoGLwrGwkxO', '조관리자', 'ADMIN', 4),
 ('dagon_admin_004', '$2a$10$zRA2sR7SU0NZBlqFt/ewFuvYnPqtlSTMArezEiBkP8qoGLwrGwkxO', '박관리자', 'ADMIN', 5),
 ('dagon_admin_005', '$2a$10$zRA2sR7SU0NZBlqFt/ewFuvYnPqtlSTMArezEiBkP8qoGLwrGwkxO', '최관리자', 'ADMIN', 6),
 ('dagon_admin_006', '$2a$10$zRA2sR7SU0NZBlqFt/ewFuvYnPqtlSTMArezEiBkP8qoGLwrGwkxO', '정관리자', 'ADMIN', 7),
@@ -544,27 +544,67 @@ CROSS JOIN (
 ) fd
 LIMIT 1000;
 
+-- 11. 조황정보 데이터 생성 (200개)
+INSERT INTO fishing_report (title, content, thumbnail_url, fishing_at, modify_at, views, uid, prod_id, created_at)
+SELECT
+    CONCAT(
+        p.prod_region, ' ',
+        p.prod_name,
+        ' 조황 - ',
+        CASE FLOOR(RAND() * 5)
+            WHEN 0 THEN '역대급 마릿수!' WHEN 1 THEN '씨알 좋은 녀석들 출현!' WHEN 2 THEN '초보도 손맛 가능!' WHEN 3 THEN '물 반 고기 반!' ELSE '짜릿한 파이팅!'
+        END
+    ) as title,
+    CONCAT(
+        '오늘의 조황 브리핑입니다! ',
+        CASE FLOOR(RAND() * 5)
+            WHEN 0 THEN '날씨가 좋아서인지 활성도가 매우 높았습니다. '
+            WHEN 1 THEN '밑밥에 반응이 폭발적이었습니다. '
+            WHEN 2 THEN '특정 포인트에서 입질이 집중되었습니다. '
+            WHEN 3 THEN '오전 피딩 타임에 대박이 터졌네요. '
+            ELSE '밤낚시에 의외의 대물이 올라왔습니다. '
+        END,
+        '주요 어종은 ',
+        (SELECT fs_name from fish_species ORDER BY RAND() LIMIT 1),
+        '이며, ',
+        CASE FLOOR(RAND() * 5)
+            WHEN 0 THEN '평균 씨알은 30cm급으로 준수했습니다. '
+            WHEN 1 THEN '4짜, 5짜 대물도 간간히 보였습니다. '
+            WHEN 2 THEN '가족 단위로 오신 분들도 쉽게 손맛을 보셨습니다. '
+            WHEN 3 THEN '쿨러 채우신 분들이 많네요! '
+            ELSE '내일도 비슷한 조황이 예상됩니다. '
+        END,
+        '#조황정보 #낚시 #',
+        p.prod_name
+    ) as content,
+    NULL as thumbnail_url,
+    DATE_ADD('2022-01-01', INTERVAL FLOOR(RAND() * DATEDIFF(NOW(), '2022-01-01')) DAY) as fishing_at,
+    NULL as modify_at,
+    FLOOR(RAND() * 500) + 50 as views,
+    p.uno as uid,
+    p.prod_id,
+    DATE_ADD('2022-01-01', INTERVAL FLOOR(RAND() * DATEDIFF(NOW(), '2022-01-01')) DAY) as created_at
+FROM (
+    SELECT * FROM product WHERE deleted = false ORDER BY RAND() LIMIT 200
+) p;
+
 -- 11-1. 조황정보 이미지 데이터 생성 (각 조황정보별 1~3장 랜덤)
 INSERT INTO fishing_report_image (image_url, is_thumbnail, order_index, fr_id)
 SELECT
     CONCAT(
-        '/uploads/',
-        DATE_FORMAT(DATE_SUB(NOW(), INTERVAL fr.fr_id DAY), '%Y/%m/%d'),
-        '/fishing_report_',
-        CASE 
-            WHEN fr.fr_id <= 20 THEN 'haewoondae'
-            WHEN fr.fr_id <= 40 THEN 'cheongpyeong'
-            WHEN fr.fr_id <= 60 THEN 'jeju'
-            WHEN fr.fr_id <= 80 THEN 'hangang'
-            ELSE 'hwacheon'
-        END,
-        '_', fr.fr_id, '_', img_idx.n, '.jpg'
+        '/uploads/fishing-report/',
+        DATE_FORMAT(fr.created_at, '%Y/%m/%d'),
+        '/report_',
+        fr.fr_id,
+        '_',
+        img_idx.n,
+        '.jpg'
     ) as image_url,
     (img_idx.n = 1) as is_thumbnail,
     (img_idx.n - 1) as order_index,
     fr.fr_id
 FROM (
-    SELECT fr_id, FLOOR(1 + RAND(fr_id) * 3) AS img_count
+    SELECT fr_id, created_at, FLOOR(1 + RAND(fr_id) * 3) AS img_count
     FROM fishing_report
 ) fr
 JOIN (
@@ -572,162 +612,47 @@ JOIN (
 ) img_idx
 ON img_idx.n <= fr.img_count;
 
--- 11. 조황정보 데이터 생성 (100개)
-SET @rownum := 0;
-INSERT INTO fishing_report (title, content, thumbnail_url, fishing_at, modify_at, views, uid, prod_id, created_at)
-SELECT 
-    CONCAT(
-        CASE 
-            WHEN @rownum <= 20 THEN 
-                CASE 
-                    WHEN @rownum % 4 = 1 THEN '🐟 해운대 방파제 대박 조황! 도미 폭탄!'
-                    WHEN @rownum % 4 = 2 THEN '🌊 해운대에서 농어가 미쳤어요!'
-                    WHEN @rownum % 4 = 3 THEN '🎣 해운대 방파제 오늘은 도미의 날!'
-                    ELSE '⚡ 해운대에서 고등어 대량 출현!'
-                END
-            WHEN @rownum <= 40 THEN 
-                CASE 
-                    WHEN @rownum % 4 = 1 THEN '🐠 청평호수 잉어 대폭발! 2kg급 연속!'
-                    WHEN @rownum % 4 = 2 THEN '🌿 청평에서 붕어가 미쳤어요!'
-                    WHEN @rownum % 4 = 3 THEN '🎯 청평호수 메기 잡기 좋은 날!'
-                    ELSE '💎 청평에서 은어 대박 조황!'
-                END
-            WHEN @rownum <= 60 THEN 
-                CASE 
-                    WHEN @rownum % 4 = 1 THEN '🦈 제주 해상에서 참치 출현!'
-                    WHEN @rownum % 4 = 2 THEN '🐟 제주 고등어 대량 어획!'
-                    WHEN @rownum % 4 = 3 THEN '🌊 제주 삼치 폭탄 조황!'
-                    ELSE '⚡ 제주 해상 전갱이 대박!'
-                END
-            WHEN @rownum <= 80 THEN 
-                CASE 
-                    WHEN @rownum % 4 = 1 THEN '🐠 한강 붕어 대폭발! 도시 낚시의 정석!'
-                    WHEN @rownum % 4 = 2 THEN '🌊 한강 잉어 미쳤어요!'
-                    WHEN @rownum % 4 = 3 THEN '🎣 한강 메기 잡기 좋은 날!'
-                    ELSE '💎 한강에서 은어 대박!'
-                END
-            ELSE 
-                CASE 
-                    WHEN @rownum % 4 = 1 THEN '🐟 화천호수 송어 대폭발! 1.5kg급 연속!'
-                    WHEN @rownum % 4 = 2 THEN '🌿 화천에서 은어가 미쳤어요!'
-                    WHEN @rownum % 4 = 3 THEN '🎯 화천호수 잉어 잡기 좋은 날!'
-                    ELSE '💎 화천에서 송어 대박 조황!'
-                END
-        END,
-        ' ', DATE_FORMAT(DATE_SUB(NOW(), INTERVAL @rownum DAY), '%Y-%m-%d')
-    ) as title,
-    CONCAT(
-        CASE 
-            WHEN @rownum <= 20 THEN 
-                CASE 
-                    WHEN @rownum % 4 = 1 THEN '해운대 방파제에서 도미가 정말 미쳤어요! 오늘 아침부터 도미 5마리 연속으로 잡았습니다. 30cm 이상 대물들이 줄줄이 걸려서 정말 신났어요! 🎣'
-                    WHEN @rownum % 4 = 2 THEN '해운대에서 농어가 대박이에요! 저녁 시간대에 농어가 활발하게 활동하고 있어서 연속으로 잡았습니다. 미끼는 오징어가 최고! 🐟'
-                    WHEN @rownum % 4 = 3 THEN '해운대 방파제 오늘은 도미의 날이었어요! 아침 일찍 가서 도미 3마리 잡았는데 모두 25cm 이상이었습니다. 날씨도 완벽했어요! 🌊'
-                    ELSE '해운대에서 고등어가 대량으로 출현하고 있어요! 오후 시간대에 고등어가 연속으로 걸려서 정말 즐거웠습니다. 회로 먹기 딱 좋은 사이즈! ⚡'
-                END
-            WHEN @rownum <= 40 THEN 
-                CASE 
-                    WHEN @rownum % 4 = 1 THEN '청평호수에서 잉어가 정말 미쳤어요! 2kg급 잉어를 연속으로 잡아서 정말 신났습니다. 민물낚시의 묘미를 제대로 느낄 수 있었어요! 🐠'
-                    WHEN @rownum % 4 = 2 THEN '청평에서 붕어가 대박이에요! 오전 시간대에 붕어가 활발하게 활동하고 있어서 연속으로 잡았습니다. 미끼는 옥수수가 최고! 🌿'
-                    WHEN @rownum % 4 = 3 THEN '청평호수 메기 잡기 정말 좋은 날이었어요! 저녁 시간대에 메기가 연속으로 걸려서 정말 즐거웠습니다. 민물고기의 맛을 제대로 느낄 수 있었어요! 🎯'
-                    ELSE '청평에서 은어가 대박이에요! 오후 시간대에 은어가 활발하게 활동하고 있어서 연속으로 잡았습니다. 회로 먹기 딱 좋은 사이즈! 💎'
-                END
-            WHEN @rownum <= 60 THEN 
-                CASE 
-                    WHEN @rownum % 4 = 1 THEN '제주 해상에서 참치가 출현했어요! 선상낚시 중에 참치가 걸려서 정말 신났습니다. 대형 어종을 잡는 기분이 정말 특별했어요! 🦈'
-                    WHEN @rownum % 4 = 2 THEN '제주에서 고등어가 대량으로 어획되고 있어요! 오전 시간대에 고등어가 연속으로 걸려서 정말 즐거웠습니다. 바다의 넓이를 느끼며 낚시하는 기분이 정말 좋았어요! 🐟'
-                    WHEN @rownum % 4 = 3 THEN '제주 해상 삼치 폭탄 조황이에요! 오후 시간대에 삼치가 활발하게 활동하고 있어서 연속으로 잡았습니다. 선상낚시의 묘미를 제대로 느낄 수 있었어요! 🌊'
-                    ELSE '제주 해상에서 전갱이가 대박이에요! 저녁 시간대에 전갱이가 연속으로 걸려서 정말 신났습니다. 바다낚시의 재미를 제대로 느낄 수 있었어요! ⚡'
-                END
-            WHEN @rownum <= 80 THEN 
-                CASE 
-                    WHEN @rownum % 4 = 1 THEN '한강에서 붕어가 정말 미쳤어요! 도시 한가운데서 붕어를 연속으로 잡아서 정말 신났습니다. 도시 낚시의 정석을 제대로 느낄 수 있었어요! 🐠'
-                    WHEN @rownum % 4 = 2 THEN '한강 잉어가 대박이에요! 오전 시간대에 잉어가 활발하게 활동하고 있어서 연속으로 잡았습니다. 도시에서 즐기는 낚시의 묘미를 느낄 수 있었어요! 🌊'
-                    WHEN @rownum % 4 = 3 THEN '한강 메기 잡기 정말 좋은 날이었어요! 저녁 시간대에 메기가 연속으로 걸려서 정말 즐거웠습니다. 도시 한가운데서 즐기는 특별한 낚시였어요! 🎣'
-                    ELSE '한강에서 은어가 대박이에요! 오후 시간대에 은어가 활발하게 활동하고 있어서 연속으로 잡았습니다. 도시에서 즐기는 프리미엄 낚시였어요! 💎'
-                END
-            ELSE 
-                CASE 
-                    WHEN @rownum % 4 = 1 THEN '화천호수에서 송어가 정말 미쳤어요! 1.5kg급 송어를 연속으로 잡아서 정말 신났습니다. 민물고기 중 최고의 맛을 느낄 수 있었어요! 🐟'
-                    WHEN @rownum % 4 = 2 THEN '화천에서 은어가 대박이에요! 오전 시간대에 은어가 활발하게 활동하고 있어서 연속으로 잡았습니다. 깨끗한 물에서 즐기는 프리미엄 낚시였어요! 🌿'
-                    WHEN @rownum % 4 = 3 THEN '화천호수 잉어 잡기 정말 좋은 날이었어요! 저녁 시간대에 잉어가 연속으로 걸려서 정말 즐거웠습니다. 자연 속에서 즐기는 평화로운 낚시였어요! 🎯'
-                    ELSE '화천 송어가 대박이에요! 오후 시간대에 송어가 활발하게 활동하고 있어서 연속으로 잡았습니다. 맑은 물과 함께하는 건강한 낚시였어요! 💎'
-                END
-        END,
-        ' #조황정보 #', @rownum
-    ) as content,
-    CONCAT(
-        '/uploads/',
-        DATE_FORMAT(DATE_SUB(NOW(), INTERVAL @rownum DAY), '%Y/%m/%d'),
-        '/fishing_report_',
-        CASE 
-            WHEN @rownum <= 20 THEN 'haewoondae'
-            WHEN @rownum <= 40 THEN 'cheongpyeong'
-            WHEN @rownum <= 60 THEN 'jeju'
-            WHEN @rownum <= 80 THEN 'hangang'
-            ELSE 'hwacheon'
-        END,
-        '_', @rownum, '.jpg'
-    ) as thumbnail_url,
-    DATE_ADD('2021-01-01', INTERVAL FLOOR(RAND() * DATEDIFF(NOW(), '2021-01-01')) DAY) as fishing_at,
-    NULL as modify_at,
-    FLOOR(RAND() * 100) + 10 as views,
-    u.uno as uid,
-    p.prod_id,
-    DATE_SUB(NOW(), INTERVAL @rownum DAY) as created_at
-FROM (
-    SELECT @rownum := @rownum + 1 AS rownum FROM (SELECT 1 as n UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9 UNION SELECT 10) a, (SELECT @rownum := 0) r
-) numbers
-CROSS JOIN (
-    SELECT uno FROM users WHERE role = 'USER' LIMIT 100
-) u
-CROSS JOIN (
-    SELECT prod_id FROM product LIMIT 100
-) p
-LIMIT 100;
+-- 11-2. 조황정보 썸네일 URL 업데이트
+UPDATE fishing_report fr
+JOIN (
+    SELECT fr_id, image_url
+    FROM fishing_report_image
+    WHERE is_thumbnail = true
+) fri ON fr.fr_id = fri.fr_id
+SET fr.thumbnail_url = fri.image_url;
 
--- 12. 조황정보 댓글 데이터 생성 (200개)
+-- 12. 조황정보 댓글 데이터 생성 (400개)
 INSERT INTO fishing_report_comments (comment_content, uid, fr_id, created_at, modify_at)
-SELECT 
-    CONCAT(
-        CASE 
-            WHEN @rownum % 20 = 1 THEN '와! 정말 대박이네요! 저도 다음에 가보고 싶어요! 🎣'
-            WHEN @rownum % 20 = 2 THEN '도미 5마리라니... 정말 부럽습니다! 축하해요! 🐟'
-            WHEN @rownum % 20 = 3 THEN '해운대 조황 정말 좋네요! 저도 이번 주말에 가볼게요! 🌊'
-            WHEN @rownum % 20 = 4 THEN '농어가 미쳤다니... 정말 신기해요! 미끼는 뭘 썼나요? 🎯'
-            WHEN @rownum % 20 = 5 THEN '고등어 대량 출현이라니! 회로 먹기 딱 좋겠네요! ⚡'
-            WHEN @rownum % 20 = 6 THEN '잉어 2kg급이라니... 정말 대단해요! 민물낚시의 묘미를 느낄 수 있겠네요! 🐠'
-            WHEN @rownum % 20 = 7 THEN '청평 붕어가 미쳤다니... 옥수수 미끼가 효과적이었나요? 🌿'
-            WHEN @rownum % 20 = 8 THEN '메기 잡기 좋은 날이라니... 저녁 시간대가 핵심이었나요? 🎣'
-            WHEN @rownum % 20 = 9 THEN '은어 대박 조황이라니... 회로 먹기 딱 좋겠네요! 💎'
-            WHEN @rownum % 20 = 10 THEN '제주에서 참치라니... 정말 대박이네요! 선상낚시는 처음이었나요? 🦈'
-            WHEN @rownum % 20 = 11 THEN '고등어 대량 어획이라니... 바다의 넓이를 느끼며 낚시하는 기분이 정말 좋았겠네요! 🐟'
-            WHEN @rownum % 20 = 12 THEN '삼치 폭탄 조황이라니... 선상낚시의 묘미를 제대로 느낄 수 있었겠네요! 🌊'
-            WHEN @rownum % 20 = 13 THEN '전갱이 대박이라니... 바다낚시의 재미를 제대로 느낄 수 있었겠네요! ⚡'
-            WHEN @rownum % 20 = 14 THEN '한강 붕어 대폭발이라니... 도시 한가운데서 낚시하는 것도 나쁘지 않네요! 🐠'
-            WHEN @rownum % 20 = 15 THEN '한강 잉어가 미쳤다니... 도시에서 즐기는 낚시의 묘미를 느낄 수 있었겠네요! 🌊'
-            WHEN @rownum % 20 = 16 THEN '한강 메기 잡기 좋은 날이라니... 도시 한가운데서 즐기는 특별한 낚시였겠네요! 🎣'
-            WHEN @rownum % 20 = 17 THEN '화천 송어 1.5kg급이라니... 민물고기 중 최고의 맛을 느낄 수 있었겠네요! 🐟'
-            WHEN @rownum % 20 = 18 THEN '화천 은어가 미쳤다니... 깨끗한 물에서 즐기는 프리미엄 낚시였겠네요! 🌿'
-            WHEN @rownum % 20 = 19 THEN '화천 잉어 잡기 좋은 날이라니... 자연 속에서 즐기는 평화로운 낚시였겠네요! 🎯'
-            ELSE '화천 송어 대박 조황이라니... 맑은 물과 함께하는 건강한 낚시였겠네요! 💎'
-        END,
-        ' #', @rownum
-    ) as comment_content,
-    u.uno as uid,
+SELECT
+    CASE FLOOR(RAND() * 20)
+        WHEN 0 THEN '와, 조황 대박이네요! 부럽습니다!'
+        WHEN 1 THEN '정보 감사합니다! 이번 주말에 출조합니다!'
+        WHEN 2 THEN '이런 건 어디 가면 잡을 수 있나요? 포인트 공유 좀...'
+        WHEN 3 THEN '씨알이 어마어마하네요. 손맛 좋으셨겠어요!'
+        WHEN 4 THEN '역시 사장님 포인트는 믿고 갑니다.'
+        WHEN 5 THEN '쿨러 조황 축하드립니다!'
+        WHEN 6 THEN '사진만 봐도 힐링되네요.'
+        WHEN 7 THEN '다음 주에도 좋은 조황 기대하겠습니다.'
+        WHEN 8 THEN '사용하신 채비 정보 알 수 있을까요?'
+        WHEN 9 THEN '물때가 언제가 좋았나요?'
+        WHEN 10 THEN '저도 거기서 저번에 손맛 봤는데, 또 가고 싶네요.'
+        WHEN 11 THEN '내일 예약했는데 기대됩니다!'
+        WHEN 12 THEN '와... 저 큰 걸 어떻게 올리셨대요?'
+        WHEN 13 THEN '회 맛이 끝내줬겠네요. 츄릅...'
+        WHEN 14 THEN '안전 조행 하셨다니 다행입니다. 수고하셨어요!'
+        WHEN 15 THEN '이런 정보 너무 소중해요. 감사합니다!'
+        WHEN 16 THEN '조만간 저도 기록 깨러 가겠습니다. ㅎㅎ'
+        WHEN 17 THEN '사장님 항상 친절하게 알려주셔서 감사해요.'
+        WHEN 18 THEN '아이들과 같이 가도 괜찮을까요?'
+        ELSE '장비 대여도 가능한가요?'
+    END as comment_content,
+    (SELECT uno FROM users WHERE role = 'USER' ORDER BY RAND() LIMIT 1) as uid,
     fr.fr_id,
-    DATE_ADD('2021-01-01', INTERVAL FLOOR(RAND() * DATEDIFF(NOW(), '2021-01-01')) DAY) as created_at,
-    DATE_ADD('2021-01-01', INTERVAL FLOOR(RAND() * DATEDIFF(NOW(), '2021-01-01')) DAY) as modify_at
-FROM (
-    SELECT @rownum := @rownum + 1 AS rownum FROM (SELECT 1 as n UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9 UNION SELECT 10) a, (SELECT @rownum := 0) r
-) numbers
-CROSS JOIN (
-    SELECT uno FROM users WHERE role = 'USER' ORDER BY RAND() LIMIT 200
-) u
-CROSS JOIN (
-    SELECT fr_id FROM fishing_report ORDER BY RAND() LIMIT 200
-) fr
-LIMIT 200;
+    DATE_ADD(fr.created_at, INTERVAL FLOOR(RAND() * 3) DAY) as created_at,
+    NULL as modify_at
+FROM
+    (SELECT fr_id, created_at FROM fishing_report ORDER BY RAND() LIMIT 200) fr,
+    (SELECT 1 as n UNION ALL SELECT 2) i;
 
 -- 13. 자유게시판 데이터 생성 (50개)
 INSERT INTO free_board (title, content, thumbnail_url, modify_at, views, uid, created_at)
@@ -955,20 +880,19 @@ SELECT
         ELSE '회원 탈퇴 시 보유하고 있던 포인트와 쿠폰은 모두 소멸되며, 복구되지 않습니다.'
     END as answer,
     -- category_id
-    CASE
+    CASE 
         WHEN @rownum BETWEEN 21 AND 30 THEN 2 -- 파트너
         ELSE 1 -- 일반회원
     END as category_id,
     -- aid
-    CONCAT('dagon_admin_00', FLOOR(RAND() * 9) + 1) as aid,
+    ELT(FLOOR(1 + RAND() * 10),
+        'dagon_admin_001', 'dagon_admin_002', 'dagon_admin_003', 'dagon_admin_004', 'dagon_admin_005',
+        'dagon_admin_006', 'dagon_admin_007', 'dagon_admin_008', 'dagon_admin_009', 'dagon_admin_010'
+    ) as aid,
     true as is_active,
     DATE_SUB(NOW(), INTERVAL FLOOR(RAND() * 365) DAY) as created_at
 FROM (
     SELECT 1 as n UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9 UNION ALL SELECT 10
-    UNION ALL SELECT 11 UNION ALL SELECT 12 UNION ALL SELECT 13 UNION ALL SELECT 14 UNION ALL SELECT 15 UNION ALL SELECT 16 UNION ALL SELECT 17 UNION ALL SELECT 18 UNION ALL SELECT 19 UNION ALL SELECT 20
-    UNION ALL SELECT 21 UNION ALL SELECT 22 UNION ALL SELECT 23 UNION ALL SELECT 24 UNION ALL SELECT 25 UNION ALL SELECT 26 UNION ALL SELECT 27 UNION ALL SELECT 28 UNION ALL SELECT 29 UNION ALL SELECT 30
-    UNION ALL SELECT 31 UNION ALL SELECT 32 UNION ALL SELECT 33 UNION ALL SELECT 34 UNION ALL SELECT 35 UNION ALL SELECT 36 UNION ALL SELECT 37 UNION ALL SELECT 38 UNION ALL SELECT 39 UNION ALL SELECT 40
-    UNION ALL SELECT 41 UNION ALL SELECT 42 UNION ALL SELECT 43 UNION ALL SELECT 44 UNION ALL SELECT 45 UNION ALL SELECT 46 UNION ALL SELECT 47 UNION ALL SELECT 48 UNION ALL SELECT 49 UNION ALL SELECT 50
 ) numbers;
 
 -- 20. 이벤트 데이터 생성 (5개)
