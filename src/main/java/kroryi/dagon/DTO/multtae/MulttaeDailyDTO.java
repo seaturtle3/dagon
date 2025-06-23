@@ -13,6 +13,9 @@ public class MulttaeDailyDTO {
     private String stationCode;
     private String stationName;
 
+    private Double latitude;
+    private Double longitude;
+
     private String sunrise;
     private String sunset;
 

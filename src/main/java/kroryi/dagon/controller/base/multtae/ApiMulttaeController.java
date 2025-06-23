@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -41,10 +42,8 @@ public class ApiMulttaeController {
     private final MarineWeatherApiClient marineWeatherApiClient;
     private final TideStationRepository tideStationRepository;
     private final LunarApiClient lunarApiClient;
-    private final SunriseApiClient sunriseApiClient;
     private final MulttaeAsyncService asyncService;
     private final LunarCacheService lunarCacheService;
-    private final SunriseCacheService sunriseCacheService;
 
     @GetMapping("/stations")
     @Operation(summary = "지역별 관측소 목록 조회")
@@ -169,19 +168,26 @@ public class ApiMulttaeController {
         Double lunarAge = lunarCacheService.getLunarAge(today);
         String mulName = LunarUtil.getMulName(lunarAge);
 
-        // 일출/일몰 정보 조회
-        Map<String, String> sunMap = sunriseCacheService.getSunInfo(station.getRegion().getKorean(), today);
-        String sunrise = formatSunTime(sunMap.get("sunrise"));
-        String sunset = formatSunTime(sunMap.get("sunset"));
+        // 일출/일몰 정보 조회 (지역명 기반)
+        String location = station.getRegion().getKorean();
+        SunRiseSetDTO sunRiseSet = lunarApiClient.getAreaRiseSet(today, location);
+        String sunrise = "-";
+        String sunset = "-";
+        if (sunRiseSet != null) {
+            sunrise = sunRiseSet.getSunrise();
+            sunset = sunRiseSet.getSunset();
+        }
 
-        log.info("🌅 요청 지역명: {}", station.getRegion().getKorean());
-        log.info("🌅 일출: {}, 일몰: {}", sunMap.get("sunrise"), sunMap.get("sunset"));
+        log.info("🌅 Station: {} (Location: {})", station.getStationName(), location);
+        log.info("🌅 Sunrise: {}, Sunset: {}", sunrise, sunset);
 
         // 최종 DTO 조립
         return MulttaeDailyDTO.builder()
                 .date(today)
                 .stationCode(stationCode)
                 .stationName(station.getStationName())
+                .latitude(station.getLatitude())
+                .longitude(station.getLongitude())
                 .sunrise(sunrise)
                 .sunset(sunset)
                 .lunarAge(lunarAge)
@@ -231,7 +237,7 @@ public class ApiMulttaeController {
 
         // 비동기 풍속/풍향만 조회
         CompletableFuture<List<WindDTO>> windFuture = asyncService.getWindDataAsync(stationCode, dateStr);
-        Map<String, String> sunMap = sunriseCacheService.getSunInfo(station.getRegion().getKorean(), date);
+        SunRiseSetDTO sunRiseSet = lunarApiClient.getAreaRiseSet(date, station.getRegion().getKorean());
         Double lunarAge = lunarCacheService.getLunarAge(date);
         String mulName = LunarUtil.getMulName(lunarAge);
 
@@ -241,11 +247,9 @@ public class ApiMulttaeController {
 
         return MulttaeDailySimpleDTO.builder()
                 .date(date)
-                .sunrise(formatSunTime(sunMap.get("sunrise")))
-                .sunset(formatSunTime(sunMap.get("sunset")))
+                .sunrise(sunRiseSet != null ? sunRiseSet.getSunrise() : "-")
+                .sunset(sunRiseSet != null ? sunRiseSet.getSunset() : "-")
                 .mulName(mulName)
-                .windDir(wind != null ? wind.getWind_dir() : null)
-                .windSpeed(wind != null ? wind.getWind_speed() : null)
                 .build();
     }
 
@@ -255,26 +259,24 @@ public class ApiMulttaeController {
         TideStation station = tideStationRepository.findById(stationCode)
                 .orElseThrow(() -> new RuntimeException("관측소 없음"));
 
-        return IntStream.range(0, 7)
+        List<CompletableFuture<MulttaeDailySimpleDTO>> futures = IntStream.range(0, 7)
                 .mapToObj(i -> LocalDate.now().plusDays(i))
-                .map(date -> {
-                    String dateStr = date.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
-                    List<WindDTO> wind = marineWeatherApiClient.getWindData(stationCode, dateStr);
-                    WindDTO w = MarineDataMapper.findClosest(wind, LocalTime.of(9, 0));
-
+                .map(date -> CompletableFuture.supplyAsync(() -> {
                     Double lunarAge = lunarCacheService.getLunarAge(date);
                     String mulName = LunarUtil.getMulName(lunarAge);
-                    Map<String, String> sun = sunriseCacheService.getSunInfo(station.getRegion().getKorean(), date);
+                    SunRiseSetDTO sunRiseSet = lunarApiClient.getAreaRiseSet(date, station.getRegion().getKorean());
 
                     return MulttaeDailySimpleDTO.builder()
                             .date(date)
                             .mulName(mulName)
-                            .sunrise(formatSunTime(sun.getOrDefault("sunrise", "-")))
-                            .sunset(formatSunTime(sun.getOrDefault("sunset", "-")))
-                            .windDir(w != null ? w.getWind_dir() : null)
-                            .windSpeed(w != null ? w.getWind_speed() : null)
+                            .sunrise(sunRiseSet != null ? sunRiseSet.getSunrise() : "-")
+                            .sunset(sunRiseSet != null ? sunRiseSet.getSunset() : "-")
                             .build();
-                })
+                }))
+                .toList();
+
+        return futures.stream()
+                .map(CompletableFuture::join)
                 .toList();
     }
 
@@ -294,5 +296,127 @@ public class ApiMulttaeController {
         return marineWeatherApiClient.getWaveData(waveStationCode, dateStr);
     }
 
+    @GetMapping("/nearest-station")
+    @Operation(summary = "위도/경도 기반 가까운 관측소 찾기")
+    public Map<String, Object> findNearestStation(
+            @RequestParam Double latitude,
+            @RequestParam Double longitude
+    ) {
+        List<TideStation> allStations = tideStationRepository.findAll();
+        
+        TideStation nearest = null;
+        double minDistance = Double.MAX_VALUE;
+        
+        for (TideStation station : allStations) {
+            double distance = calculateDistance(latitude, longitude, 
+                    station.getLatitude(), station.getLongitude());
+            if (distance < minDistance) {
+                minDistance = distance;
+                nearest = station;
+            }
+        }
+        
+        if (nearest == null) {
+            throw new RuntimeException("관측소를 찾을 수 없습니다.");
+        }
+        
+        Map<String, Object> result = new LinkedHashMap<>();
+        result.put("stationCode", nearest.getStationCode());
+        result.put("stationName", nearest.getStationName());
+        result.put("region", nearest.getRegion().getKorean());
+        result.put("latitude", nearest.getLatitude());
+        result.put("longitude", nearest.getLongitude());
+        result.put("distance", Math.round(minDistance * 100.0) / 100.0); // km, 소수점 2자리
+        result.put("distanceUnit", "km");
+        
+        if (nearest.getWaveStation() != null) {
+            result.put("hasWaveData", true);
+            result.put("waveStationCode", nearest.getWaveStation().getStationCode());
+            result.put("waveStationName", nearest.getWaveStation().getStationName());
+        } else {
+            result.put("hasWaveData", false);
+        }
+        
+        return result;
+    }
 
+    @GetMapping("/location")
+    @Operation(summary = "위도/경도 기반 물때 정보 조회")
+    public MulttaeDailyDTO getLocationInfo(
+            @RequestParam Double latitude,
+            @RequestParam Double longitude
+    ) {
+        // 1. 가장 가까운 관측소 찾기
+        List<TideStation> allStations = tideStationRepository.findAll();
+        
+        TideStation nearest = null;
+        double minDistance = Double.MAX_VALUE;
+        
+        for (TideStation station : allStations) {
+            double distance = calculateDistance(latitude, longitude, 
+                    station.getLatitude(), station.getLongitude());
+            if (distance < minDistance) {
+                minDistance = distance;
+                nearest = station;
+            }
+        }
+        
+        if (nearest == null) {
+            throw new RuntimeException("관측소를 찾을 수 없습니다.");
+        }
+        
+        // 2. 해당 관측소의 물때 정보 조회
+        return getTodayInfo(nearest.getStationCode());
+    }
+
+    @GetMapping("/stations/{stationCode}/info")
+    @Operation(summary = "관측소 상세 정보")
+    public Map<String, Object> getStationInfo(@PathVariable String stationCode) {
+        TideStation station = tideStationRepository.findById(stationCode)
+                .orElseThrow(() -> new RuntimeException("관측소를 찾을 수 없습니다."));
+        
+        Map<String, Object> result = new LinkedHashMap<>();
+        result.put("stationCode", station.getStationCode());
+        result.put("stationName", station.getStationName());
+        result.put("region", station.getRegion().getKorean());
+        result.put("latitude", station.getLatitude());
+        result.put("longitude", station.getLongitude());
+        
+        if (station.getWaveStation() != null) {
+            WaveStation wave = station.getWaveStation();
+            result.put("waveStation", Map.of(
+                    "stationCode", wave.getStationCode(),
+                    "stationName", wave.getStationName(),
+                    "latitude", wave.getLatitude(),
+                    "longitude", wave.getLongitude()
+            ));
+        } else {
+            result.put("waveStation", null);
+        }
+        
+        return result;
+    }
+
+    /**
+     * 두 지점 간의 거리를 계산 (Haversine 공식)
+     * @param lat1 첫 번째 지점의 위도
+     * @param lon1 첫 번째 지점의 경도
+     * @param lat2 두 번째 지점의 위도
+     * @param lon2 두 번째 지점의 경도
+     * @return 거리 (km)
+     */
+    private double calculateDistance(double lat1, double lon1, double lat2, double lon2) {
+        final int R = 6371; // 지구 반지름 (km)
+        
+        double latDistance = Math.toRadians(lat2 - lat1);
+        double lonDistance = Math.toRadians(lon2 - lon1);
+        
+        double a = Math.sin(latDistance / 2) * Math.sin(latDistance / 2)
+                + Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2))
+                * Math.sin(lonDistance / 2) * Math.sin(lonDistance / 2);
+        
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        
+        return R * c;
+    }
 }
