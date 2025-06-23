@@ -10,6 +10,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -23,14 +25,22 @@ public class ApiUserFishingDiaryController {
 
     private final ApiFishingDiaryService apiFishingDiaryService;
 
+    private Long getCurrentUserUno() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.getPrincipal() instanceof kroryi.dagon.component.CustomUserDetails) {
+            return ((kroryi.dagon.component.CustomUserDetails) authentication.getPrincipal()).getUno();
+        }
+        throw new RuntimeException("인증된 사용자 정보를 찾을 수 없습니다.");
+    }
+
     @Operation(summary = "조행기 생성")
     @PostMapping(value = "/create", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ApiFishingDiaryDTO createFishingDiary(
-            @RequestPart("fishingDiary") ApiFishingDiaryDTO apiFishingDiaryDTO,
-            @RequestPart(value = "images", required = false) List<MultipartFile> images,
-            @RequestParam("userUno") Long userUno
+            @RequestPart("dto") ApiFishingDiaryDTO dto,
+            @RequestPart(value = "images", required = false) List<MultipartFile> images
     ) {
-        return apiFishingDiaryService.createFishingDiary(apiFishingDiaryDTO, userUno, images);
+        Long userUno = getCurrentUserUno();
+        return apiFishingDiaryService.createFishingDiary(dto, userUno, images);
     }
 
     @Operation(summary = "조행기 모두 조회 (페이징)")
