@@ -2,6 +2,7 @@ package kroryi.dagon.service.storage;
 
 import kroryi.dagon.service.image.FileStorageService;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -13,6 +14,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.UUID;
 
+@Primary
 @Service
 public class LocalFileStorageService extends FileStorageService {
 

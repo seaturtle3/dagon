@@ -26,6 +26,7 @@ import kroryi.dagon.DTO.product.ProductDTO;
 import kroryi.dagon.service.product.ProductService;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
@@ -70,7 +71,6 @@ public class ApiProductController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("상품 등록 실패: " + e.getMessage());
         }
     }
-
 
     @Operation(summary = "모든 상품 페이징 조회", description = "페이징으로 상품 조회")
     @GetMapping("/get-all")

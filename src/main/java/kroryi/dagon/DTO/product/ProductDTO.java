@@ -1,5 +1,6 @@
 package kroryi.dagon.DTO.product;
 
+import kroryi.dagon.entity.Partner;
 import kroryi.dagon.entity.product.Product;
 import kroryi.dagon.entity.product.ProductImage;
 import kroryi.dagon.enums.MainType;
@@ -33,6 +34,7 @@ public class ProductDTO {
     private String prodNotice;
     private LocalDate createdAt;
     private String prodThumbnail;
+    private Partner partner;
 
     private boolean deleted;
     private List<String> fishSpeciesNames;
@@ -88,6 +90,7 @@ public class ProductDTO {
         product.setProdEvent(this.getProdEvent());
         product.setProdNotice(this.getProdNotice());
         product.setProdThumbnail(this.getProdThumbnail());
+        product.setPartner(partner);
         return product;
     }
 

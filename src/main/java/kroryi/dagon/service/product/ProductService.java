@@ -54,7 +54,17 @@ public class ProductService {
 
         Product product = new Product();
         product.setProdName(dto.getProdName());
-        // ... other fields
+        product.setProdRegion(dto.getProdRegion());
+        product.setMainType(dto.getMainType());
+        product.setSubType(dto.getSubType());
+        product.setMaxPerson(dto.getMaxPerson());
+        product.setMinPerson(dto.getMinPerson());
+        product.setWeight(dto.getWeight());
+        product.setProdAddress(dto.getProdAddress());
+        product.setProdDescription(dto.getProdDescription());
+        product.setProdEvent(dto.getProdEvent());
+        product.setProdNotice(dto.getProdNotice());
+        product.setProdThumbnail(dto.getProdThumbnail());
         product.setPartner(partner);
 
         if (dto.getProdImageNames() != null) {
