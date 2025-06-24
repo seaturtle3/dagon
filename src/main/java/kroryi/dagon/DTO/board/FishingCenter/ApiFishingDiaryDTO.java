@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -16,6 +17,7 @@ public class ApiFishingDiaryDTO {
     private Long fdId;
     private String title;
     private String content;
+    private LocalDateTime createdAt;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate fishingAt;
@@ -35,6 +37,7 @@ public class ApiFishingDiaryDTO {
         this.title = fishingDiary.getTitle();
         this.content = fishingDiary.getContent();
         this.fishingAt = LocalDate.from(fishingDiary.getFishingAt());
+        this.createdAt = fishingDiary.getCreatedAt();
 
         if (fishingDiary.getProduct() != null) {
             this.product = new ApiProductDTO(fishingDiary.getProduct());
