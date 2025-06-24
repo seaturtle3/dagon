@@ -12,6 +12,7 @@ from tqdm import tqdm
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.chrome.options import Options
+from selenium.common.exceptions import ElementClickInterceptedException, StaleElementReferenceException, WebDriverException
 
 def create_folder(folder_path):
     if not os.path.exists(folder_path):
@@ -34,37 +35,72 @@ def scroll_down(driver, scroll_pause_time=1.0, max_scrolls=10):
             break
         last_height = new_height
 
-def fetch_image_urls(driver, keyword, max_links=500):
+def fetch_image_urls(driver, keyword, max_links=50):
     search_url = f"https://www.google.com/search?hl=ko&tbm=isch&q={keyword}"
     driver.get(search_url)
+
+    WebDriverWait(driver, 15).until(
+        EC.presence_of_element_located((By.CSS_SELECTOR, "img"))
+    )
+
     image_urls = set()
-    scroll_down(driver, max_scrolls=20)
+    scroll_down(driver, max_scrolls=10)
 
-    # 여러 셀렉터를 동시에 시도
-    selector = "img.Q4LuWd, img.YQ4gaf, img.rg_i"
-    try:
-        WebDriverWait(driver, 10).until(
-            EC.presence_of_element_located((By.CSS_SELECTOR, selector))
-        )
-    except Exception as e:
-        print("썸네일 요소를 찾지 못했습니다:", e)
-        print("페이지 일부 소스:", driver.page_source[:1000])
-        driver.save_screenshot("debug.png")
-        driver.quit()
-        exit(1)
-    thumbnails = driver.find_elements(By.CSS_SELECTOR, selector)
-    print("thumbnails 개수:", len(thumbnails))
+    thumbnails = driver.find_elements(By.CSS_SELECTOR, "img.Q4LuWd, img.rg_i, img.YQ4gaf")
+    print(f"[INFO] 썸네일 수: {len(thumbnails)}")
 
-    for thumb in thumbnails:
-        src = thumb.get_attribute("src")
-        if src and (src.startswith("http") or src.startswith("data:image")):
-            print("썸네일 src:", src[:60])
-            image_urls.add(src)
-        # 클릭 생략!
-        driver.execute_script("arguments[0].removeAttribute('target');", thumb)
+    for idx in range(1000):
+        if len(image_urls) >= max_links:
+            break
 
-    print(f"[INFO] 최종 수집된 이미지 URL: {len(image_urls)}")
+        try:
+            # 썸네일 재탐색
+            thumbnails = driver.find_elements(By.CSS_SELECTOR, "img.Q4LuWd, img.rg_i, img.YQ4gaf")
+            if idx >= len(thumbnails):
+                break
+
+            thumbnail = thumbnails[idx]
+            driver.execute_script("arguments[0].scrollIntoView(true);", thumbnail)
+            time.sleep(0.5)
+
+            # JavaScript 클릭
+            if thumbnail.is_displayed():
+                try:
+                    driver.execute_script("arguments[0].click();", thumbnail)
+                except WebDriverException as we:
+                    print(f"[{idx}] JS 클릭 오류 → 무시: {we}")
+                    continue
+            else:
+                print(f"[{idx}] 썸네일 표시되지 않음 → 건너뜀")
+                continue
+
+            WebDriverWait(driver, 5).until(
+                EC.presence_of_element_located((By.CSS_SELECTOR, "img.n3VNCb"))
+            )
+            time.sleep(1.0)
+
+            images = driver.find_elements(By.CSS_SELECTOR, "img.n3VNCb")
+            for image in images:
+                src = image.get_attribute("src")
+                if src and src.startswith("https") and src not in image_urls:
+                    image_urls.add(src)
+                    print(f"[{len(image_urls)}] 이미지 수집: {src[:60]}...")
+                    break
+
+        except (StaleElementReferenceException, ElementClickInterceptedException) as e:
+            print(f"[{idx}] 클릭 예외 처리됨: {type(e).__name__} → 건너뜀")
+            continue
+
+        except Exception as e:
+            print(f"[{idx}] 썸네일 클릭 실패: {e}")
+            continue
+
+
+
+    print(f"[INFO] 최종 수집된 고해상도 이미지 URL: {len(image_urls)}")
     return image_urls
+
+
 
 def download_images(folder_path, image_urls):
     headers = {
