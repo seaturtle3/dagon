@@ -4,6 +4,7 @@ import jakarta.persistence.EntityNotFoundException;
 import kroryi.dagon.DTO.product.ProductDTO;
 import kroryi.dagon.entity.Partner;
 import kroryi.dagon.entity.product.Product;
+import kroryi.dagon.entity.product.ProductImage;
 import kroryi.dagon.entity.product.ProductOption;
 import kroryi.dagon.entity.User;
 import kroryi.dagon.enums.MainType;
@@ -45,6 +46,22 @@ public class ProductService {
 
         return savedProduct.getProdId();
     }
+
+    public void createProductWithImages(ProductDTO dto, Long uno) {
+        Product product = dto.toEntity();
+        product.setPartner(userRepository.findById(uno).orElseThrow().getPartner());
+
+        if (dto.getProdImageNames() != null) {
+            for (String fileName : dto.getProdImageNames()) {
+                ProductImage image = new ProductImage();
+                image.setFileName(fileName);
+                product.addImage(image);
+            }
+        }
+
+        productRepository.save(product);
+    }
+
 
     // [Read] 전체 상품 조회
     public Page<ProductDTO> getAllProductsApi(Pageable pageable) {

@@ -50,34 +50,30 @@ public class ApiProductController {
     @PostMapping(value = "/create", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> createProductWithFile(
             @RequestPart("product") ProductDTO productDTO,
-            @RequestPart(value = "thumbnailFile", required = false) MultipartFile thumbnailFile,
+            @RequestPart(value = "thumbnailFiles", required = false) List<MultipartFile> thumbnailFiles,
             @RequestHeader("Authorization") String authorizationHeader
     ) {
         try {
-            // 토큰에서 uno 추출
             String token = authorizationHeader.replace("Bearer ", "");
             Long uno = jwtUtil.getUnoFromToken(token);
 
-            // 파일 처리
-            String savedFileName = null;
-            if (thumbnailFile != null && !thumbnailFile.isEmpty()) {
-                String originalFilename = thumbnailFile.getOriginalFilename();
-                String safeFilename = UUID.randomUUID() + "_" + originalFilename.replaceAll("[^a-zA-Z0-9\\.\\-_]", "_");
-
-                Path savePath = Paths.get(uploadDir, safeFilename);
-                Files.copy(thumbnailFile.getInputStream(), savePath, StandardCopyOption.REPLACE_EXISTING);
-
-                savedFileName = safeFilename;
+            List<String> savedFileNames = new ArrayList<>();
+            if (thumbnailFiles != null) {
+                for (MultipartFile file : thumbnailFiles) {
+                    if (file.isEmpty()) continue;
+                    String safeFilename = UUID.randomUUID() + "_" + file.getOriginalFilename().replaceAll("[^a-zA-Z0-9\\.\\-_]", "_");
+                    Path savePath = Paths.get(uploadDir, safeFilename);
+                    Files.copy(file.getInputStream(), savePath, StandardCopyOption.REPLACE_EXISTING);
+                    savedFileNames.add(safeFilename);
+                }
             }
 
-            // DTO에 썸네일 파일 이름 설정
-            productDTO.setProdThumbnail(savedFileName);
+            // DTO에 이미지 파일명 리스트 설정
+            productDTO.setProdImageNames(savedFileNames);
 
-            // 서비스 호출
-            productService.createProduct(productDTO, uno);
+            productService.createProductWithImages(productDTO, uno);
 
             return ResponseEntity.ok("상품 등록 성공");
-
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("상품 등록 실패: " + e.getMessage());
         }
