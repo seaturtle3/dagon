@@ -14,6 +14,7 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface ProductRepository extends JpaRepository<Product, Long>, JpaSpecificationExecutor<Product> {
@@ -101,5 +102,7 @@ public interface ProductRepository extends JpaRepository<Product, Long>, JpaSpec
         )
     """)
     Page<Product> searchByKeyword(@Param("keyword") String keyword, Pageable pageable);
+
+    Optional<Product> findByProdName(String prodName);
 
 }

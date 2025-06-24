@@ -159,4 +159,21 @@ public class ApiFishingDiaryService {
                 .collect(Collectors.toList());
     }
 
+    public List<ApiFishingDiaryDTO> getDiariesByMyProducts(Long userUno) {
+        // 1. 유저가 등록한 상품들 조회
+        List<Product> myProducts = productRepository.findByPartner_Uno(userUno);
+        if (myProducts.isEmpty()) {
+            return Collections.emptyList();
+        }
+        List<Long> productIds = myProducts.stream()
+                .map(Product::getProdId)
+                .collect(Collectors.toList());
+        // 2. 상품 id 리스트로 조행기 조회
+        List<FishingDiary> diaries = fishingDiaryRepository.findByProduct_ProdIdIn(productIds);
+        // 3. DTO 변환
+        return diaries.stream()
+                .map(ApiFishingDiaryDTO::new)
+                .collect(Collectors.toList());
+    }
+
 }
