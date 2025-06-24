@@ -5,9 +5,9 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Entity
-@Table(name = "fishing_diary_image")
 @Getter
 @Setter
+@Table(name = "fishing_diary_image")
 public class FishingDiaryImage {
 
     @Id

@@ -76,22 +76,4 @@ public class ProductDTO {
         return dto;
     }
 
-    public Product toEntity() {
-        Product product = new Product();
-        product.setProdName(this.getProdName());
-        product.setProdRegion(this.getProdRegion());
-        product.setMainType(this.getMainType());
-        product.setSubType(this.getSubType());
-        product.setMaxPerson(this.getMaxPerson());
-        product.setMinPerson(this.getMinPerson());
-        product.setWeight(this.getWeight());
-        product.setProdAddress(this.getProdAddress());
-        product.setProdDescription(this.getProdDescription());
-        product.setProdEvent(this.getProdEvent());
-        product.setProdNotice(this.getProdNotice());
-        product.setProdThumbnail(this.getProdThumbnail());
-        product.setPartner(partner);
-        return product;
-    }
-
 }

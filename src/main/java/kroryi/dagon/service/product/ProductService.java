@@ -37,18 +37,6 @@ public class ProductService {
     private final SeaFreshwaterFishingRepository seaFreshwaterFishingRepository;
 
     @Transactional
-    public Long addProduct(ProductDTO productDTO) {
-        Product product = productDTO.toEntity();
-
-        if (product.getPartner() == null) {
-            Partner defaultPartner = partnerService.getDefaultPartner();
-            product.setPartner(defaultPartner);
-        }
-        Product savedProduct = productRepository.save(product);
-
-        return savedProduct.getProdId();
-    }
-
     public void createProductWithImages(ProductDTO dto, Long uno) {
         Partner partner = partnerRepository.findById(uno).orElseThrow();
 
