@@ -2,6 +2,8 @@ package kroryi.dagon.service.order;
 
 import kroryi.dagon.DTO.product.ProductDTO;
 import kroryi.dagon.DTO.ReservationDTO;
+import kroryi.dagon.entity.PaymentsEntity;
+import kroryi.dagon.entity.User;
 import kroryi.dagon.entity.product.Product;
 import kroryi.dagon.entity.Reservation;
 import kroryi.dagon.entity.product.ProductOption;
@@ -9,6 +11,8 @@ import kroryi.dagon.enums.MainType;
 import kroryi.dagon.enums.ProdRegion;
 import kroryi.dagon.enums.ReservationStatus;
 import kroryi.dagon.enums.SubType;
+import kroryi.dagon.repository.PaymentsRepository;
+import kroryi.dagon.repository.UserRepository;
 import kroryi.dagon.repository.product.ProductRepository;
 import kroryi.dagon.repository.SeaFreshwaterFishingRepository;
 import kroryi.dagon.repository.product.ProductOptionRepository;
@@ -28,6 +32,8 @@ public class SeaFreshwaterFishingService {
     private final SeaFreshwaterFishingRepository seaFreshwaterFishingRepository;
     private final ProductRepository productRepository;
     private final ProductOptionRepository productOptionRepository;
+    private final UserRepository userRepository;
+    private final PaymentsRepository paymentsRepository;
 
     public String getFindAll() {
         return seaFreshwaterFishingRepository.findAll().toString();
@@ -55,6 +61,10 @@ public class SeaFreshwaterFishingService {
         reservation.setNumPerson(dto.getNumPerson());
         reservation.setReservationStatus(ReservationStatus.PENDING);
         reservation.setPaymentsMethod(dto.getPaymentsMethod());
+        // userId로 User 엔티티 조회
+        User user = userRepository.findById(dto.getUserId())
+            .orElseThrow(() -> new IllegalArgumentException("해당 유저가 존재하지 않습니다: " + dto.getUserId()));
+        reservation.setUser(user);
         // Product 엔티티 조회 후 할당
         Long prodId = dto.getProdId();
         Product product = productRepository.findById(prodId)
@@ -65,6 +75,13 @@ public class SeaFreshwaterFishingService {
         ProductOption productOption = productOptionRepository.findById(optionId)
             .orElseThrow(() -> new IllegalArgumentException("해당 옵션이 존재하지 않습니다. id=" + optionId));
         reservation.setProductOption(productOption);
+
+        PaymentsEntity payment = null;
+        if (dto.getPaymentId() != null) {
+            payment = paymentsRepository.findByImpUid(dto.getPaymentId())
+                .orElseThrow(() -> new IllegalArgumentException("해당 결제 정보가 존재하지 않습니다: " + dto.getPaymentId()));
+        }
+        reservation.setPayment(payment);
         // User, Payment 등도 필요시 추가
 
         Reservation saved = seaFreshwaterFishingRepository.save(reservation);

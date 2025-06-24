@@ -38,7 +38,7 @@ public class ApiUserPaymentsController {
         Payment payment = iamportResponse.getResponse();
 
         // 실제 결제금액 서버에서 확인
-        if (payment.getAmount().intValue() == 100) {
+        if (payment.getAmount().intValue() == (int) body.get("amount")) {
             // DB 저장
             paymentsService.savePayment(payment);
             return ResponseEntity.ok(Map.of("success", "true"));
