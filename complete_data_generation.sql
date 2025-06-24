@@ -67,6 +67,16 @@ ALTER TABLE prod_fish_species_mapping AUTO_INCREMENT = 1;
 ALTER TABLE prod_fishing_gear_mapping AUTO_INCREMENT = 1;
 ALTER TABLE prod_facility_mapping AUTO_INCREMENT = 1;
 
+
+
+-- 조황정보 테이블 확장
+ALTER TABLE fishing_report MODIFY content TEXT;
+ALTER TABLE fishing_diary MODIFY content TEXT;
+ALTER TABLE free_board MODIFY content TEXT;
+ALTER TABLE event MODIFY content TEXT;
+ALTER TABLE notice MODIFY content TEXT;
+
+
 -- 3. 관리자 데이터 생성 (11개)
 INSERT INTO admin (aid, apw, aname, role, uno) VALUES
 ('admin', '$2a$10$zRA2sR7SU0NZBlqFt/ewFuvYnPqtlSTMArezEiBkP8qoGLwrGwkxO', '슈퍼관리자', 'SUPER_ADMIN', 1),
@@ -1103,3 +1113,4 @@ INSERT INTO tide_station (station_code, station_name, region, latitude, longitud
 ('IE_0060', '이어도', 'JEJU', 32.122, 125.182, 'IE_0060'),
 ('DT_0004', '제주', 'JEJU', 33.527, 126.543, 'KG_0028'),
 ('DT_0021', '추자도', 'JEJU', 33.961, 126.3, 'KG_0028');
+
