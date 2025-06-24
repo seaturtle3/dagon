@@ -118,6 +118,10 @@ public class ApiInquiryController {
                 // 일반 사용자면 본인 문의만 삭제 가능
                 Long uno = Long.parseLong(claims.get("uno").toString());
                 deleted = inquiryService.deleteInquiryByUser(inquiryId, uno);
+            } else if ("PARTNER".equals(role)) {
+                // 파트너면 본인에게 온 문의만 삭제 가능
+                Long uno = Long.parseLong(claims.get("uno").toString());
+                deleted = inquiryService.deleteInquiryByPartner(inquiryId, uno);
             } else {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).body("권한이 없습니다.");
             }

@@ -133,6 +133,23 @@ public class InquiryService {
         return true;
     }
 
+    // 파트너용: 문의 ID와 파트너 uno가 일치하는지 확인 후 삭제
+    @Transactional
+    public boolean deleteInquiryByPartner(Long inquiryId, Long partnerUno) {
+        Optional<Inquiry> inquiryOpt = inquiryRepository.findById(inquiryId);
+        if (inquiryOpt.isEmpty()) {
+            return false; // 문의 없음
+        }
+        Inquiry inquiry = inquiryOpt.get();
+
+        // 문의에 연결된 파트너가 없거나, 요청한 파트너와 다른 경우
+        if (inquiry.getPartner() == null || !inquiry.getPartner().getUno().equals(partnerUno)) {
+            return false;
+        }
+
+        inquiryRepository.delete(inquiry);
+        return true;
+    }
 
     public List<Inquiry> getUserToPartnerInquiries(Long userUno, Long partnerUno) {
         return inquiryRepository.findByUser_UnoAndPartner_Uno(userUno, partnerUno);
@@ -143,23 +160,21 @@ public class InquiryService {
         return inquiries.stream().map(this::toResponseDTO).collect(Collectors.toList());
     }
 
-
-
-private InquiryResponseDTO toResponseDTO(Inquiry inquiry) {
-    return InquiryResponseDTO.builder()
-            .id(inquiry.getId())
-            .title(inquiry.getTitle())
-            .content(inquiry.getContent())
-            .inquiryType(inquiry.getInquiryType())
-            .createdAt(inquiry.getCreatedAt())
-            .updatedAt(inquiry.getUpdatedAt())
-            .userName(inquiry.getUser().getUname())
-            .userUid(inquiry.getUser().getUid())
-            .partnerName(inquiry.getPartner() != null ? inquiry.getPartner().getPname() : null)
-            .answeredAt(inquiry.getAnsweredAt())
-            .answerContent(inquiry.getAnswerContent()) // 여기 추가 (필드 이름 맞게)
-            .build();
-}
+    private InquiryResponseDTO toResponseDTO(Inquiry inquiry) {
+        return InquiryResponseDTO.builder()
+                .id(inquiry.getId())
+                .title(inquiry.getTitle())
+                .content(inquiry.getContent())
+                .inquiryType(inquiry.getInquiryType())
+                .createdAt(inquiry.getCreatedAt())
+                .updatedAt(inquiry.getUpdatedAt())
+                .userName(inquiry.getUser().getUname())
+                .userUid(inquiry.getUser().getUid())
+                .partnerName(inquiry.getPartner() != null ? inquiry.getPartner().getPname() : null)
+                .answeredAt(inquiry.getAnsweredAt())
+                .answerContent(inquiry.getAnswerContent()) // 여기 추가 (필드 이름 맞게)
+                .build();
+    }
 
     public List<InquiryResponseDTO> getInquiriesByUserUno(Long userUno) {
         List<Inquiry> inquiries = inquiryRepository.findByUser_Uno(userUno);
