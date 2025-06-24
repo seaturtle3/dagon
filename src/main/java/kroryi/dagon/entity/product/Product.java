@@ -86,6 +86,14 @@ public class Product extends BaseTimeEntity {
     @Column(name = "prod_thumbnail")
     private String prodThumbnail; // 저장된 파일명 or URL
 
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ProductImage> images = new ArrayList<>();
+
+    public void addImage(ProductImage image) {
+        images.add(image);
+        image.setProduct(this);
+    }
+
     // 옵션
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ProductOption> options = new ArrayList<>();

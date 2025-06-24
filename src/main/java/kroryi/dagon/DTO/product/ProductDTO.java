@@ -1,6 +1,8 @@
 package kroryi.dagon.DTO.product;
 
+import kroryi.dagon.entity.Partner;
 import kroryi.dagon.entity.product.Product;
+import kroryi.dagon.entity.product.ProductImage;
 import kroryi.dagon.enums.MainType;
 import kroryi.dagon.enums.ProdRegion;
 import kroryi.dagon.enums.SubType;
@@ -9,6 +11,7 @@ import lombok.Data;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static java.util.Arrays.stream;
 
@@ -31,9 +34,12 @@ public class ProductDTO {
     private String prodNotice;
     private LocalDate createdAt;
     private String prodThumbnail;
+    private Partner partner;
+
     private boolean deleted;
     private List<String> fishSpeciesNames;
 
+    private List<String> prodImageNames; // 썸네일 여러 개
 
     public static ProductDTO fromEntity(Product product) {
         ProductDTO dto = new ProductDTO();
@@ -53,6 +59,12 @@ public class ProductDTO {
         dto.setProdEvent(product.getProdEvent());
         dto.setProdNotice(product.getProdNotice());
         dto.setDeleted(product.isDeleted());
+        // fromEntity 수정
+        dto.setProdImageNames(
+                product.getImages().stream()
+                        .map(ProductImage::getFileName)
+                        .collect(Collectors.toList())
+        );
 
         // LocalDateTime -> LocalDate 변환
         if (product.getCreatedAt() != null) {
@@ -62,23 +74,6 @@ public class ProductDTO {
         dto.setProdThumbnail(product.getProdThumbnail());
 
         return dto;
-    }
-
-    public Product toEntity() {
-        Product product = new Product();
-        product.setProdName(this.getProdName());
-        product.setProdRegion(this.getProdRegion());
-        product.setMainType(this.getMainType());
-        product.setSubType(this.getSubType());
-        product.setMaxPerson(this.getMaxPerson());
-        product.setMinPerson(this.getMinPerson());
-        product.setWeight(this.getWeight());
-        product.setProdAddress(this.getProdAddress());
-        product.setProdDescription(this.getProdDescription());
-        product.setProdEvent(this.getProdEvent());
-        product.setProdNotice(this.getProdNotice());
-        product.setProdThumbnail(this.getProdThumbnail());
-        return product;
     }
 
 }

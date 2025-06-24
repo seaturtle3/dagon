@@ -4,11 +4,13 @@ import jakarta.persistence.EntityNotFoundException;
 import kroryi.dagon.DTO.product.ProductDTO;
 import kroryi.dagon.entity.Partner;
 import kroryi.dagon.entity.product.Product;
+import kroryi.dagon.entity.product.ProductImage;
 import kroryi.dagon.entity.product.ProductOption;
 import kroryi.dagon.entity.User;
 import kroryi.dagon.enums.MainType;
 import kroryi.dagon.enums.ProdRegion;
 import kroryi.dagon.enums.SubType;
+import kroryi.dagon.repository.PartnerRepository;
 import kroryi.dagon.repository.product.ProductRepository;
 import kroryi.dagon.repository.SeaFreshwaterFishingRepository;
 import kroryi.dagon.repository.UserRepository;
@@ -30,20 +32,39 @@ public class ProductService {
 
     private final ProductRepository productRepository;
     private final UserRepository userRepository;
+    private final PartnerRepository partnerRepository;
     private final PartnerService partnerService;
     private final SeaFreshwaterFishingRepository seaFreshwaterFishingRepository;
 
     @Transactional
-    public Long addProduct(ProductDTO productDTO) {
-        Product product = productDTO.toEntity();
+    public void createProductWithImages(ProductDTO dto, Long uno) {
+        Partner partner = partnerRepository.findById(uno).orElseThrow();
 
-        if (product.getPartner() == null) {
-            Partner defaultPartner = partnerService.getDefaultPartner();
-            product.setPartner(defaultPartner);
+        Product product = new Product();
+        product.setProdName(dto.getProdName());
+        product.setProdRegion(dto.getProdRegion());
+        product.setMainType(dto.getMainType());
+        product.setSubType(dto.getSubType());
+        product.setMaxPerson(dto.getMaxPerson());
+        product.setMinPerson(dto.getMinPerson());
+        product.setWeight(dto.getWeight());
+        product.setProdAddress(dto.getProdAddress());
+        product.setProdDescription(dto.getProdDescription());
+        product.setProdEvent(dto.getProdEvent());
+        product.setProdNotice(dto.getProdNotice());
+        product.setProdThumbnail(dto.getProdThumbnail());
+        product.setPartner(partner);
+
+        if (dto.getProdImageNames() != null) {
+            for (String fileName : dto.getProdImageNames()) {
+                ProductImage image = new ProductImage();
+                image.setFileName(fileName); // 예: "abc.jpg"
+                image.setProduct(product);
+                product.addImage(image);
+            }
         }
-        Product savedProduct = productRepository.save(product);
 
-        return savedProduct.getProdId();
+        productRepository.save(product);
     }
 
     // [Read] 전체 상품 조회
