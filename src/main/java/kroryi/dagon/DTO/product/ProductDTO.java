@@ -33,6 +33,7 @@ public class ProductDTO {
     private String prodThumbnail;
     private boolean deleted;
     private List<String> fishSpeciesNames;
+    private List<ProductOptionDTO> options;
 
 
     public static ProductDTO fromEntity(Product product) {
@@ -53,14 +54,24 @@ public class ProductDTO {
         dto.setProdEvent(product.getProdEvent());
         dto.setProdNotice(product.getProdNotice());
         dto.setDeleted(product.isDeleted());
-
-        // LocalDateTime -> LocalDate 변환
-        if (product.getCreatedAt() != null) {
-            dto.setCreatedAt(product.getCreatedAt().toLocalDate());  // LocalDateTime에서 LocalDate만 추출
+        if (product.getOptions() != null) {
+            List<ProductOptionDTO> optionDTOs = product.getOptions().stream().map(option -> {
+                ProductOptionDTO dtoOpt = new ProductOptionDTO();
+                dtoOpt.setOptId(option.getOptId());
+                dtoOpt.setOptName(option.getOptName());
+                dtoOpt.setOptTime(option.getOptTime());
+                dtoOpt.setOptDescription(option.getOptDescription());
+                dtoOpt.setPrice(option.getPrice());
+                dtoOpt.setProdId(product.getProdId());
+                dtoOpt.setProdName(product.getProdName());
+                return dtoOpt;
+            }).toList();
+            dto.setOptions(optionDTOs);
         }
-
+        if (product.getCreatedAt() != null) {
+            dto.setCreatedAt(product.getCreatedAt().toLocalDate());
+        }
         dto.setProdThumbnail(product.getProdThumbnail());
-
         return dto;
     }
 
