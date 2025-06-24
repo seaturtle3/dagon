@@ -22,6 +22,7 @@ public class ApiCommentDTO {
         this.frCommentId = comment.getFrCommentId();
         this.comment = comment.getCommentContent();
         this.createdAt = comment.getCreatedAt();
+        this.user = comment.getUser() != null ? new ApiUserDTO(comment.getUser()) : null;
     }
 
     public ApiCommentDTO(FishingDiaryComment comment) {

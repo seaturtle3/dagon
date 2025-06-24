@@ -20,4 +20,8 @@ public interface FishingDiaryRepository extends JpaRepository<FishingDiary, Long
     // 특정 배 상품ID 조행기 조회
     List<FishingDiary> findByProduct_ProdId(Long prodId);
 
+    List<FishingDiary> findByUser_Uno(Long userUno);
+
+    List<FishingDiary> findByProduct_ProdIdIn(List<Long> productIds);
+
 }

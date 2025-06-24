@@ -52,15 +52,15 @@ public class InquiryService {
 //                .receiverType(request.getReceiverType());
 
         log.info("000----> {}", request);
-        if ((request.getPartnerName() != null)){
-
-            log.info("Creating partner inquiry----> {}", request.getPartnerName());
-            Partner partner = partnerRepository.findByPname(request.getPartnerName())
-                    .orElseThrow(() -> new EntityNotFoundException("Partner (업체명) not found"));
+        if (request.getPartnerId() != null) {
+            log.info("Creating partner inquiry----> {}", request.getPartnerId());
+            Partner partner = partnerRepository.findById(request.getPartnerId())
+                    .orElseThrow(() -> new EntityNotFoundException("Partner (uno) not found"));
             inquiryBuilder.partner(partner);
+            inquiryBuilder.writerType(WriterType.valueOf(request.getWriterType()));
             Inquiry savedInquiry = inquiryRepository.save(inquiryBuilder.build());
             return toResponseDTO(savedInquiry);
-        }else{
+        } else {
             inquiryBuilder.writerType(WriterType.valueOf(request.getWriterType()));
             inquiryBuilder.inquiryType(request.getInquiryType());
             Inquiry savedInquiry = inquiryRepository.save(inquiryBuilder.build());

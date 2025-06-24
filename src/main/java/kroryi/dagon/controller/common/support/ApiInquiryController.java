@@ -8,11 +8,14 @@ import jakarta.validation.Valid;
 import kroryi.dagon.DTO.InquiryCreateRequestDTO;
 import kroryi.dagon.DTO.InquiryResponseDTO;
 import kroryi.dagon.DTO.InquiryUpdateRequestDTO;
+import kroryi.dagon.DTO.PartnerInquiryCreateRequestDTO;
 import kroryi.dagon.component.CustomUserDetails;
 import kroryi.dagon.entity.Inquiry;
 import kroryi.dagon.entity.User;
+import kroryi.dagon.entity.product.Product;
 import kroryi.dagon.repository.InquiryRepository;
 import kroryi.dagon.repository.UserRepository;
+import kroryi.dagon.repository.product.ProductRepository;
 import kroryi.dagon.service.support.InquiryService;
 import kroryi.dagon.service.support.NotificationService;
 import kroryi.dagon.util.JwtUtil;
@@ -41,6 +44,7 @@ public class ApiInquiryController {
     private final JwtUtil jwtUtil;
     private final NotificationService notificationService;
     private final InquiryRepository inquiryRepository;
+    private final ProductRepository productRepository;
 
 
     // 1. 문의 생성
@@ -187,6 +191,36 @@ public class ApiInquiryController {
     public List<InquiryResponseDTO> getMyInquiries(@AuthenticationPrincipal CustomUserDetails currentUser) {
         Long userUno = currentUser.getUno();
         return inquiryService.getInquiriesByUserUno(userUno);
+    }
+
+    // 파트너 전용 1:1 문의 생성 (상품ID로 파트너 자동 매핑)
+    @Operation(summary = "파트너 전용 1:1 문의 생성 (상품ID로 파트너 자동 매핑)")
+    @PostMapping("/partner")
+    public ResponseEntity<InquiryResponseDTO> createPartnerInquiry(
+            @RequestBody PartnerInquiryCreateRequestDTO request,
+            @AuthenticationPrincipal CustomUserDetails userDetails) {
+
+        // 1. productId로 Product 조회
+        Product product = productRepository.findById(request.getProductId())
+                .orElseThrow(() -> new IllegalArgumentException("해당 상품이 존재하지 않습니다."));
+
+        // 2. 파트너 uno 추출
+        Long partnerUno = product.getPartner().getUno();
+
+        // 3. InquiryCreateRequestDTO 생성
+        InquiryCreateRequestDTO inquiryRequest = new InquiryCreateRequestDTO();
+        inquiryRequest.setReceiverType(kroryi.dagon.enums.ReceiverType.PARTNER);
+        inquiryRequest.setReceiverId(partnerUno);
+        inquiryRequest.setPartnerId(partnerUno);
+        inquiryRequest.setTitle(request.getTitle());
+        inquiryRequest.setContent(request.getContent());
+        inquiryRequest.setInquiryType(request.getInquiryType());
+        inquiryRequest.setPartnerName(product.getPartner().getPname());
+        inquiryRequest.setWriterType("USER");
+
+        // 4. 서비스 호출
+        InquiryResponseDTO response = inquiryService.createInquiry(userDetails.getUno(), inquiryRequest);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
 }

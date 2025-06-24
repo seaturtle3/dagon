@@ -2,8 +2,10 @@ package kroryi.dagon.controller.user.community;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import kroryi.dagon.DTO.board.FishingCenter.ApiFishingDiaryDTO;
 import kroryi.dagon.service.community.fishingCenter.ApiFishingDiaryService;
+import kroryi.dagon.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -24,6 +26,7 @@ import java.util.List;
 public class ApiUserFishingDiaryController {
 
     private final ApiFishingDiaryService apiFishingDiaryService;
+    private final JwtUtil jwtUtil;
 
     private Long getCurrentUserUno() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -41,6 +44,14 @@ public class ApiUserFishingDiaryController {
     ) {
         Long userUno = getCurrentUserUno();
         return apiFishingDiaryService.createFishingDiary(dto, userUno, images);
+    }
+
+    @Operation(summary = "나의 조행기 목록 조회")
+    @GetMapping("/mine")
+    public List<ApiFishingDiaryDTO> getMyDiaries(HttpServletRequest request) {
+        String token = jwtUtil.resolveToken(request);
+        Long uno = jwtUtil.getUnoFromToken(token);
+        return apiFishingDiaryService.getMyDiaries(uno);
     }
 
     @Operation(summary = "조행기 모두 조회 (페이징)")
@@ -77,6 +88,14 @@ public class ApiUserFishingDiaryController {
     @DeleteMapping("/delete/{id}")
     public void deleteFishingDiary(@PathVariable Long id) {
         apiFishingDiaryService.deleteFishingDiary(id);
+    }
+
+    @Operation(summary = "내가 등록한 상품의 모든 조행기 조회")
+    @GetMapping("/my-products-diaries")
+    public List<ApiFishingDiaryDTO> getDiariesByMyProducts(HttpServletRequest request) {
+        String token = jwtUtil.resolveToken(request);
+        Long uno = jwtUtil.getUnoFromToken(token);
+        return apiFishingDiaryService.getDiariesByMyProducts(uno);
     }
 
 }

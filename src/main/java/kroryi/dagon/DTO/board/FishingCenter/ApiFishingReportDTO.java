@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -17,6 +18,7 @@ public class ApiFishingReportDTO {
     private String title;
     private String content;
     private String prodName;
+    private LocalDateTime createdAt;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate fishingAt;
@@ -38,6 +40,7 @@ public class ApiFishingReportDTO {
         this.title = fishingReport.getTitle();
         this.content = fishingReport.getContent();
         this.fishingAt = LocalDate.from(fishingReport.getFishingAt());
+        this.createdAt = fishingReport.getCreatedAt();
 
         this.imageFileName = fishingReport.getThumbnailUrl(); // 여기에 추가
 

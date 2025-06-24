@@ -1,6 +1,7 @@
 package kroryi.dagon.service;
 
 import kroryi.dagon.DTO.CommentDTO;
+import kroryi.dagon.DTO.UsersDTO;
 import kroryi.dagon.entity.FreeBoard;
 import kroryi.dagon.entity.FreeBoardComment;
 import kroryi.dagon.entity.User;
@@ -46,7 +47,8 @@ public class FreeBoardCommentServiceImpl implements CommentService {
                         c.getFbCommentId(),
                         c.getUser().getNickname(),
                         c.getCommentContent(),
-                        c.getModifyAt()
+                        c.getModifyAt(),
+                        new UsersDTO(c.getUser())
                 )).collect(Collectors.toList());
     }
 
