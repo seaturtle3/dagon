@@ -3,11 +3,10 @@ package kroryi.dagon.DTO.board.FishingCenter;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import kroryi.dagon.entity.fishingCenter.FishingDiary;
 import kroryi.dagon.entity.fishingCenter.FishingDiaryImage;
-import kroryi.dagon.entity.fishingCenter.FishingReportImage;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -19,7 +18,7 @@ public class ApiFishingDiaryDTO {
     private String content;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-    private LocalDateTime fishingAt;
+    private LocalDate fishingAt;
 
     private ApiProductDTO product;
     private ApiUserDTO user;
@@ -35,7 +34,7 @@ public class ApiFishingDiaryDTO {
         this.fdId = fishingDiary.getFdId();
         this.title = fishingDiary.getTitle();
         this.content = fishingDiary.getContent();
-        this.fishingAt = fishingDiary.getFishingAt();
+        this.fishingAt = LocalDate.from(fishingDiary.getFishingAt());
 
         if (fishingDiary.getProduct() != null) {
             this.product = new ApiProductDTO(fishingDiary.getProduct());

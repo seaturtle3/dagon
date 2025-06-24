@@ -159,10 +159,22 @@ public class ApiProductController {
         SubType subTypeEnum = (subType == null || subType.isEmpty()) ? null : SubType.valueOf(subType);
         ProdRegion regionEnum = (region == null || region.isEmpty()) ? null : ProdRegion.valueOf(region);
 
-        return productService.getSeaProductsByFilters(regionEnum, subTypeEnum, species);
+        return productService.getFishingCenterProductsByFilters(regionEnum, subTypeEnum, species);
     }
 
-    //  -------------- 프론트 추가 api 바다 낚시 상단 필터 ----------------
+    @GetMapping("/get-all/freshwater/filter")
+    public List<ProductDTO> getFreshwaterProductsByFilters(
+            @RequestParam(required = false) String subType,
+            @RequestParam(required = false) String region,
+            @RequestParam(required = false) String species) {
+
+        SubType subTypeEnum = (subType == null || subType.isEmpty()) ? null : SubType.valueOf(subType);
+        ProdRegion regionEnum = (region == null || region.isEmpty()) ? null : ProdRegion.valueOf(region);
+
+        return productService.getFishingCenterProductsByFilters(regionEnum, subTypeEnum, species);
+    }
+
+    //  -------------- 프론트 추가 api 바다/민물 낚시 상단 필터 ----------------
     @GetMapping("/sea/filter")
     public Map<String, List<String>> getSeaFilterOptions() {
         List<String> regions = Arrays.stream(ProdRegion.values())
@@ -174,6 +186,25 @@ public class ApiProductController {
                 .toList();
 
         List<String> species = productRepository.findAllSeaFishSpecies(); // <-- 여기를 새 메서드로 변경
+
+        Map<String, List<String>> filters = new HashMap<>();
+        filters.put("regions", regions);
+        filters.put("subTypes", subTypes);
+        filters.put("fishSpecies", species);
+        return filters;
+    }
+
+    @GetMapping("/freshwater/filter")
+    public Map<String, List<String>> getFreshwaterFilterOptions() {
+        List<String> regions = Arrays.stream(ProdRegion.values())
+                .map(Enum::name)
+                .toList();
+
+        List<String> subTypes = Arrays.stream(SubType.values())
+                .map(Enum::name)
+                .toList();
+
+        List<String> species = productRepository.findAllFreshwaterFishSpecies(); // <-- 여기를 새 메서드로 변경
 
         Map<String, List<String>> filters = new HashMap<>();
         filters.put("regions", regions);

@@ -18,3 +18,12 @@ GRANT ALL PRIVILEGES ON dagon.* TO 'admin'@'%';
 -- 5. 변경 사항 적용
 FLUSH PRIVILEGES;
 
+CREATE TABLE fishing_report (
+    fr_id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    content TEXT NOT NULL,
+    thumbnail_url VARCHAR(255),
+    fishing_at DATETIME,
+    modify_at DATETIME
+);
+

@@ -82,6 +82,13 @@ public interface ProductRepository extends JpaRepository<Product, Long>, JpaSpec
             """)
     List<String> findAllSeaFishSpecies();
 
+    @Query("""
+                SELECT fs.fsName
+                FROM ProductFishSpecies fs
+                WHERE fs.mainType = kroryi.dagon.enums.MainType.FRESHWATER
+            """)
+    List<String> findAllFreshwaterFishSpecies();
+
     // 키워드 검색 (상품명, 설명, 주소, 이벤트, 공지)
     @Query("""
         SELECT p FROM Product p
