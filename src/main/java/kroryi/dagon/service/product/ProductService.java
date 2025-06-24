@@ -10,6 +10,7 @@ import kroryi.dagon.entity.User;
 import kroryi.dagon.enums.MainType;
 import kroryi.dagon.enums.ProdRegion;
 import kroryi.dagon.enums.SubType;
+import kroryi.dagon.repository.PartnerRepository;
 import kroryi.dagon.repository.product.ProductRepository;
 import kroryi.dagon.repository.SeaFreshwaterFishingRepository;
 import kroryi.dagon.repository.UserRepository;
@@ -31,6 +32,7 @@ public class ProductService {
 
     private final ProductRepository productRepository;
     private final UserRepository userRepository;
+    private final PartnerRepository partnerRepository;
     private final PartnerService partnerService;
     private final SeaFreshwaterFishingRepository seaFreshwaterFishingRepository;
 
@@ -48,20 +50,24 @@ public class ProductService {
     }
 
     public void createProductWithImages(ProductDTO dto, Long uno) {
-        Product product = dto.toEntity();
-        product.setPartner(userRepository.findById(uno).orElseThrow().getPartner());
+        Partner partner = partnerRepository.findById(uno).orElseThrow();
+
+        Product product = new Product();
+        product.setProdName(dto.getProdName());
+        // ... other fields
+        product.setPartner(partner);
 
         if (dto.getProdImageNames() != null) {
             for (String fileName : dto.getProdImageNames()) {
                 ProductImage image = new ProductImage();
-                image.setFileName(fileName);
+                image.setFileName(fileName); // 예: "abc.jpg"
+                image.setProduct(product);
                 product.addImage(image);
             }
         }
 
         productRepository.save(product);
     }
-
 
     // [Read] 전체 상품 조회
     public Page<ProductDTO> getAllProductsApi(Pageable pageable) {

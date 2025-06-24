@@ -45,9 +45,6 @@ public interface ProductRepository extends JpaRepository<Product, Long>, JpaSpec
 
     Long countByPartner_UnoAndDeletedFalse(Long partnerId);
 
-    // ProductTest
-    List<Product> findTop80ByOrderByProdIdAsc(); // 또는 정렬 없이 findAll(PageRequest.of(0, 80))
-
     //  -------------- 프론트 추가(바다/민물 필터) api ----------------
     Page<Product> findByMainTypeAndDeletedFalse(MainType mainType, Pageable pageable);
 
