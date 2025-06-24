@@ -31,7 +31,7 @@ public class ApiUserPaymentsController {
     @PostMapping("/verify")
     public ResponseEntity<?> verifyPayment(@RequestBody LinkedHashMap<String, Object> body)
             throws IamportResponseException, IOException {
-        String impUid = (String) body.get("imp_uid");
+        String impUid = (String) body.get("impUid");
         log.info("Verifying payment with imp_uid-->{}", impUid);
 
         IamportResponse<Payment> iamportResponse = iamportClient.paymentByImpUid(impUid);

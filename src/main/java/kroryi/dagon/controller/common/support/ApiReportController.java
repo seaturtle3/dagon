@@ -5,8 +5,10 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import kroryi.dagon.DTO.ReportDTO;
 import kroryi.dagon.DTO.ReportRequestDTO;
+import kroryi.dagon.entity.User;
 import kroryi.dagon.enums.TargetType;
 import kroryi.dagon.repository.ReportRepository;
+import kroryi.dagon.repository.UserRepository;
 import kroryi.dagon.service.support.ReportService;
 import kroryi.dagon.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
@@ -31,6 +33,7 @@ public class ApiReportController {
     private final ReportService reportService;
     private final JwtUtil jwtUtil;
     private final ReportRepository reportRepository;
+    private final UserRepository userRepository;
 
     // 신고 목록 조회 (페이징 및 검색)
     @Operation(summary = "신고 목록조회", description = "사용자 신고 접수 API")
@@ -136,11 +139,16 @@ public class ApiReportController {
                         .body(Map.of("message", "유효하지 않은 토큰입니다."));
             }
 
-            // ReportRequestDTO 생성
+            User user = userRepository.findByUno(uno)
+                    .orElseThrow(() -> new IllegalArgumentException("해당 사용자를 찾을 수 없습니다."));
+
+// ReportRequestDTO 생성 및 값 설정
             ReportRequestDTO reportRequestDTO = new ReportRequestDTO();
             reportRequestDTO.setTargetType(targetType);
             reportRequestDTO.setTargetId(targetId);
             reportRequestDTO.setReason(reason);
+            reportRequestDTO.setUid(user.getUid());      // 유저 아이디 설정
+            reportRequestDTO.setUname(user.getUname());  // 유저 이름 설정
 
             // 신고 접수 서비스 호출
             reportService.createReport(uno, reportRequestDTO);

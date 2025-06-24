@@ -9,4 +9,6 @@ public class ReportRequestDTO {
     private TargetType targetType;  // 신고 대상 타입
     private Long targetId;  // 신고 대상 ID (게시글, 댓글, 상품 ID)
     private String reason;
+    private String uname;
+    private String uid;
 }

@@ -64,6 +64,8 @@ public class Reservation extends BaseTimeEntity {
     @Column(name = "payment_method", nullable = false)
     private PaymentsMethod paymentsMethod;
 
-
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "payment_id")
+    private PaymentsEntity payment;
 
 }

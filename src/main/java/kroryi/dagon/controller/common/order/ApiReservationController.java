@@ -46,7 +46,8 @@ public class ApiReservationController {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인이 필요합니다.");
             }
 
-            reservationDTO.setUno(userDetails.getUno());
+            reservationDTO.setUserId(userDetails.getUno());
+            log.info("Reservation DTO--->: {}" , reservationDTO);
 
             ReservationDTO saved = reservationService.createReservation(reservationDTO);
             return ResponseEntity.status(HttpStatus.CREATED).body(saved);
@@ -89,7 +90,7 @@ public class ApiReservationController {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인이 필요합니다.");
             }
 
-            reservationDTO.setUno(userDetails.getUno());
+            reservationDTO.setUserId(userDetails.getUno());
             ReservationDTO updated = reservationService.updateReservation(id, reservationDTO);
 
             return ResponseEntity.ok(updated);
@@ -124,17 +125,20 @@ public class ApiReservationController {
 
         return reservations.stream()
                 .map(res -> ReservationDTO.builder()
-                        .uno(res.getUser().getUno())
+                        .userId(res.getUser() != null ? res.getUser().getUno() : null)
                         .reservationId(res.getReservationId())
                         .productName(res.getProduct().getProdName())
                         .optionName(res.getProductOption().getOptName())
-                        .userName(res.getUser().getUname())
+                        .userName(res.getUser() != null ? res.getUser().getUname() : null)
                         .fishingAt(res.getFishingAt())
                         .numPerson(res.getNumPerson())
                         .reservationStatus(res.getReservationStatus())
                         .paymentsMethod(res.getPaymentsMethod())
                         .paidAt(res.getPaidAt())
                         .createdAt(res.getCreatedAt())
+                        .prodId(res.getProduct() != null ? res.getProduct().getProdId() : null)
+                        .optionId(res.getProductOption() != null ? res.getProductOption().getOptId() : null)
+                        .paymentId(String.valueOf(res.getPayment() != null ? res.getPayment().getId() : null))
                         .build())
                 .collect(Collectors.toList());
     }
@@ -181,18 +185,20 @@ public class ApiReservationController {
 
         return reservations.stream()
                 .map(res -> ReservationDTO.builder()
-                        .uno(res.getUser().getUno())
+                        .userId(res.getUser() != null ? res.getUser().getUno() : null)
                         .reservationId(res.getReservationId())
                         .productName(res.getProduct().getProdName())
                         .optionName(res.getProductOption().getOptName())
-                        .userName(res.getUser().getUname())
+                        .userName(res.getUser() != null ? res.getUser().getUname() : null)
                         .fishingAt(res.getFishingAt())
                         .numPerson(res.getNumPerson())
                         .reservationStatus(res.getReservationStatus())
                         .paymentsMethod(res.getPaymentsMethod())
                         .paidAt(res.getPaidAt())
                         .createdAt(res.getCreatedAt())
-                        .deleted(res.getProduct().isDeleted())
+                        .prodId(res.getProduct() != null ? res.getProduct().getProdId() : null)
+                        .optionId(res.getProductOption() != null ? res.getProductOption().getOptId() : null)
+                        .paymentId(String.valueOf(res.getPayment() != null ? res.getPayment().getId() : null))
                         .build())
                 .collect(Collectors.toList());
     }

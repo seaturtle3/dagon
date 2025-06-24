@@ -169,9 +169,12 @@ public class ApiKeyFilter extends OncePerRequestFilter {
             return true;
         }
 
-        // 예약 전체 조회
+        // 예약 전체
         if ((path.equals("/api/reservation/all") && method.equals("GET")) ||
-                (path.equals("/api/reservation/get") && method.equals("GET"))) {
+                (path.equals("/api/reservation/get") && method.equals("GET")) ||
+                (path.equals("/api/reservation") && (method.equals("GET") || method.equals("POST"))) ||
+                (path.equals("/api/reservation/partner") && method.equals("GET"))
+                ) {
             return true;
         }
 

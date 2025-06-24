@@ -78,12 +78,24 @@ public class JwtUtil {
                     .parseClaimsJws(token)
                     .getBody();
         } catch (ExpiredJwtException e) {
+            log.error("JWT 토큰이 만료되었습니다: {}", e.getMessage());
             throw new JwtException("JWT expired", e);
+        } catch (UnsupportedJwtException e) {
+            log.error("지원되지 않는 JWT 형식입니다: {}", e.getMessage());
+            throw new JwtException("Unsupported JWT", e);
+        } catch (MalformedJwtException e) {
+            log.error("잘못된 JWT 형식입니다: {}", e.getMessage());
+            throw new JwtException("Malformed JWT", e);
+        } catch (SecurityException e) {
+            log.error("JWT 서명 검증 실패: {}", e.getMessage());
+            throw new JwtException("Invalid JWT signature", e);
+        } catch (IllegalArgumentException e) {
+            log.error("JWT 토큰이 비어있거나 null입니다: {}", e.getMessage());
+            throw new JwtException("Empty or null JWT", e);
         } catch (JwtException e) {
+            log.error("JWT 파싱 중 알 수 없는 오류: {}", e.getMessage());
             throw new JwtException("Invalid JWT", e);
         }
-
-
     }
     // 토큰 검증 및 정보 추출 등의 메서드 추가 필요
     // JWT 토큰에서 uid (Subject) 추출
@@ -118,12 +130,35 @@ public class JwtUtil {
     }
 
     public Long getUnoFromToken(String token) {
-        Claims claims = parseToken(token);
-        Object unoObj = claims.get("uno");
-        Long uno = ((Number) unoObj).longValue();
-        log.info("uno claim type: {}", unoObj.getClass().getName());
-        log.info("uno value: {}", unoObj);
-        return ((Number) unoObj).longValue(); // 안전하게 형변환
+        try {
+            Claims claims = parseToken(token);
+            Object unoObj = claims.get("uno");
+            
+            if (unoObj == null) {
+                log.error("JWT 토큰에 uno claim이 없습니다");
+                throw new JwtException("Missing uno claim in JWT");
+            }
+            
+            Long uno;
+            if (unoObj instanceof Number) {
+                uno = ((Number) unoObj).longValue();
+            } else if (unoObj instanceof String) {
+                uno = Long.parseLong((String) unoObj);
+            } else {
+                log.error("uno claim의 타입이 예상과 다릅니다: {}", unoObj.getClass().getName());
+                throw new JwtException("Invalid uno claim type in JWT");
+            }
+            
+            log.debug("JWT에서 추출한 uno: {}", uno);
+            return uno;
+            
+        } catch (JwtException e) {
+            log.error("JWT에서 uno 추출 실패: {}", e.getMessage());
+            throw e;
+        } catch (NumberFormatException e) {
+            log.error("uno claim을 Long으로 변환할 수 없습니다: {}", e.getMessage());
+            throw new JwtException("Invalid uno claim format in JWT", e);
+        }
     }
 
     // isValidToken: 토큰이 유효한지 확인하는 메서드

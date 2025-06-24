@@ -4,12 +4,14 @@ import kroryi.dagon.DTO.product.ProductDTO;
 import kroryi.dagon.DTO.ReservationDTO;
 import kroryi.dagon.entity.product.Product;
 import kroryi.dagon.entity.Reservation;
+import kroryi.dagon.entity.product.ProductOption;
 import kroryi.dagon.enums.MainType;
 import kroryi.dagon.enums.ProdRegion;
 import kroryi.dagon.enums.ReservationStatus;
 import kroryi.dagon.enums.SubType;
 import kroryi.dagon.repository.product.ProductRepository;
 import kroryi.dagon.repository.SeaFreshwaterFishingRepository;
+import kroryi.dagon.repository.product.ProductOptionRepository;
 import lombok.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -25,6 +27,7 @@ public class SeaFreshwaterFishingService {
 
     private final SeaFreshwaterFishingRepository seaFreshwaterFishingRepository;
     private final ProductRepository productRepository;
+    private final ProductOptionRepository productOptionRepository;
 
     public String getFindAll() {
         return seaFreshwaterFishingRepository.findAll().toString();
@@ -47,11 +50,22 @@ public class SeaFreshwaterFishingService {
 
     public ReservationDTO createReservation(ReservationDTO dto) {
         Reservation reservation = new Reservation();
-        // 유저, 상품, 옵션 등 엔티티 매핑 생략
+        // 유저, 상품, 옵션 등 엔티티 매핑
         reservation.setFishingAt(dto.getFishingAt());
         reservation.setNumPerson(dto.getNumPerson());
         reservation.setReservationStatus(ReservationStatus.PENDING);
         reservation.setPaymentsMethod(dto.getPaymentsMethod());
+        // Product 엔티티 조회 후 할당
+        Long prodId = dto.getProdId();
+        Product product = productRepository.findById(prodId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 상품이 존재하지 않습니다. id=" + prodId));
+        reservation.setProduct(product);
+        // ProductOption 엔티티 조회 후 할당
+        Long optionId = dto.getOptionId();
+        ProductOption productOption = productOptionRepository.findById(optionId)
+            .orElseThrow(() -> new IllegalArgumentException("해당 옵션이 존재하지 않습니다. id=" + optionId));
+        reservation.setProductOption(productOption);
+        // User, Payment 등도 필요시 추가
 
         Reservation saved = seaFreshwaterFishingRepository.save(reservation);
         return toDTO(saved);
@@ -108,12 +122,17 @@ public class SeaFreshwaterFishingService {
                 .reservationId(reservation.getReservationId())
                 .productName(reservation.getProduct().getProdName())
                 .optionName(reservation.getProductOption().getOptName())
+                .userName(reservation.getUser() != null ? reservation.getUser().getUname() : null)
                 .fishingAt(reservation.getFishingAt())
                 .numPerson(reservation.getNumPerson())
                 .reservationStatus(reservation.getReservationStatus())
                 .paymentsMethod(reservation.getPaymentsMethod())
                 .paidAt(reservation.getPaidAt())
                 .createdAt(reservation.getCreatedAt())
+                .prodId(reservation.getProduct() != null ? reservation.getProduct().getProdId() : null)
+                .optionId(reservation.getProductOption() != null ? reservation.getProductOption().getOptId() : null)
+                .userId(reservation.getUser() != null ? reservation.getUser().getUno() : null)
+                .paymentId(String.valueOf(reservation.getPayment() != null ? reservation.getPayment().getId() : null))
                 .build();
     }
 
@@ -184,13 +203,17 @@ public class SeaFreshwaterFishingService {
                 .reservationId(reservation.getReservationId())
                 .productName(reservation.getProduct().getProdName())
                 .optionName(reservation.getProductOption().getOptName())
-                .userName(reservation.getUser().getUname())
+                .userName(reservation.getUser() != null ? reservation.getUser().getUname() : null)
                 .fishingAt(reservation.getFishingAt())
                 .numPerson(reservation.getNumPerson())
                 .reservationStatus(reservation.getReservationStatus())
                 .paymentsMethod(reservation.getPaymentsMethod())
                 .paidAt(reservation.getPaidAt())
                 .createdAt(reservation.getCreatedAt())
+                .prodId(reservation.getProduct() != null ? reservation.getProduct().getProdId() : null)
+                .optionId(reservation.getProductOption() != null ? reservation.getProductOption().getOptId() : null)
+                .userId(reservation.getUser() != null ? reservation.getUser().getUno() : null)
+                .paymentId(String.valueOf(reservation.getPayment() != null ? reservation.getPayment().getId() : null))
                 .build();
     }
 
@@ -244,17 +267,20 @@ public class SeaFreshwaterFishingService {
                 .orElseThrow(() -> new RuntimeException("예약 정보를 찾을 수 없습니다."));
 
         return ReservationDTO.builder()
-                .uno(reservation.getUser().getUno())
+                .userId(reservation.getUser() != null ? reservation.getUser().getUno() : null)
                 .reservationId(reservation.getReservationId())
                 .productName(reservation.getProduct().getProdName())
                 .optionName(reservation.getProductOption().getOptName())
-                .userName(reservation.getUser().getUname())
+                .userName(reservation.getUser() != null ? reservation.getUser().getUname() : null)
                 .fishingAt(reservation.getFishingAt())
                 .numPerson(reservation.getNumPerson())
                 .reservationStatus(reservation.getReservationStatus())
                 .paymentsMethod(reservation.getPaymentsMethod())
                 .paidAt(reservation.getPaidAt())
                 .createdAt(reservation.getCreatedAt())
+                .prodId(reservation.getProduct() != null ? reservation.getProduct().getProdId() : null)
+                .optionId(reservation.getProductOption() != null ? reservation.getProductOption().getOptId() : null)
+                .paymentId(String.valueOf(reservation.getPayment() != null ? reservation.getPayment().getId() : null))
                 .build();
     }
 
