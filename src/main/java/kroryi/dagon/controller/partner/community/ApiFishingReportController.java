@@ -177,27 +177,20 @@ public class ApiFishingReportController {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).body("해당 상품에 대한 권한이 없습니다.");
             }
 
-            // 이미지 파일 처리
-            String savedFileName = null;
-            if (thumbnailFile != null && !thumbnailFile.isEmpty()) {
-                String originalFilename = thumbnailFile.getOriginalFilename();
-                String safeFilename = UUID.randomUUID() + "_" + originalFilename.replaceAll("[^a-zA-Z0-9\\.\\-_]", "_");
-
-                Path savePath = Paths.get(uploadDir, safeFilename);
-                Files.copy(thumbnailFile.getInputStream(), savePath, StandardCopyOption.REPLACE_EXISTING);
-
-                savedFileName = safeFilename;
-            }
-
             FishingReport report = new FishingReport();
             report.setTitle(dto.getTitle());
             report.setContent(dto.getContent());
             report.setFishingAt(dto.getFishingAt().atStartOfDay());  // 여기서 LocalDate 타입 받아서 넣음
-            report.setThumbnailUrl(savedFileName);
             report.setUser(user);
             report.setProduct(product);
 
-            FishingReport saved = partnerFishingReportService.save(report);
+            // 이미지 파일을 리스트로 만들어 전달
+            List<MultipartFile> images = null;
+            if (thumbnailFile != null && !thumbnailFile.isEmpty()) {
+                images = List.of(thumbnailFile);
+            }
+
+            FishingReport saved = partnerFishingReportService.saveWithImages(report, images);
 
             return ResponseEntity.ok(saved.getFrId());
         } catch (Exception e) {

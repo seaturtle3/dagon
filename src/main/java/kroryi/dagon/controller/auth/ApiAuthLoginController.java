@@ -60,6 +60,7 @@ public class ApiAuthLoginController {
 
 
             log.info("token {}", token);
+            log.info("2222222222 {}", user.getUid());
 
             return ResponseEntity.ok(new AuthResponseDTO(token, "로그인 성공"));
         } else {
