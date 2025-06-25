@@ -113,5 +113,29 @@ public class ApiNotificationController {
         Page<NotificationDTO> notifications = notificationService.getNotifications(uid, type, pageable);
         return ResponseEntity.ok(notifications);
     }
+
+    @PostMapping("/bulk")
+    @Operation(summary = "여러 회원에게 알림 보내기", description = "여러 명의 회원에게 한 번에 알림을 전송합니다.")
+    public ResponseEntity<?> sendBulkNotification(@RequestBody BulkNotificationRequest request) {
+        int count = notificationService.sendBulkNotification(request.getReceiverUids(), request.getTitle(), request.getContent());
+        return ResponseEntity.ok(java.util.Map.of(
+            "success", true,
+            "count", count,
+            "message", count + "명의 회원에게 알림이 성공적으로 전송되었습니다."
+        ));
+    }
+
+    // BulkNotificationRequest DTO (내부 static 클래스로 추가)
+    public static class BulkNotificationRequest {
+        private List<String> receiverUids;
+        private String title;
+        private String content;
+        public List<String> getReceiverUids() { return receiverUids; }
+        public void setReceiverUids(List<String> receiverUids) { this.receiverUids = receiverUids; }
+        public String getTitle() { return title; }
+        public void setTitle(String title) { this.title = title; }
+        public String getContent() { return content; }
+        public void setContent(String content) { this.content = content; }
+    }
 }
 

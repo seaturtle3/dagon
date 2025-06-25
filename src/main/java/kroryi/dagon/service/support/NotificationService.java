@@ -215,4 +215,26 @@ public class NotificationService {
 
         notificationRepository.save(notification);
     }
+
+    public int sendBulkNotification(List<String> receiverUids, String title, String content) {
+        int count = 0;
+        for (String uid : receiverUids) {
+            User receiver = userRepository.findByUid(uid)
+                    .orElseThrow(() -> new RuntimeException("Receiver not found: " + uid));
+            
+            Notification notification = new Notification();
+            notification.setReceiver(receiver);
+            notification.setSender(null); // 관리자 시스템 발송이므로 null
+            notification.setSenderType(SenderType.ADMIN);
+            notification.setType("NOTICE");
+            notification.setTitle(title);
+            notification.setContent(content);
+            notification.setCreatedAt(LocalDateTime.now());
+            notification.setRead(false);
+            
+            notificationRepository.save(notification);
+            count++;
+        }
+        return count;
+    }
 }
