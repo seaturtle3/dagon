@@ -75,6 +75,15 @@ public class ProductDTO {
             }).toList();
             dto.setOptions(optionDTOs);
         }
+        dto.setUno(product.getPartner().getUno());
+        // fromEntity 수정
+        dto.setProdImageNames(
+                product.getImages().stream()
+                        .map(ProductImage::getFileName)
+                        .collect(Collectors.toList())
+        );
+
+        // LocalDateTime -> LocalDate 변환
         if (product.getCreatedAt() != null) {
             dto.setCreatedAt(product.getCreatedAt().toLocalDate());
         }

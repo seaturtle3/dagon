@@ -50,6 +50,24 @@ public class AdminService {
         apiAdminRepository.save(admin);
     }
 
+    /**
+     * SUPER_ADMIN 권한을 가진 관리자 생성
+     */
+    public void registerSuperAdmin(AdminDTO adminDTO) {
+        if (apiAdminRepository.existsByAid(adminDTO.getAid())) {
+            throw new IllegalArgumentException("이미 존재하는 관리자 ID입니다.");
+        }
+
+        Admin admin = new Admin();
+        admin.setAid(adminDTO.getAid());
+        admin.setApw(passwordEncoder.encode(adminDTO.getApw())); // 비밀번호 암호화
+        admin.setAname(adminDTO.getAname());
+        admin.setRole(kroryi.dagon.enums.AdminRole.SUPER_ADMIN); // SUPER_ADMIN 권한 설정
+
+        apiAdminRepository.save(admin);
+        log.info("SUPER_ADMIN 계정 생성 완료: {}", adminDTO.getAid());
+    }
+
     // 전체 회원 조회 (페이징)
     public Page<UsersDTO> getAllUsers(Pageable pageable, String search) {
         Page<User> userPage;

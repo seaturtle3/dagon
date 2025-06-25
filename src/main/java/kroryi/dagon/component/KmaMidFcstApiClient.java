@@ -1,5 +1,6 @@
 package kroryi.dagon.component;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -8,6 +9,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 @Component
 @Log4j2
+@RequiredArgsConstructor
 public class KmaMidFcstApiClient {
 
     @Value("${kma.midfcst.api.base-url}")
@@ -16,7 +18,7 @@ public class KmaMidFcstApiClient {
     @Value("${kma.midfcst.api.service-key}")
     private String serviceKey;
 
-    private final RestTemplate restTemplate = new RestTemplate();
+    private final RestTemplate restTemplate;
 
     /**
      * 중기예보(육상) API 호출

@@ -54,6 +54,24 @@ public class JwtUtil {
                 .compact();
     }
 
+    /**
+     * Admin용 JWT 토큰 생성
+     */
+    public String generateToken(kroryi.dagon.entity.Admin admin) {
+        Date now = new Date();
+        Date expiryDate = new Date(now.getTime() + expirationTime);
+
+        return Jwts.builder()
+                .setSubject(admin.getAid())
+                .claim("aid", admin.getAid())
+                .claim("aname", admin.getAname())
+                .claim("role", admin.getRole().name())
+                .setIssuedAt(now)
+                .setExpiration(expiryDate)
+                .signWith(secretKey, SignatureAlgorithm.HS256)
+                .compact();
+    }
+
     public String generateAdminToken(String aid, String aname, String role, Long uno) {
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + expirationTime);
