@@ -64,6 +64,22 @@ public class Reservation extends BaseTimeEntity {
     @Column(name = "payment_method", nullable = false)
     private PaymentsMethod paymentsMethod;
 
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "payment_id")
+    private PaymentsEntity payment;
 
-
+    public Reservation toEntity(User user, Product product, ProductOption option, PaymentsEntity payment) {
+        Reservation reservation = new Reservation();
+        reservation.setUser(user);
+        reservation.setProduct(product);
+        reservation.setProductOption(option);
+        reservation.setNumPerson(this.getNumPerson());
+        reservation.setFishingAt(this.getFishingAt());
+        reservation.setPaidAt(this.getPaidAt());
+        reservation.setCreatedAt(this.getCreatedAt());
+        reservation.setReservationStatus(this.getReservationStatus());
+        reservation.setPaymentsMethod(this.getPaymentsMethod());
+        reservation.setPayment(payment);
+        return reservation;
+    }
 }

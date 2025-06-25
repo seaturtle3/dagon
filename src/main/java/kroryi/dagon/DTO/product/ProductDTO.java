@@ -39,6 +39,7 @@ public class ProductDTO {
 
     private boolean deleted;
     private List<String> fishSpeciesNames;
+    private List<ProductOptionDTO> options;
 
     private List<String> prodImageNames; // 썸네일 여러 개
 
@@ -60,6 +61,20 @@ public class ProductDTO {
         dto.setProdEvent(product.getProdEvent());
         dto.setProdNotice(product.getProdNotice());
         dto.setDeleted(product.isDeleted());
+        if (product.getOptions() != null) {
+            List<ProductOptionDTO> optionDTOs = product.getOptions().stream().map(option -> {
+                ProductOptionDTO dtoOpt = new ProductOptionDTO();
+                dtoOpt.setOptId(option.getOptId());
+                dtoOpt.setOptName(option.getOptName());
+                dtoOpt.setOptTime(option.getOptTime());
+                dtoOpt.setOptDescription(option.getOptDescription());
+                dtoOpt.setPrice(option.getPrice());
+                dtoOpt.setProdId(product.getProdId());
+                dtoOpt.setProdName(product.getProdName());
+                return dtoOpt;
+            }).toList();
+            dto.setOptions(optionDTOs);
+        }
         dto.setUno(product.getPartner().getUno());
         // fromEntity 수정
         dto.setProdImageNames(
@@ -70,12 +85,27 @@ public class ProductDTO {
 
         // LocalDateTime -> LocalDate 변환
         if (product.getCreatedAt() != null) {
-            dto.setCreatedAt(product.getCreatedAt().toLocalDate());  // LocalDateTime에서 LocalDate만 추출
+            dto.setCreatedAt(product.getCreatedAt().toLocalDate());
         }
-
         dto.setProdThumbnail(product.getProdThumbnail());
-
         return dto;
+    }
+
+    public Product toEntity() {
+        Product product = new Product();
+        product.setProdName(this.getProdName());
+        product.setProdRegion(this.getProdRegion());
+        product.setMainType(this.getMainType());
+        product.setSubType(this.getSubType());
+        product.setMaxPerson(this.getMaxPerson());
+        product.setMinPerson(this.getMinPerson());
+        product.setWeight(this.getWeight());
+        product.setProdAddress(this.getProdAddress());
+        product.setProdDescription(this.getProdDescription());
+        product.setProdEvent(this.getProdEvent());
+        product.setProdNotice(this.getProdNotice());
+        product.setProdThumbnail(this.getProdThumbnail());
+        return product;
     }
 
 }

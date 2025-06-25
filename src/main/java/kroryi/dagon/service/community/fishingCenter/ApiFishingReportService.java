@@ -18,6 +18,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.util.StreamUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -67,15 +68,17 @@ public class ApiFishingReportService {
         if (images != null && !images.isEmpty()) {
             for (int i = 0; i < images.size(); i++) {
                 MultipartFile file = images.get(i);
-                String savedUrl = fileStorageUtil.saveImage(file, "fishing-report");
-
-                FishingReportImage image = new FishingReportImage();
-                image.setImageUrl(savedUrl);
-                image.setThumbnail(i == 0); // 첫 번째 이미지를 썸네일로
-                image.setOrderIndex(i);
-                image.setFishingReport(fishingReport);
-
-                fishingReportImageRepository.save(image);
+                try {
+                    FishingReportImage image = new FishingReportImage();
+                    image.setImageUrl(null); // URL 저장 안함
+                    image.setImageData(StreamUtils.copyToByteArray(file.getInputStream()));
+                    image.setThumbnail(i == 0); // 첫 번째 이미지를 썸네일로
+                    image.setOrderIndex(i);
+                    image.setFishingReport(fishingReport);
+                    fishingReportImageRepository.save(image);
+                } catch (Exception e) {
+                    throw new RuntimeException("이미지 저장 실패", e);
+                }
             }
         }
         return new ApiFishingReportDTO(fishingReport);

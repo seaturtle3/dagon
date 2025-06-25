@@ -11,7 +11,7 @@ DB_PASSWORD = 'edurootroot'  # 실제 비밀번호로 변경
 DB_NAME = 'dagon'
 
 # 이미지 폴더 경로
-IMAGE_DIR = 'images'
+IMAGE_DIR = 'downloaded_images'
 
 # 1. DB 연결
 conn = pymysql.connect(
@@ -20,7 +20,7 @@ conn = pymysql.connect(
 cur = conn.cursor()
 
 # 2. fishing_report의 fr_id, created_at 모두 가져오기
-cur.execute("SELECT fr_id, created_at FROM fishing_report ORDER BY fr_id")
+cur.execute("SELECT fr_id, created_at FROM fishing_report_test ORDER BY fr_id")
 reports = cur.fetchall()
 
 # 3. images 폴더의 이미지 파일 목록
@@ -49,7 +49,7 @@ for fr_id, created_at in reports:
         is_thumbnail = (order == 0)
         # INSERT
         cur.execute("""
-            INSERT INTO fishing_report_image (image_url, image_data, is_thumbnail, order_index, fr_id)
+            INSERT INTO fishing_report_image_test (image_url, image_data, is_thumbnail, order_index, fr_id)
             VALUES (%s, %s, %s, %s, %s)
         """, (image_url, img_blob, is_thumbnail, order, fr_id))
     img_idx += num_imgs
