@@ -59,8 +59,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 
                 Object principal;
                 
-                if ("ADMIN".equalsIgnoreCase(role)) {
-                    // 관리자일 경우 AdminUserDetails 사용
+                if ("ADMIN".equalsIgnoreCase(role) || "SUPER_ADMIN".equalsIgnoreCase(role)) {
+                    // 관리자일 경우 AdminUserDetails 사용 (ADMIN, SUPER_ADMIN 모두)
                     principal = new AdminUserDetails(subject, role);
                 } else {
                     // 일반 사용자일 경우 uno 필요
@@ -121,6 +121,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 (path.equals("/api/auth/login") && method.equals("POST")) ||
                 (path.equals("/api/users/register") && method.equals("POST")) ||
                 (path.equals("/api/admin/register") && method.equals("POST")) ||
+                (path.equals("/api/admin/register-super") && method.equals("POST")) ||
                 (path.equals("/api/admin/login") && method.equals("POST")) ||
                 (path.equals("/api/find-password") && method.equals("POST")) ||
                 (path.equals("/admin/registration") && method.equals("GET"))) {
