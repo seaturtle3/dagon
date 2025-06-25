@@ -47,7 +47,7 @@ public class ApiUserController {
                 User user = optionalUser.get();
                 log.info("조회된 사용자: {}", user);
                 
-                return ResponseEntity.ok(new UserInfoResponseDTO(user.getUno(), user.getDisplayName()));
+                return ResponseEntity.ok(new UserInfoResponseDTO(user.getUno(), user.getDisplayName(), user.getUid(), user.getEmail()));
             } else {
                 return new ResponseEntity<>("인증된 사용자 정보를 찾을 수 없습니다.", HttpStatus.UNAUTHORIZED);
             }
@@ -57,7 +57,7 @@ public class ApiUserController {
         }
     }
 
-    record UserInfoResponseDTO(Long uno, String displayName) {}
+    record UserInfoResponseDTO(Long uno, String displayName, String uid, String email) {}
 
     @GetMapping("/find-id")
     @Operation(summary = "아이디 조회", description = "이메일로 아이디 조회")
