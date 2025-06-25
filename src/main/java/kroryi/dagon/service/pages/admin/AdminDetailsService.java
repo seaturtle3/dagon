@@ -6,6 +6,7 @@ import kroryi.dagon.entity.*;
 import kroryi.dagon.enums.ApplicationStatus;
 import kroryi.dagon.enums.UserRole;
 import kroryi.dagon.repository.*;
+import kroryi.dagon.entity.product.Product;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.relational.core.sql.In;
@@ -234,9 +235,21 @@ public class AdminDetailsService implements UserDetailsService {
             activity.put("id", report.getId());
             activity.put("createdAt", report.getCreatedAt());
             activity.put("title", "새로운 신고가 접수되었습니다");
+            // report.getReported()가 User, Product 등 다양한 타입일 수 있으니 타입 체크 후 이름/타이틀 등으로 변환
+            Object reported = report.getReported();
+            String reportedStr;
+            if (reported instanceof User) {
+                reportedStr = ((User) reported).getUname();
+            } else if (reported instanceof Product) {
+                reportedStr = ((Product) reported).getProdName();
+            } else if (reported != null) {
+                reportedStr = reported.toString(); // 기타 타입은 toString()
+            } else {
+                reportedStr = "-";
+            }
             activity.put("details", String.format("%s님이 %s을(를) 신고했습니다",
-                report.getReporter().getUname(),
-                report.getReported()));
+                report.getReporter() != null ? report.getReporter().getUname() : "-",
+                reportedStr));
             activities.add(activity);
         }
 

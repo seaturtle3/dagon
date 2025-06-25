@@ -7,4 +7,5 @@ import java.util.List;
 
 public interface FishingReportCommentRepository extends JpaRepository<FishingReportComment, Long> {
     List<FishingReportComment> findByFishingReport_FrId(Long frId);
+    List<FishingReportComment> findByUserUno(Long uno);
 }

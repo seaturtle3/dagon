@@ -9,4 +9,6 @@ public interface FishingDiaryCommentRepository extends JpaRepository<FishingDiar
 
     // ✅ 정확한 필드명에 맞춰 수정
     List<FishingDiaryComment> findByFishingDiary_FdId(Long fdId);
+
+    List<FishingDiaryComment> findByUserUno(Long uno);
 }

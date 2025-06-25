@@ -6,6 +6,16 @@ import kroryi.dagon.entity.User;
 import kroryi.dagon.enums.UserLevel;
 import kroryi.dagon.repository.MyPageRepository;
 import kroryi.dagon.repository.UserRepository;
+import kroryi.dagon.repository.board.FishingReportRepository;
+import kroryi.dagon.repository.board.FishingDiaryRepository;
+import kroryi.dagon.repository.FreeBoardRepository;
+import kroryi.dagon.repository.FreeBoardCommentRepository;
+import kroryi.dagon.repository.FishingDiaryCommentRepository;
+import kroryi.dagon.repository.FishingReportCommentRepository;
+import kroryi.dagon.repository.InquiryRepository;
+import kroryi.dagon.repository.ReservationRepository;
+import kroryi.dagon.repository.NotificationRepository;
+import kroryi.dagon.repository.ReportRepository;
 import kroryi.dagon.service.image.FileStorageService;
 import kroryi.dagon.util.LevelUtil;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +36,16 @@ public class MyPageService {
     private final MyPageRepository myPageRepository;
     private final PasswordEncoder passwordEncoder;
     private final FileStorageService fileStorageService;
+    private final FishingReportRepository fishingReportRepository;
+    private final FishingDiaryRepository fishingDiaryRepository;
+    private final FreeBoardRepository freeBoardRepository;
+    private final FreeBoardCommentRepository freeBoardCommentRepository;
+    private final FishingDiaryCommentRepository fishingDiaryCommentRepository;
+    private final FishingReportCommentRepository fishingReportCommentRepository;
+    private final InquiryRepository inquiryRepository;
+    private final ReservationRepository reservationRepository;
+    private final NotificationRepository notificationRepository;
+    private final ReportRepository reportRepository;
 
     // 내 정보 조회
     public UsersDTO findUserInfo(Long uno) {
@@ -129,6 +149,18 @@ public Map<String, Object> getUserPointAndLevel(Long uno) {
 
     public String deleteUserAccount(Long uno) {
         try {
+            // 연관 데이터 직접 삭제 (find 후 deleteAll)
+            fishingReportRepository.deleteAll(fishingReportRepository.findByUser_Uno(uno));
+            fishingDiaryRepository.deleteAll(fishingDiaryRepository.findByUser_Uno(uno));
+            freeBoardRepository.deleteAll(freeBoardRepository.findByUser_Uno(uno));
+            freeBoardCommentRepository.deleteAll(freeBoardCommentRepository.findByUserUno(uno));
+            fishingDiaryCommentRepository.deleteAll(fishingDiaryCommentRepository.findByUserUno(uno));
+            fishingReportCommentRepository.deleteAll(fishingReportCommentRepository.findByUserUno(uno));
+            inquiryRepository.deleteAllByUser_Uno(uno);
+            reservationRepository.deleteAllByUserUno(uno);
+            notificationRepository.deleteAllByReceiver_Uno(uno);
+            reportRepository.deleteAllByReporter_UnoOrReported_Uno(uno, uno);
+
             userRepository.deleteById(uno);
             return "success";
         } catch (Exception e) {

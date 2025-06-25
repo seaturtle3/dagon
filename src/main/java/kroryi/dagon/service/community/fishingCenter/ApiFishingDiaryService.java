@@ -103,7 +103,7 @@ public class ApiFishingDiaryService {
         return new ApiFishingDiaryDTO(fishingDiary);
     }
 
-    // 특정 배 상품 ID 조행기 조회
+    // 특정 제품ID 조행기 조회
     public List<ApiFishingDiaryDTO> getAllByProductId(Long productId) {
         List<FishingDiary> diaries = fishingDiaryRepository.findByProduct_ProdId(productId);
 

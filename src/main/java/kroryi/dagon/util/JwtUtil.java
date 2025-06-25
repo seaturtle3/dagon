@@ -66,6 +66,7 @@ public class JwtUtil {
                 .claim("aid", admin.getAid())
                 .claim("aname", admin.getAname())
                 .claim("role", admin.getRole().name())
+                .claim("uno", admin.getUno())
                 .setIssuedAt(now)
                 .setExpiration(expiryDate)
                 .signWith(secretKey, SignatureAlgorithm.HS256)
