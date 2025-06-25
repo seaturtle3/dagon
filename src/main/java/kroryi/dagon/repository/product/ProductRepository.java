@@ -46,7 +46,7 @@ public interface ProductRepository extends JpaRepository<Product, Long>, JpaSpec
 
     Long countByPartner_UnoAndDeletedFalse(Long partnerId);
 
-    //  -------------- 프론트 추가(바다/민물 필터) api ----------------
+    //  -------------- 프론트 api (바다/민물 필터) ----------------
     Page<Product> findByMainTypeAndDeletedFalse(MainType mainType, Pageable pageable);
 
     //  -------------- 프론트 api 상단 필터 선택 시 제품 결과 ----------------

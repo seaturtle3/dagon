@@ -106,13 +106,13 @@ public class ApiProductController {
         productService.deleteProduct(id);
     }
 
-    //  -------------- 프론트 추가 api (바다/민물 필터) ----------------
+    //  -------------- 프론트 api (바다/민물 필터) ----------------
     @Operation(summary = "바다 상품 페이징 조회", description = "mainType이 '바다'인 상품 페이징 조회")
     @GetMapping("/get-all/sea")
     public Page<ProductDTO> getSeaProducts(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
-            @RequestParam(defaultValue = "prodId") String sortBy,
+            @RequestParam(defaultValue = "createdAt") String sortBy,
             @RequestParam(defaultValue = "desc") String direction
     ) {
         Sort sort = direction.equalsIgnoreCase("desc")
@@ -127,7 +127,7 @@ public class ApiProductController {
     public Page<ProductDTO> getFreshwaterProducts(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
-            @RequestParam(defaultValue = "prodId") String sortBy,
+            @RequestParam(defaultValue = "createdAt") String sortBy,
             @RequestParam(defaultValue = "desc") String direction
     ) {
         Sort sort = direction.equalsIgnoreCase("desc")
@@ -137,7 +137,7 @@ public class ApiProductController {
         return productService.getProductsByMainType(MainType.valueOf("FRESHWATER"), pageable);
     }
 
-    //  -------------- 프론트 추가 api 바다 낚시 상품들 ----------------
+    //  -------------- 프론트 api 바다 낚시 상품들 ----------------
     @GetMapping("/get-all/sea/filter")
     public List<ProductDTO> getSeaProductsByFilters(
             @RequestParam(required = false) String subType,
@@ -162,7 +162,7 @@ public class ApiProductController {
         return productService.getFishingCenterProductsByFilters(regionEnum, subTypeEnum, species);
     }
 
-    //  -------------- 프론트 추가 api 바다/민물 낚시 상단 필터 ----------------
+    //  -------------- 프론트 api 바다/민물 낚시 상단 필터 ----------------
     @GetMapping("/sea/filter")
     public Map<String, List<String>> getSeaFilterOptions() {
         List<String> regions = Arrays.stream(ProdRegion.values())
