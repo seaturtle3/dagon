@@ -142,24 +142,37 @@ public class ApiProductController {
     public List<ProductDTO> getSeaProductsByFilters(
             @RequestParam(required = false) String subType,
             @RequestParam(required = false) String region,
-            @RequestParam(required = false) String species) {
+            @RequestParam(required = false) String species,
+            @RequestParam(defaultValue = "createdAt") String sortBy,
+            @RequestParam(defaultValue = "desc") String direction) {
 
         SubType subTypeEnum = (subType == null || subType.isEmpty()) ? null : SubType.valueOf(subType);
         ProdRegion regionEnum = (region == null || region.isEmpty()) ? null : ProdRegion.valueOf(region);
 
-        return productService.getFishingCenterProductsByFilters(regionEnum, subTypeEnum, species);
+        Sort sort = direction.equalsIgnoreCase("desc")
+                ? Sort.by(sortBy).descending()
+                : Sort.by(sortBy).ascending();
+
+        return productService.getFishingCenterProductsByFilters(regionEnum, subTypeEnum, species, sort);
     }
 
     @GetMapping("/get-all/freshwater/filter")
     public List<ProductDTO> getFreshwaterProductsByFilters(
             @RequestParam(required = false) String subType,
             @RequestParam(required = false) String region,
-            @RequestParam(required = false) String species) {
+            @RequestParam(required = false) String species,
+            @RequestParam(defaultValue = "createdAt") String sortBy,
+            @RequestParam(defaultValue = "desc") String direction
+    ) {
 
         SubType subTypeEnum = (subType == null || subType.isEmpty()) ? null : SubType.valueOf(subType);
         ProdRegion regionEnum = (region == null || region.isEmpty()) ? null : ProdRegion.valueOf(region);
 
-        return productService.getFishingCenterProductsByFilters(regionEnum, subTypeEnum, species);
+        Sort sort = direction.equalsIgnoreCase("desc")
+                ? Sort.by(sortBy).descending()
+                : Sort.by(sortBy).ascending();
+
+        return productService.getFishingCenterProductsByFilters(regionEnum, subTypeEnum, species, sort);
     }
 
     //  -------------- 프론트 api 바다/민물 낚시 상단 필터 ----------------

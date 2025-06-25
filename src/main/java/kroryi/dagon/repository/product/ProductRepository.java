@@ -6,6 +6,7 @@ import kroryi.dagon.enums.ProdRegion;
 import kroryi.dagon.enums.SubType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
@@ -62,7 +63,8 @@ public interface ProductRepository extends JpaRepository<Product, Long>, JpaSpec
     List<Product> findSeaProductsByFilters(
             @Param("region") ProdRegion region,
             @Param("subType") SubType subType,
-            @Param("species") String species
+            @Param("species") String species,
+            Sort sort
     );
 
     // 프론트 SEA 상단 필터 제어
