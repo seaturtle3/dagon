@@ -34,6 +34,7 @@ public class ProductDTO {
     private String prodNotice;
     private LocalDate createdAt;
     private String prodThumbnail;
+    private Long uno;
     private Partner partner;
 
     private boolean deleted;
@@ -59,6 +60,7 @@ public class ProductDTO {
         dto.setProdEvent(product.getProdEvent());
         dto.setProdNotice(product.getProdNotice());
         dto.setDeleted(product.isDeleted());
+        dto.setUno(product.getPartner().getUno());
         // fromEntity 수정
         dto.setProdImageNames(
                 product.getImages().stream()

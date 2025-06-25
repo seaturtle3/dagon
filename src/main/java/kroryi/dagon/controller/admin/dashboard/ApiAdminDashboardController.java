@@ -21,6 +21,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/admin/")
 @RequiredArgsConstructor
+@PreAuthorize("hasRole('ADMIN')")
 @Tag(name = "Admin", description = "관리자 대시보드 통계 API")
 public class ApiAdminDashboardController {
 
