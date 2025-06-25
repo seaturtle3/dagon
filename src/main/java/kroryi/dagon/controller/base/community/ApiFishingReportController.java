@@ -36,6 +36,7 @@ import java.time.format.DateTimeFormatter;
 import net.coobird.thumbnailator.Thumbnails;
 import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;
+import java.util.Set;
 
 @RestController
 @RequiredArgsConstructor
@@ -49,6 +50,8 @@ public class ApiFishingReportController {
     private final PartnerFishingReportService partnerFishingReportService;
     private final UserService userService;
     private final ProductService productService;
+    private final TempImageService tempImageService;
+    private final FishingReportImageService fishingReportImageService;
 
     // 현재 인증된 사용자의 uno를 가져오는 헬퍼 메서드
     private Long getCurrentUserUno() {
@@ -82,20 +85,28 @@ public class ApiFishingReportController {
     @Operation(summary = "조황정보 생성")
     @PostMapping(value = "/create", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ApiFishingReportDTO createFishingReport(
-            @RequestPart("dto") ApiFishingReportDTO apiFishingReportDTO,
-            @RequestPart(value = "images", required = false) List<MultipartFile> images
+            @RequestPart("dto") ApiFishingReportDTO apiFishingReportDTO
     ) {
         Long userUno = getCurrentUserUno();
+        // 1. 조황정보 저장 (reportId 생성)
+        ApiFishingReportDTO savedReport = apiFishingReportService.createFishingReport(apiFishingReportDTO, userUno);
 
-        if (apiFishingReportDTO.getTitle() == null || apiFishingReportDTO.getContent() == null) {
-            throw new IllegalArgumentException("제목 또는 내용이 누락되었습니다.");
+        // 2. content에서 temp 이미지 id 추출
+        Set<Long> tempImageIds = extractTempImageIds(apiFishingReportDTO.getContent());
+
+        // 3. temp_image에서 이미지 가져와서 fishing_report_image에 저장
+        for (Long tempId : tempImageIds) {
+            TempImage temp = tempImageService.findById(tempId);
+            fishingReportImageService.save(temp.getData(), temp.getContentType(), savedReport.getReportId());
+            tempImageService.delete(tempId); // 임시 이미지 삭제
         }
 
-        // if (images == null || images.isEmpty()) {
-        //     throw new IllegalArgumentException("이미지는 최소 1장 필요합니다.");
-        // }
+        // 4. content의 <img src="/api/images/temp/{tempImageId}">를 <img src="/api/images/{imageId}">로 치환
+        String updatedContent = replaceTempSrcWithReal(apiFishingReportDTO.getContent(), tempImageIds, realImageIds);
+        savedReport.setContent(updatedContent);
+        apiFishingReportService.updateContent(savedReport.getReportId(), updatedContent);
 
-        return apiFishingReportService.createFishingReport(apiFishingReportDTO, userUno, images);
+        return savedReport;
     }
 
     @Operation(summary = "조황정보 전체 조회 (페이징)")
@@ -223,5 +234,21 @@ public class ApiFishingReportController {
         } catch (IOException e) {
             throw new RuntimeException("이미지 저장/썸네일 생성 실패", e);
         }
+    }
+
+    @PostMapping("/images/temp-upload")
+    public ResponseEntity<Long> tempUploadImage(@RequestParam("image") MultipartFile file) {
+        // 1. MultipartFile -> byte[]
+        byte[] data = file.getBytes();
+        String contentType = file.getContentType();
+        // 2. temp_image 테이블에 저장 (id 자동생성)
+        Long tempImageId = tempImageService.save(data, contentType);
+        // 3. tempImageId 반환
+        return ResponseEntity.ok(tempImageId);
+    }
+
+    @GetMapping("/images/{id}")
+    public ResponseEntity<byte[]> getImage(@PathVariable Long id) {
+        // fishing_report_image에서 image_data, contentType 조회 후 반환
     }
 }
