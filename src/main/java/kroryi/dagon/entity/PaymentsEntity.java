@@ -26,4 +26,7 @@ public class PaymentsEntity {
     private String status;
     private String payMethod;
     private LocalDateTime paidAt;
+
+    @OneToOne(mappedBy = "payment")
+    private Reservation reservation;
 }

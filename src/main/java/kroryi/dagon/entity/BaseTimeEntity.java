@@ -4,11 +4,13 @@ import jakarta.persistence.Column;
 import jakarta.persistence.MappedSuperclass;
 import jakarta.persistence.PrePersist;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Getter
+@Setter
 @MappedSuperclass
 public abstract class BaseTimeEntity {
     // createdAt 컬럼에서 @ColumnDefault("CURRENT_TIMESTAMP")가 JPA에서 동작하지 않을 수도 있어서
