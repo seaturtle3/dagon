@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -38,24 +39,21 @@ public class ApiFishingDiaryService {
     // 이미지 저장
     public void saveImages(FishingDiary fishingDiary, List<MultipartFile> images) {
         List<FishingDiaryImage> imageEntities = new ArrayList<>();
-
         for (int i = 0; i < images.size(); i++) {
             MultipartFile image = images.get(i);
-
-            // 이미지 저장 → URL 리턴
-            String imageUrl = fileStorageUtil.saveImage(image, "fishing-diary");
-
-            // DB용 이미지 엔티티 생성
-            FishingDiaryImage diaryImage = new FishingDiaryImage();
-            diaryImage.setImageUrl(imageUrl);
-            diaryImage.setFishingDiary(fishingDiary); // 연관관계 주입
-            diaryImage.setThumbnail(i == 0); // 첫 번째 이미지를 썸네일로 지정
-
-            imageEntities.add(diaryImage);
+            try {
+                byte[] imageData = image.getBytes();
+                FishingDiaryImage diaryImage = new FishingDiaryImage();
+                diaryImage.setFishingDiary(fishingDiary);
+                diaryImage.setImageData(imageData);
+                diaryImage.setOrderIndex(i);
+                imageEntities.add(diaryImage);
+            } catch (IOException e) {
+                throw new RuntimeException("이미지 저장 실패", e);
+            }
         }
-
         fishingDiaryImageRepository.saveAll(imageEntities);
-        fishingDiary.setImages(imageEntities); // 양방향 매핑일 경우
+        fishingDiary.setImages(imageEntities);
     }
 
     @Transactional

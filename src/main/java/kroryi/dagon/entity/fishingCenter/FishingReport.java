@@ -32,9 +32,6 @@ public class FishingReport extends BaseTimeEntity {
     @Column(name = "content", nullable = false, columnDefinition = "TEXT")
     private String content;
 
-    @Column(length = 512)
-    private String thumbnailUrl;
-
     @Column(name = "fishing_at", nullable = false)
     private LocalDateTime fishingAt;
 

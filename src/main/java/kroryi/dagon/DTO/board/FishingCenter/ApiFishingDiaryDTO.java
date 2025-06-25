@@ -59,12 +59,6 @@ public class ApiFishingDiaryDTO {
                     .map(ApiFishingDiaryImageDTO::new)
                     .collect(Collectors.toList());
 
-            // 대표 썸네일 추출
-            this.thumbnailUrl = fishingDiary.getImages().stream()
-                    .filter(FishingDiaryImage::isThumbnail)
-                    .map(FishingDiaryImage::getImageUrl)
-                    .findFirst()
-                    .orElse(null);
         }
     }
 

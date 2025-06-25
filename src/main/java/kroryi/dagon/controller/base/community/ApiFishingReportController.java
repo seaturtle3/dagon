@@ -1,4 +1,4 @@
-package kroryi.dagon.controller.partner.community;
+package kroryi.dagon.controller.base.community;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -7,11 +7,15 @@ import kroryi.dagon.DTO.board.FishingCenter.FishingReportCreateDTO;
 import kroryi.dagon.DTO.board.FishingCenter.FishingReportDTO;
 import kroryi.dagon.DTO.board.PartnerFishingReportDTO;
 import kroryi.dagon.entity.fishingCenter.FishingReport;
+import kroryi.dagon.entity.fishingCenter.FishingReportImage;
+import kroryi.dagon.entity.fishingCenter.TempImage;
 import kroryi.dagon.entity.product.Product;
 import kroryi.dagon.entity.User;
 import kroryi.dagon.service.PartnerFishingReportService;
 import kroryi.dagon.service.auth.UserService;
 import kroryi.dagon.service.community.fishingCenter.ApiFishingReportService;
+import kroryi.dagon.service.community.fishingCenter.FishingReportImageService;
+import kroryi.dagon.service.community.fishingCenter.TempImageService;
 import kroryi.dagon.service.product.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -28,15 +32,17 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.nio.file.*;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import net.coobird.thumbnailator.Thumbnails;
 import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;
-import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+
 
 @RestController
 @RequiredArgsConstructor
@@ -89,22 +95,23 @@ public class ApiFishingReportController {
     ) {
         Long userUno = getCurrentUserUno();
         // 1. 조황정보 저장 (reportId 생성)
-        ApiFishingReportDTO savedReport = apiFishingReportService.createFishingReport(apiFishingReportDTO, userUno);
+        ApiFishingReportDTO savedReport = apiFishingReportService.createFishingReport(apiFishingReportDTO, userUno, null);
 
         // 2. content에서 temp 이미지 id 추출
         Set<Long> tempImageIds = extractTempImageIds(apiFishingReportDTO.getContent());
+        List<Long> realImageIds = new ArrayList<>();
 
         // 3. temp_image에서 이미지 가져와서 fishing_report_image에 저장
         for (Long tempId : tempImageIds) {
             TempImage temp = tempImageService.findById(tempId);
-            fishingReportImageService.save(temp.getData(), temp.getContentType(), savedReport.getReportId());
+            fishingReportImageService.save(temp.getData(), temp.getContentType(), savedReport.getFrId());
             tempImageService.delete(tempId); // 임시 이미지 삭제
         }
 
         // 4. content의 <img src="/api/images/temp/{tempImageId}">를 <img src="/api/images/{imageId}">로 치환
         String updatedContent = replaceTempSrcWithReal(apiFishingReportDTO.getContent(), tempImageIds, realImageIds);
         savedReport.setContent(updatedContent);
-        apiFishingReportService.updateContent(savedReport.getReportId(), updatedContent);
+        apiFishingReportService.updateContent(savedReport.getFrId(), updatedContent);
 
         return savedReport;
     }
@@ -237,7 +244,7 @@ public class ApiFishingReportController {
     }
 
     @PostMapping("/images/temp-upload")
-    public ResponseEntity<Long> tempUploadImage(@RequestParam("image") MultipartFile file) {
+    public ResponseEntity<Long> tempUploadImage(@RequestParam("image") MultipartFile file) throws IOException {
         // 1. MultipartFile -> byte[]
         byte[] data = file.getBytes();
         String contentType = file.getContentType();
@@ -249,6 +256,46 @@ public class ApiFishingReportController {
 
     @GetMapping("/images/{id}")
     public ResponseEntity<byte[]> getImage(@PathVariable Long id) {
-        // fishing_report_image에서 image_data, contentType 조회 후 반환
+        FishingReportImage image = fishingReportImageService
+            .getFishingReportImageById(id);
+        if (image == null || image.getImageData() == null) {
+            return ResponseEntity.notFound().build();
+        }
+        // FishingReportImage 엔티티에 contentType 필드가 없으므로 기본값 사용
+        return ResponseEntity.ok()
+                .header("Content-Type", "image/jpeg")
+                .body(image.getImageData());
+    }
+
+
+
+    public Set<Long> extractTempImageIds(String html) {
+        if (html == null || html.isBlank()) return Set.of();
+
+        Pattern pattern = Pattern.compile("<img[^>]*src=[\"']/api/images/temp/(\\d+)[\"']");
+        Matcher matcher = pattern.matcher(html);
+
+        return matcher.results()
+                .map(m -> Long.parseLong(m.group(1)))
+                .collect(Collectors.toSet());
+    }
+
+    public String replaceTempSrcWithReal(String html, Set<Long> tempImageIds, List<Long> realImageIds) {
+        if (html == null || html.isBlank() || tempImageIds.isEmpty() || realImageIds.isEmpty()) return html;
+
+        String result = html;
+        Iterator<Long> tempIter = tempImageIds.iterator();
+        Iterator<Long> realIter = realImageIds.iterator();
+
+        while (tempIter.hasNext() && realIter.hasNext()) {
+            Long tempId = tempIter.next();
+            Long realId = realIter.next();
+            // 정규식으로 정확히 해당 tempId만 치환
+            result = result.replaceAll(
+                "/api/images/temp/" + tempId,
+                "/api/images/" + realId
+            );
+        }
+        return result;
     }
 }

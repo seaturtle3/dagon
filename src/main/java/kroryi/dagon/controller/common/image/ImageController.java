@@ -9,6 +9,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -23,6 +24,9 @@ import java.time.format.DateTimeFormatter;
 import java.util.Map;
 import java.util.UUID;
 
+import kroryi.dagon.service.image.ImageService;
+import kroryi.dagon.controller.common.image.ImageResponseDTO;
+
 @Tag(name = "Image", description = "이미지 업로드 및 조회 API")
 @RestController
 @Log4j2
@@ -32,52 +36,43 @@ public class ImageController {
     @Value("${app.board.file.upload-dir}")
     private String baseUploadDir;
 
+    private final ImageService imageService;
+
+    public ImageController(ImageService imageService) {
+        this.imageService = imageService;
+    }
+
     @Operation(summary = "이미지 업로드", description = "이미지 업로드 API")
     @PostMapping(value = "/upload", consumes = "multipart/form-data")
     public ResponseEntity<String> uploadImage(@Parameter(description = "업로드할 이미지 파일", required = true)
-                                              @RequestPart("image") MultipartFile file) throws IOException {
+                                              @RequestPart("image") MultipartFile file,
+                                              @RequestParam("reportId") Long reportId) throws IOException {
 
         if (file.isEmpty()) {
             return ResponseEntity.badRequest().body("빈파일");
         }
 
-        String dateFolder = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd"));
-        Path uploadPath = Paths.get(baseUploadDir).resolve(dateFolder);
-
         try {
-            Files.createDirectories(uploadPath);
-
-            String ext = file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf(".") + 1);
-            String storedFileName = UUID.randomUUID() + "." + ext;
-            Path targetPath = uploadPath.resolve(storedFileName);
-            Files.copy(file.getInputStream(), targetPath, StandardCopyOption.REPLACE_EXISTING);
-
-            String url = dateFolder + "/" + storedFileName;
-            return ResponseEntity.ok(url);
+            byte[] data = file.getBytes();
+            String originalFilename = file.getOriginalFilename();
+            String contentType = file.getContentType();
+            // DB에 저장, id 반환
+            Long imageId = imageService.saveToDatabase(data, originalFilename, contentType, reportId);
+            return ResponseEntity.ok(imageId.toString());
         } catch (IOException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("저장 실패");
-
         }
-
     }
 
-    @Operation(summary = "이미지 조회", description = "저장된 이미지 파일을 URL 경로를 통해 조회\n" +
-            "예: /images/2025/04/21/uuid-filename.png 형식의 경로로 접근")
-    @GetMapping("/images/{year}/{month}/{day}/{filename:.+}")
-    public ResponseEntity<Resource> serveImage(@PathVariable String year,
-                                               @PathVariable String month,
-                                               @PathVariable String day,
-                                               @PathVariable String filename) throws IOException {
-        Path path = Paths.get(baseUploadDir, year, month, day, filename);
-        log.info("pat--->: {}", path);
-        Resource resource = new UrlResource(path.toUri());
-        if (resource.exists() && resource.isReadable()) {
-            return ResponseEntity.ok()
-                    .header(HttpHeaders.CONTENT_TYPE, Files.probeContentType(path))
-                    .body(resource);
-        } else {
+    @GetMapping("/{id}")
+    public ResponseEntity<byte[]> getImage(@PathVariable Long id) {
+        ImageResponseDTO imageData = imageService.loadFromDatabase(id); // ImageResponseDTO: byte[], contentType 포함 객체
+        if (imageData == null || imageData.getData() == null) {
             return ResponseEntity.notFound().build();
         }
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.parseMediaType(imageData.getContentType()));
+        return new ResponseEntity<>(imageData.getData(), headers, HttpStatus.OK);
     }
 
 }

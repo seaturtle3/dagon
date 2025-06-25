@@ -34,26 +34,6 @@ public class ImageCleanupService {
     public void cleanUnusedImages() throws IOException {
         log.info("이미지 정리 시작");
 
-        Set<String> usedPaths = contentProviders.stream()
-                .flatMap(provider -> provider.getAllContents().stream())
-                .flatMap(content -> extractImagePaths(content).stream())
-                .collect(Collectors.toSet());
-
-        try (Stream<Path> files = Files.walk(Paths.get(baseDir))) {
-            files.filter(Files::isRegularFile).forEach(file -> {
-                String filePath = file.toString().replace("\\", "/");
-                String imageUrl = filePath.replace(baseDir.replace("\\", "/"), "/images");
-
-                if (!usedPaths.contains(imageUrl)) {
-                    try {
-                        Files.delete(file);
-                        log.info("삭제됨: {}", imageUrl);
-                    } catch (IOException e) {
-                        log.warn("삭제 실패: {}", imageUrl, e);
-                    }
-                }
-            });
-        }
 
         log.info("이미지 정리 완료");
     }

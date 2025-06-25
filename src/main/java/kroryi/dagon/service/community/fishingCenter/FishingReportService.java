@@ -35,7 +35,6 @@ public class FishingReportService {
         FishingReport fishingReport = new FishingReport();
         fishingReport.setTitle(fishingReportDTO.getTitle());
         fishingReport.setContent(fishingReportDTO.getContent());
-        fishingReport.setThumbnailUrl(fishingReportDTO.getThumbnailUrl());
         fishingReport.setFishingAt(fishingReportDTO.getFishingAt());
         fishingReport.setModifyAt(fishingReportDTO.getModifyAt());
         fishingReport.setViews(fishingReportDTO.getViews());
@@ -73,7 +72,6 @@ public class FishingReportService {
 
         existing.setTitle(fishingReportDTO.getTitle());
         existing.setContent(fishingReportDTO.getContent());
-        existing.setThumbnailUrl(fishingReportDTO.getThumbnailUrl());
         existing.setFishingAt(fishingReportDTO.getFishingAt());
 
         fishingReportRepository.save(existing);
@@ -100,7 +98,6 @@ public class FishingReportService {
         dto.setProdName(report.getProduct().getProdName());
         dto.setUserName(report.getUser().getUname());
         dto.setFishingAt(report.getFishingAt());
-        dto.setThumbnailUrl(report.getThumbnailUrl());
         return dto;
     }
 

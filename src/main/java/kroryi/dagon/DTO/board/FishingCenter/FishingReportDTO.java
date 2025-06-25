@@ -39,7 +39,6 @@ public class FishingReportDTO {
         this.frId = fishingReport.getFrId();
         this.title = fishingReport.getTitle();
         this.content = fishingReport.getContent();
-        this.thumbnailUrl = fishingReport.getThumbnailUrl();
         this.fishingAt = fishingReport.getFishingAt();
         this.modifyAt = fishingReport.getModifyAt();
         this.views = fishingReport.getViews();

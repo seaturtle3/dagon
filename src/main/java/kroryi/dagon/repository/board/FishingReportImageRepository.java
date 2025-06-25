@@ -10,7 +10,4 @@ public interface FishingReportImageRepository extends JpaRepository<FishingRepor
     // 특정 조황 ID로 이미지 조회
     List<FishingReportImage> findByFishingReport_FrId(Long frId);
 
-    // 특정 조황 ID에서 썸네일 이미지 조회
-    FishingReportImage findFirstByFishingReport_FrIdAndIsThumbnailTrue(Long frId);
-
 }

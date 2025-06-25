@@ -9,7 +9,6 @@ import kroryi.dagon.entity.Event;
 import kroryi.dagon.enums.EventStatus;
 import kroryi.dagon.repository.AdminRepository;
 import kroryi.dagon.repository.board.EventRepository;
-import kroryi.dagon.util.ImageFileUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -26,7 +25,6 @@ public class EventService {
 
     private final EventRepository eventRepository;
     private final AdminRepository adminRepository;
-    private final ImageFileUtil imageFileUtil;
 
     public Page<Event> findAllPaged(Pageable pageable) {
         return eventRepository.findAllByOrderByIsTopDescCreatedAtDesc(pageable);
@@ -47,7 +45,6 @@ public class EventService {
         Event event = new Event();
         event.setTitle(dto.getTitle());
         event.setContent(dto.getContent());
-        event.setThumbnailUrl(dto.getThumbnailUrl());
         event.setStartAt(dto.getStartAt());
         event.setEndAt(dto.getEndAt());
         event.setIsTop(dto.getIsTop() != null && dto.getIsTop());
@@ -63,7 +60,6 @@ public class EventService {
 
         event.setTitle(dto.getTitle());
         event.setContent(dto.getContent());
-        event.setThumbnailUrl(dto.getThumbnailUrl());
         event.setStartAt(dto.getStartAt());
         event.setEndAt(dto.getEndAt());
         event.setIsTop(dto.getIsTop() != null && dto.getIsTop());
@@ -78,18 +74,7 @@ public class EventService {
         Event event = eventRepository.findById(id).orElseThrow();
         Admin admin = adminRepository.findById(aid).orElseThrow();
 
-        Set<String> imagesToCheck = imageFileUtil.extractImagePaths(event.getContent());
         eventRepository.delete(event);
-
-        List<String> otherUsedImages = eventRepository.findAll().stream()
-                .flatMap(e -> imageFileUtil.extractImagePaths(e.getContent()).stream())
-                .toList();
-
-        for (String img : imagesToCheck) {
-            if (!otherUsedImages.contains(img)) {
-                imageFileUtil.deleteImageFromDisk(img);
-            }
-        }
     }
 
     @Transactional

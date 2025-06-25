@@ -8,7 +8,6 @@ import kroryi.dagon.entity.Notice;
 import kroryi.dagon.repository.AdminRepository;
 import kroryi.dagon.repository.board.NoticeRepository;
 
-import kroryi.dagon.util.ImageFileUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
@@ -25,7 +24,6 @@ public class NoticeService {
 
     private final NoticeRepository noticeRepository;
     private final AdminRepository adminRepository;
-    private final ImageFileUtil imageFileUtil;
 
     public Page<Notice> findAllPaged(Pageable pageable) {
         return noticeRepository.findAllByOrderByIsTopDescCreatedAtDesc(pageable);
@@ -74,18 +72,9 @@ public class NoticeService {
 
         log.info("관리자 {} 가 공지사항 {} 삭제함", admin.getAname(), id);
 
-        Set<String> imagesToCheck = imageFileUtil.extractImagePaths(notice.getContent());
         noticeRepository.delete(notice);
 
-        List<String> otherUsedImages = noticeRepository.findAll().stream()
-                .flatMap(n -> imageFileUtil.extractImagePaths(n.getContent()).stream())
-                .toList();
 
-        for (String img : imagesToCheck) {
-            if (!otherUsedImages.contains(img)) {
-                imageFileUtil.deleteImageFromDisk(img);
-            }
-        }
     }
 
     @Transactional

@@ -51,15 +51,6 @@ public class ApiPartnerApplicationController {
 
             dto.setUno(uno);
             dto.setUname(uname);
-
-            String uploadDir = "C:/Users/edu002/IdeaProjects/dagon/uploads";
-            String filename = UUID.randomUUID() + "_" + businessLicenseImage.getOriginalFilename();
-            Path filePath = Paths.get(uploadDir, filename);
-            Files.createDirectories(filePath.getParent());
-            businessLicenseImage.transferTo(filePath.toFile());
-
-            dto.setBusinessLicenseImage(filePath.toString());
-
             partnerApplicationService.register(dto);
 
             return ResponseEntity.ok("파트너 신청이 완료되었습니다.");

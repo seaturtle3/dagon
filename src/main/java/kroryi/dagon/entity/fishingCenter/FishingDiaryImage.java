@@ -3,6 +3,7 @@ package kroryi.dagon.entity.fishingCenter;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import kroryi.dagon.entity.fishingCenter.FishingDiary;
 
 @Entity
 @Table(name = "fishing_diary_image")
@@ -14,11 +15,10 @@ public class FishingDiaryImage {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, length = 512)
-    private String imageUrl;
+    @Lob
+    @Column(name = "image_data", columnDefinition = "LONGBLOB")
+    private byte[] imageData;
 
-    @Column(name = "is_thumbnail", nullable = false)
-    private boolean isThumbnail = false; // true: 대표사진
 
     @Column(name = "order_index")
     private Integer orderIndex; // 사진 정렬 순서
@@ -26,5 +26,6 @@ public class FishingDiaryImage {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "fd_id", nullable = false)
     private FishingDiary fishingDiary;
+
 }
 

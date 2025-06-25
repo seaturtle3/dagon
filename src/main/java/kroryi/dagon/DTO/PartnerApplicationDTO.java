@@ -24,10 +24,6 @@ public class PartnerApplicationDTO {
     private LocalDateTime paReviewedAt;
     private LocalDateTime createdAt;
     private String paRejectionReason;
-    private String businessLicenseImage;
     private String uname;  // 신청자 이름
     private String displayName;
-
-
-
 }

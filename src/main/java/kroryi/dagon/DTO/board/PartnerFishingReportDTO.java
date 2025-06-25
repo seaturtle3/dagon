@@ -20,7 +20,6 @@ public class PartnerFishingReportDTO {
         this.frId = report.getFrId();
         this.title = report.getTitle();
         this.content = report.getContent();
-        this.thumbnailUrl = report.getThumbnailUrl();
         this.fishingAt = report.getFishingAt();
         if (report.getProduct() != null) {
             this.prodName = report.getProduct().getProdName();

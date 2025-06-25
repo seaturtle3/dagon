@@ -70,9 +70,8 @@ public class ApiFishingReportService {
                 MultipartFile file = images.get(i);
                 try {
                     FishingReportImage image = new FishingReportImage();
-                    image.setImageUrl(null); // URL 저장 안함
                     image.setImageData(StreamUtils.copyToByteArray(file.getInputStream()));
-                    image.setThumbnail(i == 0); // 첫 번째 이미지를 썸네일로
+                    image.setOrderIndex(i);
                     image.setOrderIndex(i);
                     image.setFishingReport(fishingReport);
                     fishingReportImageRepository.save(image);
@@ -146,5 +145,13 @@ public class ApiFishingReportService {
         FishingReport fishingReport = fishingReportRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("조황정보 없음"));
         fishingReportRepository.delete(fishingReport);
+    }
+
+    @Transactional
+    public void updateContent(Long frId, String content) {
+        FishingReport fishingReport = fishingReportRepository.findById(frId)
+                .orElseThrow(() -> new RuntimeException("조황정보 없음"));
+        fishingReport.setContent(content);
+        fishingReportRepository.save(fishingReport);
     }
 }

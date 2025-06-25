@@ -58,13 +58,6 @@ public class PartnerFishingReportService {
         report.setContent(dto.getContent());
         report.setFishingAt(dto.getFishingAt());
 
-        if (thumbnailFile != null && !thumbnailFile.isEmpty()) {
-            String savedPath = fileStorageService.store(thumbnailFile);
-            report.setThumbnailUrl(savedPath);
-        } else if (dto.getThumbnailUrl() != null && !dto.getThumbnailUrl().isBlank()) {
-            // 클라이언트가 기존 URL을 명시적으로 보낸 경우
-            report.setThumbnailUrl(dto.getThumbnailUrl());
-        }
 
         report.setModifyAt(LocalDateTime.now());
 
@@ -126,9 +119,7 @@ public class PartnerFishingReportService {
                 try {
                     FishingReportImage image = new FishingReportImage();
                     image.setFishingReport(savedReport);
-                    image.setThumbnail(i == 0); // 첫 번째 이미지를 썸네일로
                     image.setOrderIndex(i);
-                    image.setImageUrl(null); // URL 저장 안함(원하면 fileStorageService로 저장 후 경로 넣기)
                     image.setImageData(StreamUtils.copyToByteArray(file.getInputStream()));
                     imageEntities.add(image);
                 } catch (Exception e) {

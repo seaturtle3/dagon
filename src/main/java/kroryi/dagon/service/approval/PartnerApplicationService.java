@@ -41,7 +41,6 @@ private final UserRepository userRepository;
         entity.setPAddress(dto.getPaddress());
         entity.setPInfo(dto.getPinfo());
         entity.setLicense(dto.getLicense());
-        entity.setBusinessLicenseImage(dto.getBusinessLicenseImage());
         entity.setPStatus(ApplicationStatus.PENDING); // 기본 상태
         entity.setUser(user);
 
@@ -63,7 +62,6 @@ private final UserRepository userRepository;
                         entity.getPReviewedAt(),
                         entity.getCreatedAt(),
                         entity.getPRejectionReason(),
-                        entity.getBusinessLicenseImage(),
                         entity.getUser().getUname(),
                         entity.getUser().getDisplayName()
                 ));
@@ -102,7 +100,6 @@ private final UserRepository userRepository;
                         entity.getPReviewedAt(),
                         entity.getCreatedAt(),
                         entity.getPRejectionReason(),
-                        entity.getBusinessLicenseImage(),
                         entity.getUser().getUname(),
                         entity.getUser().getDisplayName()
                 ));
@@ -114,9 +111,6 @@ private final UserRepository userRepository;
                 .orElseThrow(() -> new EntityNotFoundException("신청서가 존재하지 않습니다."));
 
         // 이미지 경로 변환
-        String localPath = entity.getBusinessLicenseImage();
-        String fileName = localPath != null ? Paths.get(localPath).getFileName().toString() : null;
-        String imageUrl = fileName != null ? "http://localhost:8095/uploads/" + fileName : null;
 
         return new PartnerApplicationDTO(
                 entity.getPid(),
@@ -131,7 +125,6 @@ private final UserRepository userRepository;
                 entity.getPReviewedAt(),
                 entity.getCreatedAt(),
                 entity.getPRejectionReason(),
-                imageUrl, // ✅ 이미지 URL로 반환
                 entity.getUser().getUname(),
                 entity.getUser().getDisplayName()
         );
