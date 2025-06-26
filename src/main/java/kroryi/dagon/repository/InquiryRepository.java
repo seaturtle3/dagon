@@ -36,4 +36,6 @@ public interface InquiryRepository extends JpaRepository<Inquiry, Long> {
 
 
     List<Inquiry> findTop10ByOrderByCreatedAtDesc();
+
+    void deleteAllByUser_Uno(Long userUno);
 }

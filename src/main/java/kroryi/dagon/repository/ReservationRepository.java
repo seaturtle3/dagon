@@ -39,4 +39,8 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
     List<Reservation> findByCreatedAtAfterOrderByCreatedAtDesc(LocalDateTime date);
 
     List<Reservation> findTop5ByOrderByCreatedAtDesc();
-} 
+
+    void deleteAllByUserUno(Long userUno);
+
+    Iterable<? extends Reservation> findByProduct_Partner_Uno(Long partnerId);
+}

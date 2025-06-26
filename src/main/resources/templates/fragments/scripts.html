@@ -1,11 +1,17 @@
 <th:block th:fragment="user_info_scripts">
 
     <script>
+        // axios 기본 설정 (UTF-8 인코딩 명시)
+        if (typeof axios !== 'undefined') {
+            axios.defaults.headers.common['Content-Type'] = 'application/json; charset=UTF-8';
+            axios.defaults.headers.common['Accept'] = 'application/json; charset=UTF-8';
+        }
+
         // 백엔드 API 엔드포인트 URL (사용자 정보를 반환하는 API)
-        const API_ENDPOINT = '/api/users/me'; // 실제 API 엔드포인트로 변경해야 합니다.
+        const API_ENDPOINT = '/api/users/me';
 
         // localStorage에 저장된 JWT 토큰의 키
-        const TOKEN_KEY = 'authToken'; // 실제 토큰 키로 변경해야 합니다.
+        const TOKEN_KEY = 'authToken';
 
         async function fetchUserInfo() {
             try {
@@ -21,33 +27,50 @@
                 const config = {
                     headers: {
                         Authorization: `Bearer ${token}`,
+                        'Content-Type': 'application/json; charset=UTF-8',
+                        'Accept': 'application/json; charset=UTF-8'
                     },
                 };
 
                 const response = await axios.get(API_ENDPOINT, config);
                 const userInfo = response.data;
-                console.log(userInfo)
+                console.log('사용자 정보:', userInfo);
 
-                if (userInfo && userInfo.uno && userInfo.displayName) {
-                    document.getElementById('userNo').innerText = `유저 번호: ${userInfo.uno}`;
-                    document.getElementById('displayName').innerText = `닉네임: ${userInfo.displayName}`;
+                if (userInfo) {
+                    // 유저 번호 표시
+                    if (userInfo.uno) {
+                        document.getElementById('userNo').innerText = `유저 번호: ${userInfo.uno}`;
+                    } else if (userInfo.aid) {
+                        document.getElementById('userNo').innerText = `관리자 ID: ${userInfo.aid}`;
+                    }
+
+                    // 사용자 이름 표시 (역할에 따라)
+                    let displayName = "";
+                    if (userInfo.role === "ADMIN" || userInfo.role === "SUPER_ADMIN") {
+                        displayName = userInfo.aname || "관리자";
+                    } else if (userInfo.role === "PARTNER") {
+                        displayName = userInfo.displayName || userInfo.uname || "파트너";
+                    } else {
+                        displayName = userInfo.displayName || userInfo.uname || "사용자";
+                    }
+                    
+                    document.getElementById('displayName').innerText = `닉네임: ${displayName}`;
                 } else {
                     console.error('유저 정보 응답 형식이 잘못되었습니다.');
-                    // document.getElementById('userNo').innerText = '유저 번호: 정보 없음';
-                    // document.getElementById('displayName').innerText = '닉네임: 정보 없음';
                 }
 
             } catch (error) {
                 console.error('사용자 정보 가져오기 실패:', error);
                 document.getElementById('userNo').innerText = '유저 번호: 오류 발생';
                 document.getElementById('displayName').innerText = '닉네임: 오류 발생';
-                // 필요에 따라 로그인 페이지로 리다이렉트
-                // window.location.href = '/login';
             }
         }
 
         // 페이지 로드 시 사용자 정보 가져오기
-        document.addEventListener('DOMContentLoaded', fetchUserInfo);
+        document.addEventListener('DOMContentLoaded', () => {
+            // 약간의 지연을 두어 DOM이 완전히 로드된 후 실행
+            setTimeout(fetchUserInfo, 100);
+        });
 
     </script>
 

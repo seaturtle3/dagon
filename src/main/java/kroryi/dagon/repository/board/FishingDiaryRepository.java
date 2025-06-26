@@ -24,4 +24,6 @@ public interface FishingDiaryRepository extends JpaRepository<FishingDiary, Long
 
     List<FishingDiary> findByProduct_ProdIdIn(List<Long> productIds);
 
+    List<FishingDiary> findByProduct_Partner_Uno(Long partnerId);
+
 }

@@ -9,4 +9,5 @@ import java.util.List;
 @Repository
 public interface FreeBoardCommentRepository extends JpaRepository<FreeBoardComment, Long> {
     List<FreeBoardComment> findByFreeBoard_FbId(Long fbId);
+    List<FreeBoardComment> findByUserUno(Long uno);
 }
