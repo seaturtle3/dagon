@@ -179,6 +179,57 @@ public class JwtUtil {
         }
     }
 
+    // JWT 토큰에서 uname 추출 (일반 사용자용)
+    public String getUnameFromToken(String token) {
+        try {
+            Claims claims = parseToken(token);
+            String uname = claims.get("uname", String.class);
+            if (uname == null) {
+                log.warn("JWT 토큰에 uname claim이 없습니다");
+                return null;
+            }
+            log.debug("JWT에서 추출한 uname: {}", uname);
+            return uname;
+        } catch (JwtException e) {
+            log.error("JWT에서 uname 추출 실패: {}", e.getMessage());
+            return null;
+        }
+    }
+
+    // JWT 토큰에서 aname 추출 (관리자용)
+    public String getAnameFromToken(String token) {
+        try {
+            Claims claims = parseToken(token);
+            String aname = claims.get("aname", String.class);
+            if (aname == null) {
+                log.warn("JWT 토큰에 aname claim이 없습니다");
+                return null;
+            }
+            log.debug("JWT에서 추출한 aname: {}", aname);
+            return aname;
+        } catch (JwtException e) {
+            log.error("JWT에서 aname 추출 실패: {}", e.getMessage());
+            return null;
+        }
+    }
+
+    // JWT 토큰에서 사용자 이름 추출 (역할에 따라 자동 선택)
+    public String getUserNameFromToken(String token) {
+        try {
+            Claims claims = parseToken(token);
+            String role = claims.get("role", String.class);
+            
+            if ("ADMIN".equalsIgnoreCase(role) || "SUPER_ADMIN".equalsIgnoreCase(role)) {
+                return getAnameFromToken(token);
+            } else {
+                return getUnameFromToken(token);
+            }
+        } catch (JwtException e) {
+            log.error("JWT에서 사용자 이름 추출 실패: {}", e.getMessage());
+            return null;
+        }
+    }
+
     // isValidToken: 토큰이 유효한지 확인하는 메서드
     public boolean isValidToken(String token) {
         try {
