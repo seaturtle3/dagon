@@ -121,10 +121,13 @@ public class ApiFishingReportController {
     }
 
     @Operation(summary = "조황정보 수정")
-    @PutMapping("/update/{id}")
-    public Long updateFishingReport(@PathVariable("id") Long frId,
-                                    @RequestBody ApiFishingReportDTO apiFishingReportDTO) {
-        return apiFishingReportService.updateFishingReport(frId, apiFishingReportDTO);
+    @PutMapping(value = "/update/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public Long updateFishingReport(
+            @PathVariable("id") Long frId,
+            @RequestPart("dto") ApiFishingReportDTO apiFishingReportDTO,
+            @RequestPart(value = "images", required = false) List<MultipartFile> images
+    ) {
+        return apiFishingReportService.updateFishingReport(frId, apiFishingReportDTO, images);
     }
 
     @Operation(summary = "조황정보 삭제")
