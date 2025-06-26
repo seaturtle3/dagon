@@ -24,4 +24,6 @@ public interface ReportRepository extends JpaRepository<Report, Long> {
     boolean existsByReporterAndTargetTypeAndTargetId(User reporter, TargetType targetType, Long targetId);
 
     List<Report> findTop10ByOrderByCreatedAtDesc();
+
+    void deleteAllByReporter_UnoOrReported_Uno(Long uno1, Long uno2);
 }

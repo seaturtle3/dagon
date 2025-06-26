@@ -108,7 +108,7 @@ public class ApiPartnersController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
-        if ("ADMIN".equalsIgnoreCase(role)) {
+        if ("ADMIN".equalsIgnoreCase(role) || "SUPER_ADMIN".equalsIgnoreCase(role)) {
             partnerService.deletePartner(id);
             return ResponseEntity.ok().build();
         }
