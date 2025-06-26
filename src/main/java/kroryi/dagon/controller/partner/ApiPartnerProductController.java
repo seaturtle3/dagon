@@ -70,11 +70,13 @@ public class ApiPartnerProductController {
     }
 
     @GetMapping("/all")
-    public ResponseEntity<List<ProductDTO>> getPartnerAllProducts(@RequestHeader("Authorization") String token) {
-        String rawToken = token.replace("Bearer ", "");
-        Long unoFromToken = jwtProvider.getUnoFromToken(rawToken);
+    public ResponseEntity<List<ProductDTO>> getPartnerAllProducts(
+        @AuthenticationPrincipal CustomUserDetails userDetails
+    ) {
+        Long userUno = userDetails.getUno();
+        log.info("product list -> getUserUno: {}" , userUno);
         
-        List<ProductDTO> products = productService.getProductsByPartnerUno(unoFromToken);
+        List<ProductDTO> products = productService.getProductsByPartnerUno(userUno);
         return ResponseEntity.ok(products);
     }
 

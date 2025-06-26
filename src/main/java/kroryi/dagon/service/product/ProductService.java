@@ -84,6 +84,8 @@ public class ProductService {
                     }
                     // 3. FishingReportImage 엔티티 생성 및 저장
                     ProductImage image = new ProductImage();
+                    image.setFileName(savedUrl);
+                    image.setProduct(product);
                     image.setImageData(imageBytes); // 바이너리 저장
                     productImageRepository.save(image);
                 } catch (Exception e) {
