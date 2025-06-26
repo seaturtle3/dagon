@@ -114,6 +114,12 @@ public class ApiFishingReportController {
         return apiFishingReportService.getFishingReportById(id);
     }
 
+    @Operation(summary = "조황정보 ID 조회")
+    @GetMapping("/edit/{id}")
+    public ApiFishingReportDTO getFishingReportEdit(@PathVariable Long id) {
+        return apiFishingReportService.getFishingReportById(id);
+    }
+
     @Operation(summary = "조황정보 수정")
     @PutMapping("/update/{id}")
     public Long updateFishingReport(@PathVariable("id") Long frId,
