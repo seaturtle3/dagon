@@ -40,7 +40,7 @@ def download_images(img_urls):
         except Exception as e:
             print(f"✘ 이미지 다운로드 실패: {img_url} - {e}")
 
-def crawl_all_boat_images(pages=3):
+def crawl_all_boat_images(pages=5):
     all_img_links = set()
     for page in range(1, pages + 1):
         print(f"\n[페이지 {page}] 배 이미지 링크 수집 중...")
