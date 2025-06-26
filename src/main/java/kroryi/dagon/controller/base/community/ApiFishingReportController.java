@@ -1,4 +1,4 @@
-package kroryi.dagon.controller.partner.community;
+package kroryi.dagon.controller.base.community;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -11,7 +11,6 @@ import kroryi.dagon.entity.fishingCenter.FishingReport;
 import kroryi.dagon.entity.product.Product;
 import kroryi.dagon.entity.User;
 import kroryi.dagon.service.PartnerFishingReportService;
-import kroryi.dagon.service.auth.AdminUserDetails;
 import kroryi.dagon.service.auth.UserService;
 import kroryi.dagon.service.community.fishingCenter.ApiFishingReportService;
 import kroryi.dagon.service.product.ProductService;
@@ -40,7 +39,6 @@ import java.time.format.DateTimeFormatter;
 import net.coobird.thumbnailator.Thumbnails;
 import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;
-import org.springframework.transaction.annotation.Transactional;
 
 @RestController
 @RequiredArgsConstructor
