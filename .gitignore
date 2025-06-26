@@ -37,3 +37,5 @@ logs/
 
 db/
 /db/
+.venv/
+.venv/*

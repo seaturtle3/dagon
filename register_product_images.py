@@ -1,0 +1,52 @@
+import os
+import random
+import pymysql
+
+# DB 연결 정보
+DB_HOST = 'docs.yi.or.kr'
+DB_PORT = 24306
+DB_USER = 'root'
+DB_PASSWORD = 'edurootroot'  # 실제 비밀번호로 변경
+DB_NAME = 'dagon'
+
+# 이미지 폴더 경로
+IMAGE_DIR = 'thefishing_images'
+
+# 1. DB 연결
+conn = pymysql.connect(
+    host=DB_HOST, port=DB_PORT, user=DB_USER, password=DB_PASSWORD, db=DB_NAME, charset='utf8mb4'
+)
+cur = conn.cursor()
+
+# 2. product의 prod_id 모두 가져오기
+cur.execute("SELECT prod_id FROM product ORDER BY prod_id")
+products = cur.fetchall()
+
+# 3. 이미지 파일 목록
+image_files = [f for f in os.listdir(IMAGE_DIR) if f.lower().endswith(('.jpg', '.jpeg', '.png'))]
+random.shuffle(image_files)
+img_idx = 0
+
+for (prod_id,) in products:
+    num_imgs = random.randint(1, 2)
+    selected_imgs = image_files[img_idx:img_idx+num_imgs]
+    if not selected_imgs:
+        break
+    for img_name in selected_imgs:
+        img_path = os.path.join(IMAGE_DIR, img_name)
+        with open(img_path, 'rb') as f:
+            img_blob = f.read()
+        # INSERT
+        cur.execute("""
+            INSERT INTO prod_image (file_name, image_data, prod_id)
+            VALUES (%s, %s, %s)
+        """, (img_name, img_blob, prod_id))
+    img_idx += num_imgs
+    if img_idx >= len(image_files):
+        break
+
+conn.commit()
+cur.close()
+conn.close()
+
+print('상품 이미지 등록 완료!') 

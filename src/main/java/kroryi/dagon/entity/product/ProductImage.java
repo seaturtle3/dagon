@@ -18,6 +18,10 @@ public class ProductImage {
 
     private String fileName;
 
+    @Lob
+    @Column(name = "image_data", columnDefinition = "LONGBLOB", nullable = true)
+    private byte[] imageData;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "prod_id")
     private Product product;

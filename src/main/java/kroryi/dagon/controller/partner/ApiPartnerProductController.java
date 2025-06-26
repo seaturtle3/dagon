@@ -15,10 +15,14 @@ import org.springframework.web.bind.annotation.*;
 
 import java.nio.file.AccessDeniedException;
 import java.util.List;
+import lombok.extern.log4j.Log4j2;
+import kroryi.dagon.component.CustomUserDetails;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/partner/product")
+@Log4j2
 public class ApiPartnerProductController {
 
     private final ProductService productService;
@@ -55,14 +59,13 @@ public class ApiPartnerProductController {
     }
 
     @GetMapping("/my-products")
-    public ResponseEntity<List<ProductDTO>> getMyProducts(HttpServletRequest request) {
-        String token = jwtProvider.resolveToken(request);  // 헤더에서 토큰 꺼내기 (이 메서드 직접 구현 필요)
-        if (token == null || !jwtProvider.isValidToken(token)) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
+    public ResponseEntity<List<ProductDTO>> getMyProducts(
+        @AuthenticationPrincipal CustomUserDetails userDetails
 
-        Long uno = jwtProvider.getUnoFromToken(token);
-        List<ProductDTO> products = productService.getProductsByPartnerUno(uno);
+    ) {
+        Long userUno = userDetails.getUno();
+        log.info("파트너 로그인 아이디 -> getUserUno: {}" , userUno);
+        List<ProductDTO> products = productService.getProductsByPartnerUno(userUno);
         return ResponseEntity.ok(products);
     }
 
