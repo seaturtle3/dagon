@@ -14,6 +14,16 @@ import kroryi.dagon.enums.UserRole;
 import kroryi.dagon.repository.ApiAdminRepository;
 import kroryi.dagon.repository.PartnerRepository;
 import kroryi.dagon.repository.UserRepository;
+import kroryi.dagon.repository.board.FishingDiaryRepository;
+import kroryi.dagon.repository.board.FishingReportRepository;
+import kroryi.dagon.repository.FreeBoardRepository;
+import kroryi.dagon.repository.InquiryRepository;
+import kroryi.dagon.repository.ReservationRepository;
+import kroryi.dagon.repository.NotificationRepository;
+import kroryi.dagon.repository.ReportRepository;
+import kroryi.dagon.repository.FreeBoardCommentRepository;
+import kroryi.dagon.repository.FishingDiaryCommentRepository;
+import kroryi.dagon.repository.FishingReportCommentRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
@@ -36,6 +46,16 @@ public class AdminService {
     private final UserRepository userRepository;
     private final ModelMapper modelMapper;
     private final PartnerRepository partnerRepository;
+    private final FishingReportRepository fishingReportRepository;
+    private final FishingDiaryRepository fishingDiaryRepository;
+    private final FreeBoardRepository freeBoardRepository;
+    private final InquiryRepository inquiryRepository;
+    private final ReservationRepository reservationRepository;
+    private final NotificationRepository notificationRepository;
+    private final ReportRepository reportRepository;
+    private final FreeBoardCommentRepository freeBoardCommentRepository;
+    private final FishingDiaryCommentRepository fishingDiaryCommentRepository;
+    private final FishingReportCommentRepository fishingReportCommentRepository;
 
     public void registerAdmin(AdminDTO adminDTO) {
         if (apiAdminRepository.existsByAid(adminDTO.getAid())) {
@@ -107,7 +127,7 @@ public class AdminService {
         user.setUname(dto.getUname());
         user.setNickname(dto.getNickname());
         user.setEmail(dto.getEmail());
-        
+
         // 전화번호 처리 - fullPhone이 있으면 사용, 없으면 개별 번호 조합
         if (dto.getFullPhone() != null && !dto.getFullPhone().isEmpty()) {
             user.setPhone(dto.getFullPhone());
@@ -115,18 +135,18 @@ public class AdminService {
             String fullPhone = dto.getPhone1() + "-" + dto.getPhone2() + "-" + dto.getPhone3();
             user.setPhone(fullPhone);
         }
-        
+
         user.setPoints(dto.getPoints());
         user.setLevel(UserLevel.values()[dto.getLevel()]);
         user.setLevelPoint(Integer.valueOf(dto.getLevelPoint())); // 새 필드 처리
         user.setLoginType(LoginType.valueOf(dto.getLoginType())); // 새 필드 처리
         user.setRole(UserRole.valueOf(dto.getRole()));
-        
+
         // 프로필 이미지 업데이트 - null이 아닐 때만 업데이트
         if (dto.getProfile_image() != null && !dto.getProfile_image().isEmpty()) {
             user.setProfileImg(dto.getProfile_image());
         }
-        
+
         user.setIsActive(dto.isActive());
 
         return new UsersDTO(userRepository.save(user)); // 수정된 User 객체 저장
@@ -143,7 +163,19 @@ public class AdminService {
             partnerRepository.save(partner);  // partner가 null이 아닌 경우에만 저장
         }
 
-        // 다른 연관 관계도 clear
+        // 연관 데이터 직접 삭제 (find 후 deleteAll)
+        fishingReportRepository.deleteAll(fishingReportRepository.findByUser_Uno(user.getUno()));
+        fishingDiaryRepository.deleteAll(fishingDiaryRepository.findByUser_Uno(user.getUno()));
+        freeBoardRepository.deleteAll(freeBoardRepository.findByUser_Uno(user.getUno()));
+        freeBoardCommentRepository.deleteAll(freeBoardCommentRepository.findByUserUno(user.getUno()));
+        fishingDiaryCommentRepository.deleteAll(fishingDiaryCommentRepository.findByUserUno(user.getUno()));
+        fishingReportCommentRepository.deleteAll(fishingReportCommentRepository.findByUserUno(user.getUno()));
+        inquiryRepository.deleteAllByUser_Uno(user.getUno());
+        reservationRepository.deleteAllByUserUno(user.getUno());
+        notificationRepository.deleteAllByReceiver_Uno(user.getUno());
+        reportRepository.deleteAllByReporter_UnoOrReported_Uno(user.getUno(), user.getUno());
+
+        // 다른 연관 관계도 clear (혹시 남아있을 수 있으니)
         user.getPartnerApplications().clear();
         user.getFishingReports().clear();
         user.getFishingDiaries().clear();

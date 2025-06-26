@@ -24,6 +24,17 @@ import org.springframework.stereotype.Service;
 import kroryi.dagon.util.JwtUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import kroryi.dagon.entity.Reservation;
+import kroryi.dagon.repository.board.FishingReportRepository;
+import kroryi.dagon.repository.board.FishingDiaryRepository;
+import kroryi.dagon.repository.FreeBoardRepository;
+import kroryi.dagon.repository.FreeBoardCommentRepository;
+import kroryi.dagon.repository.FishingDiaryCommentRepository;
+import kroryi.dagon.repository.FishingReportCommentRepository;
+import kroryi.dagon.repository.InquiryRepository;
+import kroryi.dagon.repository.NotificationRepository;
+import kroryi.dagon.repository.ReportRepository;
+import kroryi.dagon.entity.fishingCenter.FishingReport;
+import kroryi.dagon.entity.fishingCenter.FishingDiary;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -43,6 +54,15 @@ public class PartnerService {
     private final ProductRepository productRepository;
     private final JwtUtil jwtUtil;
     private final HttpServletRequest request;
+    private final FishingReportRepository fishingReportRepository;
+    private final FishingDiaryRepository fishingDiaryRepository;
+    private final FreeBoardRepository freeBoardRepository;
+    private final FreeBoardCommentRepository freeBoardCommentRepository;
+    private final FishingDiaryCommentRepository fishingDiaryCommentRepository;
+    private final FishingReportCommentRepository fishingReportCommentRepository;
+    private final InquiryRepository inquiryRepository;
+    private final NotificationRepository notificationRepository;
+    private final ReportRepository reportRepository;
 
 
 
@@ -196,26 +216,41 @@ public class PartnerService {
 
         User user = partner.getUser();
 
-        // 삭제 전 연관 데이터 확인 및 로깅
-        Long reservationCount = reservationRepository.countByProduct_Partner_Uno(partnerId);
-        Long productCount = productRepository.countByPartner_UnoAndDeletedFalse(partnerId);
-        
-        log.info("파트너 삭제 시작 - 파트너ID: {}, 예약 수: {}, 상품 수: {}", 
-                partnerId, reservationCount, productCount);
+        // 1. 조황정보, 조황정보 댓글, 조행기, 조행기 댓글, 예약, 상품 순서로 삭제
+        // 1-1. 조황정보 및 댓글
+        List<FishingReport> reports = fishingReportRepository.findByProduct_Partner_Uno(partnerId);
+        for (FishingReport report : reports) {
+            fishingReportCommentRepository.deleteAll(fishingReportCommentRepository.findByFishingReport_FrId(report.getFrId()));
+        }
+        fishingReportRepository.deleteAll(reports);
 
-        // User와 Partner 연관관계 끊기
+        // 1-2. 조행기 및 댓글
+        List<FishingDiary> diaries = fishingDiaryRepository.findByProduct_Partner_Uno(partnerId);
+        for (FishingDiary diary : diaries) {
+            fishingDiaryCommentRepository.deleteAll(fishingDiaryCommentRepository.findByFishingDiary_FdId(diary.getFdId()));
+        }
+        fishingDiaryRepository.deleteAll(diaries);
+
+        // 1-3. 예약 삭제
+        reservationRepository.deleteAll(reservationRepository.findByProduct_Partner_Uno(partnerId));
+        // 1-4. 상품 삭제
+        productRepository.deleteAll(productRepository.findByPartner_Uno(partnerId));
+
+        // 기타 댓글, 알림, 신고 등도 필요시 삭제
+        freeBoardCommentRepository.deleteAll(freeBoardCommentRepository.findByUserUno(user.getUno()));
+        inquiryRepository.deleteAllByUser_Uno(user.getUno());
+        notificationRepository.deleteAllByReceiver_Uno(user.getUno());
+        reportRepository.deleteAllByReporter_UnoOrReported_Uno(user.getUno(), user.getUno());
+
+        // 2. User와 Partner 연관관계 끊기
         if (user != null) {
             user.setPartner(null);
             user.setRole(UserRole.USER);
             userRepository.save(user);
-            log.info("사용자 역할을 USER로 변경 - 사용자ID: {}", user.getUno());
         }
 
-        // Partner 삭제 - cascade + orphanRemoval로 관련된 모든 하위 엔티티도 자동 삭제됨
-        // Product -> ProductOption -> Reservation -> Notification 순서로 CASCADE 삭제
+        // 3. 파트너 삭제
         partnersRepository.delete(partner);
-        
-        log.info("파트너 및 연관 데이터 삭제 완료 - 파트너ID: {}", partnerId);
     }
 
     /**

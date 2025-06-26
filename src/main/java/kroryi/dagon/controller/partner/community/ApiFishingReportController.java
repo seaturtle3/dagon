@@ -29,13 +29,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.nio.file.*;
 import java.util.List;
-import java.util.UUID;
-import java.io.IOException;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import net.coobird.thumbnailator.Thumbnails;
-import java.awt.image.BufferedImage;
-import javax.imageio.ImageIO;
+
 
 @RestController
 @RequiredArgsConstructor
@@ -193,30 +187,5 @@ public class ApiFishingReportController {
         }
     }
 
-    public String saveImageWithThumbnail(MultipartFile file, String folderName) {
-        try {
-            String dateFolder = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd"));
-            String fileName = UUID.randomUUID() + "_" + file.getOriginalFilename();
-            Path uploadPath = Paths.get(uploadDir, folderName, dateFolder);
-            Files.createDirectories(uploadPath);
 
-            // 원본 저장
-            Path filePath = uploadPath.resolve(fileName);
-            file.transferTo(filePath.toFile());
-
-            // 썸네일 생성 및 저장
-            String thumbFileName = "thumb_" + fileName;
-            Path thumbPath = uploadPath.resolve(thumbFileName);
-
-            BufferedImage originalImage = ImageIO.read(filePath.toFile());
-            Thumbnails.of(originalImage)
-                .size(400, 300) // 원하는 썸네일 크기
-                .toFile(thumbPath.toFile());
-
-            // 원본 이미지 URL 반환 (필요시 썸네일 URL도 함께 반환 가능)
-            return "/uploads/" + folderName + "/" + dateFolder + "/" + fileName;
-        } catch (IOException e) {
-            throw new RuntimeException("이미지 저장/썸네일 생성 실패", e);
-        }
-    }
 }

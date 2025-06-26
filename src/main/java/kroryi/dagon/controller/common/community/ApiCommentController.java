@@ -38,6 +38,7 @@ public class ApiCommentController {
     @Operation(summary = "조행기 댓글 조회", description = "조행기 댓글 조회")
     public ResponseEntity<List<CommentDTO>> getFishingDiaryComments(@PathVariable Long postId) {
         List<CommentDTO> comments = fishingDiaryCommentService.getComments(postId);
+
         return ResponseEntity.ok(comments);
     }
 
