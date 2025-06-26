@@ -20,6 +20,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.util.StreamUtils;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -69,9 +71,21 @@ public class ApiFishingReportService {
             for (int i = 0; i < images.size(); i++) {
                 MultipartFile file = images.get(i);
                 try {
+                    // 1. 파일을 uploads 경로에 저장
+                    String savedUrl = fileStorageUtil.saveImage(file, "fishing-report");
+                    // 2. 저장된 파일을 읽어서 바이너리 추출
+                    String uploadDir = fileStorageUtil.getUploadDir();
+                    String relativePath = savedUrl.replaceFirst("/uploads/", "").replace("/", File.separator);
+                    File savedFile = new File(uploadDir, relativePath);
+                    log.info("savedFile:---> {}", savedFile);
+                    byte[] imageBytes;
+                    try (FileInputStream fis = new FileInputStream(savedFile)) {
+                        imageBytes = StreamUtils.copyToByteArray(fis);
+                    }
+                    // 3. FishingReportImage 엔티티 생성 및 저장
                     FishingReportImage image = new FishingReportImage();
-                    image.setImageUrl(null); // URL 저장 안함
-                    image.setImageData(StreamUtils.copyToByteArray(file.getInputStream()));
+                    image.setImageUrl(savedUrl); // 파일 경로 저장
+                    image.setImageData(imageBytes); // 바이너리 저장
                     image.setThumbnail(i == 0); // 첫 번째 이미지를 썸네일로
                     image.setOrderIndex(i);
                     image.setFishingReport(fishingReport);
