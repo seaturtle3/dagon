@@ -131,7 +131,8 @@ public class ApiFishingReportService {
                 .collect(Collectors.toList());
     }
 
-    public Long updateFishingReport(Long frId, ApiFishingReportDTO apiFishingReportDTO) {
+    @Transactional
+    public Long updateFishingReport(Long frId, ApiFishingReportDTO apiFishingReportDTO, List<MultipartFile> images) {
         FishingReport fishingReport = fishingReportRepository.findById(frId)
                 .orElseThrow(() -> new RuntimeException("조황정보 없음"));
 
@@ -151,6 +152,27 @@ public class ApiFishingReportService {
             Long prodId = apiFishingReportDTO.getProduct().getProdId();
             Product product = productRepository.getReferenceById(prodId);  // 영속성 컨텍스트에서 참조
             fishingReport.setProduct(product);
+        }
+
+        // 기존 이미지 삭제
+        fishingReportImageRepository.deleteAll(fishingReport.getImages());
+        fishingReport.getImages().clear();
+
+        // 새 이미지 저장
+        if (images != null && !images.isEmpty()) {
+            for (int i = 0; i < images.size(); i++) {
+                MultipartFile file = images.get(i);
+                try {
+                    FishingReportImage image = new FishingReportImage();
+                    image.setImageData(file.getBytes());
+                    image.setOrderIndex(i);
+                    image.setFishingReport(fishingReport);
+                    fishingReportImageRepository.save(image);
+                    fishingReport.getImages().add(image);
+                } catch (Exception e) {
+                    throw new RuntimeException("이미지 저장 실패", e);
+                }
+            }
         }
 
         fishingReportRepository.save(fishingReport);
