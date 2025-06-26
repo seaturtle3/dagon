@@ -33,11 +33,13 @@ import java.nio.file.AccessDeniedException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
+import lombok.extern.log4j.Log4j2;
 
 @Tag(name = "User-Inquiry", description = "1:1 문의 API (사용자)")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/inquiry")
+@Log4j2
 public class ApiInquiryController {
 
     private final InquiryService inquiryService;
@@ -53,6 +55,11 @@ public class ApiInquiryController {
     public ResponseEntity<InquiryResponseDTO> createInquiry(
             @RequestBody @Valid InquiryCreateRequestDTO request,
             @AuthenticationPrincipal CustomUserDetails userDetails) {
+                Long uno = userDetails.getUno();
+                log.info("uno--------------->: {}", uno);
+
+
+
         InquiryResponseDTO response = inquiryService.createInquiry(userDetails.getUno(), request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }

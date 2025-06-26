@@ -46,7 +46,7 @@ public class ApiUserController {
                 
                 log.info("현재 사용자 정보: uid={}, uno={}", uid, uno);
                 
-                Optional<User> optionalUser = userRepository.findByUid(uid);
+                Optional<User> optionalUser = userRepository.findByUno(uno);
                 if (optionalUser.isEmpty()) {
                     return new ResponseEntity<>("사용자 정보를 찾을 수 없습니다.", HttpStatus.NOT_FOUND);
                 }
