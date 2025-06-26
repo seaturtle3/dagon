@@ -11,18 +11,25 @@ import kroryi.dagon.enums.MainType;
 import kroryi.dagon.enums.ProdRegion;
 import kroryi.dagon.enums.SubType;
 import kroryi.dagon.repository.PartnerRepository;
+import kroryi.dagon.repository.product.ProductImageRepository;
 import kroryi.dagon.repository.product.ProductRepository;
 import kroryi.dagon.repository.SeaFreshwaterFishingRepository;
 import kroryi.dagon.repository.UserRepository;
 import kroryi.dagon.service.auth.PartnerService;
+import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -36,6 +43,31 @@ public class ProductService {
     private final PartnerRepository partnerRepository;
     private final PartnerService partnerService;
     private final SeaFreshwaterFishingRepository seaFreshwaterFishingRepository;
+    private final ProductImageRepository productImageRepository;
+
+    @Value("${file.upload-path}")
+    private String uploadPath;
+
+    private String saveFile(MultipartFile file) {
+        try {
+            // 업로드 경로 설정 (application.yml에서 가져온 값)
+            String fullPath = Paths.get(uploadPath, file.getOriginalFilename()).toString();
+
+            // 디렉토리가 없으면 생성
+            File dir = new File(uploadPath);
+            if (!dir.exists()) {
+                dir.mkdirs();
+            }
+
+            // 파일 저장
+            file.transferTo(new File(fullPath));
+
+            // DB에 저장할 경로로 반환
+            return "/" + uploadPath.replace("\\", "/") + "/" + file.getOriginalFilename();
+        } catch (IOException e) {
+            throw new RuntimeException("파일 저장 실패: " + file.getOriginalFilename(), e);
+        }
+    }
 
     @Transactional
     public void createProductWithImages(ProductDTO dto, Long uno) {
@@ -89,10 +121,11 @@ public class ProductService {
 
     // [Update] 상품 수정
     @Transactional
-    public Long updateProduct(Long id, ProductDTO productDTO) {
+    public Long updateProduct(Long id, ProductDTO productDTO, List<MultipartFile> thumbnailFiles) {
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("상품을 찾을 수 없습니다. id=" + id));
 
+        // 값 업데이트
         product.setProdName(productDTO.getProdName());
         product.setProdRegion(productDTO.getProdRegion());
         product.setMainType(productDTO.getMainType());
@@ -104,7 +137,29 @@ public class ProductService {
         product.setProdDescription(productDTO.getProdDescription());
         product.setProdEvent(productDTO.getProdEvent());
         product.setProdNotice(productDTO.getProdNotice());
-        product.setProdThumbnail(productDTO.getProdThumbnail());
+
+        // ✅ 삭제할 이미지 처리
+        if (productDTO.getDeleteImageNames() != null) {
+            for (String fileName : productDTO.getDeleteImageNames()) {
+                // 1. 파일 시스템에서 삭제
+                File file = new File(uploadPath + fileName); // uploadPath는 예: "/upload/products/"
+                if (file.exists()) {
+                    file.delete();
+                }
+
+                // 2. DB에서 해당 이미지 레코드 제거 (ProductImage 엔티티 있다고 가정)
+                productImageRepository.deleteByProductAndFileName(product, fileName);
+            }
+        }
+
+        // ✅ 새로 들어온 썸네일 이미지 저장
+        if (thumbnailFiles != null && !thumbnailFiles.isEmpty()) {
+            for (MultipartFile file : thumbnailFiles) {
+                String newFileName = saveFile(file); // 썸네일 저장 로직
+                ProductImage newImage = new ProductImage(product, newFileName);
+                productImageRepository.save(newImage);
+            }
+        }
 
         return product.getProdId();
     }

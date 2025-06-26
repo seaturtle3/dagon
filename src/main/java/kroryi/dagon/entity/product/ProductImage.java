@@ -1,6 +1,7 @@
 package kroryi.dagon.entity.product;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -9,6 +10,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "prod_image")
 public class ProductImage {
 
@@ -22,4 +24,9 @@ public class ProductImage {
     @JoinColumn(name = "prod_id")
     private Product product;
 
+    // product, fileName 만 받는 생성자 추가
+    public ProductImage(Product product, String fileName) {
+        this.product = product;
+        this.fileName = fileName;
+    }
 }

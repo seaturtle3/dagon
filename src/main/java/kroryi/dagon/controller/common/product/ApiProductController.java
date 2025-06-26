@@ -95,9 +95,13 @@ public class ApiProductController {
     }
 
     @Operation(summary = "상품 수정", description = "상품 정보 수정")
-    @PutMapping("/update/{id}")
-    public Long updateProduct(@PathVariable Long id, @RequestBody ProductDTO productDTO) {
-        return productService.updateProduct(id, productDTO);
+    @PutMapping(value = "/update/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public Long updateProduct(
+            @PathVariable Long id,
+            @RequestPart("product") ProductDTO productDTO,
+            @RequestPart(value = "thumbnailFiles", required = false) List<MultipartFile> thumbnailFiles) {
+
+        return productService.updateProduct(id, productDTO, thumbnailFiles);
     }
 
     @Operation(summary = "상품 삭제", description = "상품 삭제")
