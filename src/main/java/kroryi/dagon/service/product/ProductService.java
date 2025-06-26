@@ -18,6 +18,7 @@ import kroryi.dagon.repository.UserRepository;
 import kroryi.dagon.service.auth.PartnerService;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.data.domain.Page;
@@ -34,6 +35,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Log4j2
 @Service
 @RequiredArgsConstructor
 public class ProductService {
@@ -50,19 +52,14 @@ public class ProductService {
 
     private String saveFile(MultipartFile file) {
         try {
-            // 업로드 경로 설정 (application.yml에서 가져온 값)
             String fullPath = Paths.get(uploadPath, file.getOriginalFilename()).toString();
-
-            // 디렉토리가 없으면 생성
+            log.info("파일 저장 경로: {}", fullPath);
             File dir = new File(uploadPath);
             if (!dir.exists()) {
+                log.info("업로드 디렉토리 없음 → 생성 시도");
                 dir.mkdirs();
             }
-
-            // 파일 저장
-            file.transferTo(new File(fullPath));
-
-            // DB에 저장할 경로로 반환
+            file.transferTo(new File(fullPath)); // 이 줄에서 예외 발생 가능
             return "/" + uploadPath.replace("\\", "/") + "/" + file.getOriginalFilename();
         } catch (IOException e) {
             throw new RuntimeException("파일 저장 실패: " + file.getOriginalFilename(), e);
