@@ -30,5 +30,9 @@ public class FishingReportImage {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "fr_id", nullable = false)
     private FishingReport fishingReport;
+
+    @Lob
+    @Column(name = "thumbnail_data", columnDefinition = "LONGBLOB")
+    private byte[] thumbnailData;
 }
 

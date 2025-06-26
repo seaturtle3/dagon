@@ -73,6 +73,7 @@ public class ApiFishingReportService {
                 try {
                     // 1. 파일을 uploads 경로에 저장
                     String savedUrl = fileStorageUtil.saveImage(file, "fishing-report");
+                    log.info("savedUrl:---> {}", savedUrl);
                     // 2. 저장된 파일을 읽어서 바이너리 추출
                     String uploadDir = fileStorageUtil.getUploadDir();
                     String relativePath = savedUrl.replaceFirst("/uploads/", "").replace("/", File.separator);

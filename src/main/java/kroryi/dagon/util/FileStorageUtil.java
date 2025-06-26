@@ -12,8 +12,10 @@ import java.util.UUID;
 import net.coobird.thumbnailator.Thumbnails;
 import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;
+import lombok.extern.log4j.Log4j2;
 
 @Component
+@Log4j2
 public class FileStorageUtil {
 
     @Value("${app.file.upload-dir}")
@@ -28,16 +30,26 @@ public class FileStorageUtil {
             String fileName = UUID.randomUUID() + "_" + file.getOriginalFilename();
 
             // 저장 경로를 프로퍼티에서 읽어온 값으로 조합
-            Path uploadPath = Paths.get(uploadDir, folderName, dateFolder);
+            String projectRoot = System.getProperty("user.dir"); // 현재 프로젝트 루트
+            Path uploadPath = Paths.get(projectRoot, "uploads", folderName, dateFolder);
             Files.createDirectories(uploadPath);
+
+            log.info("uploadPath:---> {} {}", uploadPath, fileName);
 
             // 실제 파일 저장
             Path filePath = uploadPath.resolve(fileName);
             file.transferTo(filePath.toFile());
 
+            if (!Files.exists(filePath)) {
+                throw new RuntimeException("파일이 실제로 저장되지 않았습니다: " + filePath);
+            }
+
+            log.info("filePath:---> {}", filePath);
+
             // ✅ 클라이언트에서 접근할 수 있는 URL 경로로 변경 (날짜별 디렉토리 포함)
             return "/uploads/" + folderName + "/" + dateFolder + "/" + fileName;
         } catch (IOException e) {
+            log.error("이미지 저장 실패", e);
             throw new RuntimeException("이미지 저장 실패", e);
         }
     }
@@ -53,7 +65,8 @@ public class FileStorageUtil {
         try {
             String dateFolder = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd"));
             String fileName = UUID.randomUUID() + "_" + file.getOriginalFilename();
-            Path uploadPath = Paths.get(uploadDir, folderName, dateFolder);
+            String projectRoot = System.getProperty("user.dir"); // 현재 프로젝트 루트
+            Path uploadPath = Paths.get(projectRoot, "uploads", folderName, dateFolder);
             Files.createDirectories(uploadPath);
 
             // 원본 저장
