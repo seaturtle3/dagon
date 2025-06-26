@@ -175,7 +175,7 @@ public class ApiProductController {
         return productService.getFishingCenterProductsByFilters(regionEnum, subTypeEnum, species, sort);
     }
 
-    //  -------------- 프론트 api 바다/민물 낚시 상단 필터 ----------------
+    //  -------------- 프론트 api 바다/민물 상단 필터 ----------------
     @GetMapping("/sea/filter")
     public Map<String, List<String>> getSeaFilterOptions() {
         List<String> regions = Arrays.stream(ProdRegion.values())

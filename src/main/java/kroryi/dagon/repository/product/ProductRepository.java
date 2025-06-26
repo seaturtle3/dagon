@@ -82,6 +82,7 @@ public interface ProductRepository extends JpaRepository<Product, Long>, JpaSpec
             """)
     List<String> findAllSeaFishSpecies();
 
+    // 프론트 어종 받아오기
     @Query("""
                 SELECT fs.fsName
                 FROM ProductFishSpecies fs
