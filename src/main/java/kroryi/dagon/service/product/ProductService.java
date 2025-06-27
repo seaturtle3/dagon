@@ -47,6 +47,7 @@ import kroryi.dagon.repository.product.ProductImageRepository;
 @Log4j2
 public class ProductService {
 
+
     private final ProductRepository productRepository;
     private final ProductImageRepository productImageRepository;
     private final UserRepository userRepository;
@@ -149,28 +150,28 @@ public class ProductService {
         product.setProdEvent(productDTO.getProdEvent());
         product.setProdNotice(productDTO.getProdNotice());
 
-        // ✅ 삭제할 이미지 처리
-        if (productDTO.getDeleteImageNames() != null) {
-            for (String fileName : productDTO.getDeleteImageNames()) {
-                // 1. 파일 시스템에서 삭제
-                File file = new File(uploadPath + fileName); // uploadPath는 예: "/upload/products/"
-                if (file.exists()) {
-                    file.delete();
-                }
-
-                // 2. DB에서 해당 이미지 레코드 제거 (ProductImage 엔티티 있다고 가정)
-                productImageRepository.deleteByProductAndFileName(product, fileName);
-            }
-        }
-
-        // ✅ 새로 들어온 썸네일 이미지 저장
-        if (thumbnailFiles != null && !thumbnailFiles.isEmpty()) {
-            for (MultipartFile file : thumbnailFiles) {
-                String newFileName = saveFile(file); // 썸네일 저장 로직
-                ProductImage newImage = new ProductImage(product, newFileName);
-                productImageRepository.save(newImage);
-            }
-        }
+//        // ✅ 삭제할 이미지 처리
+//        if (productDTO.getDeleteImageNames() != null) {
+//            for (String fileName : productDTO.getDeleteImageNames()) {
+//                // 1. 파일 시스템에서 삭제
+//                File file = new File(uploadPath + fileName); // uploadPath는 예: "/upload/products/"
+//                if (file.exists()) {
+//                    file.delete();
+//                }
+//
+//                // 2. DB에서 해당 이미지 레코드 제거 (ProductImage 엔티티 있다고 가정)
+//                productImageRepository.deleteByProductAndFileName(product, fileName);
+//            }
+//        }
+//
+//        // ✅ 새로 들어온 썸네일 이미지 저장
+//        if (thumbnailFiles != null && !thumbnailFiles.isEmpty()) {
+//            for (MultipartFile file : thumbnailFiles) {
+//                String newFileName = saveFile(file); // 썸네일 저장 로직
+//                ProductImage newImage = new ProductImage(product, newFileName);
+//                productImageRepository.save(newImage);
+//            }
+//        }
 
         return product.getProdId();
     }
