@@ -11,7 +11,7 @@ public class FAQListDTO {
     private String question;
     private Boolean isActive;
     private Integer displayOrder;
-
+    private String answer;
     private Long categoryId;
     private String categoryName;
 
@@ -19,6 +19,7 @@ public class FAQListDTO {
         return FAQListDTO.builder()
                 .faqId(faq.getFaqId())
                 .question(faq.getQuestion())
+                .answer(faq.getAnswer())
                 .isActive(faq.getIsActive())
                 .displayOrder(faq.getDisplayOrder())
                 .categoryId(faq.getCategory().getId())
