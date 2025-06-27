@@ -6,7 +6,6 @@ import kroryi.dagon.DTO.board.FishingCenter.ApiFishingReportDTO;
 import kroryi.dagon.DTO.board.FishingCenter.FishingReportCreateDTO;
 import kroryi.dagon.DTO.board.FishingCenter.FishingReportDTO;
 import kroryi.dagon.DTO.board.PartnerFishingReportDTO;
-import kroryi.dagon.component.CustomUserDetails;
 import kroryi.dagon.entity.fishingCenter.FishingReport;
 import kroryi.dagon.entity.product.Product;
 import kroryi.dagon.entity.User;
@@ -25,7 +24,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -36,9 +34,14 @@ import java.util.UUID;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+
 import net.coobird.thumbnailator.Thumbnails;
+
 import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -87,11 +90,9 @@ public class ApiFishingReportController {
     @PostMapping(value = "/create", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ApiFishingReportDTO createFishingReport(
             @RequestPart("dto") ApiFishingReportDTO apiFishingReportDTO,
-            @RequestPart(value = "images", required = false) List<MultipartFile> images,
-            @AuthenticationPrincipal CustomUserDetails userDetails
-    ) {
-        Long userUno = userDetails.getUno();
-        log.info("fishing create -> getUserUno: {}" , userUno);
+            @RequestPart(value = "images", required = false) List<MultipartFile> images) {
+        Long userUno = getCurrentUserUno();
+        log.info("fishing create -> getUserUno: {}", userUno);
 
         if (apiFishingReportDTO.getTitle() == null || apiFishingReportDTO.getContent() == null) {
             throw new IllegalArgumentException("제목 또는 내용이 누락되었습니다.");
@@ -104,8 +105,7 @@ public class ApiFishingReportController {
     public Page<ApiFishingReportDTO> getAllFishingReports(@RequestParam(defaultValue = "0") int page,
                                                           @RequestParam(defaultValue = "10") int size,
                                                           @RequestParam(defaultValue = "frId") String sortBy,
-                                                          @RequestParam(defaultValue = "desc") String direction)
-    {
+                                                          @RequestParam(defaultValue = "desc") String direction) {
         Sort sort = direction.equalsIgnoreCase("desc")
                 ? Sort.by(sortBy).descending()
                 : Sort.by(sortBy).ascending();
@@ -119,20 +119,11 @@ public class ApiFishingReportController {
         return apiFishingReportService.getFishingReportById(id);
     }
 
-    @Operation(summary = "조황정보 ID 조회")
-    @GetMapping("/edit/{id}")
-    public ApiFishingReportDTO getFishingReportEdit(@PathVariable Long id) {
-        return apiFishingReportService.getFishingReportById(id);
-    }
-
     @Operation(summary = "조황정보 수정")
-    @PutMapping(value = "/update/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public Long updateFishingReport(
-            @PathVariable("id") Long frId,
-            @RequestPart("dto") ApiFishingReportDTO apiFishingReportDTO,
-            @RequestPart(value = "images", required = false) List<MultipartFile> images
-    ) {
-        return apiFishingReportService.updateFishingReport(frId, apiFishingReportDTO, images);
+    @PutMapping("/update/{id}")
+    public Long updateFishingReport(@PathVariable("id") Long frId,
+                                    @RequestBody ApiFishingReportDTO apiFishingReportDTO) {
+        return apiFishingReportService.updateFishingReport(frId, apiFishingReportDTO);
     }
 
     @Operation(summary = "조황정보 삭제")
@@ -225,13 +216,29 @@ public class ApiFishingReportController {
 
             BufferedImage originalImage = ImageIO.read(filePath.toFile());
             Thumbnails.of(originalImage)
-                .size(400, 300) // 원하는 썸네일 크기
-                .toFile(thumbPath.toFile());
+                    .size(400, 300) // 원하는 썸네일 크기
+                    .toFile(thumbPath.toFile());
 
             // 원본 이미지 URL 반환 (필요시 썸네일 URL도 함께 반환 가능)
             return "/uploads/" + folderName + "/" + dateFolder + "/" + fileName;
         } catch (IOException e) {
             throw new RuntimeException("이미지 저장/썸네일 생성 실패", e);
         }
+    }
+
+    @GetMapping("/{currentId}/prev-next")
+    public Map<String, ApiFishingReportDTO> getPrevNextFishingReport(@PathVariable Long currentId) {
+        // prev: 현재 id보다 작은 것 중 가장 큰 frId
+        // next: 현재 id보다 큰 것 중 가장 작은 frId
+        ApiFishingReportDTO prev = null;
+        ApiFishingReportDTO next = null;
+        FishingReport prevEntity = apiFishingReportService.findPrevById(currentId);
+        FishingReport nextEntity = apiFishingReportService.findNextById(currentId);
+        if (prevEntity != null) prev = new ApiFishingReportDTO(prevEntity);
+        if (nextEntity != null) next = new ApiFishingReportDTO(nextEntity);
+        Map<String, ApiFishingReportDTO> result = new HashMap<>();
+        result.put("prev", prev);
+        result.put("next", next);
+        return result;
     }
 }
