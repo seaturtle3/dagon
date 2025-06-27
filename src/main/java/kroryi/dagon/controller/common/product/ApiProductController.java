@@ -24,15 +24,20 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.bind.annotation.RequestPart;
 import kroryi.dagon.DTO.product.ProductDTO;
 import kroryi.dagon.service.product.ProductService;
+import kroryi.dagon.entity.product.ProductImage;
+import kroryi.dagon.component.CustomUserDetails;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+
 
 import java.util.*;
 import java.util.stream.Collectors;
 
+
 @RestController
-@RequiredArgsConstructor
 @Tag(name = "Product", description = "상품 등록/조회/수정/삭제 API")
 @RequestMapping("/api/product")
 @Log4j2
+@RequiredArgsConstructor
 public class ApiProductController {
 
     private final ProductService productService;
@@ -43,29 +48,24 @@ public class ApiProductController {
     @Operation(summary = "상품 등록", description = "토큰 기반 인증 후, 상품 정보를 JSON과 썸네일 파일로 등록합니다.")
     @PostMapping(value = "/create", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> createProductWithFile(
-            @RequestPart("product") ProductDTO productDTO,
-            @RequestPart(value = "thumbnailFiles", required = false) List<MultipartFile> thumbnailFiles,
-            @RequestHeader("Authorization") String authorizationHeader
+            @RequestPart("dto") ProductDTO productDTO,
+            @RequestPart(value = "images", required = false) List<MultipartFile> images,
+            @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
         try {
-            String token = authorizationHeader.replace("Bearer ", "");
-            Long uno = jwtUtil.getUnoFromToken(token);
-
-            List<String> savedFileNames = new ArrayList<>();
-            if (thumbnailFiles != null) {
-                for (MultipartFile file : thumbnailFiles) {
-                    if (file.isEmpty()) continue;
-
-                    // ⬇️ 서비스 통해 이미지 저장
-                    String fileName = productImageStorageService.save(file);
-
-                    savedFileNames.add(fileName);
-                }
+            Long userUno = userDetails.getUno();
+            log.info("product create -> getUserUno: {}" , userUno);
+            if(productDTO.getProdName() == null || productDTO.getProdName().isEmpty()) {
+                return ResponseEntity.badRequest().body("상품 이름이 누락되었습니다.");
             }
-
-            productDTO.setProdImageNames(savedFileNames);
-            productService.createProductWithImages(productDTO, uno);
-
+            if(productDTO.getProdRegion() == null) {
+                return ResponseEntity.badRequest().body("상품 지역이 누락되었습니다.");
+            }
+            if(productDTO.getMainType() == null) {
+                return ResponseEntity.badRequest().body("상품 종류가 누락되었습니다.");
+            }
+    
+            productService.createProductWithImages(productDTO, userUno, images);
             return ResponseEntity.ok("상품 등록 성공");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("상품 등록 실패: " + e.getMessage());

@@ -34,40 +34,29 @@ import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
+import kroryi.dagon.util.FileStorageUtil;
+import org.springframework.web.multipart.MultipartFile;
+import java.io.File;
+import java.io.FileInputStream;
+import org.springframework.util.StreamUtils;
+import lombok.extern.log4j.Log4j2;
+import kroryi.dagon.repository.product.ProductImageRepository;
 
-@Log4j2
 @Service
 @RequiredArgsConstructor
+@Log4j2
 public class ProductService {
 
+
     private final ProductRepository productRepository;
+    private final ProductImageRepository productImageRepository;
     private final UserRepository userRepository;
     private final PartnerRepository partnerRepository;
     private final PartnerService partnerService;
     private final SeaFreshwaterFishingRepository seaFreshwaterFishingRepository;
-    private final ProductImageRepository productImageRepository;
-
-    @Value("${file.upload-path}")
-    private String uploadPath;
-
-    private String saveFile(MultipartFile file) {
-        try {
-            String fullPath = Paths.get(uploadPath, file.getOriginalFilename()).toString();
-            log.info("파일 저장 경로: {}", fullPath);
-            File dir = new File(uploadPath);
-            if (!dir.exists()) {
-                log.info("업로드 디렉토리 없음 → 생성 시도");
-                dir.mkdirs();
-            }
-            file.transferTo(new File(fullPath)); // 이 줄에서 예외 발생 가능
-            return "/" + uploadPath.replace("\\", "/") + "/" + file.getOriginalFilename();
-        } catch (IOException e) {
-            throw new RuntimeException("파일 저장 실패: " + file.getOriginalFilename(), e);
-        }
-    }
-
+    private final FileStorageUtil fileStorageUtil;
     @Transactional
-    public void createProductWithImages(ProductDTO dto, Long uno) {
+    public void createProductWithImages(ProductDTO dto, Long uno, List<MultipartFile> productImages) {
         Partner partner = partnerRepository.findById(uno).orElseThrow();
 
         Product product = new Product();
@@ -85,16 +74,42 @@ public class ProductService {
         product.setProdThumbnail(dto.getProdThumbnail());
         product.setPartner(partner);
 
-        if (dto.getProdImageNames() != null) {
+        productRepository.save(product);
+
+        if (productImages != null) {
+            for (int i = 0; i < productImages.size(); i++) {
+                MultipartFile file = productImages.get(i);
+                try {
+                    // 1. 파일을 uploads 경로에 저장
+                    String savedUrl = fileStorageUtil.saveImage(file, "products");
+                    log.info("savedUrl:---> {}", savedUrl);
+                    // 2. 저장된 파일을 읽어서 바이너리 추출
+                    String uploadDir = fileStorageUtil.getUploadDir();
+                    String relativePath = savedUrl.replaceFirst("/uploads/", "").replace("/", File.separator);
+                    File savedFile = new File(uploadDir, relativePath);
+                    log.info("savedFile:---> {}", savedFile);
+                    byte[] imageBytes;
+                    try (FileInputStream fis = new FileInputStream(savedFile)) {
+                        imageBytes = StreamUtils.copyToByteArray(fis);
+                    }
+                    // 3. FishingReportImage 엔티티 생성 및 저장
+                    ProductImage image = new ProductImage();
+                    image.setFileName(savedUrl);
+                    image.setProduct(product);
+                    image.setImageData(imageBytes); // 바이너리 저장
+                    productImageRepository.save(image);
+                } catch (Exception e) {
+                    throw new RuntimeException("이미지 저장 실패", e);
+                }
+            }
+        } else if (dto.getProdImageNames() != null) {
             for (String fileName : dto.getProdImageNames()) {
                 ProductImage image = new ProductImage();
-                image.setFileName(fileName); // 예: "abc.jpg"
+                image.setFileName(fileName);
                 image.setProduct(product);
                 product.addImage(image);
             }
         }
-
-        productRepository.save(product);
     }
 
     // [Read] 전체 상품 조회
@@ -135,28 +150,28 @@ public class ProductService {
         product.setProdEvent(productDTO.getProdEvent());
         product.setProdNotice(productDTO.getProdNotice());
 
-        // ✅ 삭제할 이미지 처리
-        if (productDTO.getDeleteImageNames() != null) {
-            for (String fileName : productDTO.getDeleteImageNames()) {
-                // 1. 파일 시스템에서 삭제
-                File file = new File(uploadPath + fileName); // uploadPath는 예: "/upload/products/"
-                if (file.exists()) {
-                    file.delete();
-                }
-
-                // 2. DB에서 해당 이미지 레코드 제거 (ProductImage 엔티티 있다고 가정)
-                productImageRepository.deleteByProductAndFileName(product, fileName);
-            }
-        }
-
-        // ✅ 새로 들어온 썸네일 이미지 저장
-        if (thumbnailFiles != null && !thumbnailFiles.isEmpty()) {
-            for (MultipartFile file : thumbnailFiles) {
-                String newFileName = saveFile(file); // 썸네일 저장 로직
-                ProductImage newImage = new ProductImage(product, newFileName);
-                productImageRepository.save(newImage);
-            }
-        }
+//        // ✅ 삭제할 이미지 처리
+//        if (productDTO.getDeleteImageNames() != null) {
+//            for (String fileName : productDTO.getDeleteImageNames()) {
+//                // 1. 파일 시스템에서 삭제
+//                File file = new File(uploadPath + fileName); // uploadPath는 예: "/upload/products/"
+//                if (file.exists()) {
+//                    file.delete();
+//                }
+//
+//                // 2. DB에서 해당 이미지 레코드 제거 (ProductImage 엔티티 있다고 가정)
+//                productImageRepository.deleteByProductAndFileName(product, fileName);
+//            }
+//        }
+//
+//        // ✅ 새로 들어온 썸네일 이미지 저장
+//        if (thumbnailFiles != null && !thumbnailFiles.isEmpty()) {
+//            for (MultipartFile file : thumbnailFiles) {
+//                String newFileName = saveFile(file); // 썸네일 저장 로직
+//                ProductImage newImage = new ProductImage(product, newFileName);
+//                productImageRepository.save(newImage);
+//            }
+//        }
 
         return product.getProdId();
     }

@@ -43,6 +43,7 @@ public class ProductDTO {
 
     private List<String> prodImageNames; // 썸네일 여러 개
     private List<String> deleteImageNames; // 👈 삭제할 이미지 경로
+    private List<byte[]> prodImageDataList; // 이미지 바이너리 리스트
 
     public static ProductDTO fromEntity(Product product) {
         ProductDTO dto = new ProductDTO();
@@ -81,6 +82,11 @@ public class ProductDTO {
         dto.setProdImageNames(
                 product.getImages().stream()
                         .map(ProductImage::getFileName)
+                        .collect(Collectors.toList())
+        );
+        dto.setProdImageDataList(
+                product.getImages().stream()
+                        .map(ProductImage::getImageData)
                         .collect(Collectors.toList())
         );
 
