@@ -14,7 +14,7 @@ public class FishingReportImage {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, length = 512)
+    @Column(nullable = true, length = 512)
     private String imageUrl;
 
     @Lob
@@ -30,5 +30,9 @@ public class FishingReportImage {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "fr_id", nullable = false)
     private FishingReport fishingReport;
+
+    @Lob
+    @Column(name = "thumbnail_data", columnDefinition = "LONGBLOB")
+    private byte[] thumbnailData;
 }
 

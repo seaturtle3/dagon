@@ -42,6 +42,7 @@ public class ProductDTO {
     private List<ProductOptionDTO> options;
 
     private List<String> prodImageNames; // 썸네일 여러 개
+    private List<String> deleteImageNames; // 👈 삭제할 이미지 경로
 
     public static ProductDTO fromEntity(Product product) {
         ProductDTO dto = new ProductDTO();
@@ -89,23 +90,6 @@ public class ProductDTO {
         }
         dto.setProdThumbnail(product.getProdThumbnail());
         return dto;
-    }
-
-    public Product toEntity() {
-        Product product = new Product();
-        product.setProdName(this.getProdName());
-        product.setProdRegion(this.getProdRegion());
-        product.setMainType(this.getMainType());
-        product.setSubType(this.getSubType());
-        product.setMaxPerson(this.getMaxPerson());
-        product.setMinPerson(this.getMinPerson());
-        product.setWeight(this.getWeight());
-        product.setProdAddress(this.getProdAddress());
-        product.setProdDescription(this.getProdDescription());
-        product.setProdEvent(this.getProdEvent());
-        product.setProdNotice(this.getProdNotice());
-        product.setProdThumbnail(this.getProdThumbnail());
-        return product;
     }
 
 }

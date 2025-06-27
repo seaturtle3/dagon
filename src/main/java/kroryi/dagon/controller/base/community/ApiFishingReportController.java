@@ -1,4 +1,4 @@
-package kroryi.dagon.controller.partner.community;
+package kroryi.dagon.controller.base.community;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -6,14 +6,17 @@ import kroryi.dagon.DTO.board.FishingCenter.ApiFishingReportDTO;
 import kroryi.dagon.DTO.board.FishingCenter.FishingReportCreateDTO;
 import kroryi.dagon.DTO.board.FishingCenter.FishingReportDTO;
 import kroryi.dagon.DTO.board.PartnerFishingReportDTO;
+import kroryi.dagon.component.CustomUserDetails;
 import kroryi.dagon.entity.fishingCenter.FishingReport;
 import kroryi.dagon.entity.product.Product;
 import kroryi.dagon.entity.User;
 import kroryi.dagon.service.PartnerFishingReportService;
+import kroryi.dagon.service.auth.AdminUserDetails;
 import kroryi.dagon.service.auth.UserService;
 import kroryi.dagon.service.community.fishingCenter.ApiFishingReportService;
 import kroryi.dagon.service.product.ProductService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -23,6 +26,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -35,6 +39,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @Tag(name = "FishingReport", description = "조황정보 API (파트너)")
 @RequestMapping("/api/fishing-report")
+@Log4j2
 public class ApiFishingReportController {
 
     @Value("${app.file.upload-dir}")
@@ -77,9 +82,11 @@ public class ApiFishingReportController {
     @PostMapping(value = "/create", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ApiFishingReportDTO createFishingReport(
             @RequestPart("dto") ApiFishingReportDTO apiFishingReportDTO,
-            @RequestPart(value = "images", required = false) List<MultipartFile> images
+            @RequestPart(value = "images", required = false) List<MultipartFile> images,
+            @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
-        Long userUno = getCurrentUserUno();
+        Long userUno = userDetails.getUno();
+        log.info("fishing create -> getUserUno: {}" , userUno);
 
         if (apiFishingReportDTO.getTitle() == null || apiFishingReportDTO.getContent() == null) {
             throw new IllegalArgumentException("제목 또는 내용이 누락되었습니다.");
@@ -107,11 +114,20 @@ public class ApiFishingReportController {
         return apiFishingReportService.getFishingReportById(id);
     }
 
+    @Operation(summary = "조황정보 ID 조회")
+    @GetMapping("/edit/{id}")
+    public ApiFishingReportDTO getFishingReportEdit(@PathVariable Long id) {
+        return apiFishingReportService.getFishingReportById(id);
+    }
+
     @Operation(summary = "조황정보 수정")
-    @PutMapping("/update/{id}")
-    public Long updateFishingReport(@PathVariable("id") Long frId,
-                                    @RequestBody ApiFishingReportDTO apiFishingReportDTO) {
-        return apiFishingReportService.updateFishingReport(frId, apiFishingReportDTO);
+    @PutMapping(value = "/update/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public Long updateFishingReport(
+            @PathVariable("id") Long frId,
+            @RequestPart("dto") ApiFishingReportDTO apiFishingReportDTO,
+            @RequestPart(value = "images", required = false) List<MultipartFile> images
+    ) {
+        return apiFishingReportService.updateFishingReport(frId, apiFishingReportDTO, images);
     }
 
     @Operation(summary = "조황정보 삭제")
