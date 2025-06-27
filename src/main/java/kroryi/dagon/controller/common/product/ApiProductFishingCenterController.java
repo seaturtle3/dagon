@@ -20,7 +20,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @Tag(name = "Product", description = "제품 ID로 조황센터 정보 조회")
-@RequestMapping("api/product")
+@RequestMapping("/api/product")
 public class ApiProductFishingCenterController {
 
     private final ApiFishingReportService apiFishingReportService;
@@ -30,6 +30,7 @@ public class ApiProductFishingCenterController {
     @Operation(summary = "제품 ID로 조황센터 정보 조회")
     @GetMapping("/fishing-center/{productId}")
     public ApiFishingCenterDTO getFishingCenterByProductId(@PathVariable Long productId) {
+        
         List<ApiFishingReportDTO> reports = apiFishingReportService.getAllByProductId(productId);
         List<ApiFishingDiaryDTO> diaries = apiFishingDiaryService.getAllByProductId(productId);
 
