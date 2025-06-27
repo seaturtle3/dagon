@@ -1,4 +1,4 @@
-package kroryi.dagon.controller.base.community;
+package kroryi.dagon.controller.partner.community;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -33,7 +33,18 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.nio.file.*;
 import java.util.List;
+import java.util.UUID;
+import java.io.IOException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
+import net.coobird.thumbnailator.Thumbnails;
+
+import java.awt.image.BufferedImage;
+import javax.imageio.ImageIO;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -99,8 +110,7 @@ public class ApiFishingReportController {
     public Page<ApiFishingReportDTO> getAllFishingReports(@RequestParam(defaultValue = "0") int page,
                                                           @RequestParam(defaultValue = "10") int size,
                                                           @RequestParam(defaultValue = "frId") String sortBy,
-                                                          @RequestParam(defaultValue = "desc") String direction)
-    {
+                                                          @RequestParam(defaultValue = "desc") String direction) {
         Sort sort = direction.equalsIgnoreCase("desc")
                 ? Sort.by(sortBy).descending()
                 : Sort.by(sortBy).ascending();
@@ -203,5 +213,46 @@ public class ApiFishingReportController {
         }
     }
 
+    public String saveImageWithThumbnail(MultipartFile file, String folderName) {
+        try {
+            String dateFolder = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd"));
+            String fileName = UUID.randomUUID() + "_" + file.getOriginalFilename();
+            Path uploadPath = Paths.get(uploadDir, folderName, dateFolder);
+            Files.createDirectories(uploadPath);
 
+            // 원본 저장
+            Path filePath = uploadPath.resolve(fileName);
+            file.transferTo(filePath.toFile());
+
+            // 썸네일 생성 및 저장
+            String thumbFileName = "thumb_" + fileName;
+            Path thumbPath = uploadPath.resolve(thumbFileName);
+
+            BufferedImage originalImage = ImageIO.read(filePath.toFile());
+            Thumbnails.of(originalImage)
+                    .size(400, 300) // 원하는 썸네일 크기
+                    .toFile(thumbPath.toFile());
+
+            // 원본 이미지 URL 반환 (필요시 썸네일 URL도 함께 반환 가능)
+            return "/uploads/" + folderName + "/" + dateFolder + "/" + fileName;
+        } catch (IOException e) {
+            throw new RuntimeException("이미지 저장/썸네일 생성 실패", e);
+        }
+    }
+
+    @GetMapping("/{currentId}/prev-next")
+    public Map<String, ApiFishingReportDTO> getPrevNextFishingReport(@PathVariable Long currentId) {
+        // prev: 현재 id보다 작은 것 중 가장 큰 frId
+        // next: 현재 id보다 큰 것 중 가장 작은 frId
+        ApiFishingReportDTO prev = null;
+        ApiFishingReportDTO next = null;
+        FishingReport prevEntity = apiFishingReportService.findPrevById(currentId);
+        FishingReport nextEntity = apiFishingReportService.findNextById(currentId);
+        if (prevEntity != null) prev = new ApiFishingReportDTO(prevEntity);
+        if (nextEntity != null) next = new ApiFishingReportDTO(nextEntity);
+        Map<String, ApiFishingReportDTO> result = new HashMap<>();
+        result.put("prev", prev);
+        result.put("next", next);
+        return result;
+    }
 }

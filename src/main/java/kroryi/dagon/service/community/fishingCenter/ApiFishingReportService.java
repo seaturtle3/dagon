@@ -184,4 +184,11 @@ public class ApiFishingReportService {
                 .orElseThrow(() -> new RuntimeException("조황정보 없음"));
         fishingReportRepository.delete(fishingReport);
     }
+
+    public FishingReport findPrevById(Long currentId) {
+        return fishingReportRepository.findTopByFrIdLessThanOrderByFrIdDesc(currentId).orElse(null);
+    }
+    public FishingReport findNextById(Long currentId) {
+        return fishingReportRepository.findTopByFrIdGreaterThanOrderByFrIdAsc(currentId).orElse(null);
+    }
 }
