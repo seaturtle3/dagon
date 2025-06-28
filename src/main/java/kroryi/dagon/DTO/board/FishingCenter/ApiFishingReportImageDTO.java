@@ -11,6 +11,7 @@ public class ApiFishingReportImageDTO {
     private String imageUrl;
     private boolean isThumbnail;
     private String imageData; // Base64 인코딩된 이미지 데이터
+    private String thumbnailData; // Base64 인코딩된 썸네일 데이터
 
     public ApiFishingReportImageDTO(FishingReportImage image) {
         this.imageUrl = image.getImageUrl();
@@ -20,6 +21,11 @@ public class ApiFishingReportImageDTO {
             this.imageData = Base64.getEncoder().encodeToString(image.getImageData());
         } else {
             this.imageData = null;
+        }
+        if (image.getThumbnailData() != null) {
+            this.thumbnailData = Base64.getEncoder().encodeToString(image.getThumbnailData());
+        } else {
+            this.thumbnailData = null;
         }
     }
 }
