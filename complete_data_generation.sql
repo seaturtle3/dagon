@@ -75,6 +75,7 @@ ALTER TABLE fishing_diary MODIFY content TEXT;
 ALTER TABLE free_board MODIFY content TEXT;
 ALTER TABLE event MODIFY content TEXT;
 ALTER TABLE notice MODIFY content TEXT;
+ALTER TABLE faq MODIFY answer TEXT;
 
 
 -- 3. 관리자 데이터 생성 (11개)
