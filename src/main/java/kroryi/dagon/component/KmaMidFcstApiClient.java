@@ -21,16 +21,16 @@ public class KmaMidFcstApiClient {
     private final RestTemplate restTemplate;
 
     /**
-     * 중기예보(육상) API 호출
+     * 중기예보(육상) API 호출 (공식문서 기준)
      */
-    public String getMidLandFcst(String regId, String tmFc) {
-        String url = baseUrl + "/getMidLandFcst";
+    public String getMidFcst(String stnId, String tmFc) {
+        String url = baseUrl + "/getMidFcst";
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(url)
                 .queryParam("serviceKey", serviceKey)
                 .queryParam("pageNo", "1")
                 .queryParam("numOfRows", "10")
                 .queryParam("dataType", "JSON")
-                .queryParam("regId", regId)
+                .queryParam("stnId", stnId)
                 .queryParam("tmFc", tmFc);
         log.info("기상청 중기예보 API 요청: {}", builder.toUriString());
         return restTemplate.getForObject(builder.toUriString(), String.class);

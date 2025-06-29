@@ -34,9 +34,9 @@ public class KmaWeatherSampleController {
      */
     @GetMapping("/midfcst")
     public String getMidFcst(
-            @RequestParam String regId,
+            @RequestParam String stnId,
             @RequestParam String tmFc
     ) {
-        return midFcstApiClient.getMidLandFcst(regId, tmFc);
+        return midFcstApiClient.getMidFcst(stnId, tmFc);
     }
 } 
