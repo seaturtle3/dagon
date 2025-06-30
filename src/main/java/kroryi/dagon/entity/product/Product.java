@@ -62,7 +62,7 @@ public class Product extends BaseTimeEntity {
     private String prodAddress;
 
     @Lob
-    @Column(name = "prod_description")
+    @Column(name = "prod_description", columnDefinition = "TEXT", nullable = false)
     private String prodDescription;
 
     @Lob

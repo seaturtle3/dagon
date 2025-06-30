@@ -21,7 +21,7 @@ public class FAQ extends BaseTimeEntity{
     private String question;
 
     @Lob
-    @Column(name = "answer", nullable = false)
+    @Column(name = "answer", columnDefinition = "TEXT", nullable = false)
     private String answer;
 
     // 표시 순서
