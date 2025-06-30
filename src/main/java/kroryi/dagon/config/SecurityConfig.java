@@ -79,6 +79,9 @@ public class SecurityConfig {
                         .requestMatchers("/api/**").authenticated()  // 일반 API는 인증된 사용자 모두 접근 가능
                         .anyRequest().authenticated()
                 )
+                .headers(headers -> headers
+                .frameOptions(frameOptions -> frameOptions.disable())
+            )
                 .formLogin(formLogin -> { // 기존 폼 로그인 설정 유지
                     formLogin
                             .loginPage("/login")
