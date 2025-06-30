@@ -8,11 +8,14 @@ import jakarta.validation.Valid;
 import kroryi.dagon.DTO.InquiryCreateRequestDTO;
 import kroryi.dagon.DTO.InquiryResponseDTO;
 import kroryi.dagon.DTO.InquiryUpdateRequestDTO;
+import kroryi.dagon.DTO.PartnerInquiryCreateRequestDTO;
 import kroryi.dagon.component.CustomUserDetails;
 import kroryi.dagon.entity.Inquiry;
 import kroryi.dagon.entity.User;
+import kroryi.dagon.entity.product.Product;
 import kroryi.dagon.repository.InquiryRepository;
 import kroryi.dagon.repository.UserRepository;
+import kroryi.dagon.repository.product.ProductRepository;
 import kroryi.dagon.service.support.InquiryService;
 import kroryi.dagon.service.support.NotificationService;
 import kroryi.dagon.util.JwtUtil;
@@ -30,17 +33,20 @@ import java.nio.file.AccessDeniedException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
+import lombok.extern.log4j.Log4j2;
 
 @Tag(name = "User-Inquiry", description = "1:1 문의 API (사용자)")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/inquiry")
+@Log4j2
 public class ApiInquiryController {
 
     private final InquiryService inquiryService;
     private final JwtUtil jwtUtil;
     private final NotificationService notificationService;
     private final InquiryRepository inquiryRepository;
+    private final ProductRepository productRepository;
 
 
     // 1. 문의 생성
@@ -49,6 +55,11 @@ public class ApiInquiryController {
     public ResponseEntity<InquiryResponseDTO> createInquiry(
             @RequestBody @Valid InquiryCreateRequestDTO request,
             @AuthenticationPrincipal CustomUserDetails userDetails) {
+                Long uno = userDetails.getUno();
+                log.info("uno--------------->: {}", uno);
+
+
+
         InquiryResponseDTO response = inquiryService.createInquiry(userDetails.getUno(), request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
@@ -114,6 +125,10 @@ public class ApiInquiryController {
                 // 일반 사용자면 본인 문의만 삭제 가능
                 Long uno = Long.parseLong(claims.get("uno").toString());
                 deleted = inquiryService.deleteInquiryByUser(inquiryId, uno);
+            } else if ("PARTNER".equals(role)) {
+                // 파트너면 본인에게 온 문의만 삭제 가능
+                Long uno = Long.parseLong(claims.get("uno").toString());
+                deleted = inquiryService.deleteInquiryByPartner(inquiryId, uno);
             } else {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).body("권한이 없습니다.");
             }
@@ -187,6 +202,36 @@ public class ApiInquiryController {
     public List<InquiryResponseDTO> getMyInquiries(@AuthenticationPrincipal CustomUserDetails currentUser) {
         Long userUno = currentUser.getUno();
         return inquiryService.getInquiriesByUserUno(userUno);
+    }
+
+    // 파트너 전용 1:1 문의 생성 (상품ID로 파트너 자동 매핑)
+    @Operation(summary = "파트너 전용 1:1 문의 생성 (상품ID로 파트너 자동 매핑)")
+    @PostMapping("/partner")
+    public ResponseEntity<InquiryResponseDTO> createPartnerInquiry(
+            @RequestBody PartnerInquiryCreateRequestDTO request,
+            @AuthenticationPrincipal CustomUserDetails userDetails) {
+
+        // 1. productId로 Product 조회
+        Product product = productRepository.findById(request.getProductId())
+                .orElseThrow(() -> new IllegalArgumentException("해당 상품이 존재하지 않습니다."));
+
+        // 2. 파트너 uno 추출
+        Long partnerUno = product.getPartner().getUno();
+
+        // 3. InquiryCreateRequestDTO 생성
+        InquiryCreateRequestDTO inquiryRequest = new InquiryCreateRequestDTO();
+        inquiryRequest.setReceiverType(kroryi.dagon.enums.ReceiverType.PARTNER);
+        inquiryRequest.setReceiverId(partnerUno);
+        inquiryRequest.setPartnerId(partnerUno);
+        inquiryRequest.setTitle(request.getTitle());
+        inquiryRequest.setContent(request.getContent());
+        inquiryRequest.setInquiryType(request.getInquiryType());
+        inquiryRequest.setPartnerName(product.getPartner().getPname());
+        inquiryRequest.setWriterType("USER");
+
+        // 4. 서비스 호출
+        InquiryResponseDTO response = inquiryService.createInquiry(userDetails.getUno(), inquiryRequest);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
 }

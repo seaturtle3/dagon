@@ -37,3 +37,12 @@ logs/
 
 db/
 /db/
+.venv/
+.venv/*
+monak_images/
+monak_images/*
+thefishing_images/
+thefishing_images/*
+innak_images/
+downloaded_images/
+downloaded_images/*

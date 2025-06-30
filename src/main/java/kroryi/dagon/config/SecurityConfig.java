@@ -39,10 +39,6 @@ public class SecurityConfig {
     private final JwtUtil jwtUtil; // JWT 유틸리티 주입
     private final UserRepository userRepository;
 
-    @Bean
-    public ApiKeyFilter apiKeyFilter(ApiKeyService apiKeyService, JwtUtil jwtTokenUtil) {
-        return new ApiKeyFilter(apiKeyService, jwtTokenUtil);
-    }
 
     @Bean
     public JwtAuthenticationFilter jwtAuthenticationFilter(JwtUtil jwtUtil) {
@@ -51,7 +47,6 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http, 
-                                                   ApiKeyFilter apiKeyFilter, 
                                                    JwtAuthenticationFilter jwtAuthenticationFilter) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
@@ -80,6 +75,8 @@ public class SecurityConfig {
                         .requestMatchers("/api/mypage").authenticated()
                         .requestMatchers("/partner/api").authenticated()
                         .requestMatchers("/partner/review").authenticated()
+                        .requestMatchers("/api/admin/**").hasAnyRole("ADMIN", "SUPER_ADMIN")  // 관리자 전용 API
+                        .requestMatchers("/api/**").authenticated()  // 일반 API는 인증된 사용자 모두 접근 가능
                         .anyRequest().authenticated()
                 )
                 .formLogin(formLogin -> { // 기존 폼 로그인 설정 유지
@@ -96,8 +93,7 @@ public class SecurityConfig {
                         .logoutSuccessUrl("/login?logout")
                         .permitAll()
                 )
-                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(apiKeyFilter, JwtAuthenticationFilter.class);
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

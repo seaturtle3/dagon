@@ -67,6 +67,16 @@ ALTER TABLE prod_fish_species_mapping AUTO_INCREMENT = 1;
 ALTER TABLE prod_fishing_gear_mapping AUTO_INCREMENT = 1;
 ALTER TABLE prod_facility_mapping AUTO_INCREMENT = 1;
 
+
+
+-- 조황정보 테이블 확장
+ALTER TABLE fishing_report MODIFY content TEXT;
+ALTER TABLE fishing_diary MODIFY content TEXT;
+ALTER TABLE free_board MODIFY content TEXT;
+ALTER TABLE event MODIFY content TEXT;
+ALTER TABLE notice MODIFY content TEXT;
+
+
 -- 3. 관리자 데이터 생성 (11개)
 INSERT INTO admin (aid, apw, aname, role, uno) VALUES
 ('admin', '$2a$10$zRA2sR7SU0NZBlqFt/ewFuvYnPqtlSTMArezEiBkP8qoGLwrGwkxO', '슈퍼관리자', 'SUPER_ADMIN', 1),
@@ -186,66 +196,61 @@ FROM (
     WHERE a.n + b.n * 10 + c.n * 100 BETWEEN 1 AND 500
 ) numbers;
 
--- 5. 파트너 데이터 생성 (100개) - users의 uno와 매칭
-SET @rownum := 0;
-INSERT INTO partners (uno, version, pname, p_address, ceo_name, p_info, license, license_img, created_at)
-SELECT 
-    u.uno,
-    0 as version,
-    CONCAT(
-        CASE 
-            WHEN @rownum <= 20 THEN '바다낚시터'
-            WHEN @rownum <= 40 THEN '민물낚시터'
-            WHEN @rownum <= 60 THEN '해상낚시터'
-            WHEN @rownum <= 80 THEN '강낚시터'
-            ELSE '호수낚시터'
-        END,
+-- 5. 파트너 데이터 생성 (100개) - users의 uno와 매칭, 내용 랜덤 다양화
+DELIMITER //
+CREATE PROCEDURE generate_various_partners_100()
+BEGIN
+  DECLARE i INT DEFAULT 1;
+  DECLARE uno_val INT;
+  DECLARE ceo_names VARCHAR(100);
+  DECLARE pnames VARCHAR(100);
+  DECLARE paddress VARCHAR(200);
+  DECLARE pinfo VARCHAR(200);
+  WHILE i <= 100 DO
+    SET uno_val = 80 + i;
+    INSERT INTO partners (uno, version, pname, p_address, ceo_name, p_info, license, license_img, created_at)
+    VALUES (
+      uno_val,
+      0,
+      CONCAT(
+        ELT(FLOOR(1 + (RAND() * 10)),
+          '서울한강낚시', '부산해운대피싱', '인천송도낚시', '대구수성피싱', '광주무등산낚시',
+          '강릉경포낚시', '제주바다피싱', '포항영일대낚시', '여수돌산낚시', '춘천소양강낚시'
+        ),
         ' ',
-        CASE 
-            WHEN @rownum <= 20 THEN '해운대점'
-            WHEN @rownum <= 40 THEN '청평점'
-            WHEN @rownum <= 60 THEN '제주점'
-            WHEN @rownum <= 80 THEN '한강점'
-            ELSE '화천점'
-        END,
-        ' #', @rownum
-    ) as pname,
-    CONCAT(
-        CASE 
-            WHEN @rownum <= 20 THEN '부산광역시 해운대구 해운대해변로 '
-            WHEN @rownum <= 40 THEN '경기도 가평군 청평면 청평로 '
-            WHEN @rownum <= 60 THEN '제주특별자치도 제주시 애월읍 애월로 '
-            WHEN @rownum <= 80 THEN '서울특별시 강남구 한강대로 '
-            ELSE '강원도 화천군 화천읍 화천로 '
-        END,
-        @rownum
-    ) as p_address,
-    CONCAT(
-        CASE 
-            WHEN @rownum <= 20 THEN '김바다'
-            WHEN @rownum <= 40 THEN '이민물'
-            WHEN @rownum <= 60 THEN '박해상'
-            WHEN @rownum <= 80 THEN '최강낚시'
-            ELSE '정호수'
-        END,
-        @rownum
-    ) as ceo_name,
-    CONCAT(
-        CASE 
-            WHEN @rownum <= 20 THEN '해운대에서 즐기는 바다낚시! 맛있는 회와 함께하는 즐거운 낚시체험을 제공합니다.'
-            WHEN @rownum <= 40 THEN '청평호수에서 즐기는 민물낚시! 아름다운 자연과 함께하는 평화로운 낚시를 경험하세요.'
-            WHEN @rownum <= 60 THEN '제주 바다에서 즐기는 해상낚시! 깨끗한 바다와 함께하는 특별한 낚시체험을 제공합니다.'
-            WHEN @rownum <= 80 THEN '한강에서 즐기는 강낚시! 도시 한가운데서 즐기는 편안한 낚시를 경험하세요.'
-            ELSE '화천호수에서 즐기는 호수낚시! 맑은 물과 함께하는 건강한 낚시를 즐기세요.'
-        END,
-        ' #', @rownum
-    ) as p_info,
-    CONCAT('L', LPAD(@rownum, 9, '0')) as license,
-    CONCAT('license', @rownum, '.jpg') as license_img,
-    DATE_SUB(NOW(), INTERVAL FLOOR(RAND() * 365) DAY) as created_at
-FROM (
-    SELECT @rownum := @rownum + 1 AS rownum, u.* FROM (SELECT * FROM users WHERE role = 'PARTNER' ORDER BY uno LIMIT 100) u
-) u;
+        ELT(FLOOR(1 + (RAND() * 5)), '레저', '체험', '투어', '마스터', '월드'),
+        i
+      ),
+      CONCAT(
+        ELT(FLOOR(1 + (RAND() * 10)),
+          '서울특별시 강남구 테헤란로 ', '부산광역시 해운대구 해운대로 ', '인천광역시 연수구 송도과학로 ',
+          '대구광역시 수성구 동대구로 ', '광주광역시 북구 무등로 ', '강원도 강릉시 경강로 ',
+          '제주특별자치도 제주시 첨단로 ', '경상북도 포항시 북구 영일대해수욕장로 ',
+          '전라남도 여수시 돌산읍 돌산로 ', '강원도 춘천시 소양강로 '
+        ),
+        FLOOR(RAND()*100+1)
+      ),
+      ELT(FLOOR(1 + (RAND() * 10)),
+        '김민수', '이지은', '박지훈', '최유리', '정우성', '한지민', '오세훈', '이준호', '박소연', '정현우'
+      ),
+      CONCAT(
+        ELT(FLOOR(1 + (RAND() * 10)),
+          '전국 최대 규모의 낚시터', '가족과 함께 즐기는 체험', '초보자도 환영하는 친절한 운영',
+          '최신 장비 완비', '자연과 함께하는 힐링', '도심 속 레저', '전문 가이드 동행',
+          '다양한 어종 포획 가능', '연중무휴 운영', '프리미엄 서비스 제공'
+        ),
+        ' - ', i
+      ),
+      CONCAT('L', LPAD(uno_val, 9, '0')),
+      CONCAT('license', uno_val, '.jpg'),
+      DATE_SUB(NOW(), INTERVAL FLOOR(RAND() * 365) DAY)
+    );
+    SET i = i + 1;
+  END WHILE;
+END //
+DELIMITER ;
+
+-- CALL generate_various_partners_100();
 
 -- 6. 상품 데이터 생성 (1000개)
 SET @rownum := 0;
@@ -1103,3 +1108,56 @@ INSERT INTO tide_station (station_code, station_name, region, latitude, longitud
 ('IE_0060', '이어도', 'JEJU', 32.122, 125.182, 'IE_0060'),
 ('DT_0004', '제주', 'JEJU', 33.527, 126.543, 'KG_0028'),
 ('DT_0021', '추자도', 'JEJU', 33.961, 126.3, 'KG_0028');
+
+-- partners 랜덤 정보로 일괄 업데이트 프로시저
+DELIMITER //
+CREATE PROCEDURE generate_randomize_partners_all()
+BEGIN
+  DECLARE done INT DEFAULT FALSE;
+  DECLARE v_uno BIGINT;
+  DECLARE cur CURSOR FOR SELECT uno FROM partners;
+  DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
+
+  OPEN cur;
+  read_loop: LOOP
+    FETCH cur INTO v_uno;
+    IF done THEN
+      LEAVE read_loop;
+    END IF;
+    UPDATE partners SET
+      ceo_name = ELT(FLOOR(1 + (RAND() * 10)),
+        '김민수', '이지은', '박지훈', '최유리', '정우성', '한지민', '오세훈', '이준호', '박소연', '정현우'),
+      license = CONCAT('L', LPAD(v_uno, 9, '0')),
+      p_address = CONCAT(
+        ELT(FLOOR(1 + (RAND() * 10)),
+          '서울특별시 강남구 테헤란로 ', '부산광역시 해운대구 해운대로 ', '인천광역시 연수구 송도과학로 ',
+          '대구광역시 수성구 동대구로 ', '광주광역시 북구 무등로 ', '강원도 강릉시 경강로 ',
+          '제주특별자치도 제주시 첨단로 ', '경상북도 포항시 북구 영일대해수욕장로 ',
+          '전라남도 여수시 돌산읍 돌산로 ', '강원도 춘천시 소양강로 '
+        ),
+        FLOOR(RAND()*100+1)
+      ),
+      p_info = CONCAT(
+        ELT(FLOOR(1 + (RAND() * 10)),
+          '전국 최대 규모의 낚시터', '가족과 함께 즐기는 체험', '초보자도 환영하는 친절한 운영',
+          '최신 장비 완비', '자연과 함께하는 힐링', '도심 속 레저', '전문 가이드 동행',
+          '다양한 어종 포획 가능', '연중무휴 운영', '프리미엄 서비스 제공'
+        ),
+        ' - ', v_uno
+      ),
+      pname = CONCAT(
+        ELT(FLOOR(1 + (RAND() * 10)),
+          '서울한강낚시', '부산해운대피싱', '인천송도낚시', '대구수성피싱', '광주무등산낚시',
+          '강릉경포낚시', '제주바다피싱', '포항영일대낚시', '여수돌산낚시', '춘천소양강낚시'
+        ),
+        ' ',
+        ELT(FLOOR(1 + (RAND() * 5)), '레저', '체험', '투어', '마스터', '월드'),
+        v_uno
+      ),
+      version = FLOOR(RAND()*10)
+    WHERE uno = v_uno;
+  END LOOP;
+  CLOSE cur;
+END //
+DELIMITER ;
+

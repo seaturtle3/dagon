@@ -10,15 +10,25 @@ import java.util.List;
 public class AdminUserDetails implements UserDetails {
 
     private final String aid;
+    private final String aname;
     private final String role;
 
-    public AdminUserDetails(String aid, String role) {
+    public AdminUserDetails(String aid, String aname, String role) {
         this.aid = aid;
+        this.aname = aname;
         this.role = role;
     }
 
     public String getAid() {
         return aid;
+    }
+
+    public String getAname() {
+        return aname;
+    }
+
+    public String getRole() {
+        return role;
     }
 
     @Override

@@ -28,7 +28,8 @@ public class ApiAdminNoticeController {
     @PostMapping
     public ResponseEntity<?> create(
             @Valid @RequestBody NoticeRequestDTO dto, BindingResult result,
-            @AuthenticationPrincipal AdminUserDetails userDetails) {
+            @AuthenticationPrincipal AdminUserDetails userDetails
+    ) {
         if (result.hasErrors()) {
             return ResponseEntity.badRequest().body(result.getAllErrors());
         }

@@ -4,11 +4,13 @@ import jakarta.persistence.EntityNotFoundException;
 import kroryi.dagon.DTO.product.ProductDTO;
 import kroryi.dagon.entity.Partner;
 import kroryi.dagon.entity.product.Product;
+import kroryi.dagon.entity.product.ProductImage;
 import kroryi.dagon.entity.product.ProductOption;
 import kroryi.dagon.entity.User;
 import kroryi.dagon.enums.MainType;
 import kroryi.dagon.enums.ProdRegion;
 import kroryi.dagon.enums.SubType;
+import kroryi.dagon.repository.PartnerRepository;
 import kroryi.dagon.repository.product.ProductRepository;
 import kroryi.dagon.repository.SeaFreshwaterFishingRepository;
 import kroryi.dagon.repository.UserRepository;
@@ -23,27 +25,81 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
+import kroryi.dagon.util.FileStorageUtil;
+import org.springframework.web.multipart.MultipartFile;
+import java.io.File;
+import java.io.FileInputStream;
+import org.springframework.util.StreamUtils;
+import lombok.extern.log4j.Log4j2;
+import kroryi.dagon.repository.product.ProductImageRepository;
 
 @Service
 @RequiredArgsConstructor
+@Log4j2
 public class ProductService {
 
     private final ProductRepository productRepository;
+    private final ProductImageRepository productImageRepository;
     private final UserRepository userRepository;
+    private final PartnerRepository partnerRepository;
     private final PartnerService partnerService;
     private final SeaFreshwaterFishingRepository seaFreshwaterFishingRepository;
-
+    private final FileStorageUtil fileStorageUtil;
     @Transactional
-    public Long addProduct(ProductDTO productDTO) {
-        Product product = productDTO.toEntity();
+    public void createProductWithImages(ProductDTO dto, Long uno, List<MultipartFile> productImages) {
+        Partner partner = partnerRepository.findById(uno).orElseThrow();
 
-        if (product.getPartner() == null) {
-            Partner defaultPartner = partnerService.getDefaultPartner();
-            product.setPartner(defaultPartner);
+        Product product = new Product();
+        product.setProdName(dto.getProdName());
+        product.setProdRegion(dto.getProdRegion());
+        product.setMainType(dto.getMainType());
+        product.setSubType(dto.getSubType());
+        product.setMaxPerson(dto.getMaxPerson());
+        product.setMinPerson(dto.getMinPerson());
+        product.setWeight(dto.getWeight());
+        product.setProdAddress(dto.getProdAddress());
+        product.setProdDescription(dto.getProdDescription());
+        product.setProdEvent(dto.getProdEvent());
+        product.setProdNotice(dto.getProdNotice());
+        product.setProdThumbnail(dto.getProdThumbnail());
+        product.setPartner(partner);
+
+        productRepository.save(product);
+
+        if (productImages != null) {
+            for (int i = 0; i < productImages.size(); i++) {
+                MultipartFile file = productImages.get(i);
+                try {
+                    // 1. 파일을 uploads 경로에 저장
+                    String savedUrl = fileStorageUtil.saveImage(file, "products");
+                    log.info("savedUrl:---> {}", savedUrl);
+                    // 2. 저장된 파일을 읽어서 바이너리 추출
+                    String uploadDir = fileStorageUtil.getUploadDir();
+                    String relativePath = savedUrl.replaceFirst("/uploads/", "").replace("/", File.separator);
+                    File savedFile = new File(uploadDir, relativePath);
+                    log.info("savedFile:---> {}", savedFile);
+                    byte[] imageBytes;
+                    try (FileInputStream fis = new FileInputStream(savedFile)) {
+                        imageBytes = StreamUtils.copyToByteArray(fis);
+                    }
+                    // 3. FishingReportImage 엔티티 생성 및 저장
+                    ProductImage image = new ProductImage();
+                    image.setFileName(savedUrl);
+                    image.setProduct(product);
+                    image.setImageData(imageBytes); // 바이너리 저장
+                    productImageRepository.save(image);
+                } catch (Exception e) {
+                    throw new RuntimeException("이미지 저장 실패", e);
+                }
+            }
+        } else if (dto.getProdImageNames() != null) {
+            for (String fileName : dto.getProdImageNames()) {
+                ProductImage image = new ProductImage();
+                image.setFileName(fileName);
+                image.setProduct(product);
+                product.addImage(image);
+            }
         }
-        Product savedProduct = productRepository.save(product);
-
-        return savedProduct.getProdId();
     }
 
     // [Read] 전체 상품 조회

@@ -1,6 +1,8 @@
 package kroryi.dagon.DTO.product;
 
+import kroryi.dagon.entity.Partner;
 import kroryi.dagon.entity.product.Product;
+import kroryi.dagon.entity.product.ProductImage;
 import kroryi.dagon.enums.MainType;
 import kroryi.dagon.enums.ProdRegion;
 import kroryi.dagon.enums.SubType;
@@ -9,6 +11,7 @@ import lombok.Data;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static java.util.Arrays.stream;
 
@@ -31,10 +34,15 @@ public class ProductDTO {
     private String prodNotice;
     private LocalDate createdAt;
     private String prodThumbnail;
+    private Long uno;
+    private Partner partner;
+
     private boolean deleted;
     private List<String> fishSpeciesNames;
     private List<ProductOptionDTO> options;
 
+    private List<String> prodImageNames; // 썸네일 여러 개
+    private List<byte[]> prodImageDataList; // 이미지 바이너리 리스트
 
     public static ProductDTO fromEntity(Product product) {
         ProductDTO dto = new ProductDTO();
@@ -68,6 +76,20 @@ public class ProductDTO {
             }).toList();
             dto.setOptions(optionDTOs);
         }
+        dto.setUno(product.getPartner().getUno());
+        // fromEntity 수정
+        dto.setProdImageNames(
+                product.getImages().stream()
+                        .map(ProductImage::getFileName)
+                        .collect(Collectors.toList())
+        );
+        dto.setProdImageDataList(
+                product.getImages().stream()
+                        .map(ProductImage::getImageData)
+                        .collect(Collectors.toList())
+        );
+
+        // LocalDateTime -> LocalDate 변환
         if (product.getCreatedAt() != null) {
             dto.setCreatedAt(product.getCreatedAt().toLocalDate());
         }

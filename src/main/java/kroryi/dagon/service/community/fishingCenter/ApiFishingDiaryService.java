@@ -103,7 +103,7 @@ public class ApiFishingDiaryService {
         return new ApiFishingDiaryDTO(fishingDiary);
     }
 
-    // 특정 배 상품 ID 조행기 조회
+    // 특정 제품ID 조행기 조회
     public List<ApiFishingDiaryDTO> getAllByProductId(Long productId) {
         List<FishingDiary> diaries = fishingDiaryRepository.findByProduct_ProdId(productId);
 
@@ -154,6 +154,23 @@ public class ApiFishingDiaryService {
 
     public List<ApiFishingDiaryDTO> getMyDiaries(Long userUno) {
         List<FishingDiary> diaries = fishingDiaryRepository.findByUser_Uno(userUno);
+        return diaries.stream()
+                .map(ApiFishingDiaryDTO::new)
+                .collect(Collectors.toList());
+    }
+
+    public List<ApiFishingDiaryDTO> getDiariesByMyProducts(Long userUno) {
+        // 1. 유저가 등록한 상품들 조회
+        List<Product> myProducts = productRepository.findByPartner_Uno(userUno);
+        if (myProducts.isEmpty()) {
+            return Collections.emptyList();
+        }
+        List<Long> productIds = myProducts.stream()
+                .map(Product::getProdId)
+                .collect(Collectors.toList());
+        // 2. 상품 id 리스트로 조행기 조회
+        List<FishingDiary> diaries = fishingDiaryRepository.findByProduct_ProdIdIn(productIds);
+        // 3. DTO 변환
         return diaries.stream()
                 .map(ApiFishingDiaryDTO::new)
                 .collect(Collectors.toList());

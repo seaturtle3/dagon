@@ -2,6 +2,7 @@ package kroryi.dagon.service.community.fishingCenter;
 
 
 import kroryi.dagon.DTO.CommentDTO;
+import kroryi.dagon.DTO.UsersDTO;
 import kroryi.dagon.entity.fishingCenter.FishingDiary;
 import kroryi.dagon.entity.fishingCenter.FishingDiaryComment;
 import kroryi.dagon.entity.User;
@@ -48,7 +49,8 @@ public class FishingDiaryCommentServiceImpl implements CommentService {
                         c.getFdCommentId(),
                         c.getUser().getNickname(),
                         c.getCommentContent(),
-                        c.getModifyAt()
+                        c.getModifyAt(),
+                        new UsersDTO(c.getUser())
                 )).collect(Collectors.toList());
     }
 

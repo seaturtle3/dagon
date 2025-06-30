@@ -38,13 +38,19 @@ public class ApiCommentController {
     @Operation(summary = "조행기 댓글 조회", description = "조행기 댓글 조회")
     public ResponseEntity<List<CommentDTO>> getFishingDiaryComments(@PathVariable Long postId) {
         List<CommentDTO> comments = fishingDiaryCommentService.getComments(postId);
+
         return ResponseEntity.ok(comments);
     }
 
     // Fishing Diary 댓글 작성
     @PostMapping("/fishing-diary/{postId}")
     @Operation(summary = "조행기 댓글 작성", description = "조행기 게시물에 댓글을 작성합니다.")
-    public ResponseEntity<Void> createFishingDiaryComment(@PathVariable Long postId, @RequestParam String content, @RequestParam Long userId) {
+    public ResponseEntity<Void> createFishingDiaryComment(
+        @PathVariable Long postId, 
+        @RequestParam String content, 
+        @RequestParam Long userId
+        
+        ) {
         fishingDiaryCommentService.createComment(postId, content, userId);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
@@ -65,6 +71,17 @@ public class ApiCommentController {
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
+    // Fishing Report 댓글 작성용 DTO
+    class FishingReportCommentCreateDTO {
+        public String content;
+        public Long userId;
+    }
+
+    // Fishing Report 댓글 수정용 DTO
+    class FishingReportCommentUpdateDTO {
+        public String content;
+    }
+
     // Fishing Report 댓글 조회
     @GetMapping("/fishing-report/{postId}")
     @Operation(summary = "조황정보 댓글 조회", description = "특정 조황정보 게시물의 댓글을 조회합니다.")
@@ -77,6 +94,9 @@ public class ApiCommentController {
     @PostMapping("/fishing-report/{postId}")
     @Operation(summary = "조황정보 댓글 작성", description = "조황정보 게시물에 댓글을 작성합니다.")
     public ResponseEntity<Void> createFishingReportComment(@PathVariable Long postId, @RequestParam String content, @RequestParam Long userId) {
+        
+
+
         fishingReportCommentService.createComment(postId, content, userId);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }

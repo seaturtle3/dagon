@@ -5,14 +5,17 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Entity
-@Table(name = "fishing_diary_image")
 @Getter
 @Setter
+@Table(name = "fishing_diary_image")
 public class FishingDiaryImage {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Lob
+    @Column(name = "image_data", columnDefinition = "LONGBLOB")
+    private byte[] imageData;
 
     @Column(nullable = false, length = 512)
     private String imageUrl;
@@ -26,5 +29,9 @@ public class FishingDiaryImage {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "fd_id", nullable = false)
     private FishingDiary fishingDiary;
+
+    @Lob
+    @Column(name = "thumbnail_data", columnDefinition = "LONGBLOB")
+    private byte[] thumbnailData;
 }
 

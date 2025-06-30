@@ -14,6 +14,7 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface ProductRepository extends JpaRepository<Product, Long>, JpaSpecificationExecutor<Product> {
@@ -45,10 +46,7 @@ public interface ProductRepository extends JpaRepository<Product, Long>, JpaSpec
 
     Long countByPartner_UnoAndDeletedFalse(Long partnerId);
 
-    // ProductTest
-    List<Product> findTop80ByOrderByProdIdAsc(); // 또는 정렬 없이 findAll(PageRequest.of(0, 80))
-
-    //  -------------- 프론트 추가(바다/민물 필터) api ----------------
+    //  -------------- 프론트 api (바다/민물 필터) ----------------
     Page<Product> findByMainTypeAndDeletedFalse(MainType mainType, Pageable pageable);
 
     //  -------------- 프론트 api 상단 필터 선택 시 제품 결과 ----------------
@@ -101,5 +99,7 @@ public interface ProductRepository extends JpaRepository<Product, Long>, JpaSpec
         )
     """)
     Page<Product> searchByKeyword(@Param("keyword") String keyword, Pageable pageable);
+
+    Optional<Product> findByProdName(String prodName);
 
 }

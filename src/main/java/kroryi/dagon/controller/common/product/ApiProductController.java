@@ -3,11 +3,11 @@ package kroryi.dagon.controller.common.product;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import kroryi.dagon.entity.product.Product;
 import kroryi.dagon.enums.MainType;
 import kroryi.dagon.enums.ProdRegion;
 import kroryi.dagon.enums.SubType;
 import kroryi.dagon.repository.product.ProductRepository;
+import kroryi.dagon.service.storage.ProductImageStorageService;
 import kroryi.dagon.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -16,7 +16,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.MediaType;
@@ -25,64 +24,53 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.bind.annotation.RequestPart;
 import kroryi.dagon.DTO.product.ProductDTO;
 import kroryi.dagon.service.product.ProductService;
+import kroryi.dagon.entity.product.ProductImage;
+import kroryi.dagon.component.CustomUserDetails;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
-import java.time.LocalDate;
+
 import java.util.*;
+import java.util.stream.Collectors;
+
 
 @RestController
-@RequiredArgsConstructor
 @Tag(name = "Product", description = "상품 등록/조회/수정/삭제 API")
 @RequestMapping("/api/product")
 @Log4j2
+@RequiredArgsConstructor
 public class ApiProductController {
-    @Value("${app.file.upload-dir}")
-    private String uploadDir;
 
     private final ProductService productService;
     private final JwtUtil jwtUtil;
     private final ProductRepository productRepository;
+    private final ProductImageStorageService productImageStorageService;
 
     @Operation(summary = "상품 등록", description = "토큰 기반 인증 후, 상품 정보를 JSON과 썸네일 파일로 등록합니다.")
     @PostMapping(value = "/create", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> createProductWithFile(
-            @RequestPart("product") ProductDTO productDTO,
-            @RequestPart(value = "thumbnailFile", required = false) MultipartFile thumbnailFile,
-            @RequestHeader("Authorization") String authorizationHeader
+            @RequestPart("dto") ProductDTO productDTO,
+            @RequestPart(value = "images", required = false) List<MultipartFile> images,
+            @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
         try {
-            // 토큰에서 uno 추출
-            String token = authorizationHeader.replace("Bearer ", "");
-            Long uno = jwtUtil.getUnoFromToken(token);
-
-            // 파일 처리
-            String savedFileName = null;
-            if (thumbnailFile != null && !thumbnailFile.isEmpty()) {
-                String originalFilename = thumbnailFile.getOriginalFilename();
-                String safeFilename = UUID.randomUUID() + "_" + originalFilename.replaceAll("[^a-zA-Z0-9\\.\\-_]", "_");
-
-                Path savePath = Paths.get(uploadDir, safeFilename);
-                Files.copy(thumbnailFile.getInputStream(), savePath, StandardCopyOption.REPLACE_EXISTING);
-
-                savedFileName = safeFilename;
+            Long userUno = userDetails.getUno();
+            log.info("product create -> getUserUno: {}" , userUno);
+            if(productDTO.getProdName() == null || productDTO.getProdName().isEmpty()) {
+                return ResponseEntity.badRequest().body("상품 이름이 누락되었습니다.");
             }
-
-            // DTO에 썸네일 파일 이름 설정
-            productDTO.setProdThumbnail(savedFileName);
-
-            // 서비스 호출
-            productService.createProduct(productDTO, uno);
-
+            if(productDTO.getProdRegion() == null) {
+                return ResponseEntity.badRequest().body("상품 지역이 누락되었습니다.");
+            }
+            if(productDTO.getMainType() == null) {
+                return ResponseEntity.badRequest().body("상품 종류가 누락되었습니다.");
+            }
+    
+            productService.createProductWithImages(productDTO, userUno, images);
             return ResponseEntity.ok("상품 등록 성공");
-
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("상품 등록 실패: " + e.getMessage());
         }
     }
-
 
     @Operation(summary = "모든 상품 페이징 조회", description = "페이징으로 상품 조회")
     @GetMapping("/get-all")
@@ -118,13 +106,13 @@ public class ApiProductController {
         productService.deleteProduct(id);
     }
 
-//  -------------- 프론트 추가 api (바다/민물 필터) ----------------
+    //  -------------- 프론트 api (바다/민물 필터) ----------------
     @Operation(summary = "바다 상품 페이징 조회", description = "mainType이 '바다'인 상품 페이징 조회")
     @GetMapping("/get-all/sea")
     public Page<ProductDTO> getSeaProducts(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
-            @RequestParam(defaultValue = "prodId") String sortBy,
+            @RequestParam(defaultValue = "createdAt") String sortBy,
             @RequestParam(defaultValue = "desc") String direction
     ) {
         Sort sort = direction.equalsIgnoreCase("desc")
@@ -139,7 +127,7 @@ public class ApiProductController {
     public Page<ProductDTO> getFreshwaterProducts(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
-            @RequestParam(defaultValue = "prodId") String sortBy,
+            @RequestParam(defaultValue = "createdAt") String sortBy,
             @RequestParam(defaultValue = "desc") String direction
     ) {
         Sort sort = direction.equalsIgnoreCase("desc")
@@ -149,7 +137,7 @@ public class ApiProductController {
         return productService.getProductsByMainType(MainType.valueOf("FRESHWATER"), pageable);
     }
 
-    //  -------------- 프론트 추가 api 바다 낚시 상품들 ----------------
+    //  -------------- 프론트 api 바다 낚시 상품들 ----------------
     @GetMapping("/get-all/sea/filter")
     public List<ProductDTO> getSeaProductsByFilters(
             @RequestParam(required = false) String subType,
@@ -174,7 +162,7 @@ public class ApiProductController {
         return productService.getFishingCenterProductsByFilters(regionEnum, subTypeEnum, species);
     }
 
-    //  -------------- 프론트 추가 api 바다/민물 낚시 상단 필터 ----------------
+    //  -------------- 프론트 api 바다/민물 낚시 상단 필터 ----------------
     @GetMapping("/sea/filter")
     public Map<String, List<String>> getSeaFilterOptions() {
         List<String> regions = Arrays.stream(ProdRegion.values())

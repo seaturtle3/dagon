@@ -65,6 +65,18 @@ public class ApiAdminController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
+
+    @PostMapping("/register-super")
+    @Operation(summary = "SUPER_ADMIN 회원가입", description = "SUPER_ADMIN 권한을 가진 관리자 회원가입")
+    public ResponseEntity<String> registerSuperAdmin(@RequestBody AdminDTO adminDTO) {
+        try {
+            adminService.registerSuperAdmin(adminDTO);
+            return ResponseEntity.ok("SUPER_ADMIN 회원가입이 완료되었습니다.");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
     @PostMapping("/login")
     @Operation(summary = "관리자 로그인 ", description = "관리자 로그인")
     public ResponseEntity<Map<String, String>> adminLogin(@RequestBody AdminDTO adminLoginDTO) {
@@ -80,12 +92,7 @@ public class ApiAdminController {
                     .orElseThrow(() -> new UsernameNotFoundException("관리자 정보 없음"));
 
             // 토큰 생성
-            String token = jwtUtil.generateAdminToken(
-                    admin.getAid(),
-                    admin.getAname(),
-                    admin.getRole().toString(),
-                    admin.getUno()
-            );
+            String token = jwtUtil.generateToken(admin);
 
             Map<String, String> response = new HashMap<>();
             response.put("token", token);

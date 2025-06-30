@@ -25,5 +25,6 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
 
     Page<Notification> findByReceiver_UidAndType(String receiverUid, String type, Pageable pageable);
 
+    void deleteAllByReceiver_Uno(Long userUno);
 
 }

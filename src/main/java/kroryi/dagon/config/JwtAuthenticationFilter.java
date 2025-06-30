@@ -44,6 +44,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 String role = claims.get("role", String.class);
                 String subject = claims.getSubject();
                 String uname = claims.get("uname", String.class);
+                String aname = claims.get("aname", String.class);
                 
                 if (role == null || subject == null) {
                     log.warn("Invalid JWT: missing role or subject");
@@ -59,9 +60,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 
                 Object principal;
                 
-                if ("ADMIN".equalsIgnoreCase(role)) {
-                    // 관리자일 경우 AdminUserDetails 사용
-                    principal = new AdminUserDetails(subject, role);
+                if ("ADMIN".equalsIgnoreCase(role) || "SUPER_ADMIN".equalsIgnoreCase(role)) {
+                    // 관리자일 경우 AdminUserDetails 사용 (ADMIN, SUPER_ADMIN 모두)
+                    // aname이 없으면 aid를 사용
+                    String adminName = aname != null ? aname : subject;
+                    principal = new AdminUserDetails(subject, adminName, role);
+                    log.debug("관리자 인증: aid={}, aname={}, role={}", subject, adminName, role);
                 } else {
                     // 일반 사용자일 경우 uno 필요
                     Integer unoInt = claims.get("uno", Integer.class);
@@ -73,7 +77,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     }
                     
                     Long uno = unoInt.longValue();
-                    principal = new CustomUserDetails(uno, subject, "", authorities, role);
+                    // uname이 없으면 subject를 사용
+                    String userName = uname != null ? uname : subject;
+                    principal = new CustomUserDetails(uno, userName, "", authorities, role);
+                    log.debug("사용자 인증: uno={}, uname={}, role={}", uno, userName, role);
                 }
                 
                 // SecurityContext에 인증 정보 설정
@@ -121,6 +128,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 (path.equals("/api/auth/login") && method.equals("POST")) ||
                 (path.equals("/api/users/register") && method.equals("POST")) ||
                 (path.equals("/api/admin/register") && method.equals("POST")) ||
+                (path.equals("/api/admin/register-super") && method.equals("POST")) ||
                 (path.equals("/api/admin/login") && method.equals("POST")) ||
                 (path.equals("/api/find-password") && method.equals("POST")) ||
                 (path.equals("/admin/registration") && method.equals("GET"))) {

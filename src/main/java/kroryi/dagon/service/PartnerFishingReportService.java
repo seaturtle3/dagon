@@ -5,12 +5,15 @@ import kroryi.dagon.DTO.board.FishingCenter.FishingReportDTO;
 
 import kroryi.dagon.DTO.board.PartnerFishingReportDTO;
 import kroryi.dagon.entity.fishingCenter.FishingReport;
+import kroryi.dagon.entity.fishingCenter.FishingReportImage;
+import kroryi.dagon.repository.board.FishingReportImageRepository;
 import kroryi.dagon.repository.board.FishingReportRepository;
 import kroryi.dagon.service.image.FileStorageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.util.StreamUtils;
 
 import java.io.IOException;
 import java.nio.file.AccessDeniedException;
@@ -18,6 +21,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -28,6 +32,7 @@ public class PartnerFishingReportService {
 
     private final FishingReportRepository fishingReportRepository;
     private final FileStorageService fileStorageService;
+    private final FishingReportImageRepository fishingReportImageRepository;
 
     public FishingReportDTO getMyReport(Long frId, Long uno) throws AccessDeniedException {
         FishingReport report = fishingReportRepository.findWithUserAndProductByIdAndUno(frId)
@@ -108,8 +113,31 @@ public class PartnerFishingReportService {
     }
 
 
-    public FishingReport save(FishingReport report) {
-        return fishingReportRepository.save(report);
+    /**
+     * FishingReport와 이미지 파일을 함께 저장 (image_data 필드에 저장)
+     */
+    @Transactional
+    public FishingReport saveWithImages(FishingReport report, List<MultipartFile> images) {
+        FishingReport savedReport = fishingReportRepository.save(report);
+        if (images != null && !images.isEmpty()) {
+            List<FishingReportImage> imageEntities = new ArrayList<>();
+            for (int i = 0; i < images.size(); i++) {
+                MultipartFile file = images.get(i);
+                try {
+                    FishingReportImage image = new FishingReportImage();
+                    image.setFishingReport(savedReport);
+                    image.setThumbnail(i == 0); // 첫 번째 이미지를 썸네일로
+                    image.setOrderIndex(i);
+                    image.setImageUrl(null); // URL 저장 안함(원하면 fileStorageService로 저장 후 경로 넣기)
+                    image.setImageData(StreamUtils.copyToByteArray(file.getInputStream()));
+                    imageEntities.add(image);
+                } catch (Exception e) {
+                    throw new RuntimeException("이미지 저장 실패", e);
+                }
+            }
+            fishingReportImageRepository.saveAll(imageEntities);
+        }
+        return savedReport;
     }
 
 

@@ -18,7 +18,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.util.StreamUtils;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -67,15 +70,30 @@ public class ApiFishingReportService {
         if (images != null && !images.isEmpty()) {
             for (int i = 0; i < images.size(); i++) {
                 MultipartFile file = images.get(i);
-                String savedUrl = fileStorageUtil.saveImage(file, "fishing-report");
-
-                FishingReportImage image = new FishingReportImage();
-                image.setImageUrl(savedUrl);
-                image.setThumbnail(i == 0); // 첫 번째 이미지를 썸네일로
-                image.setOrderIndex(i);
-                image.setFishingReport(fishingReport);
-
-                fishingReportImageRepository.save(image);
+                try {
+                    // 1. 파일을 uploads 경로에 저장
+                    String savedUrl = fileStorageUtil.saveImage(file, "fishing-report");
+                    log.info("savedUrl:---> {}", savedUrl);
+                    // 2. 저장된 파일을 읽어서 바이너리 추출
+                    String uploadDir = fileStorageUtil.getUploadDir();
+                    String relativePath = savedUrl.replaceFirst("/uploads/", "").replace("/", File.separator);
+                    File savedFile = new File(uploadDir, relativePath);
+                    log.info("savedFile:---> {}", savedFile);
+                    byte[] imageBytes;
+                    try (FileInputStream fis = new FileInputStream(savedFile)) {
+                        imageBytes = StreamUtils.copyToByteArray(fis);
+                    }
+                    // 3. FishingReportImage 엔티티 생성 및 저장
+                    FishingReportImage image = new FishingReportImage();
+                    image.setImageUrl(savedUrl); // 파일 경로 저장
+                    image.setImageData(imageBytes); // 바이너리 저장
+                    image.setThumbnail(i == 0); // 첫 번째 이미지를 썸네일로
+                    image.setOrderIndex(i);
+                    image.setFishingReport(fishingReport);
+                    fishingReportImageRepository.save(image);
+                } catch (Exception e) {
+                    throw new RuntimeException("이미지 저장 실패", e);
+                }
             }
         }
         return new ApiFishingReportDTO(fishingReport);
@@ -113,7 +131,8 @@ public class ApiFishingReportService {
                 .collect(Collectors.toList());
     }
 
-    public Long updateFishingReport(Long frId, ApiFishingReportDTO apiFishingReportDTO) {
+    @Transactional
+    public Long updateFishingReport(Long frId, ApiFishingReportDTO apiFishingReportDTO, List<MultipartFile> images) {
         FishingReport fishingReport = fishingReportRepository.findById(frId)
                 .orElseThrow(() -> new RuntimeException("조황정보 없음"));
 
@@ -135,6 +154,27 @@ public class ApiFishingReportService {
             fishingReport.setProduct(product);
         }
 
+        // 기존 이미지 삭제
+        fishingReportImageRepository.deleteAll(fishingReport.getImages());
+        fishingReport.getImages().clear();
+
+        // 새 이미지 저장
+        if (images != null && !images.isEmpty()) {
+            for (int i = 0; i < images.size(); i++) {
+                MultipartFile file = images.get(i);
+                try {
+                    FishingReportImage image = new FishingReportImage();
+                    image.setImageData(file.getBytes());
+                    image.setOrderIndex(i);
+                    image.setFishingReport(fishingReport);
+                    fishingReportImageRepository.save(image);
+                    fishingReport.getImages().add(image);
+                } catch (Exception e) {
+                    throw new RuntimeException("이미지 저장 실패", e);
+                }
+            }
+        }
+
         fishingReportRepository.save(fishingReport);
         return fishingReport.getFrId();
     }
@@ -143,5 +183,12 @@ public class ApiFishingReportService {
         FishingReport fishingReport = fishingReportRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("조황정보 없음"));
         fishingReportRepository.delete(fishingReport);
+    }
+
+    public FishingReport findPrevById(Long currentId) {
+        return fishingReportRepository.findTopByFrIdLessThanOrderByFrIdDesc(currentId).orElse(null);
+    }
+    public FishingReport findNextById(Long currentId) {
+        return fishingReportRepository.findTopByFrIdGreaterThanOrderByFrIdAsc(currentId).orElse(null);
     }
 }

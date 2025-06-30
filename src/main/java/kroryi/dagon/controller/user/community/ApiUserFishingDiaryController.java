@@ -90,4 +90,12 @@ public class ApiUserFishingDiaryController {
         apiFishingDiaryService.deleteFishingDiary(id);
     }
 
+    @Operation(summary = "내가 등록한 상품의 모든 조행기 조회")
+    @GetMapping("/my-products-diaries")
+    public List<ApiFishingDiaryDTO> getDiariesByMyProducts(HttpServletRequest request) {
+        String token = jwtUtil.resolveToken(request);
+        Long uno = jwtUtil.getUnoFromToken(token);
+        return apiFishingDiaryService.getDiariesByMyProducts(uno);
+    }
+
 }

@@ -54,6 +54,25 @@ public class JwtUtil {
                 .compact();
     }
 
+    /**
+     * Admin용 JWT 토큰 생성
+     */
+    public String generateToken(kroryi.dagon.entity.Admin admin) {
+        Date now = new Date();
+        Date expiryDate = new Date(now.getTime() + expirationTime);
+
+        return Jwts.builder()
+                .setSubject(admin.getAid())
+                .claim("aid", admin.getAid())
+                .claim("aname", admin.getAname())
+                .claim("role", admin.getRole().name())
+                .claim("uno", admin.getUno())
+                .setIssuedAt(now)
+                .setExpiration(expiryDate)
+                .signWith(secretKey, SignatureAlgorithm.HS256)
+                .compact();
+    }
+
     public String generateAdminToken(String aid, String aname, String role, Long uno) {
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + expirationTime);
@@ -158,6 +177,57 @@ public class JwtUtil {
         } catch (NumberFormatException e) {
             log.error("uno claim을 Long으로 변환할 수 없습니다: {}", e.getMessage());
             throw new JwtException("Invalid uno claim format in JWT", e);
+        }
+    }
+
+    // JWT 토큰에서 uname 추출 (일반 사용자용)
+    public String getUnameFromToken(String token) {
+        try {
+            Claims claims = parseToken(token);
+            String uname = claims.get("uname", String.class);
+            if (uname == null) {
+                log.warn("JWT 토큰에 uname claim이 없습니다");
+                return null;
+            }
+            log.debug("JWT에서 추출한 uname: {}", uname);
+            return uname;
+        } catch (JwtException e) {
+            log.error("JWT에서 uname 추출 실패: {}", e.getMessage());
+            return null;
+        }
+    }
+
+    // JWT 토큰에서 aname 추출 (관리자용)
+    public String getAnameFromToken(String token) {
+        try {
+            Claims claims = parseToken(token);
+            String aname = claims.get("aname", String.class);
+            if (aname == null) {
+                log.warn("JWT 토큰에 aname claim이 없습니다");
+                return null;
+            }
+            log.debug("JWT에서 추출한 aname: {}", aname);
+            return aname;
+        } catch (JwtException e) {
+            log.error("JWT에서 aname 추출 실패: {}", e.getMessage());
+            return null;
+        }
+    }
+
+    // JWT 토큰에서 사용자 이름 추출 (역할에 따라 자동 선택)
+    public String getUserNameFromToken(String token) {
+        try {
+            Claims claims = parseToken(token);
+            String role = claims.get("role", String.class);
+            
+            if ("ADMIN".equalsIgnoreCase(role) || "SUPER_ADMIN".equalsIgnoreCase(role)) {
+                return getAnameFromToken(token);
+            } else {
+                return getUnameFromToken(token);
+            }
+        } catch (JwtException e) {
+            log.error("JWT에서 사용자 이름 추출 실패: {}", e.getMessage());
+            return null;
         }
     }
 
