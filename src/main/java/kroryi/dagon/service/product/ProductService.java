@@ -154,14 +154,16 @@ public class ProductService {
         product.setProdEvent(productDTO.getProdEvent());
         product.setProdNotice(productDTO.getProdNotice());
 
-        log.info("🧹 삭제 대상 이미지들: {}", productDTO.getDeleteImageNames());
+        log.info("🧹 삭제 대상 이미지들1: {}", productDTO.getDeleteImageNames());
 
         
 
         // ✅ 삭제할 이미지 처리
         if (productDTO.getDeleteImageNames() != null) {
+            log.info("🧹 삭제 대상 이미지들2: {}", productDTO.getDeleteImageNames());
             for (String imagePath : productDTO.getDeleteImageNames()) {
                 fileStorageUtil.deleteImage(imagePath); // 파일 삭제
+                log.info("🧹 삭제 대상 이미지들3: {}", imagePath);
                 productImageRepository.deleteByProductAndFileName(product, imagePath); // DB 삭제
             }
         }
@@ -190,7 +192,7 @@ public class ProductService {
             }
         }
 
-        log.info("🧹 삭제 대상 이미지들: {}", productDTO.getDeleteImageNames());
+        log.info("🧹 삭제 대상 이미지들3: {}", productDTO.getDeleteImageNames());
 
         return product.getProdId();
     }

@@ -100,6 +100,7 @@ public class ApiProductController {
             @PathVariable Long id,
             @RequestPart("product") ProductDTO productDTO,
             @RequestPart(value = "images", required = false) List<MultipartFile> images) {
+        log.info("🧹 삭제 대상 이미지들4: {}", productDTO.getDeleteImageNames());
 
         return productService.updateProduct(id, productDTO, images);
     }
