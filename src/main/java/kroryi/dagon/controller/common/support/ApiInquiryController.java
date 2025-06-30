@@ -3,7 +3,8 @@ package kroryi.dagon.controller.common.support;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import io.jsonwebtoken.Claims;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import kroryi.dagon.DTO.InquiryCreateRequestDTO;
 import kroryi.dagon.DTO.InquiryResponseDTO;
@@ -31,8 +32,10 @@ import org.springframework.web.bind.annotation.*;
 
 import java.nio.file.AccessDeniedException;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import lombok.extern.log4j.Log4j2;
 
 @Tag(name = "User-Inquiry", description = "1:1 문의 API (사용자)")
@@ -48,190 +51,373 @@ public class ApiInquiryController {
     private final InquiryRepository inquiryRepository;
     private final ProductRepository productRepository;
 
-
     // 1. 문의 생성
-    @Operation(summary = "1:1문의 생성", description = "1:1문의 생성")
+    @Operation(summary = "1:1문의 생성", description = "사용자가 1:1 문의를 생성합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "문의 생성 성공"),
+            @ApiResponse(responseCode = "400", description = "잘못된 요청"),
+            @ApiResponse(responseCode = "401", description = "인증 실패"),
+            @ApiResponse(responseCode = "500", description = "서버 오류")
+    })
     @PostMapping
-    public ResponseEntity<InquiryResponseDTO> createInquiry(
+    public ResponseEntity<Map<String, Object>> createInquiry(
             @RequestBody @Valid InquiryCreateRequestDTO request,
             @AuthenticationPrincipal CustomUserDetails userDetails) {
-                Long uno = userDetails.getUno();
-                log.info("uno--------------->: {}", uno);
 
+        try {
+            Long uno = userDetails.getUno();
+            log.info("문의 생성 요청 - 사용자 ID: {}, 제목: {}", uno, request.getTitle());
 
+            InquiryResponseDTO response = inquiryService.createInquiry(uno, request);
 
-        InquiryResponseDTO response = inquiryService.createInquiry(userDetails.getUno(), request);
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+            Map<String, Object> result = new HashMap<>();
+            result.put("success", true);
+            result.put("message", "문의가 성공적으로 등록되었습니다.");
+            result.put("data", response);
+
+            log.info("문의 생성 완료 - 문의 ID: {}", response.getId());
+            return ResponseEntity.status(HttpStatus.CREATED).body(result);
+
+        } catch (Exception e) {
+            log.error("문의 생성 중 오류 발생: {}", e.getMessage(), e);
+
+            Map<String, Object> error = new HashMap<>();
+            error.put("success", false);
+            error.put("message", "문의 등록 중 오류가 발생했습니다: " + e.getMessage());
+
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
+        }
     }
 
     // 2. 문의 리스트 조회 (검색+페이징)
-    @Operation(summary = "1:1문의 리스트 조회", description = "1:1문의 리스트 조회")
+    @Operation(summary = "1:1문의 리스트 조회", description = "관리자용 문의 리스트를 페이징과 검색으로 조회합니다.")
     @GetMapping("/admin")
-    public ResponseEntity<Page<InquiryResponseDTO>> getAdminInquiries(
+    public ResponseEntity<Map<String, Object>> getAdminInquiries(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(required = false) Boolean status,
-            @RequestParam(required = false) String keyword) {
+            @RequestParam(required = false) String keyword,
+            @RequestParam(required = false) String inquiryType
+    ) {
 
-        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
-        Page<InquiryResponseDTO> responses = inquiryService.getAdminInquiries(pageable, keyword,status);
+        try {
+            Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
+            Page<InquiryResponseDTO> responses = inquiryService.getAdminInquiries(pageable, keyword, status, inquiryType);
 
-        return ResponseEntity.ok(responses);
+            Map<String, Object> result = new HashMap<>();
+            result.put("success", true);
+            result.put("data", responses);
+            result.put("totalElements", responses.getTotalElements());
+            result.put("totalPages", responses.getTotalPages());
+            result.put("currentPage", page);
+            result.put("pageSize", size);
+
+            return ResponseEntity.ok(result);
+
+        } catch (Exception e) {
+            log.error("문의 리스트 조회 중 오류 발생: {}", e.getMessage(), e);
+
+            Map<String, Object> error = new HashMap<>();
+            error.put("success", false);
+            error.put("message", "문의 리스트 조회 중 오류가 발생했습니다.");
+
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
+        }
     }
 
     // 3. 문의 단건 조회
-    @Operation(summary = "1:1문의 단건 조회", description = "1:1문의 단건 조회")
+    @Operation(summary = "1:1문의 단건 조회", description = "특정 문의의 상세 정보를 조회합니다.")
     @GetMapping("/{id}")
-    public ResponseEntity<InquiryResponseDTO> getInquiry(@PathVariable Long id) {
-        InquiryResponseDTO response = inquiryService.getInquiry(id);
-        return ResponseEntity.ok(response);
+    public ResponseEntity<Map<String, Object>> getInquiry(@PathVariable Long id) {
+        try {
+            InquiryResponseDTO response = inquiryService.getInquiry(id);
+
+            Map<String, Object> result = new HashMap<>();
+            result.put("success", true);
+            result.put("data", response);
+
+            return ResponseEntity.ok(result);
+
+        } catch (Exception e) {
+            log.error("문의 조회 중 오류 발생 - 문의 ID: {}, 오류: {}", id, e.getMessage(), e);
+
+            Map<String, Object> error = new HashMap<>();
+            error.put("success", false);
+            error.put("message", "문의를 찾을 수 없습니다.");
+
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
+        }
     }
 
     // 4. 문의 수정
-    @Operation(summary = "1:1문의 수정", description = "1:1문의 수정")
+    @Operation(summary = "1:1문의 수정", description = "사용자가 자신의 문의를 수정합니다.")
     @PutMapping("/{id}")
-    public ResponseEntity<InquiryResponseDTO> updateInquiry(
+    public ResponseEntity<Map<String, Object>> updateInquiry(
             @PathVariable Long id,
             @RequestBody @Valid InquiryUpdateRequestDTO request,
-            @AuthenticationPrincipal CustomUserDetails userDetails) throws AccessDeniedException {
-        InquiryResponseDTO response = inquiryService.updateInquiry(userDetails.getUno(), id, request);
-        return ResponseEntity.ok(response);
+            @AuthenticationPrincipal CustomUserDetails userDetails) {
+
+        try {
+            InquiryResponseDTO response = inquiryService.updateInquiry(userDetails.getUno(), id, request);
+
+            Map<String, Object> result = new HashMap<>();
+            result.put("success", true);
+            result.put("message", "문의가 성공적으로 수정되었습니다.");
+            result.put("data", response);
+
+            return ResponseEntity.ok(result);
+
+        } catch (AccessDeniedException e) {
+            log.warn("문의 수정 권한 없음 - 사용자 ID: {}, 문의 ID: {}", userDetails.getUno(), id);
+
+            Map<String, Object> error = new HashMap<>();
+            error.put("success", false);
+            error.put("message", "해당 문의를 수정할 권한이 없습니다.");
+
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(error);
+
+        } catch (Exception e) {
+            log.error("문의 수정 중 오류 발생: {}", e.getMessage(), e);
+
+            Map<String, Object> error = new HashMap<>();
+            error.put("success", false);
+            error.put("message", "문의 수정 중 오류가 발생했습니다.");
+
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
+        }
     }
 
     // 5. 문의 삭제
-    @Operation(summary = "1:1문의 삭제", description = "1:1문의 삭제")
-    @DeleteMapping("" +
-            "/{inquiryId}")
-    public ResponseEntity<?> deleteInquiry(
+    @Operation(summary = "1:1문의 삭제", description = "사용자, 파트너, 관리자가 문의를 삭제합니다.")
+    @DeleteMapping("/{inquiryId}")
+    public ResponseEntity<Map<String, Object>> deleteInquiry(
             @PathVariable Long inquiryId,
             @RequestHeader("Authorization") String authorization) {
+
         try {
             String token = authorization.replace("Bearer ", "");
 
             if (!jwtUtil.isValidToken(token)) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid Token");
+                Map<String, Object> error = new HashMap<>();
+                error.put("success", false);
+                error.put("message", "유효하지 않은 토큰입니다.");
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error);
             }
 
             Claims claims = jwtUtil.parseToken(token);
             String role = claims.get("role", String.class);
-
-            boolean deleted;
+            boolean deleted = false;
 
             if ("ADMIN".equals(role)) {
-                // 관리자면 누구 문의든 삭제 가능
                 deleted = inquiryService.deleteInquiryByAdmin(inquiryId);
             } else if ("USER".equals(role)) {
-                System.out.println("role: " + role);
-                // 일반 사용자면 본인 문의만 삭제 가능
                 Long uno = Long.parseLong(claims.get("uno").toString());
                 deleted = inquiryService.deleteInquiryByUser(inquiryId, uno);
             } else if ("PARTNER".equals(role)) {
-                // 파트너면 본인에게 온 문의만 삭제 가능
                 Long uno = Long.parseLong(claims.get("uno").toString());
                 deleted = inquiryService.deleteInquiryByPartner(inquiryId, uno);
             } else {
-                return ResponseEntity.status(HttpStatus.FORBIDDEN).body("권한이 없습니다.");
+                Map<String, Object> error = new HashMap<>();
+                error.put("success", false);
+                error.put("message", "권한이 없습니다.");
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(error);
             }
 
+            Map<String, Object> result = new HashMap<>();
             if (deleted) {
-                return ResponseEntity.ok("1:1 문의가 성공적으로 삭제되었습니다.");
+                result.put("success", true);
+                result.put("message", "문의가 성공적으로 삭제되었습니다.");
+                return ResponseEntity.ok(result);
             } else {
-                return ResponseEntity.status(HttpStatus.FORBIDDEN).body("해당 1:1 문의를 삭제할 권한이 없습니다.");
+                result.put("success", false);
+                result.put("message", "해당 문의를 삭제할 권한이 없습니다.");
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(result);
             }
 
         } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("1:1 문의 삭제 중 오류 발생");
+            log.error("문의 삭제 중 오류 발생: {}", e.getMessage(), e);
+
+            Map<String, Object> error = new HashMap<>();
+            error.put("success", false);
+            error.put("message", "문의 삭제 중 오류가 발생했습니다.");
+
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
         }
     }
 
     // 6. 문의 답글 저장 및 전송
-    @Operation(summary = "1:1문의 답글/알림", description = "1:1문의 답글/알림")
+    @Operation(summary = "1:1문의 답글/알림", description = "관리자가 문의에 답변을 작성하고 알림을 전송합니다.")
     @PostMapping("/{inquiryId}/answer")
-    public ResponseEntity<?> answerInquiry(
+    public ResponseEntity<Map<String, Object>> answerInquiry(
             @PathVariable Long inquiryId,
-            @RequestBody Map<String, String> request
-    ) {
-        String answerContent = request.get("answerContent");
+            @RequestBody Map<String, String> request) {
 
-        // 관리자 sender는 null 처리하거나 직접 생성하거나 DB에서 ADMIN 계정 조회해도 되고
-        // 만약 관리자 정보를 DB에서 조회할 필요 없고, 그냥 ADMIN으로 고정한다면 아래처럼 간단히 처리 가능
-        User admin = null; // 혹은 userRepository.findByUid("admin") 등으로 관리자를 직접 조회
+        try {
+            String answerContent = request.get("answerContent");
 
-        // 문의 조회
-        Inquiry inquiry = inquiryRepository.findById(inquiryId)
-                .orElseThrow(() -> new RuntimeException("문의가 존재하지 않습니다."));
+            if (answerContent == null || answerContent.trim().isEmpty()) {
+                Map<String, Object> error = new HashMap<>();
+                error.put("success", false);
+                error.put("message", "답변 내용을 입력해주세요.");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+            }
 
-        // 답변 저장
-        inquiry.setAnswerContent(answerContent);
-        inquiry.setAnswered(true);
-        inquiry.setAnsweredAt(LocalDateTime.now());
-        inquiryRepository.save(inquiry);
+            User admin = null; // 관리자 정보는 필요에 따라 조회
 
-        // 알림 전송 (admin이 null이어도 senderType으로 ADMIN 구분 가능)
-        notificationService.sendInquiryAnswerNotification(inquiry, admin);
+            Inquiry inquiry = inquiryRepository.findById(inquiryId)
+                    .orElseThrow(() -> new RuntimeException("문의가 존재하지 않습니다."));
 
-        return ResponseEntity.ok("답변이 저장되고 알림이 전송되었습니다.");
+            inquiry.setAnswerContent(answerContent);
+            inquiry.setAnswered(true);
+            inquiry.setAnsweredAt(LocalDateTime.now());
+            inquiryRepository.save(inquiry);
+
+            notificationService.sendInquiryAnswerNotification(inquiry, admin);
+
+            Map<String, Object> result = new HashMap<>();
+            result.put("success", true);
+            result.put("message", "답변이 저장되고 알림이 전송되었습니다.");
+
+            return ResponseEntity.ok(result);
+
+        } catch (Exception e) {
+            log.error("문의 답변 중 오류 발생: {}", e.getMessage(), e);
+
+            Map<String, Object> error = new HashMap<>();
+            error.put("success", false);
+            error.put("message", "답변 저장 중 오류가 발생했습니다.");
+
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
+        }
     }
+
+    // 7. 사용자-파트너 간 문의 조회
     @GetMapping("/user-to-partner")
-    public ResponseEntity<List<Inquiry>> getUserToPartnerInquiries(
-            @AuthenticationPrincipal CustomUserDetails userDetails,
-            @RequestParam Long partnerUno
-    ) {
-        Long userUno = userDetails.getUno(); // 토큰에서 유저 uno 추출
-        List<Inquiry> inquiries = inquiryService.getUserToPartnerInquiries(userUno, partnerUno);
-        return ResponseEntity.ok(inquiries);
-    }
-
-    @GetMapping("/partner-inquiries")
-    public ResponseEntity<List<InquiryResponseDTO>> getInquiriesToPartner(
+    public ResponseEntity<Map<String, Object>> getUserToPartnerInquiries(
             @AuthenticationPrincipal CustomUserDetails userDetails,
             @RequestParam Long partnerUno) {
 
-        // 현재 로그인한 파트너가 요청한 것인지 확인하려면 아래 로직을 사용할 수 있음
-        if (!userDetails.getUno().equals(partnerUno)) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        try {
+            Long userUno = userDetails.getUno();
+            List<Inquiry> inquiries = inquiryService.getUserToPartnerInquiries(userUno, partnerUno);
+
+            Map<String, Object> result = new HashMap<>();
+            result.put("success", true);
+            result.put("data", inquiries);
+
+            return ResponseEntity.ok(result);
+
+        } catch (Exception e) {
+            log.error("사용자-파트너 문의 조회 중 오류 발생: {}", e.getMessage(), e);
+
+            Map<String, Object> error = new HashMap<>();
+            error.put("success", false);
+            error.put("message", "문의 조회 중 오류가 발생했습니다.");
+
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
         }
-
-        List<InquiryResponseDTO> inquiries = inquiryService.getInquiriesToPartner(partnerUno);
-        return ResponseEntity.ok(inquiries);
     }
 
+    // 8. 파트너에게 온 문의 조회
+    @GetMapping("/partner-inquiries")
+    public ResponseEntity<Map<String, Object>> getInquiriesToPartner(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @RequestParam Long partnerUno) {
 
+        try {
+            if (!userDetails.getUno().equals(partnerUno)) {
+                Map<String, Object> error = new HashMap<>();
+                error.put("success", false);
+                error.put("message", "권한이 없습니다.");
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(error);
+            }
+
+            List<InquiryResponseDTO> inquiries = inquiryService.getInquiriesToPartner(partnerUno);
+
+            Map<String, Object> result = new HashMap<>();
+            result.put("success", true);
+            result.put("data", inquiries);
+
+            return ResponseEntity.ok(result);
+
+        } catch (Exception e) {
+            log.error("파트너 문의 조회 중 오류 발생: {}", e.getMessage(), e);
+
+            Map<String, Object> error = new HashMap<>();
+            error.put("success", false);
+            error.put("message", "문의 조회 중 오류가 발생했습니다.");
+
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
+        }
+    }
+
+    // 9. 내 문의 목록 조회
     @GetMapping("/my-inquiries")
-    public List<InquiryResponseDTO> getMyInquiries(@AuthenticationPrincipal CustomUserDetails currentUser) {
-        Long userUno = currentUser.getUno();
-        return inquiryService.getInquiriesByUserUno(userUno);
+    public ResponseEntity<Map<String, Object>> getMyInquiries(
+            @AuthenticationPrincipal CustomUserDetails currentUser) {
+
+        try {
+            Long userUno = currentUser.getUno();
+            List<InquiryResponseDTO> inquiries = inquiryService.getInquiriesByUserUno(userUno);
+
+            Map<String, Object> result = new HashMap<>();
+            result.put("success", true);
+            result.put("data", inquiries);
+            result.put("count", inquiries.size());
+
+            return ResponseEntity.ok(result);
+
+        } catch (Exception e) {
+            log.error("내 문의 목록 조회 중 오류 발생: {}", e.getMessage(), e);
+
+            Map<String, Object> error = new HashMap<>();
+            error.put("success", false);
+            error.put("message", "문의 목록 조회 중 오류가 발생했습니다.");
+
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
+        }
     }
 
-    // 파트너 전용 1:1 문의 생성 (상품ID로 파트너 자동 매핑)
-    @Operation(summary = "파트너 전용 1:1 문의 생성 (상품ID로 파트너 자동 매핑)")
+    // 10. 파트너 전용 1:1 문의 생성 (상품ID로 파트너 자동 매핑)
+    @Operation(summary = "파트너 전용 1:1 문의 생성", description = "상품ID로 파트너를 자동 매핑하여 문의를 생성합니다.")
     @PostMapping("/partner")
-    public ResponseEntity<InquiryResponseDTO> createPartnerInquiry(
+    public ResponseEntity<Map<String, Object>> createPartnerInquiry(
             @RequestBody PartnerInquiryCreateRequestDTO request,
             @AuthenticationPrincipal CustomUserDetails userDetails) {
 
-        // 1. productId로 Product 조회
-        Product product = productRepository.findById(request.getProductId())
-                .orElseThrow(() -> new IllegalArgumentException("해당 상품이 존재하지 않습니다."));
+        try {
+            Product product = productRepository.findById(request.getProductId())
+                    .orElseThrow(() -> new IllegalArgumentException("해당 상품이 존재하지 않습니다."));
 
-        // 2. 파트너 uno 추출
-        Long partnerUno = product.getPartner().getUno();
+            Long partnerUno = product.getPartner().getUno();
 
-        // 3. InquiryCreateRequestDTO 생성
-        InquiryCreateRequestDTO inquiryRequest = new InquiryCreateRequestDTO();
-        inquiryRequest.setReceiverType(kroryi.dagon.enums.ReceiverType.PARTNER);
-        inquiryRequest.setReceiverId(partnerUno);
-        inquiryRequest.setPartnerId(partnerUno);
-        inquiryRequest.setTitle(request.getTitle());
-        inquiryRequest.setContent(request.getContent());
-        inquiryRequest.setInquiryType(request.getInquiryType());
-        inquiryRequest.setPartnerName(product.getPartner().getPname());
-        inquiryRequest.setWriterType("USER");
+            InquiryCreateRequestDTO inquiryRequest = new InquiryCreateRequestDTO();
+            inquiryRequest.setReceiverType(kroryi.dagon.enums.ReceiverType.PARTNER);
+            inquiryRequest.setReceiverId(partnerUno);
+            inquiryRequest.setPartnerId(partnerUno);
+            inquiryRequest.setTitle(request.getTitle());
+            inquiryRequest.setContent(request.getContent());
+            inquiryRequest.setInquiryType(request.getInquiryType());
+            inquiryRequest.setPartnerName(product.getPartner().getPname());
+            inquiryRequest.setWriterType("USER");
 
-        // 4. 서비스 호출
-        InquiryResponseDTO response = inquiryService.createInquiry(userDetails.getUno(), inquiryRequest);
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+            InquiryResponseDTO response = inquiryService.createInquiry(userDetails.getUno(), inquiryRequest);
+
+            Map<String, Object> result = new HashMap<>();
+            result.put("success", true);
+            result.put("message", "파트너 문의가 성공적으로 등록되었습니다.");
+            result.put("data", response);
+
+            return ResponseEntity.status(HttpStatus.CREATED).body(result);
+
+        } catch (Exception e) {
+            log.error("파트너 문의 생성 중 오류 발생: {}", e.getMessage(), e);
+
+            Map<String, Object> error = new HashMap<>();
+            error.put("success", false);
+            error.put("message", "파트너 문의 등록 중 오류가 발생했습니다: " + e.getMessage());
+
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
+        }
     }
-
 }
