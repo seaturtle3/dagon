@@ -67,6 +67,7 @@ public class Inquiry {
 
     // 답변 내용
     @Lob
+    @Column(name = "answerContent", columnDefinition = "TEXT", nullable = false)
     private String answerContent;
 
     // 답변 여부
