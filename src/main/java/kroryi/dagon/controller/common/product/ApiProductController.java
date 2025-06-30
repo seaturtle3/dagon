@@ -99,9 +99,9 @@ public class ApiProductController {
     public Long updateProduct(
             @PathVariable Long id,
             @RequestPart("product") ProductDTO productDTO,
-            @RequestPart(value = "thumbnailFiles", required = false) List<MultipartFile> thumbnailFiles) {
+            @RequestPart(value = "images", required = false) List<MultipartFile> images) {
 
-        return productService.updateProduct(id, productDTO, thumbnailFiles);
+        return productService.updateProduct(id, productDTO, images);
     }
 
     @Operation(summary = "상품 삭제", description = "상품 삭제")

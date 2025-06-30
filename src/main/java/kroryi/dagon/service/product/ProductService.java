@@ -154,19 +154,39 @@ public class ProductService {
         product.setProdEvent(productDTO.getProdEvent());
         product.setProdNotice(productDTO.getProdNotice());
 
+        log.info("🧹 삭제 대상 이미지들: {}", productDTO.getDeleteImageNames());
+
+        
+
         // ✅ 삭제할 이미지 처리
         if (productDTO.getDeleteImageNames() != null) {
             for (String imagePath : productDTO.getDeleteImageNames()) {
-                fileStorageUtil.deleteImage(imagePath); // ← 유틸 호출
-                productImageRepository.deleteByProductAndFileName(product, imagePath); // DB도 정리
+                fileStorageUtil.deleteImage(imagePath); // 파일 삭제
+                productImageRepository.deleteByProductAndFileName(product, imagePath); // DB 삭제
             }
         }
 
         // ✅ 새로 업로드된 이미지 저장
         if (thumbnailFiles != null && !thumbnailFiles.isEmpty()) {
             for (MultipartFile file : thumbnailFiles) {
-                String savedPath = fileStorageUtil.saveImage(file, "products"); // ← 유틸 호출
-                productImageRepository.save(new ProductImage(product, savedPath)); // DB 저장
+                try {
+                    String savedPath = fileStorageUtil.saveImage(file, "products"); // 파일 저장
+                    // 저장된 파일을 읽어서 바이너리 추출
+                    String uploadDir = fileStorageUtil.getUploadDir();
+                    String relativePath = savedPath.replaceFirst("/uploads/", "").replace("/", java.io.File.separator);
+                    File savedFile = new File(uploadDir, relativePath);
+                    byte[] imageBytes;
+                    try (FileInputStream fis = new FileInputStream(savedFile)) {
+                        imageBytes = org.springframework.util.StreamUtils.copyToByteArray(fis);
+                    }
+                    ProductImage image = new ProductImage();
+                    image.setFileName(savedPath);
+                    image.setProduct(product);
+                    image.setImageData(imageBytes);
+                    productImageRepository.save(image);
+                } catch (Exception e) {
+                    throw new RuntimeException("상품 이미지 저장 실패", e);
+                }
             }
         }
 
