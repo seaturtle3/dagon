@@ -14,7 +14,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @Tag(name = "Product", description = "상품 옵션 관리 API (공용)")
-@RequestMapping("api/product-option")
+@RequestMapping("/api/product-option")
 public class ApiProductOptionController {
 
     private final ProductOptionService prod_optionService;

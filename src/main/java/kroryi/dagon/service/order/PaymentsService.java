@@ -14,7 +14,7 @@ public class PaymentsService {
 
     private final PaymentsRepository paymentsRepository;
 
-    public void savePayment(Payment payment) {
+    public Long savePayment(Payment payment) {
         PaymentsEntity entity = PaymentsEntity.builder()
                 .impUid(payment.getImpUid())
                 .merchantUid(payment.getMerchantUid())
@@ -28,6 +28,7 @@ public class PaymentsService {
                         .toLocalDateTime())
                 .build();
 
-        paymentsRepository.save(entity);
+        PaymentsEntity savedEntity = paymentsRepository.save(entity);
+        return savedEntity.getId(); // 저장된 결제의 PK 반환
     }
 }
