@@ -2,6 +2,7 @@ package kroryi.dagon.service;
 
 
 import kroryi.dagon.DTO.board.FishingCenter.FishingReportDTO;
+import kroryi.dagon.DTO.board.FishingCenter.ApiFishingReportDTO;
 
 import kroryi.dagon.DTO.board.PartnerFishingReportDTO;
 import kroryi.dagon.entity.fishingCenter.FishingReport;
@@ -91,6 +92,12 @@ public class PartnerFishingReportService {
                 .collect(Collectors.toList());
     }
 
+    public List<ApiFishingReportDTO> getMySimpleReportsWithImages(Long uno) {
+        List<FishingReport> reports = fishingReportRepository.findByUserUno(uno);
+        return reports.stream()
+                .map(ApiFishingReportDTO::new)
+                .collect(Collectors.toList());
+    }
 
     public String uploadThumbnail(MultipartFile file) {
         if (file == null || file.isEmpty()) {

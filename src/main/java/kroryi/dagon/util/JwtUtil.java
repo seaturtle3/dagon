@@ -141,7 +141,7 @@ public class JwtUtil {
         try {
             Claims claims = parseToken(token);
             String role = claims.get("role", String.class);
-            return "ADMIN".equalsIgnoreCase(role);
+            return "ADMIN".equalsIgnoreCase(role) || "SUPER_ADMIN".equalsIgnoreCase(role);
         } catch (Exception e) {
             log.error("어드민 체크 중 오류 발생: {}", e.getMessage());
             return false;
