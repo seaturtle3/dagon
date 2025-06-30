@@ -55,6 +55,7 @@ public class ProductService {
     private final PartnerService partnerService;
     private final SeaFreshwaterFishingRepository seaFreshwaterFishingRepository;
     private final FileStorageUtil fileStorageUtil;
+
     @Transactional
     public void createProductWithImages(ProductDTO dto, Long uno, List<MultipartFile> productImages) {
         Partner partner = partnerRepository.findById(uno).orElseThrow();
@@ -131,6 +132,9 @@ public class ProductService {
         return ProductDTO.fromEntity(product);
     }
 
+    @Value("${file.upload-path}")
+    private String uploadPath;
+
     // [Update] 상품 수정
     @Transactional
     public Long updateProduct(Long id, ProductDTO productDTO, List<MultipartFile> thumbnailFiles) {
@@ -150,28 +154,23 @@ public class ProductService {
         product.setProdEvent(productDTO.getProdEvent());
         product.setProdNotice(productDTO.getProdNotice());
 
-//        // ✅ 삭제할 이미지 처리
-//        if (productDTO.getDeleteImageNames() != null) {
-//            for (String fileName : productDTO.getDeleteImageNames()) {
-//                // 1. 파일 시스템에서 삭제
-//                File file = new File(uploadPath + fileName); // uploadPath는 예: "/upload/products/"
-//                if (file.exists()) {
-//                    file.delete();
-//                }
-//
-//                // 2. DB에서 해당 이미지 레코드 제거 (ProductImage 엔티티 있다고 가정)
-//                productImageRepository.deleteByProductAndFileName(product, fileName);
-//            }
-//        }
-//
-//        // ✅ 새로 들어온 썸네일 이미지 저장
-//        if (thumbnailFiles != null && !thumbnailFiles.isEmpty()) {
-//            for (MultipartFile file : thumbnailFiles) {
-//                String newFileName = saveFile(file); // 썸네일 저장 로직
-//                ProductImage newImage = new ProductImage(product, newFileName);
-//                productImageRepository.save(newImage);
-//            }
-//        }
+        // ✅ 삭제할 이미지 처리
+        if (productDTO.getDeleteImageNames() != null) {
+            for (String imagePath : productDTO.getDeleteImageNames()) {
+                fileStorageUtil.deleteImage(imagePath); // ← 유틸 호출
+                productImageRepository.deleteByProductAndFileName(product, imagePath); // DB도 정리
+            }
+        }
+
+        // ✅ 새로 업로드된 이미지 저장
+        if (thumbnailFiles != null && !thumbnailFiles.isEmpty()) {
+            for (MultipartFile file : thumbnailFiles) {
+                String savedPath = fileStorageUtil.saveImage(file, "products"); // ← 유틸 호출
+                productImageRepository.save(new ProductImage(product, savedPath)); // DB 저장
+            }
+        }
+
+        log.info("🧹 삭제 대상 이미지들: {}", productDTO.getDeleteImageNames());
 
         return product.getProdId();
     }
