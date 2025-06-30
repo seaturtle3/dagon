@@ -7,6 +7,7 @@ import kroryi.dagon.enums.MainType;
 import kroryi.dagon.enums.ProdRegion;
 import kroryi.dagon.enums.SubType;
 import lombok.Data;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -42,7 +43,7 @@ public class ProductDTO {
     private List<ProductOptionDTO> options;
 
     private List<String> prodImageNames; // 썸네일 여러 개
-    private List<String> deleteImageNames; // 👈 삭제할 이미지 경로
+    private List<String> deleteImageNames; // 삭제할 이미지 경로
     private List<byte[]> prodImageDataList; // 이미지 바이너리 리스트
 
     public static ProductDTO fromEntity(Product product) {
