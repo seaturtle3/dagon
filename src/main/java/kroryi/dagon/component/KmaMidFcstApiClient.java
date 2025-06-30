@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
 @Component
 @Log4j2
@@ -25,8 +27,9 @@ public class KmaMidFcstApiClient {
      */
     public String getMidFcst(String stnId, String tmFc) {
         String url = baseUrl + "/getMidFcst";
+        String encodedKey = URLEncoder.encode(serviceKey, StandardCharsets.UTF_8);
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(url)
-                .queryParam("serviceKey", serviceKey)
+                .queryParam("serviceKey", encodedKey)
                 .queryParam("pageNo", "1")
                 .queryParam("numOfRows", "10")
                 .queryParam("dataType", "JSON")
