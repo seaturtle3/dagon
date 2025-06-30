@@ -50,4 +50,4 @@ def crawl_all_boat_images(pages=10):
     download_images(list(all_img_links))
 
 if __name__ == "__main__":
-    crawl_all_boat_images(pages=3)  # 첫 3페이지만 테스트 
+    crawl_all_boat_images(pages=10)  # 첫 3페이지만 테스트 
