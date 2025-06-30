@@ -23,7 +23,7 @@ public class Event extends BaseTimeEntity {
     private String title;
 
     @Lob
-    @Column(name = "content", nullable = false)
+    @Column(name = "content", columnDefinition = "TEXT", nullable = false)
     private String content;
 
     @Column(length = 512)

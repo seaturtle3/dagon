@@ -22,7 +22,7 @@ public class Notice extends BaseTimeEntity {
     private String title;
 
     @Lob
-    @Column(nullable = false)
+    @Column(name = "content", columnDefinition = "TEXT", nullable = false)
     private String content;
 
     @Column(length = 512)
