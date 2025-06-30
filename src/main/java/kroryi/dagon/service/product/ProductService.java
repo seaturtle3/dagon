@@ -11,17 +11,26 @@ import kroryi.dagon.enums.MainType;
 import kroryi.dagon.enums.ProdRegion;
 import kroryi.dagon.enums.SubType;
 import kroryi.dagon.repository.PartnerRepository;
+import kroryi.dagon.repository.product.ProductImageRepository;
 import kroryi.dagon.repository.product.ProductRepository;
 import kroryi.dagon.repository.SeaFreshwaterFishingRepository;
 import kroryi.dagon.repository.UserRepository;
 import kroryi.dagon.service.auth.PartnerService;
+import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -38,6 +47,7 @@ import kroryi.dagon.repository.product.ProductImageRepository;
 @Log4j2
 public class ProductService {
 
+
     private final ProductRepository productRepository;
     private final ProductImageRepository productImageRepository;
     private final UserRepository userRepository;
@@ -45,6 +55,7 @@ public class ProductService {
     private final PartnerService partnerService;
     private final SeaFreshwaterFishingRepository seaFreshwaterFishingRepository;
     private final FileStorageUtil fileStorageUtil;
+
     @Transactional
     public void createProductWithImages(ProductDTO dto, Long uno, List<MultipartFile> productImages) {
         Partner partner = partnerRepository.findById(uno).orElseThrow();
@@ -121,12 +132,16 @@ public class ProductService {
         return ProductDTO.fromEntity(product);
     }
 
+    @Value("${file.upload-path}")
+    private String uploadPath;
+
     // [Update] 상품 수정
     @Transactional
-    public Long updateProduct(Long id, ProductDTO productDTO) {
+    public Long updateProduct(Long id, ProductDTO productDTO, List<MultipartFile> thumbnailFiles) {
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("상품을 찾을 수 없습니다. id=" + id));
 
+        // 값 업데이트
         product.setProdName(productDTO.getProdName());
         product.setProdRegion(productDTO.getProdRegion());
         product.setMainType(productDTO.getMainType());
@@ -138,7 +153,24 @@ public class ProductService {
         product.setProdDescription(productDTO.getProdDescription());
         product.setProdEvent(productDTO.getProdEvent());
         product.setProdNotice(productDTO.getProdNotice());
-        product.setProdThumbnail(productDTO.getProdThumbnail());
+
+        // ✅ 삭제할 이미지 처리
+        if (productDTO.getDeleteImageNames() != null) {
+            for (String imagePath : productDTO.getDeleteImageNames()) {
+                fileStorageUtil.deleteImage(imagePath); // ← 유틸 호출
+                productImageRepository.deleteByProductAndFileName(product, imagePath); // DB도 정리
+            }
+        }
+
+        // ✅ 새로 업로드된 이미지 저장
+        if (thumbnailFiles != null && !thumbnailFiles.isEmpty()) {
+            for (MultipartFile file : thumbnailFiles) {
+                String savedPath = fileStorageUtil.saveImage(file, "products"); // ← 유틸 호출
+                productImageRepository.save(new ProductImage(product, savedPath)); // DB 저장
+            }
+        }
+
+        log.info("🧹 삭제 대상 이미지들: {}", productDTO.getDeleteImageNames());
 
         return product.getProdId();
     }
@@ -180,8 +212,8 @@ public class ProductService {
     }
 
     //  -------------- 프론트 api 추가(날짜, 지역, 상세 장소, 어종에 따라 바다 상품 필터 조회) ----------------
-    public List<ProductDTO> getFishingCenterProductsByFilters(ProdRegion region, SubType subType, String species) {
-        List<Product> products = productRepository.findSeaProductsByFilters(region, subType, species);
+    public List<ProductDTO> getFishingCenterProductsByFilters(ProdRegion region, SubType subType, String species, Sort sort) {
+        List<Product> products = productRepository.findSeaProductsByFilters(region, subType, species, sort);
 
         return products.stream().map(product -> {
             ProductDTO dto = ProductDTO.fromEntity(product);

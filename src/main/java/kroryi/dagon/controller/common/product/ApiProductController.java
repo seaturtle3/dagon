@@ -95,9 +95,13 @@ public class ApiProductController {
     }
 
     @Operation(summary = "상품 수정", description = "상품 정보 수정")
-    @PutMapping("/update/{id}")
-    public Long updateProduct(@PathVariable Long id, @RequestBody ProductDTO productDTO) {
-        return productService.updateProduct(id, productDTO);
+    @PutMapping(value = "/update/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public Long updateProduct(
+            @PathVariable Long id,
+            @RequestPart("product") ProductDTO productDTO,
+            @RequestPart(value = "thumbnailFiles", required = false) List<MultipartFile> thumbnailFiles) {
+
+        return productService.updateProduct(id, productDTO, thumbnailFiles);
     }
 
     @Operation(summary = "상품 삭제", description = "상품 삭제")
@@ -142,27 +146,40 @@ public class ApiProductController {
     public List<ProductDTO> getSeaProductsByFilters(
             @RequestParam(required = false) String subType,
             @RequestParam(required = false) String region,
-            @RequestParam(required = false) String species) {
+            @RequestParam(required = false) String species,
+            @RequestParam(defaultValue = "createdAt") String sortBy,
+            @RequestParam(defaultValue = "desc") String direction) {
 
         SubType subTypeEnum = (subType == null || subType.isEmpty()) ? null : SubType.valueOf(subType);
         ProdRegion regionEnum = (region == null || region.isEmpty()) ? null : ProdRegion.valueOf(region);
 
-        return productService.getFishingCenterProductsByFilters(regionEnum, subTypeEnum, species);
+        Sort sort = direction.equalsIgnoreCase("desc")
+                ? Sort.by(sortBy).descending()
+                : Sort.by(sortBy).ascending();
+
+        return productService.getFishingCenterProductsByFilters(regionEnum, subTypeEnum, species, sort);
     }
 
     @GetMapping("/get-all/freshwater/filter")
     public List<ProductDTO> getFreshwaterProductsByFilters(
             @RequestParam(required = false) String subType,
             @RequestParam(required = false) String region,
-            @RequestParam(required = false) String species) {
+            @RequestParam(required = false) String species,
+            @RequestParam(defaultValue = "createdAt") String sortBy,
+            @RequestParam(defaultValue = "desc") String direction
+    ) {
 
         SubType subTypeEnum = (subType == null || subType.isEmpty()) ? null : SubType.valueOf(subType);
         ProdRegion regionEnum = (region == null || region.isEmpty()) ? null : ProdRegion.valueOf(region);
 
-        return productService.getFishingCenterProductsByFilters(regionEnum, subTypeEnum, species);
+        Sort sort = direction.equalsIgnoreCase("desc")
+                ? Sort.by(sortBy).descending()
+                : Sort.by(sortBy).ascending();
+
+        return productService.getFishingCenterProductsByFilters(regionEnum, subTypeEnum, species, sort);
     }
 
-    //  -------------- 프론트 api 바다/민물 낚시 상단 필터 ----------------
+    //  -------------- 프론트 api 바다/민물 상단 필터 ----------------
     @GetMapping("/sea/filter")
     public Map<String, List<String>> getSeaFilterOptions() {
         List<String> regions = Arrays.stream(ProdRegion.values())
