@@ -45,6 +45,7 @@ import javax.imageio.ImageIO;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.nio.file.AccessDeniedException;
 
 @RestController
 @RequiredArgsConstructor
@@ -148,9 +149,9 @@ public class ApiFishingReportController {
 
     //====================================================================================================
     @GetMapping("/mine")
-    public List<PartnerFishingReportDTO> getMyReports() {
+    public List<ApiFishingReportDTO> getMyReports() {
         Long uno = getCurrentUserUno();
-        return partnerFishingReportService.getMySimpleReports(uno);
+        return partnerFishingReportService.getMySimpleReportsWithImages(uno);
     }
 
     @GetMapping("/{frId}")

@@ -140,6 +140,10 @@ public class ApiMulttaeController {
         String recentDir = MarineDataMapper.getMostRecentValue(windList, WindDTO::getWind_dir);
         String windDirName = getWindDirName(recentDir);
 
+        // 기온 (가장 최근값)
+        List<AirTempDTO> airTempList = airFuture.join();
+        Double recentAirTemp = MarineDataMapper.getMostRecentValue(airTempList, AirTempDTO::getAir_temp);
+
         // 시간대별 기상 데이터 병합
         List<HourlyDataDTO> hourlyData = MarineDataMapper.mergeToHourly(
                 waveFuture.join(), windFuture.join(), airFuture.join(), tideLevelFuture.join()
@@ -193,8 +197,10 @@ public class ApiMulttaeController {
                 .lunarAge(lunarAge)
                 .mulName(mulName)
                 .tideItems(tideItems)
-                .hourlyData(hourlyData).todayWindSpeed(recentSpeed)
+                .hourlyData(hourlyData)
+                .todayWindSpeed(recentSpeed)
                 .todayWindDir(windDirName)
+                .airTemp(recentAirTemp)
                 .build();
     }
     private String formatSunTime(String time) {
