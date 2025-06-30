@@ -17,6 +17,7 @@ import kroryi.dagon.repository.product.ProductRepository;
 import kroryi.dagon.repository.SeaFreshwaterFishingRepository;
 import kroryi.dagon.repository.product.ProductOptionRepository;
 import lombok.*;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -27,6 +28,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Log4j2
 public class SeaFreshwaterFishingService {
 
     private final SeaFreshwaterFishingRepository seaFreshwaterFishingRepository;
@@ -67,6 +69,8 @@ public class SeaFreshwaterFishingService {
         reservation.setUser(user);
         // Product 엔티티 조회 후 할당
         Long prodId = dto.getProdId();
+
+        log.info("------------------ prodid: {}" ,prodId);
         Product product = productRepository.findById(prodId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 상품이 존재하지 않습니다. id=" + prodId));
         reservation.setProduct(product);
@@ -76,13 +80,28 @@ public class SeaFreshwaterFishingService {
             .orElseThrow(() -> new IllegalArgumentException("해당 옵션이 존재하지 않습니다. id=" + optionId));
         reservation.setProductOption(productOption);
 
+        // 결제 정보 처리
         PaymentsEntity payment = null;
-        if (dto.getPaymentId() != null) {
-            payment = paymentsRepository.findByImpUid(dto.getPaymentId())
-                .orElseThrow(() -> new IllegalArgumentException("해당 결제 정보가 존재하지 않습니다: " + dto.getPaymentId()));
+        if (dto.getPaymentId() != null && !dto.getPaymentId().trim().isEmpty()) {
+            try {
+                // paymentId가 숫자인 경우 (PaymentsEntity의 id)
+                if (dto.getPaymentId().matches("\\d+")) {
+                    Long paymentId = Long.parseLong(dto.getPaymentId());
+                    payment = paymentsRepository.findById(paymentId)
+                        .orElse(null);
+                } else {
+                    // paymentId가 impUid인 경우
+                    payment = paymentsRepository.findByImpUid(dto.getPaymentId())
+                        .orElse(null);
+                }
+            } catch (Exception e) {
+                // 결제 정보 조회 실패 시 로그만 남기고 계속 진행
+                System.err.println("결제 정보 조회 실패: " + dto.getPaymentId() + ", 오류: " + e.getMessage());
+            }
         }
+        
+        // 결제 정보가 있으면 설정, 없으면 null로 유지
         reservation.setPayment(payment);
-        // User, Payment 등도 필요시 추가
 
         Reservation saved = seaFreshwaterFishingRepository.save(reservation);
         return toDTO(saved);
