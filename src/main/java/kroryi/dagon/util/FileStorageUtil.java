@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.*;
 import java.time.LocalDate;
@@ -53,6 +54,39 @@ public class FileStorageUtil {
             throw new RuntimeException("이미지 저장 실패", e);
         }
     }
+
+    /**
+     * 이미지 삭제
+     * @param relativePath DB에 저장된 상대 경로 (예: /uploads/products/2025/06/30/파일명.jpg)
+     */
+    public void deleteImage(String relativePath) {
+
+
+        if (relativePath == null || relativePath.isEmpty()) return;
+
+        try {
+            // "/uploads/products/2025/06/30/파일명.jpg" → "products/2025/06/30/파일명.jpg"
+            String trimmedPath = relativePath.replaceFirst("/?uploads/?", "");
+
+            // 실제 전체 경로 구성
+            Path fullPath = Paths.get(uploadDir, trimmedPath);
+            File file = fullPath.toFile();
+
+            if (file.exists()) {
+                if (file.delete()) {
+                    log.info("🗑 삭제 성공: {}", fullPath);
+                } else {
+                    log.warn("⚠️ 삭제 실패: {}", fullPath);
+                }
+            } else {
+                log.warn("🚫 파일 없음: {}", fullPath);
+            }
+
+        } catch (Exception e) {
+            log.error("❌ 이미지 삭제 중 오류", e);
+        }
+    }
+
 
     /**
      * 이미지를 저장하고, 같은 경로에 썸네일도 thumb_{원본파일명}으로 생성합니다.
