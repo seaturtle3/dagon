@@ -35,6 +35,12 @@ public class ApiFishingReportDTO {
     // 대표 썸네일도 따로 뽑아서 담기
     private String thumbnailUrl;
 
+    // 기존 이미지 유지 플래그 추가
+    private Boolean keepExistingImages;
+    
+    // 기존 이미지 URL 리스트 (수정 시 기존 이미지 정보 전달용)
+    private List<String> existingImageUrls;
+
     public ApiFishingReportDTO(FishingReport fishingReport) {
         this.frId = fishingReport.getFrId();
         this.title = fishingReport.getTitle();
