@@ -234,7 +234,7 @@ public class ProductService {
     }
 
     //  -------------- 프론트 api 추가(날짜, 지역, 상세 장소, 어종에 따라 바다 상품 필터 조회) ----------------
-    public List<ProductDTO> getFishingCenterProductsByFilters(ProdRegion region, SubType subType, String species, Sort sort) {
+    public List<ProductDTO> getFishingCenterProductsByFilters(ProdRegion region, SubType subType, List<String> species, Sort sort) {
         List<Product> products = productRepository.findSeaProductsByFilters(region, subType, species, sort);
 
         return products.stream().map(product -> {

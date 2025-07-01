@@ -58,12 +58,12 @@ public interface ProductRepository extends JpaRepository<Product, Long>, JpaSpec
             WHERE p.mainType = kroryi.dagon.enums.MainType.SEA
             AND (:region IS NULL OR p.prodRegion = :region)
             AND (:subType IS NULL OR p.subType = :subType)
-            AND (:species IS NULL OR fs.fsName = :species)
+            AND ((:species) IS NULL OR fs.fsName IN (:species))
             """)
     List<Product> findSeaProductsByFilters(
             @Param("region") ProdRegion region,
             @Param("subType") SubType subType,
-            @Param("species") String species,
+            @Param("species") List<String> species,
             Sort sort
     );
 

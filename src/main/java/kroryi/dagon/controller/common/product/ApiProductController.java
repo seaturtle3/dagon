@@ -38,6 +38,7 @@ import java.util.stream.Collectors;
 @RequestMapping("/api/product")
 @Log4j2
 @RequiredArgsConstructor
+@CrossOrigin(origins = "http://localhost:5173")
 public class ApiProductController {
 
     private final ProductService productService;
@@ -147,7 +148,7 @@ public class ApiProductController {
     public List<ProductDTO> getSeaProductsByFilters(
             @RequestParam(required = false) String subType,
             @RequestParam(required = false) String region,
-            @RequestParam(required = false) String species,
+            @RequestParam(required = false) List<String> species,
             @RequestParam(defaultValue = "createdAt") String sortBy,
             @RequestParam(defaultValue = "desc") String direction) {
 
@@ -165,7 +166,7 @@ public class ApiProductController {
     public List<ProductDTO> getFreshwaterProductsByFilters(
             @RequestParam(required = false) String subType,
             @RequestParam(required = false) String region,
-            @RequestParam(required = false) String species,
+            @RequestParam(required = false) List<String> species,
             @RequestParam(defaultValue = "createdAt") String sortBy,
             @RequestParam(defaultValue = "desc") String direction
     ) {
