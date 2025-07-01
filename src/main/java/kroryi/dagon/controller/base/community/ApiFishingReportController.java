@@ -138,6 +138,21 @@ public class ApiFishingReportController {
             @RequestPart("dto") ApiFishingReportDTO apiFishingReportDTO,
             @RequestPart(value = "images", required = false) List<MultipartFile> images
     ) {
+        // 이미지 처리 로직
+        if (images == null || images.isEmpty()) {
+            // 이미지가 없거나 비어있을 때 기본적으로 기존 이미지 유지
+            if (apiFishingReportDTO.getKeepExistingImages() == null) {
+                apiFishingReportDTO.setKeepExistingImages(true);
+            }
+        } else {
+            // 새 이미지가 있으면 기존 이미지 유지 플래그를 false로 설정
+            apiFishingReportDTO.setKeepExistingImages(false);
+        }
+        
+        log.info("Update fishing report - frId: {}, keepExistingImages: {}, images count: {}", 
+                frId, apiFishingReportDTO.getKeepExistingImages(), 
+                images != null ? images.size() : 0);
+        
         return apiFishingReportService.updateFishingReport(frId, apiFishingReportDTO, images);
     }
 
