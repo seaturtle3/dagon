@@ -202,7 +202,6 @@ public class ProductService {
     public void deleteProduct(Long id) {
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("상품을 찾을 수 없습니다. id=" + id));
-
         // product 안에 옵션들 돌면서 예약 체크
         for (ProductOption option : product.getOptions()) {
             if (seaFreshwaterFishingRepository.existsByProductOption_OptId(option.getOptId())) {
@@ -227,15 +226,33 @@ public class ProductService {
                 .orElseThrow(() -> new IllegalArgumentException("해당 배가 없습니다. id=" + id));
     }
 
-    //  -------------- 프론트 api 추가(바다/민물 필터) ----------------
+    //  -------------- 프론트 api (바다/민물 상품 필터) ----------------
     public Page<ProductDTO> getProductsByMainType(MainType mainType, Pageable pageable) {
         Page<Product> products = productRepository.findByMainTypeAndDeletedFalse(mainType, pageable);
         return products.map(ProductDTO::fromEntity);
     }
 
-    //  -------------- 프론트 api 추가(날짜, 지역, 상세 장소, 어종에 따라 바다 상품 필터 조회) ----------------
-    public List<ProductDTO> getFishingCenterProductsByFilters(ProdRegion region, SubType subType, List<String> species, Sort sort) {
+    //  -------------- 프론트 api 바다 (지역, 상세장소, 어종 상품 필터 조회) ----------------
+    public List<ProductDTO> getFishingSeaProductsByFilters(ProdRegion region, SubType subType, List<String> species, Sort sort) {
         List<Product> products = productRepository.findSeaProductsByFilters(region, subType, species, sort);
+
+        return products.stream().map(product -> {
+            ProductDTO dto = ProductDTO.fromEntity(product);
+
+            // fishSpecies 이름 리스트 추가
+            List<String> fishSpeciesNames = product.getFishSpeciesMappings().stream()
+                    .map(mapping -> mapping.getFs().getFsName())
+                    .toList();
+
+            dto.setFishSpeciesNames(fishSpeciesNames);  // 이 필드를 DTO에 추가해야 함
+
+            return dto;
+        }).toList();
+    }
+
+    //  -------------- 프론트 api 민물 (지역, 상세장소, 어종 상품 필터 조회) ----------------
+    public List<ProductDTO> getFishingFreshwaterProductsByFilters(ProdRegion region, SubType subType, List<String> species, Sort sort) {
+        List<Product> products = productRepository.findFreshwaterProductsByFilters(region, subType, species, sort);
 
         return products.stream().map(product -> {
             ProductDTO dto = ProductDTO.fromEntity(product);

@@ -143,7 +143,7 @@ public class ApiProductController {
         return productService.getProductsByMainType(MainType.valueOf("FRESHWATER"), pageable);
     }
 
-    //  -------------- 프론트 api 바다 낚시 상품들 ----------------
+    //  -------------- 프론트 api 바다/민물 낚시 상품 가져오기 ----------------
     @GetMapping("/get-all/sea/filter")
     public List<ProductDTO> getSeaProductsByFilters(
             @RequestParam(required = false) String subType,
@@ -159,7 +159,7 @@ public class ApiProductController {
                 ? Sort.by(sortBy).descending()
                 : Sort.by(sortBy).ascending();
 
-        return productService.getFishingCenterProductsByFilters(regionEnum, subTypeEnum, species, sort);
+        return productService.getFishingSeaProductsByFilters(regionEnum, subTypeEnum, species, sort);
     }
 
     @GetMapping("/get-all/freshwater/filter")
@@ -178,7 +178,7 @@ public class ApiProductController {
                 ? Sort.by(sortBy).descending()
                 : Sort.by(sortBy).ascending();
 
-        return productService.getFishingCenterProductsByFilters(regionEnum, subTypeEnum, species, sort);
+        return productService.getFishingFreshwaterProductsByFilters(regionEnum, subTypeEnum, species, sort);
     }
 
     //  -------------- 프론트 api 바다/민물 상단 필터 ----------------
