@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -45,6 +46,14 @@ public class Reservation extends BaseTimeEntity {
     @Column(name = "num_person", nullable = false)
     private Integer numPerson;
 
+    // 옵션 수량
+    @Column(name = "option_quantity", nullable = false)
+    private Integer optionQuantity = 1; // 기본값 1
+
+    // 예약 총 금액 (상품가격 * 인원수 + 옵션가격 * 옵션수량)
+    @Column(name = "amount", precision = 10, scale = 0, nullable = true)
+    private BigDecimal amount;
+
     // reservationAt은 예약생성시간으로 이름을 createdAt으로 지정하고z BaseTimeEntity 상속
 
     @Column(name = "fishing_at", nullable = false)
@@ -80,6 +89,12 @@ public class Reservation extends BaseTimeEntity {
         reservation.setReservationStatus(this.getReservationStatus());
         reservation.setPaymentsMethod(this.getPaymentsMethod());
         reservation.setPayment(payment);
+        
+        // 금액 계산 (인원수 * 옵션가격)
+        if (this.getNumPerson() != null && option.getPrice() != null) {
+            reservation.setAmount(option.getPrice().multiply(BigDecimal.valueOf(this.getNumPerson())));
+        }
+        
         return reservation;
     }
 }
