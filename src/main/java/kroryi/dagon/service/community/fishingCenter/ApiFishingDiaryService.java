@@ -19,7 +19,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -37,29 +36,6 @@ public class ApiFishingDiaryService {
     private final FishingDiaryImageRepository fishingDiaryImageRepository;
     private final ProductRepository productRepository;
 
-    // 이미지 저장
-    public void saveImages(FishingDiary fishingDiary, List<MultipartFile> images) {
-        List<FishingDiaryImage> imageEntities = new ArrayList<>();
-
-        for (int i = 0; i < images.size(); i++) {
-            MultipartFile image = images.get(i);
-
-            // 이미지 저장 → URL 리턴
-            String imageUrl = fileStorageUtil.saveImage(image, "fishing-diary");
-
-            // DB용 이미지 엔티티 생성
-            FishingDiaryImage diaryImage = new FishingDiaryImage();
-            diaryImage.setImageUrl(imageUrl);
-            diaryImage.setFishingDiary(fishingDiary); // 연관관계 주입
-            diaryImage.setThumbnail(i == 0); // 첫 번째 이미지를 썸네일로 지정
-
-            imageEntities.add(diaryImage);
-        }
-
-        fishingDiaryImageRepository.saveAll(imageEntities);
-        fishingDiary.setImages(imageEntities); // 양방향 매핑일 경우
-    }
-
     @Transactional
     public ApiFishingDiaryDTO createFishingDiary(ApiFishingDiaryDTO dto, Long userUno, List<MultipartFile> images) {
         FishingDiary fishingDiary = new FishingDiary();
@@ -67,14 +43,7 @@ public class ApiFishingDiaryService {
         fishingDiary.setContent(dto.getContent());
         if (dto.getFishingAt() != null) {
             fishingDiary.setFishingAt(dto.getFishingAt().atStartOfDay());
-        } else {
-            fishingDiary.setFishingAt(java.time.LocalDate.now().atStartOfDay());
         }
-
-        // 사용자 설정
-        User user = userRepository.findById(userUno)
-                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
-        fishingDiary.setUser(user);
 
         // 상품 설정
         if (dto.getProduct() != null && dto.getProduct().getProdId() != null) {
@@ -84,15 +53,42 @@ public class ApiFishingDiaryService {
             fishingDiary.setProduct(product);
         }
 
+        // 사용자 설정
+        User user = userRepository.findById(userUno)
+                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+        fishingDiary.setUser(user);
 
-        // 먼저 조행기 저장 (PK 필요)
+        // 조행기 저장 (PK 확보)
         fishingDiary = fishingDiaryRepository.save(fishingDiary);
 
-        // 이미지 저장
+        // 이미지 저장 처리 (조황정보와 동일 패턴)
         if (images != null && !images.isEmpty()) {
-            saveImages(fishingDiary, images);
+            for (int i = 0; i < images.size(); i++) {
+                MultipartFile file = images.get(i);
+                try {
+                    // 1. 파일을 uploads 경로에 저장
+                    String savedUrl = fileStorageUtil.saveImage(file, "fishing-diary");
+                    // 2. 저장된 파일을 읽어서 바이너리 추출
+                    String uploadDir = fileStorageUtil.getUploadDir();
+                    String relativePath = savedUrl.replaceFirst("/uploads/", "").replace("/", File.separator);
+                    File savedFile = new File(uploadDir, relativePath);
+                    byte[] imageBytes;
+                    try (FileInputStream fis = new FileInputStream(savedFile)) {
+                        imageBytes = org.springframework.util.StreamUtils.copyToByteArray(fis);
+                    }
+                    // 3. FishingDiaryImage 엔티티 생성 및 저장
+                    FishingDiaryImage image = new FishingDiaryImage();
+                    image.setImageUrl(savedUrl); // 파일 경로 저장
+                    image.setImageData(imageBytes); // 바이너리 저장
+                    image.setThumbnail(i == 0); // 첫 번째 이미지를 썸네일로
+                    image.setOrderIndex(i);
+                    image.setFishingDiary(fishingDiary);
+                    fishingDiaryImageRepository.save(image);
+                } catch (Exception e) {
+                    throw new RuntimeException("이미지 저장 실패", e);
+                }
+            }
         }
-
         return new ApiFishingDiaryDTO(fishingDiary);
     }
 
