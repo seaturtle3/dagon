@@ -17,6 +17,7 @@ public class ApiFishingDiaryDTO {
     private Long fdId;
     private String title;
     private String content;
+    private String prodName;
     private LocalDateTime createdAt;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
@@ -31,6 +32,14 @@ public class ApiFishingDiaryDTO {
 
     // 대표 썸네일도 따로 뽑아서 담기
     private String thumbnailUrl;
+
+    // 기존 이미지 유지 플래그 추가
+    private Boolean keepExistingImages;
+
+    // 기존 이미지 URL 리스트 (수정 시 기존 이미지 정보 전달용)
+    private List<String> existingImageUrls;
+
+    private String imageFileName;
 
     public ApiFishingDiaryDTO(FishingDiary fishingDiary) {
         this.fdId = fishingDiary.getFdId();
@@ -65,6 +74,8 @@ public class ApiFishingDiaryDTO {
                     .map(FishingDiaryImage::getImageUrl)
                     .findFirst()
                     .orElse(null);
+            // imageFileName도 동일하게 할당
+            this.imageFileName = this.thumbnailUrl;
         }
     }
 
