@@ -9,6 +9,8 @@
 
 <p id="fishingAtText"></p>
 <p id="numPersonText"></p>
+<p id="optionText"></p>
+<p id="optionQuantityText"></p>
 <p id="amountText"></p>
 
 <button onclick="goBack()">예약정보 수정</button>
@@ -24,11 +26,16 @@
   const params = new URLSearchParams(window.location.search);
   const fishingAt = params.get("fishingAt");
   const numPerson = params.get("numPerson");
+  const optionId = params.get("optionId");
+  const optionQuantity = params.get("optionQuantity");
   const amount = params.get("amount");
+  const prodId = params.get("prodId");
 
   document.getElementById("fishingAtText").textContent = "출조일: " + fishingAt;
   document.getElementById("numPersonText").textContent = "인원 수: " + numPerson + "명";
-  document.getElementById("amountText").textContent = "결제 금액: " + amount + "원";
+  document.getElementById("optionText").textContent = "선택된 옵션 ID: " + optionId;
+  document.getElementById("optionQuantityText").textContent = "옵션 수량: " + optionQuantity + "개";
+  document.getElementById("amountText").textContent = "결제 금액: " + parseInt(amount).toLocaleString() + "원";
 
   function goBack() {
     window.opener.focus();

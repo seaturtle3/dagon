@@ -21,31 +21,74 @@
     <label for="numPerson">인원 수:</label>
     <input type="number" id="numPerson" name="numPerson" min="1" max="20" step="1" value="1"/>
 
+    <label for="optionSelect">옵션 선택:</label>
+    <select id="optionSelect" name="optionId">
+        <option value="">옵션을 선택하세요</option>
+        <option th:each="option : ${product.options}" 
+                th:value="${option.optId}" 
+                th:text="${option.optName + ' - ' + option.price + '원'}"></option>
+    </select>
+
+    <label for="optionQuantity">옵션 수량:</label>
+    <input type="number" id="optionQuantity" name="optionQuantity" min="1" max="10" step="1" value="1"/>
+
     <label for="uid">예약자:</label>
     <input type="text" id="uid" name="uid" disabled/>
 
     <label for="totalAmount">결제 금액:</label>
-    <span id="totalAmount">1000</span> 원
-    <input type="hidden" id="amount" name="amount" value="1000"/>
+    <span id="totalAmount">0</span> 원
+    <input type="hidden" id="amount" name="amount" value="0"/>
+    
+    <!-- 상품 정보를 JavaScript에서 사용할 수 있도록 hidden 필드로 전달 -->
+    <input type="hidden" id="prodPrice" th:value="${product.prodPrice != null ? product.prodPrice : 0}"/>
+    <input type="hidden" id="prodId" th:value="${product.prodId}"/>
 </form>
 <br>
 <button type="button" onclick="openReservationPopup()">예약 확인</button>
 
 <script src="/js/auth.js"></script>
 <script>
-    const pricePerPerson = 1000;
+    // 상품 가격과 옵션 정보를 저장할 변수
+    let productPrice = 0;
+    let selectedOptionPrice = 0;
+    let options = [];
 
     document.addEventListener("DOMContentLoaded", () => {
         fetchUserInfo();
         setupAmountCalculation();
+        loadProductData();
     });
+
+    function loadProductData() {
+        // 상품 가격 설정
+        productPrice = parseInt(document.getElementById('prodPrice').value) || 0;
+        
+        // 옵션 정보 로드
+        const optionSelect = document.getElementById('optionSelect');
+        options = [];
+        Array.from(optionSelect.options).forEach(option => {
+            if (option.value) {
+                const optionText = option.textContent;
+                const priceMatch = optionText.match(/(\d+)원$/);
+                if (priceMatch) {
+                    options.push({
+                        id: option.value,
+                        name: optionText.replace(/\s*-\s*\d+원$/, ''),
+                        price: parseInt(priceMatch[1])
+                    });
+                }
+            }
+        });
+        
+        console.log('상품 가격:', productPrice);
+        console.log('옵션 정보:', options);
+    }
 
     function fetchUserInfo() {
         fetch('/api/users/me', {
             method: 'GET',
             headers: getAuthHeaders()
         })
-
             .then(response => {
                 if (!response.ok) throw new Error("사용자 정보 요청 실패");
                 return response.json();
@@ -60,26 +103,64 @@
 
     function setupAmountCalculation() {
         const numPersonInput = document.getElementById('numPerson');
+        const optionSelect = document.getElementById('optionSelect');
+        const optionQuantityInput = document.getElementById('optionQuantity');
         const totalAmountSpan = document.getElementById('totalAmount');
         const amountInput = document.getElementById('amount');
 
         const updateAmount = () => {
             const numPerson = parseInt(numPersonInput.value) || 1;
-            const totalAmount = numPerson * pricePerPerson;
-            totalAmountSpan.textContent = totalAmount;
+            const optionQuantity = parseInt(optionQuantityInput.value) || 1;
+            
+            // 선택된 옵션 가격 계산
+            const selectedOption = optionSelect.value;
+            let optionPrice = 0;
+            if (selectedOption) {
+                const option = options.find(opt => opt.id === selectedOption);
+                if (option) {
+                    optionPrice = option.price;
+                }
+            }
+            
+            // 총 금액 계산: (상품가격 * 인원수) + (옵션가격 * 옵션수량)
+            const productAmount = productPrice * numPerson;
+            const optionAmount = optionPrice * optionQuantity;
+            const totalAmount = productAmount + optionAmount;
+            
+            totalAmountSpan.textContent = totalAmount.toLocaleString();
             amountInput.value = totalAmount;
+            
+            console.log('금액 계산:', {
+                productPrice: productPrice,
+                numPerson: numPerson,
+                productAmount: productAmount,
+                optionPrice: optionPrice,
+                optionQuantity: optionQuantity,
+                optionAmount: optionAmount,
+                totalAmount: totalAmount
+            });
         };
 
         numPersonInput.addEventListener('input', updateAmount);
+        optionSelect.addEventListener('change', updateAmount);
+        optionQuantityInput.addEventListener('input', updateAmount);
         updateAmount(); // 초기 계산
     }
 
     function openReservationPopup() {
         const fishingAt = document.getElementById('fishingAt').value;
         const numPerson = document.getElementById('numPerson').value;
+        const optionId = document.getElementById('optionSelect').value;
+        const optionQuantity = document.getElementById('optionQuantity').value;
         const amount = document.getElementById('amount').value;
+        const prodId = document.getElementById('prodId').value;
 
-        const query = `?fishingAt=${encodeURIComponent(fishingAt)}&numPerson=${numPerson}&amount=${amount}`;
+        if (!optionId) {
+            alert('옵션을 선택해주세요.');
+            return;
+        }
+
+        const query = `?fishingAt=${encodeURIComponent(fishingAt)}&numPerson=${numPerson}&optionId=${optionId}&optionQuantity=${optionQuantity}&amount=${amount}&prodId=${prodId}`;
         window.open('/reservation/confirm' + query, '예약확인', 'width=1200,height=800');
     }
 

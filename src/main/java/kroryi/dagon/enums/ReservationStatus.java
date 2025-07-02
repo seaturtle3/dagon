@@ -3,7 +3,8 @@ package kroryi.dagon.enums;
 public enum ReservationStatus {
     PENDING("대기"),
     PAID("결제완료"),
-    CANCELED("취소됨");
+    CANCELED("취소됨"),
+    COMPLETED("이용완료");
 
     private final String korean;
 

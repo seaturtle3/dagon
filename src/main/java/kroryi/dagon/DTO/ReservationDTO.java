@@ -5,6 +5,7 @@ import kroryi.dagon.enums.PaymentsMethod;
 import kroryi.dagon.enums.ReservationStatus;
 import lombok.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Data
@@ -24,6 +25,13 @@ public class ReservationDTO {
     private Long optionId; // ProductOption의 PK
 
     private Integer numPerson; // 예약 인원
+    
+    // 옵션 수량
+    private Integer optionQuantity; // 옵션 수량
+    
+    // 예약 총 금액
+    private BigDecimal amount;
+    
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime fishingAt; // 예약 날짜 및 시간
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
@@ -42,4 +50,6 @@ public class ReservationDTO {
     private String optionName;
     private String userName;
 
+    private String phone;
+    private String email;
 }
