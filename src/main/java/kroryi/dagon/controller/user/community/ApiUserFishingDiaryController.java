@@ -77,14 +77,14 @@ public class ApiUserFishingDiaryController {
         return apiFishingDiaryService.updateFishingDiary(id, apiFishingDiaryDTO, userDetails.getUno(), images);
     }
 
-    @PutMapping(value = "/update/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public Long updateFishingDiaryJson(
-            @PathVariable Long id,
-            @RequestBody ApiFishingDiaryDTO apiFishingDiaryDTO,
-            @AuthenticationPrincipal CustomUserDetails userDetails
-    ) {
-        return apiFishingDiaryService.updateFishingDiary(id, apiFishingDiaryDTO, userDetails.getUno());
-    }
+//    @PutMapping(value = "/update/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
+//    public Long updateFishingDiaryJson(
+//            @PathVariable Long id,
+//            @RequestBody ApiFishingDiaryDTO apiFishingDiaryDTO,
+//            @AuthenticationPrincipal CustomUserDetails userDetails
+//    ) {
+//        return apiFishingDiaryService.updateFishingDiary(id, apiFishingDiaryDTO, userDetails.getUno());
+//    }
 
     @Operation(summary = "조행기 삭제")
     @DeleteMapping("/delete/{id}")
