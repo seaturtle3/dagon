@@ -99,7 +99,14 @@ public class ProductDTO {
         if (product.getCreatedAt() != null) {
             dto.setCreatedAt(product.getCreatedAt().toLocalDate());
         }
-        dto.setProdThumbnail(product.getProdThumbnail());
+        
+        // 썸네일 설정: 이미지가 있으면 첫 번째 이미지를 썸네일로 사용, 없으면 기존 prodThumbnail 사용
+        if (product.getImages() != null && !product.getImages().isEmpty()) {
+            dto.setProdThumbnail(product.getImages().get(0).getFileName());
+        } else {
+            dto.setProdThumbnail(product.getProdThumbnail());
+        }
+        
         return dto;
     }
 
