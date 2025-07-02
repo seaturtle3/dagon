@@ -38,6 +38,9 @@ public class ProductDTO {
     private Long uno;
     private Partner partner;
 
+    // 상품 기본 가격
+    private BigDecimal prodPrice;
+
     private boolean deleted;
     private List<String> fishSpeciesNames;
     private List<ProductOptionDTO> options;
@@ -59,6 +62,7 @@ public class ProductDTO {
         dto.setMaxPerson(product.getMaxPerson());
         dto.setMinPerson(product.getMinPerson());
         dto.setWeight(product.getWeight());
+        dto.setProdPrice(product.getProdPrice());
         dto.setProdAddress(product.getProdAddress());
         dto.setProdDescription(product.getProdDescription());
         dto.setProdEvent(product.getProdEvent());
