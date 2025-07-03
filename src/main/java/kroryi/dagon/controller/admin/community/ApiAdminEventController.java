@@ -6,6 +6,7 @@ import jakarta.validation.Valid;
 import kroryi.dagon.DTO.board.EventRequestDTO;
 import kroryi.dagon.DTO.board.EventResponseDTO;
 import kroryi.dagon.entity.Event;
+import kroryi.dagon.repository.board.EventImageRepository;
 import kroryi.dagon.service.auth.AdminUserDetails;
 import kroryi.dagon.service.community.EventService;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +28,7 @@ import lombok.extern.log4j.Log4j2;
 public class ApiAdminEventController {
 
     private final EventService eventService;
+    private final EventImageRepository eventImageRepository;
 
     @Operation(summary = "이벤트 등록", description = "관리자가 새로운 이벤트 등록")
     @PostMapping
@@ -50,6 +52,19 @@ public class ApiAdminEventController {
             @RequestPart("dto") EventRequestDTO dto,
             @RequestPart(value = "images", required = false) List<MultipartFile> images,
             @AuthenticationPrincipal AdminUserDetails userDetails) {
+
+        // 1. 삭제할 썸네일 id 목록 처리
+        if (dto.getDeleteImageNames() != null) {
+            for (Long imageId : dto.getDeleteImageNames()) {
+                try {
+                    eventImageRepository.deleteById(imageId);
+                    log.info("이미지 삭제 완료: imageId={}", imageId);
+                } catch (NumberFormatException e) {
+                    log.warn("잘못된 이미지 ID 형식: {}", imageId);
+                }
+            }
+        }
+
         dto.setImages(images);
         String adminId = userDetails.getAid();
         log.info("dto---------------->: {}", dto);

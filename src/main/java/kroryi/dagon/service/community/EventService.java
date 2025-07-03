@@ -108,9 +108,9 @@ public class EventService {
         Event saved = eventRepository.save(event);
         // 기존 이미지 DB 삭제 후 새 이미지 저장
         // eventImageRepository.deleteAll(existingImages);
-        // if (dto.getImages() != null && !dto.getImages().isEmpty()) {
-        //     saveEventImages(saved, dto.getImages());
-        // }
+        if (dto.getImages() != null && !dto.getImages().isEmpty()) {
+            saveEventImages(saved, dto.getImages());
+        }
         return saved;
     }
 

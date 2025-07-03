@@ -20,5 +20,8 @@ public class EventRequestDTO {
     private LocalDate endAt;
     private Boolean isTop;
     private List<MultipartFile> images;
+    
+    // 썸네일 지우기 기능
+    private List<Long> deleteImageNames; // 삭제할 이미지 경로
 
 }
