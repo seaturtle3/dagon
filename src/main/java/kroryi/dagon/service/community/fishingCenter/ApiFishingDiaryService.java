@@ -126,73 +126,6 @@ public class ApiFishingDiaryService {
                 .collect(Collectors.toList());
     }
 
-    public Long updateFishingDiary(Long fdId, ApiFishingDiaryDTO apiFishingDiaryDTO, List<MultipartFile> images) {
-        FishingDiary fishingDiary = fishingDiaryRepository.findById(fdId)
-                .orElseThrow(() -> new RuntimeException("조황정보 없음"));
-
-        fishingDiary.setTitle(apiFishingDiaryDTO.getTitle());
-        fishingDiary.setContent(apiFishingDiaryDTO.getContent());
-        if (apiFishingDiaryDTO.getFishingAt() != null) {
-            fishingDiary.setFishingAt(apiFishingDiaryDTO.getFishingAt().atStartOfDay());
-        } else {
-            fishingDiary.setFishingAt(java.time.LocalDate.now().atStartOfDay());
-        }
-
-        // User 설정
-        Long userId = apiFishingDiaryDTO.getUser().getUno();
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
-        fishingDiary.setUser(user);
-
-        // Product 설정
-        Long prodId = apiFishingDiaryDTO.getProduct().getProdId();
-        Product product = productService.findById(prodId);
-        fishingDiary.setProduct(product);
-
-        // 기존 이미지 삭제
-        fishingDiaryImageRepository.deleteAll(fishingDiary.getImages());
-        fishingDiary.getImages().clear();
-
-        // 새 이미지 저장
-        if (images != null && !images.isEmpty()) {
-            for (int i = 0; i < images.size(); i++) {
-                MultipartFile file = images.get(i);
-                try {
-                    // 원본 이미지 저장
-                    String imageUrl = fileStorageUtil.saveImage(file, "fishing-diary");
-                    byte[] imageBytes = file.getBytes();
-                    // 썸네일 생성 및 저장 (FileStorageUtil 활용)
-                    byte[] thumbnailBytes = null;
-                    if (i == 0) {
-                        String thumbUrl = fileStorageUtil.saveImageWithThumbnail(file, "fishing-diary");
-                        // 썸네일 파일 읽기
-                        String uploadDir = fileStorageUtil.getUploadDir();
-                        String dateFolder = imageUrl.replaceFirst("/uploads/fishing-diary/", "").replaceAll("/[^/]+$", "");
-                        String thumbFileName = "thumb_" + file.getOriginalFilename();
-                        java.nio.file.Path thumbPath = java.nio.file.Paths.get(uploadDir, "fishing-diary", dateFolder, thumbFileName);
-                        if (java.nio.file.Files.exists(thumbPath)) {
-                            thumbnailBytes = java.nio.file.Files.readAllBytes(thumbPath);
-                        }
-                    }
-                    FishingDiaryImage diaryImage = new FishingDiaryImage();
-                    diaryImage.setImageUrl(imageUrl);
-                    diaryImage.setImageData(imageBytes);
-                    diaryImage.setThumbnail(i == 0);
-                    diaryImage.setOrderIndex(i);
-                    diaryImage.setFishingDiary(fishingDiary);
-                    diaryImage.setThumbnailData(thumbnailBytes);
-                    fishingDiaryImageRepository.save(diaryImage);
-                    fishingDiary.getImages().add(diaryImage);
-                } catch (Exception e) {
-                    throw new RuntimeException("이미지 저장 실패", e);
-                }
-            }
-        }
-
-        fishingDiaryRepository.save(fishingDiary);
-        return fishingDiary.getFdId();
-    }
-
     public Long updateFishingDiary(Long fdId, ApiFishingDiaryDTO apiFishingDiaryDTO, Long userUno, List<MultipartFile> images) {
         FishingDiary fishingDiary = fishingDiaryRepository.findById(fdId)
                 .orElseThrow(() -> new RuntimeException("조황정보 없음"));
@@ -221,30 +154,34 @@ public class ApiFishingDiaryService {
         fishingDiaryImageRepository.deleteAll(fishingDiary.getImages());
         fishingDiary.getImages().clear();
 
-        // 새 이미지 저장
-        // ✅ 새로 업로드된 이미지 저장
-        if (images != null && !images.isEmpty()) {
-            for (MultipartFile file : images) {
-                try {
-                    String savedPath = fileStorageUtil.saveImage(file, "fishing-diary"); // 파일 저장
-                    // 저장된 파일을 읽어서 바이너리 추출
-                    String uploadDir = fileStorageUtil.getUploadDir();
-                    String relativePath = savedPath.replaceFirst("/uploads/", "").replace("/", java.io.File.separator);
-                    File savedFile = new File(uploadDir, relativePath);
-                    byte[] imageBytes;
-                    try (FileInputStream fis = new FileInputStream(savedFile)) {
-                        imageBytes = org.springframework.util.StreamUtils.copyToByteArray(fis);
-                    }
-                    FishingDiaryImage image = new FishingDiaryImage();
-                    image.setImageUrl(savedPath);
-                    image.setImageData(imageBytes);
-                    image.setFishingDiary(fishingDiary);
-                    image.setThumbnail(false);
-                    image.setOrderIndex(0);
-                    fishingDiaryImageRepository.save(image);
-                } catch (Exception e) {
-                    throw new RuntimeException("상품 이미지 저장 실패", e);
+        // 새 이미지 저장 (썸네일 1장만 허용)
+        if (images == null || images.isEmpty()) {
+            throw new IllegalArgumentException("썸네일 이미지는 1장 필수입니다.");
+        }
+        if (images.size() > 1) {
+            images = images.subList(0, 1); // 1장만 허용
+        }
+        for (int i = 0; i < images.size(); i++) {
+            MultipartFile file = images.get(i);
+            try {
+                String savedPath = fileStorageUtil.saveImage(file, "fishing-diary"); // 파일 저장
+                String uploadDir = fileStorageUtil.getUploadDir();
+                String relativePath = savedPath.replaceFirst("/uploads/", "").replace("/", java.io.File.separator);
+                File savedFile = new File(uploadDir, relativePath);
+                byte[] imageBytes;
+                try (FileInputStream fis = new FileInputStream(savedFile)) {
+                    imageBytes = org.springframework.util.StreamUtils.copyToByteArray(fis);
                 }
+                FishingDiaryImage image = new FishingDiaryImage();
+                image.setImageUrl(savedPath);
+                image.setImageData(imageBytes);
+                image.setFishingDiary(fishingDiary);
+                image.setThumbnail(true); // 무조건 1장만 true
+                image.setOrderIndex(0);
+                fishingDiaryImageRepository.save(image);
+                fishingDiary.getImages().add(image);
+            } catch (Exception e) {
+                throw new RuntimeException("상품 이미지 저장 실패", e);
             }
         }
 
