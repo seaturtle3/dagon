@@ -31,40 +31,25 @@ public class EventResponseDTO {
     private List<Long> imageIdList;
 
     public static EventResponseDTO from(Event e) {
-        // 이미지 데이터 추출
-        List<byte[]> imageDataList = e.getImages().stream()
-                .sorted((img1, img2) -> {
-                    if (img1.getOrderIndex() == null) return 1;
-                    if (img2.getOrderIndex() == null) return -1;
-                    return img1.getOrderIndex().compareTo(img2.getOrderIndex());
-                })
+        // 썸네일 이미지만 필터링 (isThumbnail이 true인 것만)
+        List<EventImage> thumbnailImages = e.getImages().stream()
+                .filter(EventImage::getIsThumbnail)
+                .collect(Collectors.toList());
+        
+        // 이미지 데이터 추출 (썸네일만)
+        List<byte[]> imageDataList = thumbnailImages.stream()
                 .map(EventImage::getImageData)
                 .collect(Collectors.toList());
         
-        List<byte[]> thumbnailDataList = e.getImages().stream()
-                .sorted((img1, img2) -> {
-                    if (img1.getOrderIndex() == null) return 1;
-                    if (img2.getOrderIndex() == null) return -1;
-                    return img1.getOrderIndex().compareTo(img2.getOrderIndex());
-                })
+        List<byte[]> thumbnailDataList = thumbnailImages.stream()
                 .map(EventImage::getThumbnailData)
                 .collect(Collectors.toList());
         
-        List<String> imageUrlList = e.getImages().stream()
-                .sorted((img1, img2) -> {
-                    if (img1.getOrderIndex() == null) return 1;
-                    if (img2.getOrderIndex() == null) return -1;
-                    return img1.getOrderIndex().compareTo(img2.getOrderIndex());
-                })
+        List<String> imageUrlList = thumbnailImages.stream()
                 .map(EventImage::getImageUrl)
                 .collect(Collectors.toList());
 
-        List<Long> imageIdList = e.getImages().stream()
-                .sorted((img1, img2) -> {
-                    if (img1.getOrderIndex() == null) return 1;
-                    if (img2.getOrderIndex() == null) return -1;
-                    return img1.getOrderIndex().compareTo(img2.getOrderIndex());
-                })
+        List<Long> imageIdList = thumbnailImages.stream()
                 .map(EventImage::getId)
                 .collect(Collectors.toList());
 

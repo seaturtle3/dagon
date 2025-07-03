@@ -16,12 +16,14 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
+import lombok.extern.log4j.Log4j2;
 
 @RestController
 @RequiredArgsConstructor
 @PreAuthorize("hasRole('ADMIN')")
 @Tag(name = "Event", description = "이벤트관리 API (관리자)")
 @RequestMapping("/api/admin/event")
+@Log4j2
 public class ApiAdminEventController {
 
     private final EventService eventService;
@@ -50,6 +52,7 @@ public class ApiAdminEventController {
             @AuthenticationPrincipal AdminUserDetails userDetails) {
         dto.setImages(images);
         String adminId = userDetails.getAid();
+        log.info("dto---------------->: {}", dto);
         Event event = eventService.updateEvent(id, dto, adminId);
         
         // 수정된 이벤트의 이미지 ID 리스트를 포함하여 반환
