@@ -60,7 +60,7 @@ public class ImageControllerEvent {
     private final EventService eventService;
 
     @Operation(summary = "이미지 업로드", description = "이미지 업로드 API")
-    @PostMapping(value = "/upload", consumes = "multipart/form-data")
+    @PostMapping(value = "/upload", consumes = "multipart/form-data", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Map<String, String>> uploadImage(
         @Parameter(description = "업로드할 이미지 파일", required = true)
         @RequestPart("image") MultipartFile file,
@@ -117,7 +117,9 @@ public class ImageControllerEvent {
             updateContentWithImageUrl(event, fileUrl, dbUrl);
             
             // 4. 두 URL 모두 반환
-            return ResponseEntity.ok(Map.of("fileUrl", fileUrl, "dbUrl", dbUrl));
+            return ResponseEntity.ok()
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(Map.of("fileUrl", fileUrl, "dbUrl", dbUrl));
         }
         
         // eventId가 없거나 이벤트를 찾을 수 없는 경우
@@ -125,7 +127,9 @@ public class ImageControllerEvent {
         String dbUrl = "/api/images/event/" + image.getId();
         
         // 3. 파일 URL만 반환 (content 업데이트 없음)
-        return ResponseEntity.ok(Map.of("fileUrl", fileUrl, "dbUrl", dbUrl));
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(Map.of("fileUrl", fileUrl, "dbUrl", dbUrl));
     }
 
     @Operation(summary = "이미지 조회", description = "저장된 이미지 파일을 URL 경로를 통해 조회\n" +
@@ -149,21 +153,21 @@ public class ImageControllerEvent {
 
     // 에디터 이미지 업로드 (파일+DB 동시 저장)
     @PostMapping("/uploadImage")
-    public ResponseEntity<String> uploadEditorImage(
+    public ResponseEntity<Map<String, String>> uploadEditorImage(
             @RequestParam("file") MultipartFile file,
             @RequestParam(value = "eventId", required = false) Long eventId,
             @RequestParam(value = "isThumbnail", required = false, defaultValue = "false") Boolean isThumbnail,
             @RequestParam(value = "imageType", required = false) String imageType) throws IOException {
         
         if (file.isEmpty()) {
-            return ResponseEntity.badRequest().body("빈 파일입니다.");
+            return ResponseEntity.badRequest().body(Map.of("error", "빈 파일입니다."));
         }
         
         Event event = null;
         if (eventId != null) {
             event = eventRepository.findById(eventId).orElse(null);
-        if (event == null) {
-            return ResponseEntity.badRequest().body("존재하지 않는 이벤트입니다.");
+            if (event == null) {
+                return ResponseEntity.badRequest().body(Map.of("error", "존재하지 않는 이벤트입니다."));
             }
         }
         
@@ -207,7 +211,7 @@ public class ImageControllerEvent {
             BufferedImage originalImage = ImageIO.read(new ByteArrayInputStream(fileBytes));
             if (originalImage == null) {
                 log.warn("이미지 파일을 읽을 수 없습니다: {}", file.getOriginalFilename());
-                return ResponseEntity.badRequest().body("지원하지 않는 이미지 형식입니다.");
+                return ResponseEntity.badRequest().body(Map.of("error", "지원하지 않는 이미지 형식입니다."));
             }
             
             ByteArrayOutputStream thumbnailOutputStream = new ByteArrayOutputStream();
@@ -229,14 +233,23 @@ public class ImageControllerEvent {
                 updateContentWithImageUrl(event, fileUrl, dbUrl);
             }
             
-            return ResponseEntity.ok(dbUrl);
+            return ResponseEntity.ok()
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(Map.of(
+                        "fileUrl", fileUrl,
+                        "dbUrl", dbUrl,
+                        "imageId", image.getId().toString(),
+                        "message", "에디터 이미지 업로드 완료"
+                    ));
             
         } catch (IOException e) {
             log.error("에디터 이미지 업로드 실패: {}", file.getOriginalFilename(), e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("이미지 업로드 실패: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("error", "이미지 업로드 실패: " + e.getMessage()));
         } catch (Exception e) {
             log.error("에디터 이미지 처리 중 예상치 못한 오류: {}", file.getOriginalFilename(), e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("이미지 처리 실패: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("error", "이미지 처리 실패: " + e.getMessage()));
         }
     }
 
