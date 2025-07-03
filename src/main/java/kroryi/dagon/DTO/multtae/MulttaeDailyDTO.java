@@ -27,4 +27,5 @@ public class MulttaeDailyDTO {
 
     private Double todayWindSpeed;
     private String todayWindDir;
+    private Double airTemp;
 }

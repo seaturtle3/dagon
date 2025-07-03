@@ -7,6 +7,7 @@ import kroryi.dagon.enums.MainType;
 import kroryi.dagon.enums.ProdRegion;
 import kroryi.dagon.enums.SubType;
 import lombok.Data;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -37,11 +38,15 @@ public class ProductDTO {
     private Long uno;
     private Partner partner;
 
+    // 상품 기본 가격
+    private BigDecimal prodPrice;
+
     private boolean deleted;
     private List<String> fishSpeciesNames;
     private List<ProductOptionDTO> options;
 
     private List<String> prodImageNames; // 썸네일 여러 개
+    private List<String> deleteImageNames; // 삭제할 이미지 경로
     private List<byte[]> prodImageDataList; // 이미지 바이너리 리스트
 
     public static ProductDTO fromEntity(Product product) {
@@ -57,6 +62,7 @@ public class ProductDTO {
         dto.setMaxPerson(product.getMaxPerson());
         dto.setMinPerson(product.getMinPerson());
         dto.setWeight(product.getWeight());
+        dto.setProdPrice(product.getProdPrice());
         dto.setProdAddress(product.getProdAddress());
         dto.setProdDescription(product.getProdDescription());
         dto.setProdEvent(product.getProdEvent());
@@ -93,25 +99,15 @@ public class ProductDTO {
         if (product.getCreatedAt() != null) {
             dto.setCreatedAt(product.getCreatedAt().toLocalDate());
         }
-        dto.setProdThumbnail(product.getProdThumbnail());
+        
+        // 썸네일 설정: 이미지가 있으면 첫 번째 이미지를 썸네일로 사용, 없으면 기존 prodThumbnail 사용
+        if (product.getImages() != null && !product.getImages().isEmpty()) {
+            dto.setProdThumbnail(product.getImages().get(0).getFileName());
+        } else {
+            dto.setProdThumbnail(product.getProdThumbnail());
+        }
+        
         return dto;
-    }
-
-    public Product toEntity() {
-        Product product = new Product();
-        product.setProdName(this.getProdName());
-        product.setProdRegion(this.getProdRegion());
-        product.setMainType(this.getMainType());
-        product.setSubType(this.getSubType());
-        product.setMaxPerson(this.getMaxPerson());
-        product.setMinPerson(this.getMinPerson());
-        product.setWeight(this.getWeight());
-        product.setProdAddress(this.getProdAddress());
-        product.setProdDescription(this.getProdDescription());
-        product.setProdEvent(this.getProdEvent());
-        product.setProdNotice(this.getProdNotice());
-        product.setProdThumbnail(this.getProdThumbnail());
-        return product;
     }
 
 }

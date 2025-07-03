@@ -75,6 +75,7 @@ ALTER TABLE fishing_diary MODIFY content TEXT;
 ALTER TABLE free_board MODIFY content TEXT;
 ALTER TABLE event MODIFY content TEXT;
 ALTER TABLE notice MODIFY content TEXT;
+ALTER TABLE faq MODIFY answer TEXT;
 
 
 -- 3. 관리자 데이터 생성 (11개)
@@ -254,7 +255,7 @@ DELIMITER ;
 
 -- 6. 상품 데이터 생성 (1000개)
 SET @rownum := 0;
-INSERT INTO product (prod_name, prod_region, main_type, sub_type, max_person, min_person, weight, prod_address, prod_description, prod_event, prod_notice, uno, deleted, available_date, prod_thumbnail, created_at)
+INSERT INTO product (prod_name, prod_region, main_type, sub_type, max_person, min_person, weight, prod_price, prod_address, prod_description, prod_event, prod_notice, uno, deleted, available_date, prod_thumbnail, created_at)
 SELECT 
     -- prod_name
     CASE FLOOR(RAND() * 10)
@@ -295,6 +296,12 @@ SELECT
     FLOOR(RAND() * 10) + 5 as max_person,
     FLOOR(RAND() * 3) + 1 as min_person,
     0.00 as weight,
+    -- prod_price (상품 기본 가격)
+    CASE 
+        WHEN FLOOR(RAND() * 10) % 3 = 0 THEN FLOOR(RAND() * 20000) + 30000  -- 3만원~5만원
+        WHEN FLOOR(RAND() * 10) % 3 = 1 THEN FLOOR(RAND() * 30000) + 50000  -- 5만원~8만원
+        ELSE FLOOR(RAND() * 50000) + 80000  -- 8만원~13만원
+    END as prod_price,
     -- prod_address
     CASE FLOOR(RAND() * 16)
         WHEN 0 THEN '부산광역시 해운대구 해운대해변로'
@@ -416,12 +423,14 @@ CROSS JOIN (
 ) numbers;
 
 -- 8. 예약 데이터 생성 (200개)
-INSERT INTO reservation (uid, prod_id, opt_id, num_person, fishing_at, paid_at, reservation_status, payment_method, created_at)
+INSERT INTO reservation (uid, prod_id, opt_id, num_person, option_quantity, amount, fishing_at, paid_at, reservation_status, payment_method, created_at)
 SELECT 
     u.uno as uid,
     p.prod_id,
     o.opt_id,
     FLOOR(RAND() * 5) + 1 as num_person,
+    FLOOR(RAND() * 3) + 1 as option_quantity,
+    ((p.prod_price * (FLOOR(RAND() * 5) + 1)) + (o.opt_price * (FLOOR(RAND() * 3) + 1))) as amount,
     DATE_ADD(NOW(), INTERVAL FLOOR(RAND() * 30) DAY) as fishing_at,
     CASE 
         WHEN RAND() > 0.3 THEN DATE_SUB(NOW(), INTERVAL FLOOR(RAND() * 7) DAY)
@@ -442,10 +451,10 @@ FROM (
     SELECT uno FROM users WHERE role = 'USER' LIMIT 200
 ) u
 CROSS JOIN (
-    SELECT prod_id FROM product LIMIT 100
+    SELECT prod_id, prod_price FROM product LIMIT 100
 ) p
 CROSS JOIN (
-    SELECT opt_id, prod_id FROM prod_option LIMIT 200
+    SELECT opt_id, prod_id, opt_price FROM prod_option LIMIT 200
 ) o
 WHERE o.prod_id = p.prod_id
 LIMIT 200;

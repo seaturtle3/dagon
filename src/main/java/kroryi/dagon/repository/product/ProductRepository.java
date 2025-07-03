@@ -6,6 +6,7 @@ import kroryi.dagon.enums.ProdRegion;
 import kroryi.dagon.enums.SubType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
@@ -49,7 +50,7 @@ public interface ProductRepository extends JpaRepository<Product, Long>, JpaSpec
     //  -------------- 프론트 api (바다/민물 필터) ----------------
     Page<Product> findByMainTypeAndDeletedFalse(MainType mainType, Pageable pageable);
 
-    //  -------------- 프론트 api 상단 필터 선택 시 제품 결과 ----------------
+    //  -------------- 프론트 api 상단 필터 > 바다/민물 상품 가져오기 ----------------
     @Query("""
             SELECT DISTINCT p FROM Product p
             LEFT JOIN FETCH p.fishSpeciesMappings m
@@ -57,12 +58,29 @@ public interface ProductRepository extends JpaRepository<Product, Long>, JpaSpec
             WHERE p.mainType = kroryi.dagon.enums.MainType.SEA
             AND (:region IS NULL OR p.prodRegion = :region)
             AND (:subType IS NULL OR p.subType = :subType)
-            AND (:species IS NULL OR fs.fsName = :species)
+            AND ((:species) IS NULL OR fs.fsName IN (:species))
             """)
     List<Product> findSeaProductsByFilters(
             @Param("region") ProdRegion region,
             @Param("subType") SubType subType,
-            @Param("species") String species
+            @Param("species") List<String> species,
+            Sort sort
+    );
+
+    @Query("""
+            SELECT DISTINCT p FROM Product p
+            LEFT JOIN FETCH p.fishSpeciesMappings m
+            LEFT JOIN FETCH m.fs fs
+            WHERE p.mainType = kroryi.dagon.enums.MainType.FRESHWATER
+            AND (:region IS NULL OR p.prodRegion = :region)
+            AND (:subType IS NULL OR p.subType = :subType)
+            AND ((:species) IS NULL OR fs.fsName IN (:species))
+            """)
+    List<Product> findFreshwaterProductsByFilters(
+            @Param("region") ProdRegion region,
+            @Param("subType") SubType subType,
+            @Param("species") List<String> species,
+            Sort sort
     );
 
     // 프론트 SEA 상단 필터 제어
@@ -80,6 +98,7 @@ public interface ProductRepository extends JpaRepository<Product, Long>, JpaSpec
             """)
     List<String> findAllSeaFishSpecies();
 
+    // 프론트 어종 받아오기
     @Query("""
                 SELECT fs.fsName
                 FROM ProductFishSpecies fs

@@ -17,16 +17,23 @@ import kroryi.dagon.repository.product.ProductRepository;
 import kroryi.dagon.repository.SeaFreshwaterFishingRepository;
 import kroryi.dagon.repository.product.ProductOptionRepository;
 import lombok.*;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Log4j2
 public class SeaFreshwaterFishingService {
 
     private final SeaFreshwaterFishingRepository seaFreshwaterFishingRepository;
@@ -59,6 +66,7 @@ public class SeaFreshwaterFishingService {
         // 유저, 상품, 옵션 등 엔티티 매핑
         reservation.setFishingAt(dto.getFishingAt());
         reservation.setNumPerson(dto.getNumPerson());
+        reservation.setOptionQuantity(dto.getOptionQuantity() != null ? dto.getOptionQuantity() : 1);
         reservation.setReservationStatus(ReservationStatus.PENDING);
         reservation.setPaymentsMethod(dto.getPaymentsMethod());
         // userId로 User 엔티티 조회
@@ -67,22 +75,77 @@ public class SeaFreshwaterFishingService {
         reservation.setUser(user);
         // Product 엔티티 조회 후 할당
         Long prodId = dto.getProdId();
+
+        log.info("------------------ prodid: {}" ,prodId);
         Product product = productRepository.findById(prodId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 상품이 존재하지 않습니다. id=" + prodId));
         reservation.setProduct(product);
         // ProductOption 엔티티 조회 후 할당
         Long optionId = dto.getOptionId();
+        log.info("옵션 ID 조회: {}", optionId);
         ProductOption productOption = productOptionRepository.findById(optionId)
             .orElseThrow(() -> new IllegalArgumentException("해당 옵션이 존재하지 않습니다. id=" + optionId));
         reservation.setProductOption(productOption);
+        
+        log.info("조회된 옵션 정보: ID={}, 이름={}, 가격={}", 
+                productOption.getOptId(), 
+                productOption.getOptName(), 
+                productOption.getPrice());
 
-        PaymentsEntity payment = null;
-        if (dto.getPaymentId() != null) {
-            payment = paymentsRepository.findByImpUid(dto.getPaymentId())
-                .orElseThrow(() -> new IllegalArgumentException("해당 결제 정보가 존재하지 않습니다: " + dto.getPaymentId()));
+        // 금액 계산 (상품가격 * 인원수 + 옵션가격 * 옵션수량)
+        BigDecimal totalAmount = BigDecimal.ZERO;
+        Integer numPerson = dto.getNumPerson();
+        Integer optionQuantity = dto.getOptionQuantity() != null ? dto.getOptionQuantity() : 1;
+        
+        // 상품 가격 계산
+        if (product.getProdPrice() != null && numPerson != null) {
+            BigDecimal productAmount = product.getProdPrice().multiply(BigDecimal.valueOf(numPerson));
+            totalAmount = totalAmount.add(productAmount);
+            log.info("상품 가격 계산: {} * {} = {}", product.getProdPrice(), numPerson, productAmount);
+        } else {
+            // 상품 가격이 없으면 기본 가격 사용
+            BigDecimal defaultProductAmount = BigDecimal.valueOf(numPerson * 30000); // 기본 3만원
+            totalAmount = totalAmount.add(defaultProductAmount);
+            log.warn("상품 가격이 없어 기본 가격 사용: 인원수={}, 기본상품가격={}", numPerson, defaultProductAmount);
         }
+        
+        // 옵션 가격 계산
+        if (productOption.getPrice() != null) {
+            BigDecimal optionAmount = productOption.getPrice().multiply(BigDecimal.valueOf(optionQuantity));
+            totalAmount = totalAmount.add(optionAmount);
+            log.info("옵션 가격 계산: {} * {} = {}", productOption.getPrice(), optionQuantity, optionAmount);
+        } else {
+            // 옵션 가격이 없으면 기본 가격 사용
+            BigDecimal defaultOptionAmount = BigDecimal.valueOf(optionQuantity * 20000); // 기본 2만원
+            totalAmount = totalAmount.add(defaultOptionAmount);
+            log.warn("옵션 가격이 없어 기본 가격 사용: 옵션수량={}, 기본옵션가격={}", optionQuantity, defaultOptionAmount);
+        }
+        
+        reservation.setAmount(totalAmount);
+        log.info("총 예약 금액: {}", totalAmount);
+
+        // 결제 정보 처리
+        PaymentsEntity payment = null;
+        if (dto.getPaymentId() != null && !dto.getPaymentId().trim().isEmpty()) {
+            try {
+                // paymentId가 숫자인 경우 (PaymentsEntity의 id)
+                if (dto.getPaymentId().matches("\\d+")) {
+                    Long paymentId = Long.parseLong(dto.getPaymentId());
+                    payment = paymentsRepository.findById(paymentId)
+                        .orElse(null);
+                } else {
+                    // paymentId가 impUid인 경우
+                    payment = paymentsRepository.findByImpUid(dto.getPaymentId())
+                        .orElse(null);
+                }
+            } catch (Exception e) {
+                // 결제 정보 조회 실패 시 로그만 남기고 계속 진행
+                System.err.println("결제 정보 조회 실패: " + dto.getPaymentId() + ", 오류: " + e.getMessage());
+            }
+        }
+        
+        // 결제 정보가 있으면 설정, 없으면 null로 유지
         reservation.setPayment(payment);
-        // User, Payment 등도 필요시 추가
 
         Reservation saved = seaFreshwaterFishingRepository.save(reservation);
         return toDTO(saved);
@@ -142,6 +205,8 @@ public class SeaFreshwaterFishingService {
                 .userName(reservation.getUser() != null ? reservation.getUser().getUname() : null)
                 .fishingAt(reservation.getFishingAt())
                 .numPerson(reservation.getNumPerson())
+                .optionQuantity(reservation.getOptionQuantity())
+                .amount(reservation.getAmount())
                 .reservationStatus(reservation.getReservationStatus())
                 .paymentsMethod(reservation.getPaymentsMethod())
                 .paidAt(reservation.getPaidAt())
@@ -223,6 +288,8 @@ public class SeaFreshwaterFishingService {
                 .userName(reservation.getUser() != null ? reservation.getUser().getUname() : null)
                 .fishingAt(reservation.getFishingAt())
                 .numPerson(reservation.getNumPerson())
+                .optionQuantity(reservation.getOptionQuantity())
+                .amount(reservation.getAmount())
                 .reservationStatus(reservation.getReservationStatus())
                 .paymentsMethod(reservation.getPaymentsMethod())
                 .paidAt(reservation.getPaidAt())
@@ -231,6 +298,8 @@ public class SeaFreshwaterFishingService {
                 .optionId(reservation.getProductOption() != null ? reservation.getProductOption().getOptId() : null)
                 .userId(reservation.getUser() != null ? reservation.getUser().getUno() : null)
                 .paymentId(String.valueOf(reservation.getPayment() != null ? reservation.getPayment().getId() : null))
+                .phone(reservation.getUser().getPhone())
+                .email(reservation.getUser().getEmail())
                 .build();
     }
 
@@ -291,6 +360,8 @@ public class SeaFreshwaterFishingService {
                 .userName(reservation.getUser() != null ? reservation.getUser().getUname() : null)
                 .fishingAt(reservation.getFishingAt())
                 .numPerson(reservation.getNumPerson())
+                .optionQuantity(reservation.getOptionQuantity())
+                .amount(reservation.getAmount())
                 .reservationStatus(reservation.getReservationStatus())
                 .paymentsMethod(reservation.getPaymentsMethod())
                 .paidAt(reservation.getPaidAt())
@@ -298,7 +369,162 @@ public class SeaFreshwaterFishingService {
                 .prodId(reservation.getProduct() != null ? reservation.getProduct().getProdId() : null)
                 .optionId(reservation.getProductOption() != null ? reservation.getProductOption().getOptId() : null)
                 .paymentId(String.valueOf(reservation.getPayment() != null ? reservation.getPayment().getId() : null))
+                .email(reservation.getUser().getEmail())
+                .phone(reservation.getUser().getPhone())
                 .build();
+    }
+
+    // ========== 관리자용 메서드들 ==========
+
+    /**
+     * 관리자용 전체 예약 조회
+     */
+    public Page<ReservationDTO> getAllReservationsForAdmin(Pageable pageable) {
+        Page<Reservation> reservations = seaFreshwaterFishingRepository.findAllWithDetails(pageable);
+        return reservations.map(this::toDTO);
+    }
+
+    /**
+     * 관리자용 검색 조건별 예약 조회
+     */
+    public Page<ReservationDTO> searchReservationsForAdmin(String search, Pageable pageable) {
+        // 예약번호, 회원명, 파트너명으로 검색
+        Page<Reservation> reservations = seaFreshwaterFishingRepository.findBySearchKeywordForAdmin(search, pageable);
+        return reservations.map(this::toDTO);
+    }
+
+    /**
+     * 관리자용 날짜별 예약 조회
+     */
+    public Page<ReservationDTO> getReservationsByDateForAdmin(LocalDate date, Pageable pageable) {
+        LocalDateTime startOfDay = date.atStartOfDay();
+        LocalDateTime endOfDay = date.atTime(23, 59, 59);
+        
+        Page<Reservation> reservations = seaFreshwaterFishingRepository.findByFishingAtBetweenForAdmin(startOfDay, endOfDay, pageable);
+        return reservations.map(this::toDTO);
+    }
+
+    /**
+     * 관리자용 상태별 예약 조회
+     */
+    public Page<ReservationDTO> getReservationsByStatusForAdmin(String status, Pageable pageable) {
+        ReservationStatus reservationStatus = convertStatusString(status);
+        Page<Reservation> reservations = seaFreshwaterFishingRepository.findByReservationStatusForAdmin(reservationStatus, pageable);
+        return reservations.map(this::toDTO);
+    }
+
+    /**
+     * 관리자용 예약 승인
+     */
+    public boolean approveReservationByAdmin(Long reservationId) {
+        Optional<Reservation> optional = seaFreshwaterFishingRepository.findById(reservationId);
+        if (optional.isPresent()) {
+            Reservation reservation = optional.get();
+            
+            // 예약 대기 상태인 경우에만 승인 가능
+            if (reservation.getReservationStatus() == ReservationStatus.PENDING) {
+                reservation.setReservationStatus(ReservationStatus.PAID);
+                reservation.setPaidAt(LocalDateTime.now());
+                seaFreshwaterFishingRepository.save(reservation);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * 관리자용 예약 거절
+     */
+    public boolean rejectReservationByAdmin(Long reservationId) {
+        Optional<Reservation> optional = seaFreshwaterFishingRepository.findById(reservationId);
+        if (optional.isPresent()) {
+            Reservation reservation = optional.get();
+            
+            // 예약 대기 상태인 경우에만 거절 가능
+            if (reservation.getReservationStatus() == ReservationStatus.PENDING) {
+                reservation.setReservationStatus(ReservationStatus.CANCELED);
+                seaFreshwaterFishingRepository.save(reservation);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * 관리자용 이용완료 처리
+     */
+    public boolean completeReservationByAdmin(Long reservationId) {
+        Optional<Reservation> optional = seaFreshwaterFishingRepository.findById(reservationId);
+        if (optional.isPresent()) {
+            Reservation reservation = optional.get();
+            
+            // 예약 확정 상태인 경우에만 이용완료 처리 가능
+            if (reservation.getReservationStatus() == ReservationStatus.PAID) {
+                reservation.setReservationStatus(ReservationStatus.COMPLETED);
+                seaFreshwaterFishingRepository.save(reservation);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * 관리자용 예약 상세 조회
+     */
+    public ReservationDTO getReservationDetailForAdmin(Long reservationId) {
+        return getReservationDetail(reservationId);
+    }
+
+    /**
+     * 관리자용 예약 통계
+     */
+    public Map<String, Object> getReservationStatsForAdmin() {
+        Map<String, Object> stats = new HashMap<>();
+        
+        // 전체 예약 수
+        long totalReservations = seaFreshwaterFishingRepository.count();
+        
+        // 상태별 예약 수
+        long pendingCount = seaFreshwaterFishingRepository.countByReservationStatus(ReservationStatus.PENDING);
+        long paidCount = seaFreshwaterFishingRepository.countByReservationStatus(ReservationStatus.PAID);
+        long canceledCount = seaFreshwaterFishingRepository.countByReservationStatus(ReservationStatus.CANCELED);
+        long completedCount = seaFreshwaterFishingRepository.countByReservationStatus(ReservationStatus.COMPLETED);
+        
+        // 오늘 예약 수
+        LocalDateTime startOfToday = LocalDate.now().atStartOfDay();
+        LocalDateTime endOfToday = startOfToday.plusDays(1).minusNanos(1);
+        long todayCount = seaFreshwaterFishingRepository.countByFishingAtBetween(startOfToday, endOfToday);
+        
+        stats.put("totalReservations", totalReservations);
+        stats.put("pendingCount", pendingCount);
+        stats.put("paidCount", paidCount);
+        stats.put("canceledCount", canceledCount);
+        stats.put("completedCount", completedCount);
+        stats.put("todayCount", todayCount);
+        
+        return stats;
+    }
+
+    /**
+     * 상태 문자열을 ReservationStatus enum으로 변환
+     */
+    private ReservationStatus convertStatusString(String status) {
+        switch (status) {
+            case "예약대기":
+            case "PENDING":
+                return ReservationStatus.PENDING;
+            case "예약확정":
+            case "PAID":
+                return ReservationStatus.PAID;
+            case "예약취소":
+            case "CANCELED":
+                return ReservationStatus.CANCELED;
+            case "이용완료":
+            case "COMPLETED":
+                return ReservationStatus.COMPLETED;
+            default:
+                return ReservationStatus.PENDING;
+        }
     }
 
 }

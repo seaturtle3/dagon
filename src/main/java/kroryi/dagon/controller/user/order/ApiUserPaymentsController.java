@@ -39,11 +39,19 @@ public class ApiUserPaymentsController {
 
         // 실제 결제금액 서버에서 확인
         if (payment.getAmount().intValue() == (int) body.get("amount")) {
-            // DB 저장
-            paymentsService.savePayment(payment);
-            return ResponseEntity.ok(Map.of("success", "true"));
+            // DB 저장하고 저장된 PK 반환
+            Long paymentId = paymentsService.savePayment(payment);
+            
+            Map<String, Object> response = new LinkedHashMap<>();
+            response.put("success", true);
+            response.put("paymentId", paymentId); // 저장된 결제 PK 반환
+            response.put("impUid", impUid);
+            response.put("amount", payment.getAmount());
+            response.put("status", payment.getStatus());
+            
+            return ResponseEntity.ok(response);
         } else {
-            return ResponseEntity.status(400).body(Map.of("success", "false", "message", "금액 불일치"));
+            return ResponseEntity.status(400).body(Map.of("success", false, "message", "금액 불일치"));
         }
     }
 }

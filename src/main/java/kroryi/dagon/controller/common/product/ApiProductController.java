@@ -38,6 +38,7 @@ import java.util.stream.Collectors;
 @RequestMapping("/api/product")
 @Log4j2
 @RequiredArgsConstructor
+@CrossOrigin(origins = "http://localhost:5173")
 public class ApiProductController {
 
     private final ProductService productService;
@@ -83,6 +84,7 @@ public class ApiProductController {
         Sort sort = direction.equalsIgnoreCase("desc")
                 ? Sort.by(sortBy).descending()
                 : Sort.by(sortBy).ascending();
+
         Pageable pageable = PageRequest.of(page, size, sort);
         return productService.getAllProductsApi(pageable);
     }
@@ -95,9 +97,14 @@ public class ApiProductController {
     }
 
     @Operation(summary = "상품 수정", description = "상품 정보 수정")
-    @PutMapping("/update/{id}")
-    public Long updateProduct(@PathVariable Long id, @RequestBody ProductDTO productDTO) {
-        return productService.updateProduct(id, productDTO);
+    @PutMapping(value = "/update/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public Long updateProduct(
+            @PathVariable Long id,
+            @RequestPart("product") ProductDTO productDTO,
+            @RequestPart(value = "images", required = false) List<MultipartFile> images) {
+        log.info("🧹 삭제 대상 이미지들4: {}", productDTO.getDeleteImageNames());
+
+        return productService.updateProduct(id, productDTO, images);
     }
 
     @Operation(summary = "상품 삭제", description = "상품 삭제")
@@ -137,32 +144,45 @@ public class ApiProductController {
         return productService.getProductsByMainType(MainType.valueOf("FRESHWATER"), pageable);
     }
 
-    //  -------------- 프론트 api 바다 낚시 상품들 ----------------
+    //  -------------- 프론트 api 바다/민물 낚시 상품 가져오기 ----------------
     @GetMapping("/get-all/sea/filter")
     public List<ProductDTO> getSeaProductsByFilters(
             @RequestParam(required = false) String subType,
             @RequestParam(required = false) String region,
-            @RequestParam(required = false) String species) {
+            @RequestParam(required = false) List<String> species,
+            @RequestParam(defaultValue = "createdAt") String sortBy,
+            @RequestParam(defaultValue = "desc") String direction) {
 
         SubType subTypeEnum = (subType == null || subType.isEmpty()) ? null : SubType.valueOf(subType);
         ProdRegion regionEnum = (region == null || region.isEmpty()) ? null : ProdRegion.valueOf(region);
 
-        return productService.getFishingCenterProductsByFilters(regionEnum, subTypeEnum, species);
+        Sort sort = direction.equalsIgnoreCase("desc")
+                ? Sort.by(sortBy).descending()
+                : Sort.by(sortBy).ascending();
+
+        return productService.getFishingSeaProductsByFilters(regionEnum, subTypeEnum, species, sort);
     }
 
     @GetMapping("/get-all/freshwater/filter")
     public List<ProductDTO> getFreshwaterProductsByFilters(
             @RequestParam(required = false) String subType,
             @RequestParam(required = false) String region,
-            @RequestParam(required = false) String species) {
+            @RequestParam(required = false) List<String> species,
+            @RequestParam(defaultValue = "createdAt") String sortBy,
+            @RequestParam(defaultValue = "desc") String direction
+    ) {
 
         SubType subTypeEnum = (subType == null || subType.isEmpty()) ? null : SubType.valueOf(subType);
         ProdRegion regionEnum = (region == null || region.isEmpty()) ? null : ProdRegion.valueOf(region);
 
-        return productService.getFishingCenterProductsByFilters(regionEnum, subTypeEnum, species);
+        Sort sort = direction.equalsIgnoreCase("desc")
+                ? Sort.by(sortBy).descending()
+                : Sort.by(sortBy).ascending();
+
+        return productService.getFishingFreshwaterProductsByFilters(regionEnum, subTypeEnum, species, sort);
     }
 
-    //  -------------- 프론트 api 바다/민물 낚시 상단 필터 ----------------
+    //  -------------- 프론트 api 바다/민물 상단 필터 ----------------
     @GetMapping("/sea/filter")
     public Map<String, List<String>> getSeaFilterOptions() {
         List<String> regions = Arrays.stream(ProdRegion.values())

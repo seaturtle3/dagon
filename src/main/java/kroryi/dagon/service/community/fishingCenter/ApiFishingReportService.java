@@ -154,17 +154,41 @@ public class ApiFishingReportService {
             fishingReport.setProduct(product);
         }
 
-        // 기존 이미지 삭제
-        fishingReportImageRepository.deleteAll(fishingReport.getImages());
-        fishingReport.getImages().clear();
-
-        // 새 이미지 저장
+        // 이미지 처리 로직 개선
+        boolean shouldKeepExistingImages = apiFishingReportDTO.getKeepExistingImages() != null && 
+                                         apiFishingReportDTO.getKeepExistingImages();
+        
+        log.info("Image processing - shouldKeepExistingImages: {}, images count: {}, existing images count: {}", 
+                shouldKeepExistingImages, images != null ? images.size() : 0, 
+                fishingReport.getImages() != null ? fishingReport.getImages().size() : 0);
+        
+        // 새 이미지가 있고, 기존 이미지 유지 플래그가 false인 경우에만 기존 이미지 삭제
         if (images != null && !images.isEmpty()) {
+            // 새 이미지가 있으면 기존 이미지 삭제
+            fishingReportImageRepository.deleteAll(fishingReport.getImages());
+            fishingReport.getImages().clear();
+            
+            // 새 이미지 저장
             for (int i = 0; i < images.size(); i++) {
                 MultipartFile file = images.get(i);
                 try {
+                    // 1. 파일을 uploads 경로에 저장
+                    String savedUrl = fileStorageUtil.saveImage(file, "fishing-report");
+                    log.info("savedUrl:---> {}", savedUrl);
+                    // 2. 저장된 파일을 읽어서 바이너리 추출
+                    String uploadDir = fileStorageUtil.getUploadDir();
+                    String relativePath = savedUrl.replaceFirst("/uploads/", "").replace("/", File.separator);
+                    File savedFile = new File(uploadDir, relativePath);
+                    log.info("savedFile:---> {}", savedFile);
+                    byte[] imageBytes;
+                    try (FileInputStream fis = new FileInputStream(savedFile)) {
+                        imageBytes = StreamUtils.copyToByteArray(fis);
+                    }
+                    // 3. FishingReportImage 엔티티 생성 및 저장
                     FishingReportImage image = new FishingReportImage();
-                    image.setImageData(file.getBytes());
+                    image.setImageUrl(savedUrl); // 파일 경로 저장
+                    image.setImageData(imageBytes); // 바이너리 저장
+                    image.setThumbnail(i == 0); // 첫 번째 이미지를 썸네일로
                     image.setOrderIndex(i);
                     image.setFishingReport(fishingReport);
                     fishingReportImageRepository.save(image);
@@ -173,6 +197,14 @@ public class ApiFishingReportService {
                     throw new RuntimeException("이미지 저장 실패", e);
                 }
             }
+        } else if (!shouldKeepExistingImages) {
+            // 새 이미지가 없고, 기존 이미지 유지 플래그가 false인 경우 기존 이미지 삭제
+            log.info("Deleting existing images as keepExistingImages is false");
+            fishingReportImageRepository.deleteAll(fishingReport.getImages());
+            fishingReport.getImages().clear();
+        } else {
+            // 새 이미지가 없고, 기존 이미지 유지 플래그가 true이거나 null인 경우 기존 이미지 유지
+            log.info("Keeping existing images as keepExistingImages is true or null");
         }
 
         fishingReportRepository.save(fishingReport);

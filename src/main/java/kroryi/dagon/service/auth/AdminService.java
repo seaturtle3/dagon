@@ -66,6 +66,7 @@ public class AdminService {
         admin.setAid(adminDTO.getAid());
         admin.setApw(passwordEncoder.encode(adminDTO.getApw())); // 비밀번호 암호화
         admin.setAname(adminDTO.getAname());
+        admin.setUno(1L); // uno를 1로 강제 세팅
 
         apiAdminRepository.save(admin);
     }
@@ -83,6 +84,7 @@ public class AdminService {
         admin.setApw(passwordEncoder.encode(adminDTO.getApw())); // 비밀번호 암호화
         admin.setAname(adminDTO.getAname());
         admin.setRole(kroryi.dagon.enums.AdminRole.SUPER_ADMIN); // SUPER_ADMIN 권한 설정
+        admin.setUno(1L); // uno를 1로 강제 세팅
 
         apiAdminRepository.save(admin);
         log.info("SUPER_ADMIN 계정 생성 완료: {}", adminDTO.getAid());
