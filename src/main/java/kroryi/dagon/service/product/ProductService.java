@@ -76,40 +76,68 @@ public class ProductService {
         product.setPartner(partner);
 
         productRepository.save(product);
+        
+        log.info("🔍 제품 저장 완료 - prodId: {}", product.getProdId());
+        log.info("🔍 받은 이미지 개수: {}", productImages != null ? productImages.size() : 0);
 
-        if (productImages != null) {
+        String firstImageUrl = null; // 첫 번째 이미지 URL 저장용
+
+        if (productImages != null && !productImages.isEmpty()) {
+            log.info("🔍 이미지 처리 시작");
             for (int i = 0; i < productImages.size(); i++) {
                 MultipartFile file = productImages.get(i);
+                log.info("🔍 처리 중인 이미지 {}: {}", i, file.getOriginalFilename());
                 try {
                     // 1. 파일을 uploads 경로에 저장
                     String savedUrl = fileStorageUtil.saveImage(file, "products");
-                    log.info("savedUrl:---> {}", savedUrl);
+                    log.info("🔍 savedUrl: {}", savedUrl);
+                    
+                    // 첫 번째 이미지 URL 저장
+                    if (i == 0) {
+                        firstImageUrl = savedUrl;
+                        log.info("🔍 첫 번째 이미지 URL 저장: {}", firstImageUrl);
+                    }
+                    
                     // 2. 저장된 파일을 읽어서 바이너리 추출
                     String uploadDir = fileStorageUtil.getUploadDir();
                     String relativePath = savedUrl.replaceFirst("/uploads/", "").replace("/", File.separator);
                     File savedFile = new File(uploadDir, relativePath);
-                    log.info("savedFile:---> {}", savedFile);
+                    log.info("🔍 savedFile: {}", savedFile);
                     byte[] imageBytes;
                     try (FileInputStream fis = new FileInputStream(savedFile)) {
                         imageBytes = StreamUtils.copyToByteArray(fis);
                     }
-                    // 3. FishingReportImage 엔티티 생성 및 저장
+                    log.info("🔍 이미지 바이너리 크기: {} bytes", imageBytes.length);
+                    
+                    // 3. ProductImage 엔티티 생성 및 저장
                     ProductImage image = new ProductImage();
                     image.setFileName(savedUrl);
                     image.setProduct(product);
                     image.setImageData(imageBytes); // 바이너리 저장
                     productImageRepository.save(image);
+                    log.info("🔍 ProductImage 저장 완료 - ID: {}", image.getId());
                 } catch (Exception e) {
+                    log.error("🔍 이미지 저장 실패: {}", e.getMessage(), e);
                     throw new RuntimeException("이미지 저장 실패", e);
                 }
             }
-        } else if (dto.getProdImageNames() != null) {
-            for (String fileName : dto.getProdImageNames()) {
-                ProductImage image = new ProductImage();
-                image.setFileName(fileName);
-                image.setProduct(product);
-                product.addImage(image);
+            
+            // 첫 번째 이미지를 썸네일로 설정
+            if (firstImageUrl != null) {
+                product.setProdThumbnail(firstImageUrl);
+                productRepository.save(product);
+                log.info("🔍 썸네일 설정 완료: {}", firstImageUrl);
             }
+        } else {
+            log.info("🔍 이미지가 없거나 비어있음");
+        }
+        
+        // 최종 확인
+        Product savedProduct = productRepository.findById(product.getProdId()).orElse(null);
+        if (savedProduct != null) {
+            log.info("🔍 최종 제품 정보 - 썸네일: {}, 이미지 개수: {}", 
+                    savedProduct.getProdThumbnail(), 
+                    savedProduct.getImages().size());
         }
     }
 
@@ -202,7 +230,6 @@ public class ProductService {
     public void deleteProduct(Long id) {
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("상품을 찾을 수 없습니다. id=" + id));
-
         // product 안에 옵션들 돌면서 예약 체크
         for (ProductOption option : product.getOptions()) {
             if (seaFreshwaterFishingRepository.existsByProductOption_OptId(option.getOptId())) {
@@ -227,15 +254,33 @@ public class ProductService {
                 .orElseThrow(() -> new IllegalArgumentException("해당 배가 없습니다. id=" + id));
     }
 
-    //  -------------- 프론트 api 추가(바다/민물 필터) ----------------
+    //  -------------- 프론트 api (바다/민물 상품 필터) ----------------
     public Page<ProductDTO> getProductsByMainType(MainType mainType, Pageable pageable) {
         Page<Product> products = productRepository.findByMainTypeAndDeletedFalse(mainType, pageable);
         return products.map(ProductDTO::fromEntity);
     }
 
-    //  -------------- 프론트 api 추가(날짜, 지역, 상세 장소, 어종에 따라 바다 상품 필터 조회) ----------------
-    public List<ProductDTO> getFishingCenterProductsByFilters(ProdRegion region, SubType subType, String species, Sort sort) {
+    //  -------------- 프론트 api 바다 (지역, 상세장소, 어종 상품 필터 조회) ----------------
+    public List<ProductDTO> getFishingSeaProductsByFilters(ProdRegion region, SubType subType, List<String> species, Sort sort) {
         List<Product> products = productRepository.findSeaProductsByFilters(region, subType, species, sort);
+
+        return products.stream().map(product -> {
+            ProductDTO dto = ProductDTO.fromEntity(product);
+
+            // fishSpecies 이름 리스트 추가
+            List<String> fishSpeciesNames = product.getFishSpeciesMappings().stream()
+                    .map(mapping -> mapping.getFs().getFsName())
+                    .toList();
+
+            dto.setFishSpeciesNames(fishSpeciesNames);  // 이 필드를 DTO에 추가해야 함
+
+            return dto;
+        }).toList();
+    }
+
+    //  -------------- 프론트 api 민물 (지역, 상세장소, 어종 상품 필터 조회) ----------------
+    public List<ProductDTO> getFishingFreshwaterProductsByFilters(ProdRegion region, SubType subType, List<String> species, Sort sort) {
+        List<Product> products = productRepository.findFreshwaterProductsByFilters(region, subType, species, sort);
 
         return products.stream().map(product -> {
             ProductDTO dto = ProductDTO.fromEntity(product);

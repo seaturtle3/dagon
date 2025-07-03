@@ -58,6 +58,10 @@ public class Product extends BaseTimeEntity {
     @Column(name = "weight", precision = 10, scale = 2)
     private BigDecimal weight;
 
+    // 상품 기본 가격
+    @Column(name = "prod_price", precision = 10, scale = 0)
+    private BigDecimal prodPrice;
+
     @Column(name = "prod_address")
     private String prodAddress;
 

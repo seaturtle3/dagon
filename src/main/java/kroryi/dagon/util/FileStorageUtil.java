@@ -37,9 +37,9 @@ public class FileStorageUtil {
 
             log.info("uploadPath:---> {} {}", uploadPath, fileName);
 
-            // 실제 파일 저장
+            // 실제 파일 저장 (바이트 배열에서 직접 저장)
             Path filePath = uploadPath.resolve(fileName);
-            file.transferTo(filePath.toFile());
+            Files.write(filePath, file.getBytes());
 
             if (!Files.exists(filePath)) {
                 throw new RuntimeException("파일이 실제로 저장되지 않았습니다: " + filePath);
@@ -50,8 +50,11 @@ public class FileStorageUtil {
             // ✅ 클라이언트에서 접근할 수 있는 URL 경로로 변경 (날짜별 디렉토리 포함)
             return "/uploads/" + folderName + "/" + dateFolder + "/" + fileName;
         } catch (IOException e) {
-            log.error("이미지 저장 실패", e);
-            throw new RuntimeException("이미지 저장 실패", e);
+            log.error("이미지 저장 실패: {}", file.getOriginalFilename(), e);
+            throw new RuntimeException("이미지 저장 실패: " + file.getOriginalFilename(), e);
+        } catch (Exception e) {
+            log.error("이미지 처리 중 예상치 못한 오류: {}", file.getOriginalFilename(), e);
+            throw new RuntimeException("이미지 처리 실패: " + file.getOriginalFilename(), e);
         }
     }
 

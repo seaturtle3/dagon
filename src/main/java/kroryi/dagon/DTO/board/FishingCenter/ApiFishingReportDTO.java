@@ -22,12 +22,12 @@ public class ApiFishingReportDTO {
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate fishingAt;
-    private String imageFileName;
-
 
     private ApiProductDTO product;
     private ApiUserDTO user;
     private List<ApiCommentDTO> comments;
+
+    private String imageFileName;
 
     // 이미지 DTO 리스트 추가
     private List<ApiFishingReportImageDTO> images;
