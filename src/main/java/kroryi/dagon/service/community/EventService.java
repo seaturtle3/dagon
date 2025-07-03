@@ -29,8 +29,14 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
+import java.util.Map;
 import lombok.extern.log4j.Log4j2;
 import java.util.ArrayList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 
 @Service
@@ -62,15 +68,15 @@ public class EventService {
 
         Event event = new Event();
         event.setTitle(dto.getTitle());
-        event.setContent(dto.getContent());
         event.setThumbnailUrl(dto.getThumbnailUrl());
         event.setStartAt(dto.getStartAt());
         event.setEndAt(dto.getEndAt());
         event.setIsTop(dto.getIsTop() != null && dto.getIsTop());
         event.setAdmin(admin);
+        // content 설정 (이미지 태그 유지)
+        event.setContent(dto.getContent());
         Event saved = eventRepository.save(event);
-
-        // 이미지 저장
+        // 별도 이미지 저장
         if (dto.getImages() != null && !dto.getImages().isEmpty()) {
             saveEventImages(saved, dto.getImages());
         }
@@ -91,20 +97,20 @@ public class EventService {
         }
 
         event.setTitle(dto.getTitle());
-        event.setContent(dto.getContent());
         event.setThumbnailUrl(dto.getThumbnailUrl());
         event.setStartAt(dto.getStartAt());
         event.setEndAt(dto.getEndAt());
         event.setIsTop(dto.getIsTop() != null && dto.getIsTop());
         event.setModifyAt(LocalDateTime.now());
         event.setAdmin(admin);
+        // content 설정 (이미지 태그 유지)
+        event.setContent(dto.getContent());
         Event saved = eventRepository.save(event);
-
         // 기존 이미지 DB 삭제 후 새 이미지 저장
-        eventImageRepository.deleteAll(existingImages);
-        if (dto.getImages() != null && !dto.getImages().isEmpty()) {
-            saveEventImages(saved, dto.getImages());
-        }
+        // eventImageRepository.deleteAll(existingImages);
+        // if (dto.getImages() != null && !dto.getImages().isEmpty()) {
+        //     saveEventImages(saved, dto.getImages());
+        // }
         return saved;
     }
 
@@ -139,8 +145,10 @@ public class EventService {
                 image.setImageUrl(imageUrl);
                 image.setImageData(fileBytes);
                 image.setThumbnailData(thumbnailOutputStream.toByteArray());
-                image.setOrderIndex(idx++);
-                image.setIsThumbnail(idx == 1); // 첫 번째 이미지를 대표사진으로 설정
+                image.setIsThumbnail(idx == 0); // 첫 번째 이미지를 대표사진으로 설정
+                image.setImageType("content");
+                image.setOrderIndex(idx);
+                idx++;
                 
                 eventImageRepository.save(image);
                 
@@ -228,24 +236,133 @@ public class EventService {
     }
 
     public List<byte[]> getEventImageDataList(Long eventId) {
-        return eventImageRepository.findByEvent_EventIdOrderByOrderIndex(eventId)
+        return eventImageRepository.findByEvent_EventIdAndIsThumbnailTrueOrderByOrderIndex(eventId)
                 .stream()
                 .map(EventImage::getImageData)
                 .collect(Collectors.toList());
     }
 
     public List<byte[]> getEventThumbnailDataList(Long eventId) {
-        return eventImageRepository.findByEvent_EventIdOrderByOrderIndex(eventId)
+        return eventImageRepository.findByEvent_EventIdAndIsThumbnailTrueOrderByOrderIndex(eventId)
                 .stream()
                 .map(EventImage::getThumbnailData)
                 .collect(Collectors.toList());
     }
 
     public List<String> getEventImageUrlList(Long eventId) {
-        return eventImageRepository.findByEvent_EventIdOrderByOrderIndex(eventId)
+        return eventImageRepository.findByEvent_EventIdAndIsThumbnailTrueOrderByOrderIndex(eventId)
                 .stream()
                 .map(EventImage::getImageUrl)
                 .collect(Collectors.toList());
+    }
+
+    /**
+     * content에서 이미지를 추출하여 DB에 저장하고 content 정리
+     */
+    @Transactional
+    public Map<String, Object> processContentImages(Long eventId, String content) {
+        // 이미지 태그 추출
+        Pattern imgPattern = Pattern.compile("<img[^>]+src=[\"']([^\"']+)[\"'][^>]*>");
+        Matcher matcher = imgPattern.matcher(content);
+        
+        String processedContent = content;
+        List<String> extractedImages = new ArrayList<>();
+        
+        // 이미지 태그를 찾아서 추출
+        while (matcher.find()) {
+            String imgTag = matcher.group(0);
+            String imgSrc = matcher.group(1);
+            extractedImages.add(imgSrc);
+            
+            // content에서 이미지 태그 제거
+            processedContent = processedContent.replace(imgTag, "");
+        }
+        
+        // content 정리 (빈 <p> 태그 제거)
+        processedContent = processedContent.replaceAll("<p>\\s*<br>\\s*</p>", "");
+        processedContent = processedContent.replaceAll("<p>\\s*</p>", "");
+        processedContent = processedContent.trim();
+        
+        // eventId가 있는 경우에만 DB 업데이트 및 이미지 저장
+        if (eventId != null) {
+            Event event = eventRepository.findById(eventId).orElse(null);
+            if (event == null) {
+                throw new RuntimeException("존재하지 않는 이벤트입니다.");
+            }
+            
+            // 이벤트 content 업데이트
+            event.setContent(processedContent);
+            eventRepository.save(event);
+            
+            // 추출된 이미지들을 DB에 저장
+            for (String imageUrl : extractedImages) {
+                saveImageFromUrl(event, imageUrl);
+            }
+        }
+        
+        return Map.of(
+            "processedContent", processedContent,
+            "extractedImages", extractedImages,
+            "message", "컨텐츠 처리가 완료되었습니다."
+        );
+    }
+
+    /**
+     * 이미지 URL을 DB에 저장
+     */
+    @Transactional
+    public void saveImageFromUrl(Event event, String imageUrl) {
+        try {
+            // 이미지 파일 경로에서 실제 파일 읽기
+            String relativePath = imageUrl;
+            if (relativePath.startsWith("/uploads/")) {
+                relativePath = relativePath.substring(1); // "/" 제거
+            }
+            
+            String projectRoot = System.getProperty("user.dir");
+            Path filePath = Paths.get(projectRoot, relativePath);
+            
+            if (!Files.exists(filePath)) {
+                log.warn("이미지 파일을 찾을 수 없습니다: {}", imageUrl);
+                return;
+            }
+            
+            // 파일 읽기
+            byte[] imageData = Files.readAllBytes(filePath);
+            
+            // 썸네일 생성
+            BufferedImage originalImage = ImageIO.read(new ByteArrayInputStream(imageData));
+            if (originalImage == null) {
+                log.warn("지원하지 않는 이미지 형식입니다: {}", imageUrl);
+                return;
+            }
+            
+            ByteArrayOutputStream thumbnailOutputStream = new ByteArrayOutputStream();
+            Thumbnails.of(originalImage)
+                    .size(400, 300)
+                    .outputFormat("JPEG")
+                    .toOutputStream(thumbnailOutputStream);
+            
+            // EventImage 엔티티 생성 및 저장
+            EventImage image = new EventImage();
+            image.setEvent(event);
+            image.setImageUrl(imageUrl);
+            image.setImageData(imageData);
+            image.setThumbnailData(thumbnailOutputStream.toByteArray());
+            image.setIsThumbnail(false);
+            image.setImageType("content");
+            
+            // orderIndex 설정 (기존 이미지 개수 + 1)
+            List<EventImage> existingImages = eventImageRepository.findByEvent_EventId(event.getEventId());
+            image.setOrderIndex(existingImages.size());
+            
+            eventImageRepository.save(image);
+            
+            log.info("이미지 URL 저장 완료: eventId={}, imageUrl={}", event.getEventId(), imageUrl);
+            
+        } catch (Exception e) {
+            log.error("이미지 URL 저장 중 오류 발생: eventId={}, imageUrl={}", event.getEventId(), imageUrl, e);
+        }
     }
 
     public EventImage findEventImageById(Long imageId) {
@@ -254,28 +371,13 @@ public class EventService {
 
     @Transactional
     public void deleteEventImages(Long eventId) {
-        List<EventImage> images = eventImageRepository.findByEvent_EventId(eventId);
-        
-        if (images.isEmpty()) {
-            log.info("삭제할 이미지가 없습니다: eventId={}", eventId);
-            return;
+        try {
+            List<EventImage> images = eventImageRepository.findByEvent_EventId(eventId);
+            eventImageRepository.deleteAll(images);
+            log.info("이벤트 이미지 삭제 완료: eventId={}, 삭제된 이미지 수={}", eventId, images.size());
+        } catch (Exception e) {
+            log.error("이벤트 이미지 삭제 중 오류 발생: eventId={}", eventId, e);
+            throw new RuntimeException("이벤트 이미지 삭제 실패", e);
         }
-
-        // 파일시스템에서 이미지 파일 삭제
-        for (EventImage image : images) {
-            if (image.getImageUrl() != null) {
-                try {
-                    fileStorageUtil.deleteImage(image.getImageUrl());
-                } catch (Exception e) {
-                    log.warn("이미지 파일 삭제 실패: {}", image.getImageUrl(), e);
-                    // 파일 삭제 실패해도 DB 삭제는 계속 진행
-                }
-            }
-        }
-
-        // DB에서 이미지 레코드 삭제
-        eventImageRepository.deleteAll(images);
-        
-        log.info("이벤트 이미지 삭제 완료: eventId={}, 삭제된 이미지 수={}", eventId, images.size());
     }
 }

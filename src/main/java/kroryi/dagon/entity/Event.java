@@ -69,8 +69,12 @@ public class Event extends BaseTimeEntity {
     @JoinColumn(name = "aid", nullable = false)
     private Admin admin;
 
-    @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
+    // 이벤트 이미지들 (1:N)
+    @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OrderBy("orderIndex ASC")
     private List<EventImage> images = new ArrayList<>();
+
+
 
 
 
