@@ -265,21 +265,21 @@ const EventEditForm = ({ eventId }) => {
 
     return (
         <div>
-            {/* 폼 컴포넌트 */}
-            <button onClick={() => imageManager?.deleteAllImages()}>
+            {/* 폼 컴포넌트 */
+    /*        <button onClick={() => imageManager?.deleteAllImages()}>
                 모든 이미지 삭제
             </button>
             
-            {/* 이미지 리스트 */}
-            {imageIds.map(imageId => (
-                <div key={imageId} data-image-id={imageId}>
-                    <img src={`/api/event/image/${imageId}`} alt="이벤트 이미지" />
-                    <button onClick={() => handleDeleteImage(imageId)}>
-                        삭제
-                    </button>
-                </div>
-            ))}
-        </div>
-    );
+            {/* 이미지 리스트}
+/*              {imageIds.map(imageId => (
+               <div key={imageId} data-image-id={imageId}>
+                   <img src={`/api/event/image/${imageId}`} alt="이벤트 이미지" />
+                   <button onClick={() => handleDeleteImage(imageId)}>
+                       삭제
+                   </button>
+               </div>
+           ))}
+       </div>
+   );
 };
-*/ 
+*/
