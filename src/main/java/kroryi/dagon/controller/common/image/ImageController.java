@@ -32,6 +32,9 @@ public class ImageController {
     @Value("${app.board.file.upload-dir}")
     private String baseUploadDir;
 
+    @Value("${app.server.base-url:http://docs.yi.or.kr:8097}")
+    private String baseUrl;
+
     @Operation(summary = "이미지 업로드", description = "이미지 업로드 API")
     @PostMapping(value = "/upload", consumes = "multipart/form-data")
     public ResponseEntity<String> uploadImage(@Parameter(description = "업로드할 이미지 파일", required = true)
@@ -52,7 +55,7 @@ public class ImageController {
             Path targetPath = uploadPath.resolve(storedFileName);
             Files.copy(file.getInputStream(), targetPath, StandardCopyOption.REPLACE_EXISTING);
 
-            String url = dateFolder + "/" + storedFileName;
+            String url = baseUrl + "/api/images/images/" + dateFolder + "/" + storedFileName;
             return ResponseEntity.ok(url);
         } catch (IOException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("저장 실패");

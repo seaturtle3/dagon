@@ -40,7 +40,7 @@ public class ApiAdminEventController {
     }
 
     @Operation(summary = "이벤트 수정", description = "기존 이벤트 정보수정")
-    @PostMapping("/{id}")
+    @PutMapping("/{id}")
     public EventResponseDTO update(
             @PathVariable Long id,
             @RequestBody EventRequestDTO dto,
