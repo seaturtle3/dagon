@@ -1,3 +1,4 @@
+import api from '@/lib/axios';
 const token = localStorage.getItem("authToken");
 
 function showTab(tabId) {
@@ -14,7 +15,7 @@ async function loadReservations() {
     }
 
     try {
-        const res = await fetch("http://localhost:8095/api/reservation/partner", {
+        const res = await api.get("/api/reservation/partner", {
             method: "GET",
             headers: {
                 "Authorization": `Bearer ${token}`

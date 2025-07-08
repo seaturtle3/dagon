@@ -6,12 +6,14 @@ ENV LANGUAGE=ko_KR:ko
 ENV LC_ALL=ko_KR.UTF-8
 
 
-# 필수 패키지 설치
-RUN apt-get update && \
-    apt-get install -y openjdk-17-jdk net-tools iputils-ping vim vim && \
-    locale-gen ko_KR.UTF-8 \
-    apt-get clean
+# 미러 변경 (선택)
+RUN sed -i 's|http://archive.ubuntu.com|http://mirror.kakao.com|g' /etc/apt/sources.list
 
+# 필수 패키지 + locales 설치
+RUN apt-get update && \
+    apt-get install -y openjdk-17-jdk net-tools iputils-ping vim locales && \
+    locale-gen ko_KR.UTF-8 && \
+    apt-get clean
 
 # JAVA 환경 변수 (Ubuntu에서 openjdk 설치 경로는 아래와 같음)
 ENV JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64

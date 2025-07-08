@@ -9,7 +9,7 @@ services:
       - database
       - redis
     ports:
-      - "8095:8095"
+      - "8097:8097"
     container_name: dagon_server
     hostname: dagon_app
     volumes:

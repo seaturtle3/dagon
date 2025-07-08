@@ -182,7 +182,7 @@ Swagger 기반
 
 
 > **API 문서 확인 경로**
-> - Swagger UI: [`/swagger-ui/index.html`](http://docs.yi.or.kr:8095/swagger-ui/index.html)
+> - Swagger UI: [`/swagger-ui/index.html`](http://docs.yi.or.kr:8097/swagger-ui/index.html)
 > - 관리자 대시보드: [`/admin-dashboard.html`](http://docs.yi.or.kr:8095/admin)
 
 <br/>
