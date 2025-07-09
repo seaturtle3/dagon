@@ -127,6 +127,8 @@ public class EventService {
 
         // 썸네일 처리 (base64 or url)
         String thumbnailUrl = null;
+        byte[] imageBytes = null;
+        byte[] thumbnailBytes = null;
         if (dto.getThumbnailUrl() != null && dto.getThumbnailUrl().startsWith("data:")) {
             try {
                 // 기존 썸네일 파일 삭제
@@ -135,7 +137,7 @@ public class EventService {
                 }
                 String[] parts = dto.getThumbnailUrl().split(",");
                 String base64Data = parts.length > 1 ? parts[1] : parts[0];
-                byte[] imageBytes = Base64.getDecoder().decode(base64Data);
+                imageBytes = Base64.getDecoder().decode(base64Data);
                 String dateFolder = java.time.LocalDate.now().format(java.time.format.DateTimeFormatter.ofPattern("yyyy/MM/dd"));
                 Path uploadPath = Paths.get("uploads/event", dateFolder);
                 Files.createDirectories(uploadPath);
@@ -143,6 +145,19 @@ public class EventService {
                 Path filePath = uploadPath.resolve(fileName);
                 Files.write(filePath, imageBytes);
                 thumbnailUrl = "/uploads/event/" + dateFolder + "/" + fileName;
+
+                // 썸네일 리사이즈
+                BufferedImage originalImage = ImageIO.read(new ByteArrayInputStream(imageBytes));
+                if (originalImage != null) {
+                    ByteArrayOutputStream thumbnailOutputStream = new ByteArrayOutputStream();
+                    Thumbnails.of(originalImage)
+                            .size(400, 300)
+                            .outputFormat("JPEG")
+                            .toOutputStream(thumbnailOutputStream);
+                    thumbnailBytes = thumbnailOutputStream.toByteArray();
+                } else {
+                    thumbnailBytes = imageBytes;
+                }
             } catch (Exception e) {
                 log.error("base64 썸네일 저장 실패", e);
             }
@@ -152,6 +167,29 @@ public class EventService {
         // 썸네일이 변경된 경우에만 set
         if (thumbnailUrl != null) {
             event.setThumbnailUrl(thumbnailUrl);
+
+            // event_image 테이블의 썸네일 레코드 update or insert
+            List<EventImage> thumbnails = eventImageRepository.findByEvent_EventIdAndIsThumbnailTrueOrderByOrderIndex(event.getEventId());
+            if (!thumbnails.isEmpty()) {
+                EventImage thumb = thumbnails.get(0);
+                thumb.setImageUrl(thumbnailUrl);
+                if (imageBytes != null) thumb.setImageData(imageBytes);
+                if (thumbnailBytes != null) thumb.setThumbnailData(thumbnailBytes);
+                thumb.setIsThumbnail(true);
+                thumb.setImageType("thumbnail");
+                thumb.setOrderIndex(0);
+                eventImageRepository.save(thumb);
+            } else if (imageBytes != null && thumbnailBytes != null) {
+                EventImage newThumb = new EventImage();
+                newThumb.setEvent(event);
+                newThumb.setImageUrl(thumbnailUrl);
+                newThumb.setImageData(imageBytes);
+                newThumb.setThumbnailData(thumbnailBytes);
+                newThumb.setIsThumbnail(true);
+                newThumb.setImageType("thumbnail");
+                newThumb.setOrderIndex(0);
+                eventImageRepository.save(newThumb);
+            }
         }
 
         Event saved = eventRepository.save(event);
