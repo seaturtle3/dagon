@@ -51,26 +51,57 @@ public class FAQService {
         Boolean isActive = dto.getIsActive();
         Long categoryId = dto.getCategoryId();
 
-        // 검색 키워드가 있을 경우 (question/answer 필터와 함께)
-        if (keyword != null && !keyword.isBlank()) {
-            // faqType이 null, 빈 문자열, 또는 'question+answer'면 전체 검색
+        // 1. 키워드 + 카테고리 + isActive + faqType 모두 있는 경우
+        if (keyword != null && !keyword.isBlank() && categoryId != null && isActive != null && faqType != null) {
+            return faqRepository.searchByAllConditions(keyword, categoryId, isActive, faqType, pageable);
+        }
+
+        // 2. 키워드 + 카테고리 + isActive 있는 경우
+        if (keyword != null && !keyword.isBlank() && categoryId != null && isActive != null) {
+            return faqRepository.searchByKeywordAndCategoryAndActive(keyword, categoryId, isActive, pageable);
+        }
+
+        // 3. 키워드 + 카테고리 있는 경우
+        if (keyword != null && !keyword.isBlank() && categoryId != null) {
+            return faqRepository.searchByKeywordAndCategory(keyword, categoryId, pageable);
+        }
+
+        // 4. 키워드 + isActive 있는 경우
+        if (keyword != null && !keyword.isBlank() && isActive != null) {
             String type = (faqType == null || faqType.isBlank()) ? "question+answer" : faqType;
-            if (isActive == null) {
-                return faqRepository.searchByKeyword(keyword, type, pageable);
-            } else if (isActive) {
+            if (isActive) {
                 return faqRepository.searchByKeywordAndActive(keyword, type, pageable);
             } else {
-                // 아직 inactive 전용 메서드가 없다면, 직접 만들거나 조건 추가 필요
                 return faqRepository.searchByKeywordAndInactive(keyword, type, pageable);
             }
         }
 
-        // 키워드가 없고 카테고리만 있는 경우
+        // 5. 키워드만 있는 경우
+        if (keyword != null && !keyword.isBlank()) {
+            String type = (faqType == null || faqType.isBlank()) ? "question+answer" : faqType;
+            return faqRepository.searchByKeyword(keyword, type, pageable);
+        }
+
+        // 6. 카테고리 + isActive 있는 경우
+        if (categoryId != null && isActive != null) {
+            return faqRepository.searchByCategoryAndActive(categoryId, isActive, pageable);
+        }
+
+        // 7. 카테고리만 있는 경우
         if (categoryId != null) {
             return faqRepository.searchByCategoryAndKeyword(categoryId, null, pageable);
         }
 
-        // 아무 조건이 없는 경우 전체 조회
+        // 8. isActive만 있는 경우
+        if (isActive != null) {
+            if (isActive) {
+                return faqRepository.findByIsActiveTrueOrderByDisplayOrderAsc(pageable);
+            } else {
+                return faqRepository.findByIsActiveFalseOrderByDisplayOrderAsc(pageable);
+            }
+        }
+
+        // 9. 아무 조건이 없는 경우 전체 조회
         return faqRepository.findAllByOrderByDisplayOrderAsc(pageable);
     }
 
