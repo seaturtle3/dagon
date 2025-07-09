@@ -53,13 +53,15 @@ public class FAQService {
 
         // 검색 키워드가 있을 경우 (question/answer 필터와 함께)
         if (keyword != null && !keyword.isBlank()) {
+            // faqType이 null, 빈 문자열, 또는 'question+answer'면 전체 검색
+            String type = (faqType == null || faqType.isBlank()) ? "question+answer" : faqType;
             if (isActive == null) {
-                return faqRepository.searchByKeyword(keyword, faqType, pageable);
+                return faqRepository.searchByKeyword(keyword, type, pageable);
             } else if (isActive) {
-                return faqRepository.searchByKeywordAndActive(keyword, faqType, pageable);
+                return faqRepository.searchByKeywordAndActive(keyword, type, pageable);
             } else {
                 // 아직 inactive 전용 메서드가 없다면, 직접 만들거나 조건 추가 필요
-                return faqRepository.searchByKeywordAndInactive(keyword, faqType, pageable);
+                return faqRepository.searchByKeywordAndInactive(keyword, type, pageable);
             }
         }
 
