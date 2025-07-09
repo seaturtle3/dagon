@@ -109,7 +109,7 @@ public class EventService {
         Event event = eventRepository.findById(id).orElseThrow();
         Admin admin = adminRepository.findById(aid).orElseThrow();
 
-        // 기존 이미지 파일 삭제
+        // 기존 이미지 파일 삭제 (EventImage)
         List<EventImage> existingImages = eventImageRepository.findByEvent_EventId(id);
         for (EventImage img : existingImages) {
             if (img.getImageUrl() != null) {
@@ -129,6 +129,10 @@ public class EventService {
         String thumbnailUrl = null;
         if (dto.getThumbnailUrl() != null && dto.getThumbnailUrl().startsWith("data:")) {
             try {
+                // 기존 썸네일 파일 삭제
+                if (event.getThumbnailUrl() != null) {
+                    fileStorageUtil.deleteImage(event.getThumbnailUrl());
+                }
                 String[] parts = dto.getThumbnailUrl().split(",");
                 String base64Data = parts.length > 1 ? parts[1] : parts[0];
                 byte[] imageBytes = Base64.getDecoder().decode(base64Data);
@@ -145,7 +149,10 @@ public class EventService {
         } else if (dto.getThumbnailUrl() != null) {
             thumbnailUrl = dto.getThumbnailUrl();
         }
-        event.setThumbnailUrl(thumbnailUrl);
+        // 썸네일이 변경된 경우에만 set
+        if (thumbnailUrl != null) {
+            event.setThumbnailUrl(thumbnailUrl);
+        }
 
         Event saved = eventRepository.save(event);
         if (dto.getImages() != null && !dto.getImages().isEmpty()) {
