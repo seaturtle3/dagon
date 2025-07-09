@@ -9,6 +9,8 @@ import kroryi.dagon.repository.AdminRepository;
 import kroryi.dagon.repository.board.FAQCategoryRepository;
 import kroryi.dagon.repository.board.FAQRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -18,6 +20,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Log4j2
 public class FAQService {
     private final FAQRepository faqRepository;
     private final AdminRepository adminRepository;
@@ -49,6 +52,10 @@ public class FAQService {
         String keyword = dto.getKeyword();
         Boolean isActive = dto.getIsActive();
         Long categoryId = dto.getCategoryId();
+        log.info("keyword: {}", keyword);
+        log.info("isActive: {}", isActive);
+        log.info("categoryId: {}", categoryId); 
+        log.info("pageable: {}", pageable);
         // JPQL 동적 검색 사용
         return faqRepository.searchDynamic(categoryId, isActive, keyword, pageable);
     }
