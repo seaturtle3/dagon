@@ -62,11 +62,11 @@ public class ImageControllerEvent {
     @Operation(summary = "이미지 업로드", description = "이미지 업로드 API")
     @PostMapping(value = "/upload", consumes = "multipart/form-data", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Map<String, String>> uploadImage(
-            @Parameter(description = "업로드할 이미지 파일", required = true)
-            @RequestPart("image") MultipartFile file,
-            @RequestParam(value = "eventId", required = false) Long eventId,
-            @RequestParam(value = "isThumbnail", required = false, defaultValue = "false") Boolean isThumbnail,
-            @RequestParam(value = "imageType", required = false) String imageType
+        @Parameter(description = "업로드할 이미지 파일", required = true)
+        @RequestPart("image") MultipartFile file,
+        @RequestParam(value = "eventId", required = false) Long eventId,
+        @RequestParam(value = "isThumbnail", required = false, defaultValue = "false") Boolean isThumbnail,
+        @RequestParam(value = "imageType", required = false) String imageType
     ) throws IOException {
         if (file.isEmpty()) {
             return ResponseEntity.badRequest().body(Map.of("error", "빈파일"));
@@ -233,14 +233,15 @@ public class ImageControllerEvent {
                 updateContentWithImageUrl(event, fileUrl, dbUrl);
             }
 
+
             log.info("image dbulr---------------->: {}", dbUrl);
             return ResponseEntity.ok()
                     .contentType(MediaType.APPLICATION_JSON)
                     .body(Map.of(
-                            "fileUrl", fileUrl,
-                            "dbUrl", dbUrl,
-                            "imageId", image.getId().toString(),
-                            "message", "에디터 이미지 업로드 완료"
+                        "fileUrl", fileUrl,
+                        "dbUrl", dbUrl,
+                        "imageId", image.getId().toString(),
+                        "message", "에디터 이미지 업로드 완료"
                     ));
 
         } catch (IOException e) {
@@ -310,8 +311,8 @@ public class ImageControllerEvent {
                     .collect(Collectors.toList());
 
             return ResponseEntity.ok(Map.of(
-                    "totalCount", allImages.size(),
-                    "images", imageInfo
+                "totalCount", allImages.size(),
+                "images", imageInfo
             ));
 
         } catch (Exception e) {
@@ -423,14 +424,14 @@ public class ImageControllerEvent {
 
     public List<byte[]> getEventImageDataList(Long eventId) {
         return eventImageRepository.findByEvent_EventIdAndIsThumbnailTrue(eventId).stream()
-                .map(EventImage::getImageData)
-                .collect(Collectors.toList());
+            .map(EventImage::getImageData)
+            .collect(Collectors.toList());
     }
 
     public List<byte[]> getEventThumbnailDataList(Long eventId) {
         return eventImageRepository.findByEvent_EventIdAndIsThumbnailTrue(eventId).stream()
-                .map(EventImage::getThumbnailData)
-                .collect(Collectors.toList());
+            .map(EventImage::getThumbnailData)
+            .collect(Collectors.toList());
     }
 
     /**
@@ -475,9 +476,9 @@ public class ImageControllerEvent {
             eventRepository.save(event);
 
             return ResponseEntity.ok(Map.of(
-                    "processedContent", processedContent,
-                    "extractedImages", extractedImages,
-                    "message", "컨텐츠 처리가 완료되었습니다."
+                "processedContent", processedContent,
+                "extractedImages", extractedImages,
+                "message", "컨텐츠 처리가 완료되었습니다."
             ));
 
         } catch (Exception e) {
@@ -535,7 +536,7 @@ public class ImageControllerEvent {
                     .outputFormat("JPEG")
                     .toOutputStream(thumbnailOutputStream);
 
-            // EventImage.java 엔티티 생성 및 저장
+            // EventImage 엔티티 생성 및 저장
             EventImage image = new EventImage();
             if (event != null) {
                 image.setEvent(event);
@@ -618,10 +619,10 @@ public class ImageControllerEvent {
             String dbUrl = "/api/images/event/" + image.getId();
 
             return ResponseEntity.ok(Map.of(
-                    "fileUrl", fileUrl,
-                    "dbUrl", dbUrl,
-                    "imageId", image.getId().toString(),
-                    "message", "임시 이미지 업로드 완료"
+                "fileUrl", fileUrl,
+                "dbUrl", dbUrl,
+                "imageId", image.getId().toString(),
+                "message", "임시 이미지 업로드 완료"
             ));
 
         } catch (Exception e) {

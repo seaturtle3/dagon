@@ -5,11 +5,15 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import kroryi.dagon.DTO.board.BoardSearchDTO;
 import kroryi.dagon.DTO.board.EventResponseDTO;
 import kroryi.dagon.entity.Event;
+import kroryi.dagon.entity.EventImage;
 import kroryi.dagon.service.community.EventService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -43,9 +47,49 @@ public class ApiEventController {
 
     @Operation(summary = "이벤트 단건 조회", description = "이벤트 상세 내용을 조회 조회수를 1 증가")
     @GetMapping("/{id}")
-    public EventResponseDTO getOne(@PathVariable Long id) {
+    public ResponseEntity<EventResponseDTO> getOne(@PathVariable Long id) {
         eventService.increaseViews(id);
         Event event = eventService.findById(id);
-        return EventResponseDTO.from(event);
+        
+        if (event == null) {
+            return ResponseEntity.notFound().build();
+        }
+        
+        EventResponseDTO responseDTO = EventResponseDTO.from(event);
+        return ResponseEntity.ok(responseDTO);
+    }
+
+    @Operation(summary = "이벤트 이미지 조회", description = "이벤트의 개별 이미지를 조회")
+    @GetMapping("/image/{imageId}")
+    public ResponseEntity<byte[]> getEventImage(@PathVariable Long imageId) {
+        EventImage image = eventService.findEventImageById(imageId);
+        if (image == null || image.getImageData() == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.IMAGE_JPEG);
+        headers.setContentLength(image.getImageData().length);
+        
+        return ResponseEntity.ok()
+                .headers(headers)
+                .body(image.getImageData());
+    }
+
+    @Operation(summary = "이벤트 썸네일 조회", description = "이벤트의 개별 썸네일을 조회")
+    @GetMapping("/thumbnail/{imageId}")
+    public ResponseEntity<byte[]> getEventThumbnail(@PathVariable Long imageId) {
+        EventImage image = eventService.findEventImageById(imageId);
+        if (image == null || image.getThumbnailData() == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.IMAGE_JPEG);
+        headers.setContentLength(image.getThumbnailData().length);
+        
+        return ResponseEntity.ok()
+                .headers(headers)
+                .body(image.getThumbnailData());
     }
 }

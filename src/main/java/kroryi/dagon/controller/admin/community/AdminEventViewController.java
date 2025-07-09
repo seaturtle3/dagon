@@ -16,6 +16,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import java.util.List;
 
 @Controller
 @RequestMapping("/admin/event")
@@ -82,16 +84,16 @@ public class AdminEventViewController {
                          @RequestParam(defaultValue = "0") int page,
                          @RequestParam(defaultValue = "10") int size,
                          Model model,
-                         @AuthenticationPrincipal AdminUserDetails userDetails) {
+                         @AuthenticationPrincipal AdminUserDetails userDetails,
+                         @RequestPart(value = "images", required = false) List<MultipartFile> images) {
         if (result.hasErrors()) {
             model.addAttribute("formAction", "/admin/event?page=" + page + "&size=" + size);
             model.addAttribute("page", page);
             model.addAttribute("size", size);
             return "board/event/form";
         }
-
+        dto.setImages(images);
         eventService.createEvent(dto, userDetails.getAid());
-
         // ✅ 등록 후 대시보드로 이동
         return "redirect:/admin/dashboard";
     }
@@ -123,7 +125,9 @@ public class AdminEventViewController {
     @PostMapping("/{id}")
     public String update(@PathVariable Long id,
                          @ModelAttribute EventRequestDTO dto,
-                         @AuthenticationPrincipal AdminUserDetails userDetails) {
+                         @AuthenticationPrincipal AdminUserDetails userDetails,
+                         @RequestPart(value = "images", required = false) List<MultipartFile> images) {
+        dto.setImages(images);
         eventService.updateEvent(id, dto, userDetails.getAid());
         return "redirect:/admin/dashboard";  // ✅ 수정 후 대시보드로 이동
     }

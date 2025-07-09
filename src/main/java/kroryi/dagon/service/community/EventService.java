@@ -301,9 +301,9 @@ public class EventService {
         }
 
         return Map.of(
-                "processedContent", processedContent,
-                "extractedImages", extractedImages,
-                "message", "컨텐츠 처리가 완료되었습니다."
+            "processedContent", processedContent,
+            "extractedImages", extractedImages,
+            "message", "컨텐츠 처리가 완료되었습니다."
         );
     }
 
