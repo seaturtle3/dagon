@@ -45,9 +45,9 @@ public class ApiAdminEventController {
         return ResponseEntity.ok(EventResponseDTO.from(event));
     }
 
-    @Operation(summary = "이벤트 수정", description = "기존 이벤트 정보수정")
-    @PutMapping("/{id}")
-    public ResponseEntity<EventResponseDTO> update(
+    @Operation(summary = "이벤트 수정 (multipart)", description = "기존 이벤트 정보수정 (이미지 포함)")
+    @PutMapping(value = "/{id}", consumes = "multipart/form-data")
+    public ResponseEntity<EventResponseDTO> updateWithMultipart(
             @PathVariable Long id,
             @RequestPart("dto") EventRequestDTO dto,
             @RequestPart(value = "images", required = false) List<MultipartFile> images,
@@ -67,7 +67,36 @@ public class ApiAdminEventController {
 
         dto.setImages(images);
         String adminId = userDetails.getAid();
-        log.info("dto---------------->: {}", dto);
+        log.info("multipart dto---------------->: {}", dto);
+        Event event = eventService.updateEvent(id, dto, adminId);
+
+        // 수정된 이벤트의 이미지 ID 리스트를 포함하여 반환
+        EventResponseDTO responseDTO = EventResponseDTO.from(event);
+
+        return ResponseEntity.ok(responseDTO);
+    }
+
+    @Operation(summary = "이벤트 수정 (JSON)", description = "기존 이벤트 정보수정 (JSON)")
+    @PutMapping(value = "/{id}", consumes = "application/json")
+    public ResponseEntity<EventResponseDTO> updateWithJson(
+            @PathVariable Long id,
+            @Valid @RequestBody EventRequestDTO dto,
+            @AuthenticationPrincipal AdminUserDetails userDetails) {
+
+        // 1. 삭제할 썸네일 id 목록 처리
+        if (dto.getDeleteImageNames() != null) {
+            for (Long imageId : dto.getDeleteImageNames()) {
+                try {
+                    eventImageRepository.deleteById(imageId);
+                    log.info("이미지 삭제 완료: imageId={}", imageId);
+                } catch (NumberFormatException e) {
+                    log.warn("잘못된 이미지 ID 형식: {}", imageId);
+                }
+            }
+        }
+
+        String adminId = userDetails.getAid();
+        log.info("json dto---------------->: {}", dto);
         Event event = eventService.updateEvent(id, dto, adminId);
 
         // 수정된 이벤트의 이미지 ID 리스트를 포함하여 반환
