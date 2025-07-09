@@ -37,6 +37,7 @@ import java.util.regex.Pattern;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Base64;
 
 
 @Service
@@ -68,15 +69,35 @@ public class EventService {
 
         Event event = new Event();
         event.setTitle(dto.getTitle());
-        event.setThumbnailUrl(dto.getThumbnailUrl());
         event.setStartAt(dto.getStartAt());
         event.setEndAt(dto.getEndAt());
         event.setIsTop(dto.getIsTop() != null && dto.getIsTop());
         event.setAdmin(admin);
-        // content 설정 (이미지 태그 유지)
         event.setContent(dto.getContent());
+
+        // 썸네일 처리 (base64 or url)
+        String thumbnailUrl = null;
+        if (dto.getThumbnailUrl() != null && dto.getThumbnailUrl().startsWith("data:")) {
+            try {
+                String[] parts = dto.getThumbnailUrl().split(",");
+                String base64Data = parts.length > 1 ? parts[1] : parts[0];
+                byte[] imageBytes = Base64.getDecoder().decode(base64Data);
+                String dateFolder = java.time.LocalDate.now().format(java.time.format.DateTimeFormatter.ofPattern("yyyy/MM/dd"));
+                Path uploadPath = Paths.get("uploads/event", dateFolder);
+                Files.createDirectories(uploadPath);
+                String fileName = java.util.UUID.randomUUID() + ".jpg";
+                Path filePath = uploadPath.resolve(fileName);
+                Files.write(filePath, imageBytes);
+                thumbnailUrl = "/uploads/event/" + dateFolder + "/" + fileName;
+            } catch (Exception e) {
+                log.error("base64 썸네일 저장 실패", e);
+            }
+        } else if (dto.getThumbnailUrl() != null) {
+            thumbnailUrl = dto.getThumbnailUrl();
+        }
+        event.setThumbnailUrl(thumbnailUrl);
+
         Event saved = eventRepository.save(event);
-        // 별도 이미지 저장
         if (dto.getImages() != null && !dto.getImages().isEmpty()) {
             saveEventImages(saved, dto.getImages());
         }
@@ -97,17 +118,36 @@ public class EventService {
         }
 
         event.setTitle(dto.getTitle());
-        event.setThumbnailUrl(dto.getThumbnailUrl());
         event.setStartAt(dto.getStartAt());
         event.setEndAt(dto.getEndAt());
         event.setIsTop(dto.getIsTop() != null && dto.getIsTop());
         event.setModifyAt(LocalDateTime.now());
         event.setAdmin(admin);
-        // content 설정 (이미지 태그 유지)
         event.setContent(dto.getContent());
+
+        // 썸네일 처리 (base64 or url)
+        String thumbnailUrl = null;
+        if (dto.getThumbnailUrl() != null && dto.getThumbnailUrl().startsWith("data:")) {
+            try {
+                String[] parts = dto.getThumbnailUrl().split(",");
+                String base64Data = parts.length > 1 ? parts[1] : parts[0];
+                byte[] imageBytes = Base64.getDecoder().decode(base64Data);
+                String dateFolder = java.time.LocalDate.now().format(java.time.format.DateTimeFormatter.ofPattern("yyyy/MM/dd"));
+                Path uploadPath = Paths.get("uploads/event", dateFolder);
+                Files.createDirectories(uploadPath);
+                String fileName = java.util.UUID.randomUUID() + ".jpg";
+                Path filePath = uploadPath.resolve(fileName);
+                Files.write(filePath, imageBytes);
+                thumbnailUrl = "/uploads/event/" + dateFolder + "/" + fileName;
+            } catch (Exception e) {
+                log.error("base64 썸네일 저장 실패", e);
+            }
+        } else if (dto.getThumbnailUrl() != null) {
+            thumbnailUrl = dto.getThumbnailUrl();
+        }
+        event.setThumbnailUrl(thumbnailUrl);
+
         Event saved = eventRepository.save(event);
-        // 기존 이미지 DB 삭제 후 새 이미지 저장
-        // eventImageRepository.deleteAll(existingImages);
         if (dto.getImages() != null && !dto.getImages().isEmpty()) {
             saveEventImages(saved, dto.getImages());
         }
