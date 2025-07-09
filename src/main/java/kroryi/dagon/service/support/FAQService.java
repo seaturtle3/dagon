@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import kroryi.dagon.entity.QFAQ;
 
 @Service
 @RequiredArgsConstructor
@@ -47,36 +48,10 @@ public class FAQService {
 
     public Page<FAQ> searchFaq(BoardSearchDTO dto, Pageable pageable) {
         String keyword = dto.getKeyword();
-        String faqType = dto.getFaqType();
         Boolean isActive = dto.getIsActive();
         Long categoryId = dto.getCategoryId();
-
-        // 검색 키워드가 있을 경우 (question/answer 필터와 함께)
-        if (keyword != null && !keyword.isBlank()) {
-            String type = (faqType == null || faqType.isBlank()) ? "question+answer" : faqType;
-            if (isActive == null) {
-                return faqRepository.searchByKeyword(keyword, type, pageable);
-            } else if (isActive) {
-                return faqRepository.searchByKeywordAndActive(keyword, type, pageable);
-            } else {
-                return faqRepository.searchByKeywordAndInactive(keyword, type, pageable);
-            }
-        }
-
-        // 키워드가 없고 카테고리만 있는 경우
-        if ((keyword == null || keyword.isBlank()) && categoryId != null) {
-            if (isActive == null) {
-                return faqRepository.searchByCategoryAndKeyword(categoryId, null, pageable);
-            } else if (isActive) {
-                return faqRepository.findByCategoryIdAndIsActiveTrueOrderByDisplayOrderAsc(categoryId, pageable);
-            } else {
-                // 비활성화된 FAQ만 카테고리별로 조회 (isActive = false)
-                return faqRepository.findByCategoryIdAndIsActiveFalseOrderByDisplayOrderAsc(categoryId, pageable);
-            }
-        }
-
-        // 아무 조건이 없는 경우 전체 조회
-        return faqRepository.findAllByOrderByDisplayOrderAsc(pageable);
+        // QueryDSL 동적 검색 사용
+        return faqRepository.searchDynamic(keyword, categoryId, isActive, pageable);
     }
 
     public Page<FAQ> searchActivePaged(BoardSearchDTO dto, Pageable pageable) {
