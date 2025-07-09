@@ -68,4 +68,25 @@ public interface FAQRepository extends JpaRepository<FAQ, Long> {
     Page<FAQ> searchByKeywordAndInactive(@Param("keyword") String keyword,
                                          @Param("type") String type,
                                          Pageable pageable);
+
+
+        @Query("""
+        SELECT f FROM FAQ f
+        WHERE (:categoryId IS NULL OR f.category.id = :categoryId)
+            AND (:isActive IS NULL OR f.isActive = :isActive)
+            AND (
+            :keyword IS NULL
+            OR LOWER(f.question) LIKE LOWER(CONCAT('%', :keyword, '%'))
+            OR LOWER(f.answer) LIKE LOWER(CONCAT('%', :keyword, '%'))
+            )
+        ORDER BY f.displayOrder ASC
+    """)
+    Page<FAQ> searchDynamic(
+        @Param("categoryId") Long categoryId,
+        @Param("isActive") Boolean isActive,
+        @Param("keyword") String keyword,
+        Pageable pageable
+    );                                    
+
+                                         
 }
