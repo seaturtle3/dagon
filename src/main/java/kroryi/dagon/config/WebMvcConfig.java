@@ -47,12 +47,12 @@ public class WebMvcConfig implements WebMvcConfigurer {
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/api/**")
                 .allowedOrigins(
-                        "http://docs.yi.or.kr:8094",
-                        "http://docs.yi.or.kr:8095",
-                        "http://docs.yi.or.kr:8096",
-                        "http://docs.yi.or.kr:8097",
-                        "http://docs.yi.or.kr:25173",
-                        "http://docs.yi.or.kr:5173",
+                        "https://docs.yi.or.kr:8094",
+                        "https://docs.yi.or.kr:8095",
+                        "https://docs.yi.or.kr:8096",
+                        "https://docs.yi.or.kr:8097",
+                        "https://docs.yi.or.kr:25173",
+                        "https://docs.yi.or.kr:5173",
                         "http://localhost:8094",
                         "http://localhost:8095",
                         "http://localhost:8096",
