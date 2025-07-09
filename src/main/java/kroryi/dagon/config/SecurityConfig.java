@@ -109,8 +109,8 @@ public class SecurityConfig {
         configuration.setAllowedOriginPatterns(Arrays.asList(
             "http://localhost:5173",  // Vite 개발 서버
             "http://localhost:5173",  // Vite 개발 서버
-            "http://docs.yi.or.kr:25173",  // Vite 개발 서버
-            "http://docs.yi.or.kr:8097",  // Vite 개발 서버
+            "https://docs.yi.or.kr:25173",  // Vite 개발 서버
+            "https://docs.yi.or.kr:8097",  // Vite 개발 서버
             "http://localhost:8080",  // Vue 개발 서버
             "http://127.0.0.1:5173",
             "http://127.0.0.1:5173",
