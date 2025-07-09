@@ -47,61 +47,35 @@ public class FAQService {
 
     public Page<FAQ> searchFaq(BoardSearchDTO dto, Pageable pageable) {
         String keyword = dto.getKeyword();
-        String faqType = dto.getFaqType(); // "question", "answer", "question+answer"
+        String faqType = dto.getFaqType();
         Boolean isActive = dto.getIsActive();
         Long categoryId = dto.getCategoryId();
 
-        // 1. 키워드 + 카테고리 + isActive + faqType 모두 있는 경우
-        if (keyword != null && !keyword.isBlank() && categoryId != null && isActive != null && faqType != null) {
-            return faqRepository.searchByAllConditions(keyword, categoryId, isActive, faqType, pageable);
-        }
-
-        // 2. 키워드 + 카테고리 + isActive 있는 경우
-        if (keyword != null && !keyword.isBlank() && categoryId != null && isActive != null) {
-            return faqRepository.searchByKeywordAndCategoryAndActive(keyword, categoryId, isActive, pageable);
-        }
-
-        // 3. 키워드 + 카테고리 있는 경우
-        if (keyword != null && !keyword.isBlank() && categoryId != null) {
-            return faqRepository.searchByKeywordAndCategory(keyword, categoryId, pageable);
-        }
-
-        // 4. 키워드 + isActive 있는 경우
-        if (keyword != null && !keyword.isBlank() && isActive != null) {
+        // 검색 키워드가 있을 경우 (question/answer 필터와 함께)
+        if (keyword != null && !keyword.isBlank()) {
             String type = (faqType == null || faqType.isBlank()) ? "question+answer" : faqType;
-            if (isActive) {
+            if (isActive == null) {
+                return faqRepository.searchByKeyword(keyword, type, pageable);
+            } else if (isActive) {
                 return faqRepository.searchByKeywordAndActive(keyword, type, pageable);
             } else {
                 return faqRepository.searchByKeywordAndInactive(keyword, type, pageable);
             }
         }
 
-        // 5. 키워드만 있는 경우
-        if (keyword != null && !keyword.isBlank()) {
-            String type = (faqType == null || faqType.isBlank()) ? "question+answer" : faqType;
-            return faqRepository.searchByKeyword(keyword, type, pageable);
-        }
-
-        // 6. 카테고리 + isActive 있는 경우
-        if (categoryId != null && isActive != null) {
-            return faqRepository.searchByCategoryAndActive(categoryId, isActive, pageable);
-        }
-
-        // 7. 카테고리만 있는 경우
-        if (categoryId != null) {
-            return faqRepository.searchByCategoryAndKeyword(categoryId, null, pageable);
-        }
-
-        // 8. isActive만 있는 경우
-        if (isActive != null) {
-            if (isActive) {
-                return faqRepository.findByIsActiveTrueOrderByDisplayOrderAsc(pageable);
+        // 키워드가 없고 카테고리만 있는 경우
+        if ((keyword == null || keyword.isBlank()) && categoryId != null) {
+            if (isActive == null) {
+                return faqRepository.searchByCategoryAndKeyword(categoryId, null, pageable);
+            } else if (isActive) {
+                return faqRepository.findByCategoryIdAndIsActiveTrueOrderByDisplayOrderAsc(categoryId, pageable);
             } else {
-                return faqRepository.findByIsActiveFalseOrderByDisplayOrderAsc(pageable);
+                // 비활성화된 FAQ만 카테고리별로 조회 (isActive = false)
+                return faqRepository.findByCategoryIdAndIsActiveFalseOrderByDisplayOrderAsc(categoryId, pageable);
             }
         }
 
-        // 9. 아무 조건이 없는 경우 전체 조회
+        // 아무 조건이 없는 경우 전체 조회
         return faqRepository.findAllByOrderByDisplayOrderAsc(pageable);
     }
 
