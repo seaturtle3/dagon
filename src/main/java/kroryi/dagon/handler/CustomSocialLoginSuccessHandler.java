@@ -64,7 +64,7 @@ public class CustomSocialLoginSuccessHandler implements AuthenticationSuccessHan
         }
 
         // baseUrl에 경로 및 파라미터 추가
-        String redirectUrl = "http://localhost:5173/" + "oauth/callback?token=" + jwt + "&success=true";
+        String redirectUrl = "http://docs.yi.or.kr:25173/" + "oauth/callback?token=" + jwt + "&success=true";
 
         log.info("Redirecting to frontend: {}", redirectUrl);
         response.sendRedirect(redirectUrl);
