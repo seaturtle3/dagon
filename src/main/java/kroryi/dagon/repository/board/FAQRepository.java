@@ -77,7 +77,7 @@ public interface FAQRepository extends JpaRepository<FAQ, Long> {
             AND (
             :keyword IS NULL
             OR LOWER(f.question) LIKE LOWER(CONCAT('%', :keyword, '%'))
-            OR LOWER(f.answer) LIKE LOWER(CONCAT('%', :keyword, '%'))
+            OR f.answer LIKE CONCAT('%', :keyword, '%')
             )
         ORDER BY f.displayOrder ASC
     """)
