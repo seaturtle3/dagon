@@ -144,6 +144,9 @@ public class ApiFishingReportService {
         }
 
         // User 객체 설정
+        if (apiFishingReportDTO.getUser() == null) {
+            throw new IllegalArgumentException("작성자 정보가 없습니다. (user=null)");
+        }
         User user = userRepository.findById(apiFishingReportDTO.getUser().getUno())
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
         fishingReport.setUser(user);
