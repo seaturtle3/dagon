@@ -1,19 +1,15 @@
 # Ubuntu 22.04 기반의 openjdk 이미지 (슬림하지 않음)
 FROM ubuntu:22.04
-
-ENV LANG=ko_KR.UTF-8
-ENV LANGUAGE=ko_KR:ko
-ENV LC_ALL=ko_KR.UTF-8
-
-
 # 미러 변경 (선택)
 RUN sed -i 's|http://archive.ubuntu.com|http://mirror.kakao.com|g' /etc/apt/sources.list
 
-# 필수 패키지 + locales 설치
+
+# 필수 패키지 설치
 RUN apt-get update && \
-    apt-get install -y openjdk-17-jdk net-tools iputils-ping vim locales && \
-    locale-gen ko_KR.UTF-8 && \
+    apt-get install -y openjdk-17-jdk maven vim && \
     apt-get clean
+ENV LANG=ko_KR.UTF-8
+ENV LC_ALL=ko_KR.UTF-8
 
 # JAVA 환경 변수 (Ubuntu에서 openjdk 설치 경로는 아래와 같음)
 ENV JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
@@ -23,6 +19,9 @@ ENV PATH="$JAVA_HOME/bin:$PATH"
 ENV APP_HOME=/apps
 WORKDIR $APP_HOME
 
+#RUN mvn clean package -Pprod -DskipTests
+
+
 # 빌드된 JAR 복사
 ARG JAR_FILE_PATH=target/*.jar
 COPY ${JAR_FILE_PATH} app.jar
@@ -31,7 +30,7 @@ COPY ${JAR_FILE_PATH} app.jar
 ENV API_SECRET_KEY=place_holder
 
 # 포트 노출
-EXPOSE 8097 26379 
+EXPOSE 8097 26379
 
 # 실행
 ENTRYPOINT ["java", "-jar", "app.jar"]
