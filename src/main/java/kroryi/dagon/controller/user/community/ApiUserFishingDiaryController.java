@@ -11,7 +11,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -26,6 +28,15 @@ import lombok.extern.log4j.Log4j2;
 public class ApiUserFishingDiaryController {
 
     private final ApiFishingDiaryService apiFishingDiaryService;
+
+    // 현재 인증된 사용자의 uno를 가져오는 헬퍼 메서드
+    private Long getCurrentUserUno() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.getPrincipal() instanceof kroryi.dagon.component.CustomUserDetails) {
+            return ((kroryi.dagon.component.CustomUserDetails) authentication.getPrincipal()).getUno();
+        }
+        throw new RuntimeException("인증된 사용자 정보를 찾을 수 없습니다.");
+    }
 
     @Operation(summary = "조행기 생성")
     @PostMapping(value = "/create", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -70,11 +81,11 @@ public class ApiUserFishingDiaryController {
     public Long updateFishingDiary(
             @PathVariable Long id,
             @RequestPart("dto") ApiFishingDiaryDTO apiFishingDiaryDTO,
-            @RequestPart(value = "images", required = false) List<MultipartFile> images,
-            @AuthenticationPrincipal CustomUserDetails userDetails
+            @RequestPart(value = "images", required = false) List<MultipartFile> images
     ) {
         log.info("content: {}", apiFishingDiaryDTO);
-        return apiFishingDiaryService.updateFishingDiary(id, apiFishingDiaryDTO, userDetails.getUno(), images);
+        Long userUno = getCurrentUserUno();
+        return apiFishingDiaryService.updateFishingDiary(id, apiFishingDiaryDTO, userUno, images);
     }
 
 //    @PutMapping(value = "/update/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
