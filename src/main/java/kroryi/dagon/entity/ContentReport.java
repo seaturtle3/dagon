@@ -49,7 +49,7 @@ public class ContentReport {
 
     // 처리한 관리자
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "handled_by_admin")
+    @JoinColumn(name = "handled_by_admin", columnDefinition = "VARCHAR(50)")
     private Admin handledBy;
 
 }

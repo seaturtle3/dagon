@@ -56,7 +56,7 @@ public interface ProductRepository extends JpaRepository<Product, Long>, JpaSpec
             WHERE p.main_type = 'SEA'
             AND (:region IS NULL OR p.prod_region = :region)
             AND (:subType IS NULL OR p.sub_type = :subType)
-            AND ((:species) IS NULL OR :species IS EMPTY OR 
+            AND (:species IS NULL OR 
                  EXISTS (SELECT 1 FROM prod_fish_species_mapping m 
                          JOIN prod_fish_species fs ON m.fs_id = fs.fs_id 
                          WHERE m.prod_id = p.prod_id AND fs.fs_name IN (:species)))
@@ -73,7 +73,7 @@ public interface ProductRepository extends JpaRepository<Product, Long>, JpaSpec
             WHERE p.main_type = 'FRESHWATER'
             AND (:region IS NULL OR p.prod_region = :region)
             AND (:subType IS NULL OR p.sub_type = :subType)
-            AND ((:species) IS NULL OR :species IS EMPTY OR 
+            AND (:species IS NULL OR 
                  EXISTS (SELECT 1 FROM prod_fish_species_mapping m 
                          JOIN prod_fish_species fs ON m.fs_id = fs.fs_id 
                          WHERE m.prod_id = p.prod_id AND fs.fs_name IN (:species)))
