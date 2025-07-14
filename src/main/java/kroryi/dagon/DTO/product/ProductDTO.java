@@ -13,6 +13,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.Base64;
 
 import static java.util.Arrays.stream;
 
@@ -47,7 +48,7 @@ public class ProductDTO {
 
     private List<String> prodImageNames; // 썸네일 여러 개
     private List<String> deleteImageNames; // 삭제할 이미지 경로
-    private List<byte[]> prodImageDataList; // 이미지 바이너리 리스트
+    private List<String> prodImageDataList; // Base64 인코딩된 이미지 데이터 리스트
 
     public static ProductDTO fromEntity(Product product) {
         ProductDTO dto = new ProductDTO();
@@ -99,7 +100,13 @@ public class ProductDTO {
         );
         dto.setProdImageDataList(
                 product.getImages().stream()
-                        .map(ProductImage::getImageData)
+                        .map(image -> {
+                            if (image.getImageData() != null) {
+                                return Base64.getEncoder().encodeToString(image.getImageData());
+                            }
+                            return null;
+                        })
+                        .filter(data -> data != null)
                         .collect(Collectors.toList())
         );
 
