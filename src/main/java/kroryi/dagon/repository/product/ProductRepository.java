@@ -53,12 +53,12 @@ public interface ProductRepository extends JpaRepository<Product, Long>, JpaSpec
     //  -------------- 프론트 api 상단 필터 > 바다/민물 상품 가져오기 ----------------
     @Query("""
             SELECT DISTINCT p FROM Product p
-            LEFT JOIN p.fishSpeciesMappings m
-            LEFT JOIN m.fs fs
+            LEFT JOIN FETCH p.fishSpeciesMappings m
+            LEFT JOIN FETCH m.fs fs
             WHERE p.mainType = kroryi.dagon.enums.MainType.SEA
             AND (:region IS NULL OR p.prodRegion = :region)
             AND (:subType IS NULL OR p.subType = :subType)
-            AND (COALESCE(:species, NULL) IS NULL OR fs.fsName IN (:species))
+            AND ((:species) IS NULL OR fs.fsName IN (:species))
             """)
     Page<Product> findSeaProductsByFilters(
             @Param("region") ProdRegion region,
@@ -69,12 +69,12 @@ public interface ProductRepository extends JpaRepository<Product, Long>, JpaSpec
 
     @Query("""
             SELECT DISTINCT p FROM Product p
-            LEFT JOIN p.fishSpeciesMappings m
-            LEFT JOIN m.fs fs
+            LEFT JOIN FETCH p.fishSpeciesMappings m
+            LEFT JOIN FETCH m.fs fs
             WHERE p.mainType = kroryi.dagon.enums.MainType.FRESHWATER
             AND (:region IS NULL OR p.prodRegion = :region)
             AND (:subType IS NULL OR p.subType = :subType)
-            AND (COALESCE(:species, NULL) IS NULL OR fs.fsName IN (:species))
+            AND ((:species) IS NULL OR fs.fsName IN (:species))
             """)
     Page<Product> findFreshwaterProductsByFilters(
             @Param("region") ProdRegion region,
