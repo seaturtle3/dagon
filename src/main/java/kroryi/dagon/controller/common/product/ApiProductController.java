@@ -146,40 +146,51 @@ public class ApiProductController {
 
     //  -------------- 프론트 api 바다/민물 낚시 상품 가져오기 ----------------
     @GetMapping("/get-all/sea/filter")
-    public List<ProductDTO> getSeaProductsByFilters(
+    public Page<ProductDTO> getSeaProductsByFilters(
             @RequestParam(required = false) String subType,
             @RequestParam(required = false) String region,
             @RequestParam(required = false) List<String> species,
             @RequestParam(defaultValue = "createdAt") String sortBy,
-            @RequestParam(defaultValue = "desc") String direction) {
-
+            @RequestParam(defaultValue = "desc") String direction,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "15") int size
+    ) {
+        if (species != null && species.isEmpty()) {
+            species = null;
+        }
         SubType subTypeEnum = (subType == null || subType.isEmpty()) ? null : SubType.valueOf(subType);
         ProdRegion regionEnum = (region == null || region.isEmpty()) ? null : ProdRegion.valueOf(region);
 
         Sort sort = direction.equalsIgnoreCase("desc")
                 ? Sort.by(sortBy).descending()
                 : Sort.by(sortBy).ascending();
+        Pageable pageable = PageRequest.of(page, size, sort);
 
-        return productService.getFishingSeaProductsByFilters(regionEnum, subTypeEnum, species, sort);
+        return productService.getFishingSeaProductsByFilters(regionEnum, subTypeEnum, species, pageable);
     }
 
     @GetMapping("/get-all/freshwater/filter")
-    public List<ProductDTO> getFreshwaterProductsByFilters(
+    public Page<ProductDTO> getFreshwaterProductsByFilters(
             @RequestParam(required = false) String subType,
             @RequestParam(required = false) String region,
             @RequestParam(required = false) List<String> species,
             @RequestParam(defaultValue = "createdAt") String sortBy,
-            @RequestParam(defaultValue = "desc") String direction
+            @RequestParam(defaultValue = "desc") String direction,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "15") int size
     ) {
-
+        if (species != null && species.isEmpty()) {
+            species = null;
+        }
         SubType subTypeEnum = (subType == null || subType.isEmpty()) ? null : SubType.valueOf(subType);
         ProdRegion regionEnum = (region == null || region.isEmpty()) ? null : ProdRegion.valueOf(region);
 
         Sort sort = direction.equalsIgnoreCase("desc")
                 ? Sort.by(sortBy).descending()
                 : Sort.by(sortBy).ascending();
+        Pageable pageable = PageRequest.of(page, size, sort);
 
-        return productService.getFishingFreshwaterProductsByFilters(regionEnum, subTypeEnum, species, sort);
+        return productService.getFishingFreshwaterProductsByFilters(regionEnum, subTypeEnum, species, pageable);
     }
 
     //  -------------- 프론트 api 바다/민물 상단 필터 ----------------

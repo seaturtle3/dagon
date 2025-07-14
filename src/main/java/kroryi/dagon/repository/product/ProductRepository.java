@@ -52,9 +52,7 @@ public interface ProductRepository extends JpaRepository<Product, Long>, JpaSpec
 
     //  -------------- 프론트 api 상단 필터 > 바다/민물 상품 가져오기 ----------------
     @Query("""
-            SELECT DISTINCT p FROM Product p
-            LEFT JOIN FETCH p.fishSpeciesMappings m
-            LEFT JOIN FETCH m.fs fs
+            SELECT p FROM Product p
             WHERE p.mainType = kroryi.dagon.enums.MainType.SEA
             AND (:region IS NULL OR p.prodRegion = :region)
             AND (:subType IS NULL OR p.subType = :subType)
