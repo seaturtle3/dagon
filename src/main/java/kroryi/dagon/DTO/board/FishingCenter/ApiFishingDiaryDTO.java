@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Data
@@ -61,21 +62,28 @@ public class ApiFishingDiaryDTO {
                     .map(ApiCommentDTO::new)
                     .collect(Collectors.toList());
         }
-
         // 이미지 리스트 매핑
         if (fishingDiary.getImages() != null) {
             this.images = fishingDiary.getImages().stream()
                     .map(ApiFishingDiaryImageDTO::new)
                     .collect(Collectors.toList());
 
-            // 대표 썸네일 추출
-            this.thumbnailUrl = fishingDiary.getImages().stream()
+            // 대표 썸네일 추출 - 우선순위: imageData > thumbnailData > imageUrl
+            Optional<FishingDiaryImage> thumbnailImage = fishingDiary.getImages().stream()
                     .filter(FishingDiaryImage::isThumbnail)
-                    .map(FishingDiaryImage::getImageUrl)
-                    .findFirst()
-                    .orElse(null);
-            // imageFileName도 동일하게 할당
-            this.imageFileName = this.thumbnailUrl;
+                    .findFirst();
+
+            if (thumbnailImage.isPresent()) {
+                FishingDiaryImage image = thumbnailImage.get();
+                if (image.getImageData() != null) {
+                    this.thumbnailUrl = "data:image/jpeg;base64," + java.util.Base64.getEncoder().encodeToString(image.getImageData());
+                } else if (image.getThumbnailData() != null) {
+                    this.thumbnailUrl = "data:image/jpeg;base64," + java.util.Base64.getEncoder().encodeToString(image.getThumbnailData());
+                } else {
+                    this.thumbnailUrl = image.getImageUrl();
+                }
+                this.imageFileName = this.thumbnailUrl;
+            }
         }
     }
 
