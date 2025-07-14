@@ -36,7 +36,6 @@ public class ProductDTO {
     private LocalDate createdAt;
     private String prodThumbnail;
     private Long uno;
-    private Long partnerUno; // 파트너 수정용
     private Partner partner;
 
     // 상품 기본 가격
@@ -84,7 +83,6 @@ public class ProductDTO {
             dto.setOptions(optionDTOs);
         }
         dto.setUno(product.getPartner().getUno());
-        dto.setPartnerUno(product.getPartner().getUno()); // 파트너 수정용으로도 설정
         dto.setPartner(product.getPartner()); // 파트너 정보 전체 설정
         // fromEntity 수정
         dto.setProdImageNames(
