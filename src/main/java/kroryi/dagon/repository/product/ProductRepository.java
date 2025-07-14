@@ -64,7 +64,7 @@ public interface ProductRepository extends JpaRepository<Product, Long>, JpaSpec
             @Param("region") ProdRegion region,
             @Param("subType") SubType subType,
             @Param("species") List<String> species,
-            Pageable pageable 
+            Pageable pageable
     );
 
     @Query("""
