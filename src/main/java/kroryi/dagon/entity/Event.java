@@ -8,6 +8,8 @@ import org.hibernate.annotations.ColumnDefault;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -26,7 +28,7 @@ public class Event extends BaseTimeEntity {
     @Column(name = "content", columnDefinition = "TEXT", nullable = false)
     private String content;
 
-    @Column(length = 512)
+    @Column(name = "thumbnail_url", columnDefinition = "TEXT", nullable = false)
     private String thumbnailUrl;
 
     @Column(name = "start_at")
@@ -66,6 +68,13 @@ public class Event extends BaseTimeEntity {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "aid", nullable = false)
     private Admin admin;
+
+    // 이벤트 이미지들 (1:N)
+    @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OrderBy("orderIndex ASC")
+    private List<EventImage> images = new ArrayList<>();
+
+
 
 
 

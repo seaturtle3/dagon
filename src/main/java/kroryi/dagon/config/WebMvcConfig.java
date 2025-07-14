@@ -46,9 +46,16 @@ public class WebMvcConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/api/**")
-                .allowedOrigins("https://docs.yi.or.kr:8095",
-                        "https://192.168.10.47:8095",
-                        "https://localhost:8095",
+                .allowedOrigins(
+                        "https://docs.yi.or.kr:8094",
+                        "https://docs.yi.or.kr:8095",
+                        "https://docs.yi.or.kr:8096",
+                        "https://docs.yi.or.kr:8097",
+                        "https://docs.yi.or.kr:25173",
+                        "https://docs.yi.or.kr:5173",
+                        "http://localhost:8094",
+                        "http://localhost:8095",
+                        "http://localhost:8096",
                         "http://localhost:5174",
                         "http://localhost:5173"
                 )
@@ -56,11 +63,37 @@ public class WebMvcConfig implements WebMvcConfigurer {
                 .allowCredentials(true);
 
         registry.addMapping("/v3/api-docs/**")
-                .allowedOrigins("https://docs.yi.or.kr:8095", "https://192.168.10.47:8094","https://localhost:8095")
+                .allowedOrigins(
+                        "http://docs.yi.or.kr:8097",
+                        "http://docs.yi.or.kr:8096",
+                        "http://docs.yi.or.kr:8095",
+                        "http://docs.yi.or.kr:8094",
+                        "https://docs.yi.or.kr:8097",
+                        "https://docs.yi.or.kr:8096",
+                        "https://docs.yi.or.kr:8095",
+                        "https://docs.yi.or.kr:8094",
+                        "http://localhost:8094",
+                        "http://localhost:8095",
+                        "http://localhost:8096",
+                        "http://localhost:8097"
+                )
                 .allowedMethods("*");
 
         registry.addMapping("/swagger-ui/**") // 만약 Swagger UI 경로도 CORS 걸리면 추가
-                .allowedOrigins("https://docs.yi.or.kr:8095", "https://localhost:8095")
+                .allowedOrigins(
+                        "https://docs.yi.or.kr:8094",
+                        "https://docs.yi.or.kr:8095",
+                        "https://docs.yi.or.kr:8096",
+                        "https://docs.yi.or.kr:8097",
+                        "http://docs.yi.or.kr:8094",
+                        "http://docs.yi.or.kr:8095",
+                        "http://docs.yi.or.kr:8096",
+                        "http://docs.yi.or.kr:8097",
+                        "http://localhost:8094",
+                        "http://localhost:8095",
+                        "http://localhost:8096",
+                        "http://localhost:8097"
+                )
                 .allowedMethods("*");
     }
 

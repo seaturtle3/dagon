@@ -9,6 +9,8 @@ import kroryi.dagon.repository.AdminRepository;
 import kroryi.dagon.repository.board.FAQCategoryRepository;
 import kroryi.dagon.repository.board.FAQRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -18,6 +20,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Log4j2
 public class FAQService {
     private final FAQRepository faqRepository;
     private final AdminRepository adminRepository;
@@ -47,29 +50,14 @@ public class FAQService {
 
     public Page<FAQ> searchFaq(BoardSearchDTO dto, Pageable pageable) {
         String keyword = dto.getKeyword();
-        String faqType = dto.getFaqType(); // "question", "answer", "question+answer"
         Boolean isActive = dto.getIsActive();
         Long categoryId = dto.getCategoryId();
-
-        // 검색 키워드가 있을 경우 (question/answer 필터와 함께)
-        if (keyword != null && !keyword.isBlank()) {
-            if (isActive == null) {
-                return faqRepository.searchByKeyword(keyword, faqType, pageable);
-            } else if (isActive) {
-                return faqRepository.searchByKeywordAndActive(keyword, faqType, pageable);
-            } else {
-                // 아직 inactive 전용 메서드가 없다면, 직접 만들거나 조건 추가 필요
-                return faqRepository.searchByKeywordAndInactive(keyword, faqType, pageable);
-            }
-        }
-
-        // 키워드가 없고 카테고리만 있는 경우
-        if (categoryId != null) {
-            return faqRepository.searchByCategoryAndKeyword(categoryId, null, pageable);
-        }
-
-        // 아무 조건이 없는 경우 전체 조회
-        return faqRepository.findAllByOrderByDisplayOrderAsc(pageable);
+        log.info("keyword: {}", keyword);
+        log.info("isActive: {}", isActive);
+        log.info("categoryId: {}", categoryId); 
+        log.info("pageable: {}", pageable);
+        // JPQL 동적 검색 사용
+        return faqRepository.searchDynamic(categoryId, isActive, keyword, pageable);
     }
 
     public Page<FAQ> searchActivePaged(BoardSearchDTO dto, Pageable pageable) {

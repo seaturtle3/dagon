@@ -50,7 +50,10 @@ public class CustomSocialLoginSuccessHandler implements AuthenticationSuccessHan
 
         // 허용된 baseUrl 목록
         java.util.List<String> allowedBaseUrls = java.util.List.of(
+            "http://docs.yi.or.kr:8097",
+            "http://docs.yi.or.kr:8095",
             "http://localhost:8095",
+            "http://localhost:8097",
             "http://localhost:5173"
             // 필요시 추가
         );
@@ -61,7 +64,7 @@ public class CustomSocialLoginSuccessHandler implements AuthenticationSuccessHan
         }
 
         // baseUrl에 경로 및 파라미터 추가
-        String redirectUrl = "http://localhost:5173/" + "oauth/callback?token=" + jwt + "&success=true";
+        String redirectUrl = "http://docs.yi.or.kr:25173/" + "oauth/callback?token=" + jwt + "&success=true";
 
         log.info("Redirecting to frontend: {}", redirectUrl);
         response.sendRedirect(redirectUrl);

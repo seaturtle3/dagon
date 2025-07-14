@@ -35,14 +35,17 @@ public class ApiAdminFaqController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(required = false) String keyword,
-            @RequestParam(required = false) String faqType
+            @RequestParam(required = false) String faqType,
+            @RequestParam(required = false) Long categoryId,
+            @RequestParam(required = false) Boolean isActive
     ) {
-        System.out.println("👉 [FAQ 검색 요청] keyword = " + keyword + ", faqType = " + faqType);  // ✅ 이거 추가
-
+        System.out.println("👉 [FAQ 검색 요청] keyword = " + keyword + ", faqType = " + faqType + ", categoryId = " + categoryId);  // ✅ 이거 추가
 
         BoardSearchDTO dto = new BoardSearchDTO();
         dto.setKeyword(keyword);
         dto.setFaqType(faqType);
+        dto.setCategoryId(categoryId);
+        dto.setIsActive(isActive);
 
         Page<FAQ> faqPage = faqService.searchFaq(dto, PageRequest.of(page, size));
         return faqPage.map(FAQResponseDTO::from);

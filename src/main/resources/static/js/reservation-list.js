@@ -1,3 +1,4 @@
+import api from '@/lib/axios';
 const token = localStorage.getItem("authToken");
 
 function showTab(tabId) {
@@ -14,7 +15,7 @@ async function loadReservations() {
     }
 
     try {
-        const res = await fetch("http://localhost:8095/api/reservation/partner", {
+        const res = await api.get("/api/reservation/partner", {
             method: "GET",
             headers: {
                 "Authorization": `Bearer ${token}`
@@ -77,7 +78,7 @@ async function cancelReservation(reservationId) {
     if (!confirm("정말 예약을 취소하시겠습니까?")) return;
 
     try {
-        const res = await fetch(`http://localhost:8095/api/reservation/cancel/${reservationId}`, {
+        const res = await fetch(`http://docs.yi.or.kr:8097/api/reservation/cancel/${reservationId}`, {
             method: "DELETE",
             headers: {
                 "Authorization": `Bearer ${token}`

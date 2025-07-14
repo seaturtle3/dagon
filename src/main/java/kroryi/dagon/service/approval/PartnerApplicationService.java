@@ -116,7 +116,7 @@ private final UserRepository userRepository;
         // 이미지 경로 변환
         String localPath = entity.getBusinessLicenseImage();
         String fileName = localPath != null ? Paths.get(localPath).getFileName().toString() : null;
-        String imageUrl = fileName != null ? "http://localhost:8095/uploads/" + fileName : null;
+        String imageUrl = fileName != null ? "http://docs.yi.or.kr:8097/uploads/" + fileName : null;
 
         return new PartnerApplicationDTO(
                 entity.getPid(),
