@@ -198,7 +198,7 @@ public class ApiProductController {
                 .map(Enum::name)
                 .toList();
 
-        List<String> species = productRepository.findAllSeaFishSpecies(); // <-- 여기를 새 메서드로 변경
+        List<String> species = Arrays.asList("갈치", "고등어", "돔", "농어", "우럭"); // 임시 데이터
 
         Map<String, List<String>> filters = new HashMap<>();
         filters.put("regions", regions);
@@ -217,7 +217,7 @@ public class ApiProductController {
                 .map(Enum::name)
                 .toList();
 
-        List<String> species = productRepository.findAllFreshwaterFishSpecies(); // <-- 여기를 새 메서드로 변경
+        List<String> species = Arrays.asList("잉어", "붕어", "쏘가리", "배스", "가물치"); // 임시 데이터
 
         Map<String, List<String>> filters = new HashMap<>();
         filters.put("regions", regions);

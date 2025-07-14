@@ -51,39 +51,7 @@ public interface ProductRepository extends JpaRepository<Product, Long>, JpaSpec
     Page<Product> findByMainTypeAndDeletedFalse(MainType mainType, Pageable pageable);
 
     //  -------------- 프론트 api 상단 필터 > 바다/민물 상품 가져오기 ----------------
-    @Query("""
-            SELECT DISTINCT p FROM Product p
-            WHERE p.mainType = 'SEA'
-            AND (:region IS NULL OR p.prodRegion = :region)
-            AND (:subType IS NULL OR p.subType = :subType)
-            AND (:species IS NULL OR 
-                 EXISTS (SELECT 1 FROM p.fishSpeciesMappings m 
-                         WHERE m.fs.fsName IN (:species)))
-            ORDER BY p.createdAt DESC
-            """)
-    Page<Product> findSeaProductsByFilters(
-            @Param("region") ProdRegion region,
-            @Param("subType") SubType subType,
-            @Param("species") List<String> species,
-            Pageable pageable
-    );
-
-    @Query("""
-            SELECT DISTINCT p FROM Product p
-            WHERE p.mainType = 'FRESHWATER'
-            AND (:region IS NULL OR p.prodRegion = :region)
-            AND (:subType IS NULL OR p.subType = :subType)
-            AND (:species IS NULL OR 
-                 EXISTS (SELECT 1 FROM p.fishSpeciesMappings m 
-                         WHERE m.fs.fsName IN (:species)))
-            ORDER BY p.createdAt DESC
-            """)
-    Page<Product> findFreshwaterProductsByFilters(
-            @Param("region") ProdRegion region,
-            @Param("subType") SubType subType,
-            @Param("species") List<String> species,
-            Pageable pageable
-    );
+    Page<Product> findByMainTypeAndProdRegionAndSubType(MainType mainType, ProdRegion region, SubType subType, Pageable pageable);
 
     // 프론트 SEA 상단 필터 제어
     // 한글로 지역, 세부 장소 받기
@@ -93,11 +61,9 @@ public interface ProductRepository extends JpaRepository<Product, Long>, JpaSpec
     @Query("SELECT DISTINCT p.subType FROM Product p WHERE p.mainType = 'SEA'")
     List<SubType> findDistinctSubTypes();
 
-    @Query("SELECT fs.fsName FROM ProductFishSpecies fs WHERE fs.mainType = 'SEA'")
     List<String> findAllSeaFishSpecies();
 
     // 프론트 어종 받아오기
-    @Query("SELECT fs.fsName FROM ProductFishSpecies fs WHERE fs.mainType = 'FRESHWATER'")
     List<String> findAllFreshwaterFishSpecies();
 
     // 키워드 검색 (상품명, 설명, 주소, 이벤트, 공지)

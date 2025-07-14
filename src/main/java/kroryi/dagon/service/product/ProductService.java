@@ -269,40 +269,14 @@ public class ProductService {
 
     //  -------------- 프론트 api 바다 (지역, 상세장소, 어종 상품 필터 조회) ----------------
     public Page<ProductDTO> getFishingSeaProductsByFilters(ProdRegion region, SubType subType, List<String> species, Pageable pageable) {
-        Page<Product> products = productRepository.findSeaProductsByFilters(
-            region, 
-            subType, 
-            species, 
-            pageable
-        );
-        
-        return products.map(product -> {
-            ProductDTO dto = ProductDTO.fromEntity(product);
-            List<String> fishSpeciesNames = product.getFishSpeciesMappings().stream()
-                    .map(mapping -> mapping.getFs().getFsName())
-                    .toList();
-            dto.setFishSpeciesNames(fishSpeciesNames);
-            return dto;
-        });
+        Page<Product> products = productRepository.findByMainTypeAndProdRegionAndSubType(MainType.SEA, region, subType, pageable);
+        return products.map(ProductDTO::fromEntity);
     }
 
     //  -------------- 프론트 api 민물 (지역, 상세장소, 어종 상품 필터 조회) ----------------
     public Page<ProductDTO> getFishingFreshwaterProductsByFilters(ProdRegion region, SubType subType, List<String> species, Pageable pageable) {
-        Page<Product> products = productRepository.findFreshwaterProductsByFilters(
-            region, 
-            subType, 
-            species, 
-            pageable
-        );
-        
-        return products.map(product -> {
-            ProductDTO dto = ProductDTO.fromEntity(product);
-            List<String> fishSpeciesNames = product.getFishSpeciesMappings().stream()
-                    .map(mapping -> mapping.getFs().getFsName())
-                    .toList();
-            dto.setFishSpeciesNames(fishSpeciesNames);
-            return dto;
-        });
+        Page<Product> products = productRepository.findByMainTypeAndProdRegionAndSubType(MainType.FRESHWATER, region, subType, pageable);
+        return products.map(ProductDTO::fromEntity);
     }
 
 
