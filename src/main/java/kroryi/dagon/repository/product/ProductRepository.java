@@ -93,19 +93,19 @@ public interface ProductRepository extends JpaRepository<Product, Long>, JpaSpec
     @Query("SELECT DISTINCT p.subType FROM Product p WHERE p.mainType = 'SEA'")
     List<SubType> findDistinctSubTypes();
 
-    @Query("""
-                SELECT fs.fsName
-                FROM ProductFishSpecies fs
-                WHERE fs.mainType = kroryi.dagon.enums.MainType.SEA
-            """)
+    @Query(value = """
+                SELECT fs.fs_name
+                FROM prod_fish_species fs
+                WHERE fs.main_type = 'SEA'
+            """, nativeQuery = true)
     List<String> findAllSeaFishSpecies();
 
     // 프론트 어종 받아오기
-    @Query("""
-                SELECT fs.fsName
-                FROM ProductFishSpecies fs
-                WHERE fs.mainType = kroryi.dagon.enums.MainType.FRESHWATER
-            """)
+    @Query(value = """
+                SELECT fs.fs_name
+                FROM prod_fish_species fs
+                WHERE fs.main_type = 'FRESHWATER'
+            """, nativeQuery = true)
     List<String> findAllFreshwaterFishSpecies();
 
     // 키워드 검색 (상품명, 설명, 주소, 이벤트, 공지)
