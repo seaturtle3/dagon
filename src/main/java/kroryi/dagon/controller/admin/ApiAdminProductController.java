@@ -3,11 +3,13 @@ package kroryi.dagon.controller.admin;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import kroryi.dagon.DTO.product.ProductDTO;
+import kroryi.dagon.DTO.PartnerDTO;
 import kroryi.dagon.entity.product.Product;
 import kroryi.dagon.enums.MainType;
 import kroryi.dagon.enums.ProdRegion;
 import kroryi.dagon.enums.SubType;
 import kroryi.dagon.service.product.ProductService;
+import kroryi.dagon.service.auth.PartnerService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
@@ -34,6 +36,7 @@ import java.util.Map;
 public class ApiAdminProductController {
 
     private final ProductService productService;
+    private final PartnerService partnerService;
 
     @Operation(summary = "전체 제품 목록 조회 (관리자)", description = "페이징으로 모든 제품 조회")
     @GetMapping
@@ -87,7 +90,7 @@ public class ApiAdminProductController {
             @RequestPart("dto") ProductDTO productDTO,
             @RequestPart(value = "images", required = false) List<MultipartFile> images) {
         try {
-            // 관리자용으로 기본 파트너 설정
+            // 관리자용으로 기본 파트너 설정 (productDTO에 partnerUno가 있으면 해당 파트너 사용)
             productService.createProductWithImages(productDTO, 1L, images);
             return ResponseEntity.ok("제품 등록이 완료되었습니다.");
         } catch (Exception e) {
@@ -180,5 +183,16 @@ public class ApiAdminProductController {
         Pageable pageable = PageRequest.of(page, size, Sort.by("prodId").descending());
         Page<ProductDTO> products = productService.getProductsByMainType(mainType, pageable);
         return ResponseEntity.ok(products);
+    }
+
+    @Operation(summary = "파트너 목록 조회 (관리자)", description = "제품 등록/수정용 파트너 목록 조회")
+    @GetMapping("/partners")
+    public ResponseEntity<Page<PartnerDTO>> getPartners(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "100") int size) {
+        
+        Pageable pageable = PageRequest.of(page, size, Sort.by("uno").ascending());
+        Page<PartnerDTO> partners = partnerService.getAllPartners(page, size, null, "pname");
+        return ResponseEntity.ok(partners);
     }
 } 

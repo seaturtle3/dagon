@@ -58,7 +58,14 @@ public class ProductService {
 
     @Transactional
     public void createProductWithImages(ProductDTO dto, Long uno, List<MultipartFile> productImages) {
-        Partner partner = partnerRepository.findById(uno).orElseThrow();
+        // 파트너 설정: DTO에 partnerUno가 있으면 사용, 없으면 기본 파트너 사용
+        Partner partner;
+        if (dto.getPartnerUno() != null) {
+            partner = partnerRepository.findById(dto.getPartnerUno())
+                    .orElseThrow(() -> new IllegalArgumentException("파트너를 찾을 수 없습니다. uno=" + dto.getPartnerUno()));
+        } else {
+            partner = partnerRepository.findById(uno).orElseThrow();
+        }
 
         Product product = new Product();
         product.setProdName(dto.getProdName());
@@ -181,6 +188,13 @@ public class ProductService {
         product.setProdDescription(productDTO.getProdDescription());
         product.setProdEvent(productDTO.getProdEvent());
         product.setProdNotice(productDTO.getProdNotice());
+        
+        // 파트너 변경 처리
+        if (productDTO.getPartnerUno() != null) {
+            Partner newPartner = partnerRepository.findById(productDTO.getPartnerUno())
+                    .orElseThrow(() -> new IllegalArgumentException("파트너를 찾을 수 없습니다. uno=" + productDTO.getPartnerUno()));
+            product.setPartner(newPartner);
+        }
 
         log.info("🧹 삭제 대상 이미지들1: {}", productDTO.getDeleteImageNames());
 
