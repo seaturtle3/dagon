@@ -67,8 +67,8 @@ public interface ProductRepository extends JpaRepository<Product, Long>, JpaSpec
 
     @Query("""
             SELECT DISTINCT p FROM Product p
-            LEFT JOIN FETCH p.fishSpeciesMappings m
-            LEFT JOIN FETCH m.fs fs
+            LEFT JOIN p.fishSpeciesMappings m
+            LEFT JOIN m.fs fs
             WHERE p.mainType = kroryi.dagon.enums.MainType.FRESHWATER
             AND (:region IS NULL OR p.prodRegion = :region)
             AND (:subType IS NULL OR p.subType = :subType)
