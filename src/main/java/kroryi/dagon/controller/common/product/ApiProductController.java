@@ -155,6 +155,9 @@ public class ApiProductController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "15") int size
     ) {
+        if (species != null && species.isEmpty()) {
+            species = null;
+        }
         SubType subTypeEnum = (subType == null || subType.isEmpty()) ? null : SubType.valueOf(subType);
         ProdRegion regionEnum = (region == null || region.isEmpty()) ? null : ProdRegion.valueOf(region);
 
@@ -176,6 +179,9 @@ public class ApiProductController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "15") int size
     ) {
+        if (species != null && species.isEmpty()) {
+            species = null;
+        }
         SubType subTypeEnum = (subType == null || subType.isEmpty()) ? null : SubType.valueOf(subType);
         ProdRegion regionEnum = (region == null || region.isEmpty()) ? null : ProdRegion.valueOf(region);
 
