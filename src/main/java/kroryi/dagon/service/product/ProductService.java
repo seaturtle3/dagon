@@ -182,7 +182,12 @@ public class ProductService {
         product.setProdEvent(productDTO.getProdEvent());
         product.setProdNotice(productDTO.getProdNotice());
         
-
+        // 파트너 변경 처리
+        if (productDTO.getUno() != null) {
+            Partner partner = partnerRepository.findById(productDTO.getUno())
+                .orElseThrow(() -> new EntityNotFoundException("파트너를 찾을 수 없습니다."));
+            product.setPartner(partner);
+        }
 
         log.info("🧹 삭제 대상 이미지들1: {}", productDTO.getDeleteImageNames());
 
