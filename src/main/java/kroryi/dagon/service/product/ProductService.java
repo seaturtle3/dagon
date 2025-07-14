@@ -342,6 +342,13 @@ public class ProductService {
         product.setProdThumbnail(dto.getProdThumbnail());
         // 필요하다면 prodPrice 등 가격 필드도 추가하세요
 
+        // 파트너 변경 처리
+        if (dto.getUno() != null) {
+            Partner partner = partnerRepository.findById(dto.getUno())
+                .orElseThrow(() -> new EntityNotFoundException("파트너를 찾을 수 없습니다."));
+            product.setPartner(partner);
+        }
+
         productRepository.save(product);
     }
 
