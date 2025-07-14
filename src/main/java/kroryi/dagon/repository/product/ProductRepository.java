@@ -51,17 +51,16 @@ public interface ProductRepository extends JpaRepository<Product, Long>, JpaSpec
     Page<Product> findByMainTypeAndDeletedFalse(MainType mainType, Pageable pageable);
 
     //  -------------- 프론트 api 상단 필터 > 바다/민물 상품 가져오기 ----------------
-    @Query(value = """
-            SELECT DISTINCT p.* FROM product p
-            WHERE p.main_type = 'SEA'
-            AND (:region IS NULL OR p.prod_region = :region)
-            AND (:subType IS NULL OR p.sub_type = :subType)
+    @Query("""
+            SELECT DISTINCT p FROM Product p
+            WHERE p.mainType = 'SEA'
+            AND (:region IS NULL OR p.prodRegion = :region)
+            AND (:subType IS NULL OR p.subType = :subType)
             AND (:species IS NULL OR 
-                 EXISTS (SELECT 1 FROM prod_fish_species_mapping m 
-                         JOIN prod_fish_species fs ON m.fs_id = fs.fs_id 
-                         WHERE m.prod_id = p.prod_id AND fs.fs_name IN (:species)))
-            ORDER BY p.created_at DESC
-            """, nativeQuery = true)
+                 EXISTS (SELECT 1 FROM p.fishSpeciesMappings m 
+                         WHERE m.fishSpecies.fsName IN (:species)))
+            ORDER BY p.createdAt DESC
+            """)
     Page<Product> findSeaProductsByFilters(
             @Param("region") String region,
             @Param("subType") String subType,
@@ -69,17 +68,16 @@ public interface ProductRepository extends JpaRepository<Product, Long>, JpaSpec
             Pageable pageable
     );
 
-    @Query(value = """
-            SELECT DISTINCT p.* FROM product p
-            WHERE p.main_type = 'FRESHWATER'
-            AND (:region IS NULL OR p.prod_region = :region)
-            AND (:subType IS NULL OR p.sub_type = :subType)
+    @Query("""
+            SELECT DISTINCT p FROM Product p
+            WHERE p.mainType = 'FRESHWATER'
+            AND (:region IS NULL OR p.prodRegion = :region)
+            AND (:subType IS NULL OR p.subType = :subType)
             AND (:species IS NULL OR 
-                 EXISTS (SELECT 1 FROM prod_fish_species_mapping m 
-                         JOIN prod_fish_species fs ON m.fs_id = fs.fs_id 
-                         WHERE m.prod_id = p.prod_id AND fs.fs_name IN (:species)))
-            ORDER BY p.created_at DESC
-            """, nativeQuery = true)
+                 EXISTS (SELECT 1 FROM p.fishSpeciesMappings m 
+                         WHERE m.fishSpecies.fsName IN (:species)))
+            ORDER BY p.createdAt DESC
+            """)
     Page<Product> findFreshwaterProductsByFilters(
             @Param("region") String region,
             @Param("subType") String subType,
