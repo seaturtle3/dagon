@@ -60,6 +60,7 @@ public interface ProductRepository extends JpaRepository<Product, Long>, JpaSpec
                  EXISTS (SELECT 1 FROM prod_fish_species_mapping m 
                          JOIN prod_fish_species fs ON m.fs_id = fs.fs_id 
                          WHERE m.prod_id = p.prod_id AND fs.fs_name IN (:species)))
+            ORDER BY p.created_at DESC
             """, nativeQuery = true)
     Page<Product> findSeaProductsByFilters(
             @Param("region") String region,
@@ -77,6 +78,7 @@ public interface ProductRepository extends JpaRepository<Product, Long>, JpaSpec
                  EXISTS (SELECT 1 FROM prod_fish_species_mapping m 
                          JOIN prod_fish_species fs ON m.fs_id = fs.fs_id 
                          WHERE m.prod_id = p.prod_id AND fs.fs_name IN (:species)))
+            ORDER BY p.created_at DESC
             """, nativeQuery = true)
     Page<Product> findFreshwaterProductsByFilters(
             @Param("region") String region,
