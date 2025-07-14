@@ -100,7 +100,7 @@ public class ApiAdminProductController {
     @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> updateProduct(
             @PathVariable Long id,
-            @RequestPart("product") ProductDTO productDTO,
+            @RequestPart("dto") ProductDTO productDTO,
             @RequestPart(value = "images", required = false) List<MultipartFile> images) {
         try {
             productService.updateProduct(id, productDTO, images);
