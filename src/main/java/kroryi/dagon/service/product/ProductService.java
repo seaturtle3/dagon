@@ -261,39 +261,29 @@ public class ProductService {
     }
 
     //  -------------- 프론트 api 바다 (지역, 상세장소, 어종 상품 필터 조회) ----------------
-    public List<ProductDTO> getFishingSeaProductsByFilters(ProdRegion region, SubType subType, List<String> species, Sort sort) {
-        List<Product> products = productRepository.findSeaProductsByFilters(region, subType, species, sort);
-
-        return products.stream().map(product -> {
+    public Page<ProductDTO> getFishingSeaProductsByFilters(ProdRegion region, SubType subType, List<String> species, Pageable pageable) {
+        Page<Product> products = productRepository.findSeaProductsByFilters(region, subType, species, pageable);
+        return products.map(product -> {
             ProductDTO dto = ProductDTO.fromEntity(product);
-
-            // fishSpecies 이름 리스트 추가
             List<String> fishSpeciesNames = product.getFishSpeciesMappings().stream()
                     .map(mapping -> mapping.getFs().getFsName())
                     .toList();
-
-            dto.setFishSpeciesNames(fishSpeciesNames);  // 이 필드를 DTO에 추가해야 함
-
+            dto.setFishSpeciesNames(fishSpeciesNames);
             return dto;
-        }).toList();
+        });
     }
 
     //  -------------- 프론트 api 민물 (지역, 상세장소, 어종 상품 필터 조회) ----------------
-    public List<ProductDTO> getFishingFreshwaterProductsByFilters(ProdRegion region, SubType subType, List<String> species, Sort sort) {
-        List<Product> products = productRepository.findFreshwaterProductsByFilters(region, subType, species, sort);
-
-        return products.stream().map(product -> {
+    public Page<ProductDTO> getFishingFreshwaterProductsByFilters(ProdRegion region, SubType subType, List<String> species, Pageable pageable) {
+        Page<Product> products = productRepository.findFreshwaterProductsByFilters(region, subType, species, pageable);
+        return products.map(product -> {
             ProductDTO dto = ProductDTO.fromEntity(product);
-
-            // fishSpecies 이름 리스트 추가
             List<String> fishSpeciesNames = product.getFishSpeciesMappings().stream()
                     .map(mapping -> mapping.getFs().getFsName())
                     .toList();
-
-            dto.setFishSpeciesNames(fishSpeciesNames);  // 이 필드를 DTO에 추가해야 함
-
+            dto.setFishSpeciesNames(fishSpeciesNames);
             return dto;
-        }).toList();
+        });
     }
 
 

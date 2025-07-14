@@ -60,11 +60,11 @@ public interface ProductRepository extends JpaRepository<Product, Long>, JpaSpec
             AND (:subType IS NULL OR p.subType = :subType)
             AND ((:species) IS NULL OR fs.fsName IN (:species))
             """)
-    List<Product> findSeaProductsByFilters(
+    Page<Product> findSeaProductsByFilters(
             @Param("region") ProdRegion region,
             @Param("subType") SubType subType,
             @Param("species") List<String> species,
-            Sort sort
+            Pageable pageable
     );
 
     @Query("""
@@ -76,11 +76,11 @@ public interface ProductRepository extends JpaRepository<Product, Long>, JpaSpec
             AND (:subType IS NULL OR p.subType = :subType)
             AND ((:species) IS NULL OR fs.fsName IN (:species))
             """)
-    List<Product> findFreshwaterProductsByFilters(
+    Page<Product> findFreshwaterProductsByFilters(
             @Param("region") ProdRegion region,
             @Param("subType") SubType subType,
             @Param("species") List<String> species,
-            Sort sort
+            Pageable pageable
     );
 
     // 프론트 SEA 상단 필터 제어
