@@ -56,7 +56,7 @@ public interface ProductRepository extends JpaRepository<Product, Long>, JpaSpec
             WHERE p.mainType = 'SEA'
             AND (:region IS NULL OR p.prodRegion = :region)
             AND (:subType IS NULL OR p.subType = :subType)
-            AND (SIZE(:species) = 0 OR 
+            AND (:species IS NULL OR 
                  EXISTS (SELECT 1 FROM p.fishSpeciesMappings m 
                          WHERE m.fs.fsName IN (:species)))
             ORDER BY p.createdAt DESC
@@ -73,7 +73,7 @@ public interface ProductRepository extends JpaRepository<Product, Long>, JpaSpec
             WHERE p.mainType = 'FRESHWATER'
             AND (:region IS NULL OR p.prodRegion = :region)
             AND (:subType IS NULL OR p.subType = :subType)
-            AND (SIZE(:species) = 0 OR 
+            AND (:species IS NULL OR 
                  EXISTS (SELECT 1 FROM p.fishSpeciesMappings m 
                          WHERE m.fs.fsName IN (:species)))
             ORDER BY p.createdAt DESC
@@ -93,19 +93,11 @@ public interface ProductRepository extends JpaRepository<Product, Long>, JpaSpec
     @Query("SELECT DISTINCT p.subType FROM Product p WHERE p.mainType = 'SEA'")
     List<SubType> findDistinctSubTypes();
 
-    @Query(value = """
-                SELECT fs.fs_name
-                FROM prod_fish_species fs
-                WHERE fs.main_type = 'SEA'
-            """, nativeQuery = true)
+    @Query("SELECT fs.fsName FROM ProductFishSpecies fs WHERE fs.mainType = 'SEA'")
     List<String> findAllSeaFishSpecies();
 
     // 프론트 어종 받아오기
-    @Query(value = """
-                SELECT fs.fs_name
-                FROM prod_fish_species fs
-                WHERE fs.main_type = 'FRESHWATER'
-            """, nativeQuery = true)
+    @Query("SELECT fs.fsName FROM ProductFishSpecies fs WHERE fs.mainType = 'FRESHWATER'")
     List<String> findAllFreshwaterFishSpecies();
 
     // 키워드 검색 (상품명, 설명, 주소, 이벤트, 공지)
