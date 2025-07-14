@@ -1,5 +1,7 @@
 package kroryi.dagon.DTO.board.FishingCenter;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import kroryi.dagon.entity.fishingCenter.FishingDiaryImage;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -11,8 +13,14 @@ import java.util.Base64;
 public class ApiFishingDiaryImageDTO {
     private String imageUrl;
     private boolean isThumbnail;
-    private String imageData; // Base64 인코딩된 이미지 데이터
-    private String thumbnailData; // Base64 인코딩된 썸네일 데이터
+
+    @JsonProperty("imageData")
+    @JsonInclude(JsonInclude.Include.ALWAYS)
+    private String imageData;
+
+    @JsonProperty("thumbnailData")
+    @JsonInclude(JsonInclude.Include.ALWAYS)
+    private String thumbnailData;
 
     public ApiFishingDiaryImageDTO(FishingDiaryImage image) {
         this.imageUrl = image.getImageUrl();
