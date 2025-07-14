@@ -58,7 +58,7 @@ public interface ProductRepository extends JpaRepository<Product, Long>, JpaSpec
             AND (:subType IS NULL OR p.subType = :subType)
             AND (:species IS NULL OR 
                  EXISTS (SELECT 1 FROM p.fishSpeciesMappings m 
-                         WHERE m.fishSpecies.fsName IN (:species)))
+                         WHERE m.fs.fsName IN (:species)))
             ORDER BY p.createdAt DESC
             """)
     Page<Product> findSeaProductsByFilters(
@@ -75,7 +75,7 @@ public interface ProductRepository extends JpaRepository<Product, Long>, JpaSpec
             AND (:subType IS NULL OR p.subType = :subType)
             AND (:species IS NULL OR 
                  EXISTS (SELECT 1 FROM p.fishSpeciesMappings m 
-                         WHERE m.fishSpecies.fsName IN (:species)))
+                         WHERE m.fs.fsName IN (:species)))
             ORDER BY p.createdAt DESC
             """)
     Page<Product> findFreshwaterProductsByFilters(
