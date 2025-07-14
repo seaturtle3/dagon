@@ -405,4 +405,31 @@ public class ProductService {
         return products.map(ProductDTO::fromEntity);
     }
 
+    // 관리자용 메서드들
+    public Page<ProductDTO> getProductsByRegion(ProdRegion region, Pageable pageable) {
+        Page<Product> products = productRepository.findByProdRegionAndDeletedFalse(region, pageable);
+        return products.map(ProductDTO::fromEntity);
+    }
+
+    public Page<ProductDTO> getProductsByDeletedStatus(Boolean deleted, Pageable pageable) {
+        Page<Product> products = productRepository.findByDeleted(deleted, pageable);
+        return products.map(ProductDTO::fromEntity);
+    }
+
+    public long getTotalProductCount() {
+        return productRepository.count();
+    }
+
+    public long getActiveProductCount() {
+        return productRepository.countByDeletedFalse();
+    }
+
+    public long getDeletedProductCount() {
+        return productRepository.countByDeletedTrue();
+    }
+
+    public long getProductCountByMainType(MainType mainType) {
+        return productRepository.countByMainTypeAndDeletedFalse(mainType);
+    }
+
 }

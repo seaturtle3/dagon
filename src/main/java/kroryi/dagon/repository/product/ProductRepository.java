@@ -123,4 +123,15 @@ public interface ProductRepository extends JpaRepository<Product, Long>, JpaSpec
 
     Optional<Product> findByProdName(String prodName);
 
+    // 관리자용 메서드들
+    Page<Product> findByProdRegionAndDeletedFalse(ProdRegion region, Pageable pageable);
+    
+    Page<Product> findByDeleted(Boolean deleted, Pageable pageable);
+    
+    Long countByDeletedFalse();
+    
+    Long countByDeletedTrue();
+    
+    Long countByMainTypeAndDeletedFalse(MainType mainType);
+
 }
