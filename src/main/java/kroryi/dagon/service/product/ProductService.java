@@ -266,8 +266,8 @@ public class ProductService {
         List<String> safeSpecies = (species == null || species.isEmpty()) ? null : species;
         
         Page<Product> products = productRepository.findSeaProductsByFilters(
-            region != null ? region.name() : null, 
-            subType != null ? subType.name() : null, 
+            region, 
+            subType, 
             safeSpecies, 
             pageable
         );
@@ -288,8 +288,8 @@ public class ProductService {
         List<String> safeSpecies = (species == null || species.isEmpty()) ? null : species;
         
         Page<Product> products = productRepository.findFreshwaterProductsByFilters(
-            region != null ? region.name() : null, 
-            subType != null ? subType.name() : null, 
+            region, 
+            subType, 
             safeSpecies, 
             pageable
         );

@@ -62,8 +62,8 @@ public interface ProductRepository extends JpaRepository<Product, Long>, JpaSpec
             ORDER BY p.createdAt DESC
             """)
     Page<Product> findSeaProductsByFilters(
-            @Param("region") String region,
-            @Param("subType") String subType,
+            @Param("region") ProdRegion region,
+            @Param("subType") SubType subType,
             @Param("species") List<String> species,
             Pageable pageable
     );
@@ -79,8 +79,8 @@ public interface ProductRepository extends JpaRepository<Product, Long>, JpaSpec
             ORDER BY p.createdAt DESC
             """)
     Page<Product> findFreshwaterProductsByFilters(
-            @Param("region") String region,
-            @Param("subType") String subType,
+            @Param("region") ProdRegion region,
+            @Param("subType") SubType subType,
             @Param("species") List<String> species,
             Pageable pageable
     );
