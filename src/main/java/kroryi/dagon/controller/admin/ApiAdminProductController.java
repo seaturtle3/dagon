@@ -101,7 +101,8 @@ public class ApiAdminProductController {
     public ResponseEntity<?> updateProduct(
             @PathVariable Long id,
             @RequestPart("dto") ProductDTO productDTO,
-            @RequestPart(value = "images", required = false) List<MultipartFile> images) {
+            @RequestPart(value = "images", required = false) List<MultipartFile> images,
+            @RequestPart(value = "deleteImageNames", required = false) List<String> deleteImageNames) {
         try {
             productService.updateProduct(id, productDTO, images);
             return ResponseEntity.ok("제품 수정이 완료되었습니다.");
