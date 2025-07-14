@@ -83,7 +83,14 @@ public class ProductDTO {
             dto.setOptions(optionDTOs);
         }
         dto.setUno(product.getPartner().getUno());
-        dto.setPartner(product.getPartner()); // 파트너 정보 전체 설정
+        // 파트너 정보는 필요한 필드만 설정하여 무한 재귀 방지
+        Partner partner = product.getPartner();
+        Partner simplePartner = new Partner();
+        simplePartner.setUno(partner.getUno());
+        simplePartner.setPname(partner.getPname());
+        simplePartner.setCeoName(partner.getCeoName());
+        simplePartner.setLicense(partner.getLicense());
+        dto.setPartner(simplePartner);
         // fromEntity 수정
         dto.setProdImageNames(
                 product.getImages().stream()
