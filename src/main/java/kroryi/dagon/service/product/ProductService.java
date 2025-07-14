@@ -262,10 +262,13 @@ public class ProductService {
 
     //  -------------- 프론트 api 바다 (지역, 상세장소, 어종 상품 필터 조회) ----------------
     public Page<ProductDTO> getFishingSeaProductsByFilters(ProdRegion region, SubType subType, List<String> species, Pageable pageable) {
+        // species가 null이거나 빈 리스트인 경우 null로 처리
+        List<String> safeSpecies = (species == null || species.isEmpty()) ? null : species;
+        
         Page<Product> products = productRepository.findSeaProductsByFilters(
             region != null ? region.name() : null, 
             subType != null ? subType.name() : null, 
-            species, 
+            safeSpecies, 
             pageable
         );
         
@@ -281,10 +284,13 @@ public class ProductService {
 
     //  -------------- 프론트 api 민물 (지역, 상세장소, 어종 상품 필터 조회) ----------------
     public Page<ProductDTO> getFishingFreshwaterProductsByFilters(ProdRegion region, SubType subType, List<String> species, Pageable pageable) {
+        // species가 null이거나 빈 리스트인 경우 null로 처리
+        List<String> safeSpecies = (species == null || species.isEmpty()) ? null : species;
+        
         Page<Product> products = productRepository.findFreshwaterProductsByFilters(
             region != null ? region.name() : null, 
             subType != null ? subType.name() : null, 
-            species, 
+            safeSpecies, 
             pageable
         );
         
