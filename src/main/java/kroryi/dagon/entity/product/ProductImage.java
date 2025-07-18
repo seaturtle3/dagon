@@ -24,6 +24,10 @@ public class ProductImage {
     @Column(name = "image_data", columnDefinition = "LONGBLOB", nullable = true)
     private byte[] imageData;
 
+    @Lob
+    @Column(name = "thumbnail_data", columnDefinition = "LONGBLOB", nullable = true)
+    private byte[] thumbnailData;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "prod_id")
     private Product product;

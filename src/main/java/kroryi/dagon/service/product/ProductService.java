@@ -109,11 +109,33 @@ public class ProductService {
                     }
                     log.info("🔍 이미지 바이너리 크기: {} bytes", imageBytes.length);
                     
-                    // 3. ProductImage 엔티티 생성 및 저장
+                    // 3. 썸네일 생성 (200x200 크기로 리사이즈)
+                    byte[] thumbnailBytes = null;
+                    try {
+                        // PIL을 사용하여 썸네일 생성
+                        java.awt.image.BufferedImage originalImage = javax.imageio.ImageIO.read(savedFile);
+                        java.awt.image.BufferedImage thumbnailImage = new java.awt.image.BufferedImage(200, 200, originalImage.getType());
+                        
+                        java.awt.Graphics2D g = thumbnailImage.createGraphics();
+                        g.drawImage(originalImage, 0, 0, 200, 200, null);
+                        g.dispose();
+                        
+                        // 썸네일을 바이트 배열로 변환
+                        java.io.ByteArrayOutputStream baos = new java.io.ByteArrayOutputStream();
+                        javax.imageio.ImageIO.write(thumbnailImage, "JPEG", baos);
+                        thumbnailBytes = baos.toByteArray();
+                        baos.close();
+                    } catch (Exception e) {
+                        log.warn("썸네일 생성 실패, 원본 이미지 사용: {}", e.getMessage());
+                        thumbnailBytes = imageBytes; // 썸네일 생성 실패시 원본 사용
+                    }
+                    
+                    // 4. ProductImage 엔티티 생성 및 저장
                     ProductImage image = new ProductImage();
                     image.setFileName(savedUrl);
                     image.setProduct(product);
-                    image.setImageData(imageBytes); // 바이너리 저장
+                    image.setImageData(imageBytes); // 원본 바이너리 저장
+                    image.setThumbnailData(thumbnailBytes); // 썸네일 바이너리 저장
                     productImageRepository.save(image);
                     log.info("🔍 ProductImage 저장 완료 - ID: {}", image.getId());
                 } catch (Exception e) {
@@ -222,10 +244,32 @@ public class ProductService {
                     try (FileInputStream fis = new FileInputStream(savedFile)) {
                         imageBytes = org.springframework.util.StreamUtils.copyToByteArray(fis);
                     }
+                    // 썸네일 생성 (200x200 크기로 리사이즈)
+                    byte[] thumbnailBytes = null;
+                    try {
+                        // PIL을 사용하여 썸네일 생성
+                        java.awt.image.BufferedImage originalImage = javax.imageio.ImageIO.read(savedFile);
+                        java.awt.image.BufferedImage thumbnailImage = new java.awt.image.BufferedImage(200, 200, originalImage.getType());
+                        
+                        java.awt.Graphics2D g = thumbnailImage.createGraphics();
+                        g.drawImage(originalImage, 0, 0, 200, 200, null);
+                        g.dispose();
+                        
+                        // 썸네일을 바이트 배열로 변환
+                        java.io.ByteArrayOutputStream baos = new java.io.ByteArrayOutputStream();
+                        javax.imageio.ImageIO.write(thumbnailImage, "JPEG", baos);
+                        thumbnailBytes = baos.toByteArray();
+                        baos.close();
+                    } catch (Exception e) {
+                        log.warn("썸네일 생성 실패, 원본 이미지 사용: {}", e.getMessage());
+                        thumbnailBytes = imageBytes; // 썸네일 생성 실패시 원본 사용
+                    }
+                    
                     ProductImage image = new ProductImage();
                     image.setFileName(savedPath);
                     image.setProduct(product);
                     image.setImageData(imageBytes);
+                    image.setThumbnailData(thumbnailBytes);
                     productImageRepository.save(image);
                 } catch (Exception e) {
                     throw new RuntimeException("상품 이미지 저장 실패", e);

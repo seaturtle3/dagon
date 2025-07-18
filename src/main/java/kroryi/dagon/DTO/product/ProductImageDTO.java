@@ -20,10 +20,17 @@ public class ProductImageDTO {
         // imageData가 null이 아니면 Base64 인코딩
         if (image.getImageData() != null) {
             this.imageData = Base64.getEncoder().encodeToString(image.getImageData());
-            // 썸네일 데이터는 원본과 동일 (상품은 별도 썸네일 생성 안함)
-            this.thumbnailData = Base64.getEncoder().encodeToString(image.getImageData());
         } else {
             this.imageData = null;
+        }
+        
+        // thumbnailData가 null이 아니면 Base64 인코딩
+        if (image.getThumbnailData() != null) {
+            this.thumbnailData = Base64.getEncoder().encodeToString(image.getThumbnailData());
+        } else if (image.getImageData() != null) {
+            // thumbnailData가 없으면 imageData를 사용
+            this.thumbnailData = Base64.getEncoder().encodeToString(image.getImageData());
+        } else {
             this.thumbnailData = null;
         }
     }
