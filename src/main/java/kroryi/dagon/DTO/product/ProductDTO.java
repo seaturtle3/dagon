@@ -49,6 +49,12 @@ public class ProductDTO {
     private List<String> prodImageNames; // 썸네일 여러 개
     private List<String> deleteImageNames; // 삭제할 이미지 경로
     private List<String> prodImageDataList; // Base64 인코딩된 이미지 데이터 리스트
+    
+    // 홈페이지용 필드 (조황센터/조행기와 동일한 구조)
+    private String thumbnailData; // Base64 인코딩된 썸네일 데이터
+    private String imageData; // Base64 인코딩된 이미지 데이터
+    private String thumbnailUrl; // 썸네일 URL
+    private String imageUrl; // 이미지 URL
 
     public static ProductDTO fromEntity(Product product) {
         ProductDTO dto = new ProductDTO();
@@ -172,12 +178,28 @@ public class ProductDTO {
         simplePartner.setLicense(partner.getLicense());
         dto.setPartner(simplePartner);
         
-        // 이미지 URL만 포함 (데이터는 제외)
-        dto.setProdImageNames(
-                product.getImages().stream()
-                        .map(ProductImage::getFileName)
-                        .collect(Collectors.toList())
-        );
+        // 이미지 처리 (조황센터/조행기와 동일한 방식)
+        if (product.getImages() != null && !product.getImages().isEmpty()) {
+            // 첫 번째 이미지를 대표 이미지로 사용
+            ProductImage firstImage = product.getImages().get(0);
+            
+            // 이미지 URL 설정
+            dto.setImageUrl(firstImage.getFileName());
+            dto.setThumbnailUrl(firstImage.getFileName());
+            
+            // 이미지 데이터 설정 (Base64)
+            if (firstImage.getImageData() != null) {
+                dto.setImageData(Base64.getEncoder().encodeToString(firstImage.getImageData()));
+                dto.setThumbnailData(Base64.getEncoder().encodeToString(firstImage.getImageData())); // 썸네일은 원본과 동일
+            }
+            
+            // 기존 필드도 설정
+            dto.setProdImageNames(
+                    product.getImages().stream()
+                            .map(ProductImage::getFileName)
+                            .collect(Collectors.toList())
+            );
+        }
         
         // LocalDateTime -> LocalDate 변환
         if (product.getCreatedAt() != null) {
