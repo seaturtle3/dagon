@@ -79,6 +79,25 @@ public class WebMvcConfig implements WebMvcConfigurer {
                 )
                 .allowedMethods("*");
 
+        registry.addMapping("/api-docs/**")
+                .allowedOrigins(
+                        "http://docs.yi.or.kr:8097",
+                        "http://docs.yi.or.kr:8096",
+                        "http://docs.yi.or.kr:8095",
+                        "http://docs.yi.or.kr:8094",
+                        "https://docs.yi.or.kr:8097",
+                        "https://docs.yi.or.kr:8096",
+                        "https://docs.yi.or.kr:8095",
+                        "https://docs.yi.or.kr:8094",
+                        "https://docs.yi.or.kr:25173",
+                        "http://localhost:8094",
+                        "http://localhost:8095",
+                        "http://localhost:8096",
+                        "http://localhost:8097",
+                        "http://localhost:5173"
+                )
+                .allowedMethods("*");
+
         registry.addMapping("/swagger-ui/**") // 만약 Swagger UI 경로도 CORS 걸리면 추가
                 .allowedOrigins(
                         "https://docs.yi.or.kr:8094",
