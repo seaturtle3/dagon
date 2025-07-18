@@ -147,9 +147,9 @@ public class ProductService {
         return products.map(ProductDTO::fromEntity);  // 생성자 대신 정적 메서드 사용
     }
 
-    // 홈페이지용 상품 조회 (이미지 데이터 제외)
+    // 홈페이지용 상품 조회 (이미지 데이터 제외, 삭제되지 않은 상품만)
     public Page<ProductDTO> getHomeProducts(Pageable pageable) {
-        Page<Product> products = productRepository.findAll(pageable);
+        Page<Product> products = productRepository.findByDeletedFalse(pageable);
         return products.map(ProductDTO::fromEntityForHome);  // 홈페이지용 생성자 사용
     }
 
@@ -275,13 +275,13 @@ public class ProductService {
 
     //  -------------- 프론트 api 바다 (지역, 상세장소, 어종 상품 필터 조회) ----------------
     public Page<ProductDTO> getFishingSeaProductsByFilters(ProdRegion region, SubType subType, List<String> species, Pageable pageable) {
-        Page<Product> products = productRepository.findByMainTypeAndProdRegionAndSubType(MainType.SEA, region, subType, pageable);
+        Page<Product> products = productRepository.findByMainTypeAndProdRegionAndSubTypeAndDeletedFalse(MainType.SEA, region, subType, pageable);
         return products.map(ProductDTO::fromEntity);
     }
 
     //  -------------- 프론트 api 민물 (지역, 상세장소, 어종 상품 필터 조회) ----------------
     public Page<ProductDTO> getFishingFreshwaterProductsByFilters(ProdRegion region, SubType subType, List<String> species, Pageable pageable) {
-        Page<Product> products = productRepository.findByMainTypeAndProdRegionAndSubType(MainType.FRESHWATER, region, subType, pageable);
+        Page<Product> products = productRepository.findByMainTypeAndProdRegionAndSubTypeAndDeletedFalse(MainType.FRESHWATER, region, subType, pageable);
         return products.map(ProductDTO::fromEntity);
     }
 
