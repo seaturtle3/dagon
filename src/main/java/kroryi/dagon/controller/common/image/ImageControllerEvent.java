@@ -225,7 +225,7 @@ public class ImageControllerEvent {
 
             log.info("image---------------->: {}", image);
 
-            // 5. DB URL 반환 (에디터에서 사용) - 상대 경로만 사용
+            // 5. DB URL 반환 (에디터에서 사용)
             String dbUrl = "/api/images/event/" + image.getId();
 
             // 6. content 업데이트 (이미지 URL을 DB URL로 교체) - event가 있는 경우에만
