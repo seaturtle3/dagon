@@ -61,10 +61,9 @@ public interface ProductRepository extends JpaRepository<Product, Long>, JpaSpec
     @Query("SELECT DISTINCT p.subType FROM Product p WHERE p.mainType = 'SEA'")
     List<SubType> findDistinctSubTypes();
 
-    List<String> findAllSeaFishSpecies();
-
-    // 프론트 어종 받아오기
-    List<String> findAllFreshwaterFishSpecies();
+    // 어종 관련 메서드는 FishSpeciesRepository에서 처리
+    // List<String> findAllSeaFishSpecies();
+    // List<String> findAllFreshwaterFishSpecies();
 
     // 키워드 검색 (상품명, 설명, 주소, 이벤트, 공지)
     @Query("""
