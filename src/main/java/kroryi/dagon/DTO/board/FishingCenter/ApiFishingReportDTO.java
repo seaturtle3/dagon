@@ -9,7 +9,6 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Data
@@ -108,28 +107,26 @@ public class ApiFishingReportDTO {
             dto.user = new ApiUserDTO(fishingReport.getUser());
         }
 
-        // 이미지 처리 (Base64 데이터 우선)
+        // 이미지 처리 (Base64 데이터 포함)
         if (fishingReport.getImages() != null) {
             dto.images = fishingReport.getImages().stream()
                     .map(ApiFishingReportImageDTO::new) // Base64 데이터 포함
                     .collect(Collectors.toList());
 
             // 대표 썸네일 추출 - 우선순위: imageData > thumbnailData > imageUrl
-            Optional<FishingReportImage> thumbnailImage = fishingReport.getImages().stream()
+            dto.thumbnailUrl = fishingReport.getImages().stream()
                     .filter(FishingReportImage::isThumbnail)
-                    .findFirst();
-
-            if (thumbnailImage.isPresent()) {
-                FishingReportImage image = thumbnailImage.get();
-                if (image.getImageData() != null) {
-                    dto.thumbnailUrl = "data:image/jpeg;base64," + java.util.Base64.getEncoder().encodeToString(image.getImageData());
-                } else if (image.getThumbnailData() != null) {
-                    dto.thumbnailUrl = "data:image/jpeg;base64," + java.util.Base64.getEncoder().encodeToString(image.getThumbnailData());
-                } else {
-                    dto.thumbnailUrl = image.getImageUrl();
-                }
-                dto.imageFileName = dto.thumbnailUrl;
-            }
+                    .findFirst()
+                    .map(image -> {
+                        if (image.getImageData() != null) {
+                            return "data:image/jpeg;base64," + java.util.Base64.getEncoder().encodeToString(image.getImageData());
+                        } else if (image.getThumbnailData() != null) {
+                            return "data:image/jpeg;base64," + java.util.Base64.getEncoder().encodeToString(image.getThumbnailData());
+                        } else {
+                            return image.getImageUrl();
+                        }
+                    })
+                    .orElse(null);
         }
 
         return dto;

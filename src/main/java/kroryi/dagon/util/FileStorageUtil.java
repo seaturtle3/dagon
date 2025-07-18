@@ -120,7 +120,7 @@ public class FileStorageUtil {
                 .toFile(thumbPath.toFile());
 
             // 원본 이미지 URL 반환 (썸네일은 thumb_ 접두어로 조합)
-            return "/uploads/" + folderName + "/" + dateFolder + "/" + fileName;
+            return "uploads/" + folderName + "/" + dateFolder + "/" + fileName;
         } catch (IOException e) {
             throw new RuntimeException("이미지 저장/썸네일 생성 실패", e);
         }
