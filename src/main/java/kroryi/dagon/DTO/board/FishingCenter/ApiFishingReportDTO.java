@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Data
@@ -107,24 +108,28 @@ public class ApiFishingReportDTO {
             dto.user = new ApiUserDTO(fishingReport.getUser());
         }
 
-        // 이미지 URL만 포함 (데이터는 제외)
+        // 이미지 처리 (Base64 데이터 우선)
         if (fishingReport.getImages() != null) {
             dto.images = fishingReport.getImages().stream()
-                    .map(image -> {
-                        ApiFishingReportImageDTO imageDto = new ApiFishingReportImageDTO();
-                        imageDto.setImageUrl(image.getImageUrl());
-                        imageDto.setThumbnail(image.isThumbnail());
-                        // imageData와 thumbnailData는 설정하지 않음
-                        return imageDto;
-                    })
+                    .map(ApiFishingReportImageDTO::new) // Base64 데이터 포함
                     .collect(Collectors.toList());
 
-            // 대표 썸네일 추출
-            dto.thumbnailUrl = fishingReport.getImages().stream()
+            // 대표 썸네일 추출 - 우선순위: imageData > thumbnailData > imageUrl
+            Optional<FishingReportImage> thumbnailImage = fishingReport.getImages().stream()
                     .filter(FishingReportImage::isThumbnail)
-                    .map(FishingReportImage::getImageUrl)
-                    .findFirst()
-                    .orElse(null);
+                    .findFirst();
+
+            if (thumbnailImage.isPresent()) {
+                FishingReportImage image = thumbnailImage.get();
+                if (image.getImageData() != null) {
+                    dto.thumbnailUrl = "data:image/jpeg;base64," + java.util.Base64.getEncoder().encodeToString(image.getImageData());
+                } else if (image.getThumbnailData() != null) {
+                    dto.thumbnailUrl = "data:image/jpeg;base64," + java.util.Base64.getEncoder().encodeToString(image.getThumbnailData());
+                } else {
+                    dto.thumbnailUrl = image.getImageUrl();
+                }
+                dto.imageFileName = dto.thumbnailUrl;
+            }
         }
 
         return dto;

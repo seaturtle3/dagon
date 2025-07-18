@@ -109,27 +109,27 @@ public class ApiFishingDiaryDTO {
             dto.user = new ApiUserDTO(fishingDiary.getUser());
         }
 
-        // 이미지 URL만 포함 (데이터는 제외)
+        // 이미지 처리 (Base64 데이터 우선)
         if (fishingDiary.getImages() != null) {
             dto.images = fishingDiary.getImages().stream()
-                    .map(image -> {
-                        ApiFishingDiaryImageDTO imageDto = new ApiFishingDiaryImageDTO();
-                        imageDto.setImageUrl(image.getImageUrl());
-                        imageDto.setThumbnail(image.isThumbnail());
-                        // imageData와 thumbnailData는 설정하지 않음
-                        return imageDto;
-                    })
+                    .map(ApiFishingDiaryImageDTO::new) // Base64 데이터 포함
                     .collect(Collectors.toList());
 
-            // 대표 썸네일 추출
+            // 대표 썸네일 추출 - 우선순위: imageData > thumbnailData > imageUrl
             Optional<FishingDiaryImage> thumbnailImage = fishingDiary.getImages().stream()
                     .filter(FishingDiaryImage::isThumbnail)
                     .findFirst();
 
             if (thumbnailImage.isPresent()) {
                 FishingDiaryImage image = thumbnailImage.get();
-                dto.thumbnailUrl = image.getImageUrl();
-                dto.imageFileName = image.getImageUrl();
+                if (image.getImageData() != null) {
+                    dto.thumbnailUrl = "data:image/jpeg;base64," + java.util.Base64.getEncoder().encodeToString(image.getImageData());
+                } else if (image.getThumbnailData() != null) {
+                    dto.thumbnailUrl = "data:image/jpeg;base64," + java.util.Base64.getEncoder().encodeToString(image.getThumbnailData());
+                } else {
+                    dto.thumbnailUrl = image.getImageUrl();
+                }
+                dto.imageFileName = dto.thumbnailUrl;
             }
         }
 
