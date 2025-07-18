@@ -85,6 +85,9 @@ public interface ProductRepository extends JpaRepository<Product, Long>, JpaSpec
     
     Page<Product> findByDeleted(Boolean deleted, Pageable pageable);
     
+    // 삭제되지 않은 상품만 조회 (페이징)
+    Page<Product> findByDeletedFalse(Pageable pageable);
+    
     Long countByDeletedFalse();
     
     Long countByDeletedTrue();
