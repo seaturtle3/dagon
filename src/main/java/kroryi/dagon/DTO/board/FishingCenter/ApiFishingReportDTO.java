@@ -88,5 +88,47 @@ public class ApiFishingReportDTO {
         return new ApiFishingReportDTO(fishingReport);
     }
 
+    // 홈페이지용 생성자 (이미지 데이터 제외)
+    public static ApiFishingReportDTO fromEntityForHome(FishingReport fishingReport) {
+        ApiFishingReportDTO dto = new ApiFishingReportDTO();
+        dto.frId = fishingReport.getFrId();
+        dto.title = fishingReport.getTitle();
+        dto.content = fishingReport.getContent();
+        dto.fishingAt = LocalDate.from(fishingReport.getFishingAt());
+        dto.createdAt = fishingReport.getCreatedAt();
+        dto.imageFileName = fishingReport.getThumbnailUrl();
+
+        if (fishingReport.getProduct() != null) {
+            dto.product = new ApiProductDTO(fishingReport.getProduct());
+            dto.prodName = fishingReport.getProduct().getProdName();
+        }
+
+        if (fishingReport.getUser() != null) {
+            dto.user = new ApiUserDTO(fishingReport.getUser());
+        }
+
+        // 이미지 URL만 포함 (데이터는 제외)
+        if (fishingReport.getImages() != null) {
+            dto.images = fishingReport.getImages().stream()
+                    .map(image -> {
+                        ApiFishingReportImageDTO imageDto = new ApiFishingReportImageDTO();
+                        imageDto.setImageUrl(image.getImageUrl());
+                        imageDto.setThumbnail(image.isThumbnail());
+                        // imageData와 thumbnailData는 설정하지 않음
+                        return imageDto;
+                    })
+                    .collect(Collectors.toList());
+
+            // 대표 썸네일 추출
+            dto.thumbnailUrl = fishingReport.getImages().stream()
+                    .filter(FishingReportImage::isThumbnail)
+                    .map(FishingReportImage::getImageUrl)
+                    .findFirst()
+                    .orElse(null);
+        }
+
+        return dto;
+    }
+
 }
 

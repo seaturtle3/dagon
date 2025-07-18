@@ -104,6 +104,12 @@ public class ApiFishingReportService {
         return fishingReports.map(ApiFishingReportDTO::new);  // 생성자 직접 호출
     }
 
+    // 홈페이지용 조황정보 조회 (이미지 데이터 제외)
+    public Page<ApiFishingReportDTO> getAllFishingReportsForHome(Pageable pageable) {
+        Page<FishingReport> fishingReports = fishingReportRepository.findAll(pageable);
+        return fishingReports.map(ApiFishingReportDTO::fromEntityForHome);  // 홈페이지용 생성자 사용
+    }
+
     public ApiFishingReportDTO getFishingReportById(Long id) {
         FishingReport entity = fishingReportRepository.findByIdWithComments(id)
                 .orElseThrow(() -> new RuntimeException("조황정보를 찾을 수 없습니다."));

@@ -97,6 +97,12 @@ public class ApiFishingDiaryService {
         return page.map(ApiFishingDiaryDTO::new); // Page<Entity> → Page<DTO>
     }
 
+    // 홈페이지용 조행기 조회 (이미지 데이터 제외)
+    public Page<ApiFishingDiaryDTO> getAllFishingDiaryForHome(Pageable pageable) {
+        Page<FishingDiary> page = fishingDiaryRepository.findAll(pageable);
+        return page.map(ApiFishingDiaryDTO::fromEntityForHome); // 홈페이지용 생성자 사용
+    }
+
     public ApiFishingDiaryDTO getFishingDiaryById(@PathVariable Long id) {
         FishingDiary fishingDiary = fishingDiaryRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("조황정보를 찾을 수 없습니다."));

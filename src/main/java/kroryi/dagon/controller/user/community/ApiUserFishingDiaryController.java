@@ -70,6 +70,22 @@ public class ApiUserFishingDiaryController {
         return apiFishingDiaryService.getAllFishingDiary(pageable);
     }
 
+    @Operation(summary = "홈페이지용 조행기 조회 (이미지 데이터 제외)")
+    @GetMapping("/get-all/home")
+    public Page<ApiFishingDiaryDTO> getAllFishingDiaryForHome(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "fdId") String sortBy,
+            @RequestParam(defaultValue = "desc") String direction) {
+
+        Sort sort = direction.equalsIgnoreCase("desc")
+                ? Sort.by(sortBy).descending()
+                : Sort.by(sortBy).ascending();
+
+        Pageable pageable = PageRequest.of(page, size, sort);
+        return apiFishingDiaryService.getAllFishingDiaryForHome(pageable);
+    }
+
     @Operation(summary = "조행기 ID 조회")
     @GetMapping("/get/{id}")
     public ApiFishingDiaryDTO getFishingDiary(@PathVariable Long id) {

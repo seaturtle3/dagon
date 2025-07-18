@@ -91,4 +91,49 @@ public class ApiFishingDiaryDTO {
         return new ApiFishingDiaryDTO(fishingDiary);
     }
 
+    // 홈페이지용 생성자 (이미지 데이터 제외)
+    public static ApiFishingDiaryDTO fromEntityForHome(FishingDiary fishingDiary) {
+        ApiFishingDiaryDTO dto = new ApiFishingDiaryDTO();
+        dto.fdId = fishingDiary.getFdId();
+        dto.title = fishingDiary.getTitle();
+        dto.content = fishingDiary.getContent();
+        dto.fishingAt = LocalDate.from(fishingDiary.getFishingAt());
+        dto.createdAt = fishingDiary.getCreatedAt();
+
+        if (fishingDiary.getProduct() != null) {
+            dto.product = new ApiProductDTO(fishingDiary.getProduct());
+            dto.prodName = fishingDiary.getProduct().getProdName();
+        }
+
+        if (fishingDiary.getUser() != null) {
+            dto.user = new ApiUserDTO(fishingDiary.getUser());
+        }
+
+        // 이미지 URL만 포함 (데이터는 제외)
+        if (fishingDiary.getImages() != null) {
+            dto.images = fishingDiary.getImages().stream()
+                    .map(image -> {
+                        ApiFishingDiaryImageDTO imageDto = new ApiFishingDiaryImageDTO();
+                        imageDto.setImageUrl(image.getImageUrl());
+                        imageDto.setThumbnail(image.isThumbnail());
+                        // imageData와 thumbnailData는 설정하지 않음
+                        return imageDto;
+                    })
+                    .collect(Collectors.toList());
+
+            // 대표 썸네일 추출
+            Optional<FishingDiaryImage> thumbnailImage = fishingDiary.getImages().stream()
+                    .filter(FishingDiaryImage::isThumbnail)
+                    .findFirst();
+
+            if (thumbnailImage.isPresent()) {
+                FishingDiaryImage image = thumbnailImage.get();
+                dto.thumbnailUrl = image.getImageUrl();
+                dto.imageFileName = image.getImageUrl();
+            }
+        }
+
+        return dto;
+    }
+
 }

@@ -119,6 +119,19 @@ public class ApiFishingReportController {
         return apiFishingReportService.getAllFishingReports(pageable);
     }
 
+    @Operation(summary = "홈페이지용 조황정보 조회 (이미지 데이터 제외)")
+    @GetMapping("/get-all/home")
+    public Page<ApiFishingReportDTO> getAllFishingReportsForHome(@RequestParam(defaultValue = "0") int page,
+                                                                 @RequestParam(defaultValue = "10") int size,
+                                                                 @RequestParam(defaultValue = "frId") String sortBy,
+                                                                 @RequestParam(defaultValue = "desc") String direction) {
+        Sort sort = direction.equalsIgnoreCase("desc")
+                ? Sort.by(sortBy).descending()
+                : Sort.by(sortBy).ascending();
+        Pageable pageable = PageRequest.of(page, size, sort);
+        return apiFishingReportService.getAllFishingReportsForHome(pageable);
+    }
+
     @Operation(summary = "조황정보 ID 조회")
     @GetMapping("/get/{id}")
     public ApiFishingReportDTO getFishingReport(@PathVariable Long id) {
