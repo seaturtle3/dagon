@@ -89,6 +89,22 @@ public class ApiProductController {
         return productService.getAllProductsApi(pageable);
     }
 
+    @Operation(summary = "홈페이지용 상품 조회 (이미지 데이터 제외)", description = "홈페이지용 상품 조회")
+    @GetMapping("/home")
+    public Page<ProductDTO> getHomeProducts(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "prodId") String sortBy,
+            @RequestParam(defaultValue = "desc") String direction) {
+
+        Sort sort = direction.equalsIgnoreCase("desc")
+                ? Sort.by(sortBy).descending()
+                : Sort.by(sortBy).ascending();
+
+        Pageable pageable = PageRequest.of(page, size, sort);
+        return productService.getHomeProducts(pageable);
+    }
+
 
     @Operation(summary = "상품 단건 조회", description = "ID로 상품 조회")
     @GetMapping("/get/{id}")

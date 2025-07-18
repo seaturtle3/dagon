@@ -125,4 +125,73 @@ public class ProductDTO {
         return dto;
     }
 
+    // 홈페이지용 생성자 (이미지 데이터 제외)
+    public static ProductDTO fromEntityForHome(Product product) {
+        ProductDTO dto = new ProductDTO();
+        dto.setProdId(product.getProdId());
+        dto.setProdName(product.getProdName());
+        dto.setProdRegion(product.getProdRegion());
+        dto.setProdRegionKorean(product.getProdRegion().getKorean());
+        dto.setMainType(product.getMainType());
+        dto.setMainTypeKorean(product.getMainType().getKorean());
+        dto.setSubType(product.getSubType());
+        dto.setSubTypeKorean(product.getSubType().getKorean());
+        dto.setMaxPerson(product.getMaxPerson());
+        dto.setMinPerson(product.getMinPerson());
+        dto.setWeight(product.getWeight());
+        dto.setProdPrice(product.getProdPrice());
+        dto.setProdAddress(product.getProdAddress());
+        dto.setProdDescription(product.getProdDescription());
+        dto.setProdEvent(product.getProdEvent());
+        dto.setProdNotice(product.getProdNotice());
+        dto.setDeleted(product.isDeleted());
+        
+        if (product.getOptions() != null) {
+            List<ProductOptionDTO> optionDTOs = product.getOptions().stream().map(option -> {
+                ProductOptionDTO dtoOpt = new ProductOptionDTO();
+                dtoOpt.setOptId(option.getOptId());
+                dtoOpt.setOptName(option.getOptName());
+                dtoOpt.setOptTime(option.getOptTime());
+                dtoOpt.setOptDescription(option.getOptDescription());
+                dtoOpt.setPrice(option.getPrice());
+                dtoOpt.setProdId(product.getProdId());
+                dtoOpt.setProdName(product.getProdName());
+                return dtoOpt;
+            }).toList();
+            dto.setOptions(optionDTOs);
+        }
+        
+        dto.setUno(product.getPartner().getUno());
+        
+        // 파트너 정보는 필요한 필드만 설정하여 무한 재귀 방지
+        Partner partner = product.getPartner();
+        Partner simplePartner = new Partner();
+        simplePartner.setUno(partner.getUno());
+        simplePartner.setPname(partner.getPname());
+        simplePartner.setCeoName(partner.getCeoName());
+        simplePartner.setLicense(partner.getLicense());
+        dto.setPartner(simplePartner);
+        
+        // 이미지 URL만 포함 (데이터는 제외)
+        dto.setProdImageNames(
+                product.getImages().stream()
+                        .map(ProductImage::getFileName)
+                        .collect(Collectors.toList())
+        );
+        
+        // LocalDateTime -> LocalDate 변환
+        if (product.getCreatedAt() != null) {
+            dto.setCreatedAt(product.getCreatedAt().toLocalDate());
+        }
+        
+        // 썸네일 설정: 이미지가 있으면 첫 번째 이미지를 썸네일로 사용, 없으면 기존 prodThumbnail 사용
+        if (product.getImages() != null && !product.getImages().isEmpty()) {
+            dto.setProdThumbnail(product.getImages().get(0).getFileName());
+        } else {
+            dto.setProdThumbnail(product.getProdThumbnail());
+        }
+        
+        return dto;
+    }
+
 }

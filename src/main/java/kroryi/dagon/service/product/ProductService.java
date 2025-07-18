@@ -147,6 +147,12 @@ public class ProductService {
         return products.map(ProductDTO::fromEntity);  // 생성자 대신 정적 메서드 사용
     }
 
+    // 홈페이지용 상품 조회 (이미지 데이터 제외)
+    public Page<ProductDTO> getHomeProducts(Pageable pageable) {
+        Page<Product> products = productRepository.findAll(pageable);
+        return products.map(ProductDTO::fromEntityForHome);  // 홈페이지용 생성자 사용
+    }
+
     public Page<ProductDTO> getProductList(Pageable pageable) {
         return productRepository.findAll(pageable)
                 .map(ProductDTO::fromEntity);
