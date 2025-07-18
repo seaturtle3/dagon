@@ -51,7 +51,7 @@ public interface ProductRepository extends JpaRepository<Product, Long>, JpaSpec
     Page<Product> findByMainTypeAndDeletedFalse(MainType mainType, Pageable pageable);
 
     //  -------------- 프론트 api 상단 필터 > 바다/민물 상품 가져오기 ----------------
-    Page<Product> findByMainTypeAndProdRegionAndSubTypeAndDeletedFalse(MainType mainType, ProdRegion region, SubType subType, Pageable pageable);
+    Page<Product> findByMainTypeAndProdRegionAndSubType(MainType mainType, ProdRegion region, SubType subType, Pageable pageable);
 
     // 프론트 SEA 상단 필터 제어
     // 한글로 지역, 세부 장소 받기
@@ -65,11 +65,10 @@ public interface ProductRepository extends JpaRepository<Product, Long>, JpaSpec
     // List<String> findAllSeaFishSpecies();
     // List<String> findAllFreshwaterFishSpecies();
 
-    // 키워드 검색 (상품명, 설명, 주소, 이벤트, 공지) - 삭제되지 않은 상품만
+    // 키워드 검색 (상품명, 설명, 주소, 이벤트, 공지)
     @Query("""
         SELECT p FROM Product p
-        WHERE p.deleted = false
-        AND (
+        WHERE (
             LOWER(p.prodName) LIKE LOWER(CONCAT('%', :keyword, '%'))
             OR p.prodDescription LIKE CONCAT('%', :keyword, '%')
             OR LOWER(p.prodAddress) LIKE LOWER(CONCAT('%', :keyword, '%'))
@@ -91,8 +90,5 @@ public interface ProductRepository extends JpaRepository<Product, Long>, JpaSpec
     Long countByDeletedTrue();
     
     Long countByMainTypeAndDeletedFalse(MainType mainType);
-
-    // 홈페이지용 상품 조회 (삭제되지 않은 상품만)
-    Page<Product> findByDeletedFalse(Pageable pageable);
 
 }
