@@ -55,6 +55,9 @@ public class ImageControllerEvent {
     @Value("${app.board.file.upload-dir}")
     private String baseUploadDir;
 
+    @Value("${app.server.base-url:https://docs.yi.or.kr:8097}")
+    private String baseUrl;
+
     private final EventImageRepository eventImageRepository;
     private final EventRepository eventRepository;
     private final EventService eventService;
@@ -112,14 +115,15 @@ public class ImageControllerEvent {
             }
             eventImageRepository.save(image);
             String dbUrl = "/api/images/event/" + image.getId();
+            String httpsDbUrl = baseUrl + dbUrl;
 
             // 3. content 업데이트 (이미지 URL을 DB URL로 교체)
-            updateContentWithImageUrl(event, fileUrl, dbUrl);
+            updateContentWithImageUrl(event, fileUrl, httpsDbUrl);
 
             // 4. 두 URL 모두 반환
             return ResponseEntity.ok()
                     .contentType(MediaType.APPLICATION_JSON)
-                    .body(Map.of("fileUrl", fileUrl, "dbUrl", dbUrl));
+                    .body(Map.of("fileUrl", fileUrl, "dbUrl", httpsDbUrl));
         }
 
         // eventId가 없거나 이벤트를 찾을 수 없는 경우
@@ -225,21 +229,22 @@ public class ImageControllerEvent {
 
             log.info("image---------------->: {}", image);
 
-            // 5. DB URL 반환 (에디터에서 사용)
+            // 5. DB URL 반환 (에디터에서 사용) - HTTPS URL로 변환
             String dbUrl = "/api/images/event/" + image.getId();
+            String httpsDbUrl = baseUrl + dbUrl;
 
             // 6. content 업데이트 (이미지 URL을 DB URL로 교체) - event가 있는 경우에만
             if (event != null) {
-                updateContentWithImageUrl(event, fileUrl, dbUrl);
+                updateContentWithImageUrl(event, fileUrl, httpsDbUrl);
             }
 
 
-            log.info("image dbulr---------------->: {}", dbUrl);
+            log.info("image dbulr---------------->: {}", httpsDbUrl);
             return ResponseEntity.ok()
                     .contentType(MediaType.APPLICATION_JSON)
                     .body(Map.of(
                         "fileUrl", fileUrl,
-                        "dbUrl", dbUrl,
+                        "dbUrl", httpsDbUrl,
                         "imageId", image.getId().toString(),
                         "message", "에디터 이미지 업로드 완료"
                     ));
@@ -558,8 +563,9 @@ public class ImageControllerEvent {
 
             // content 업데이트 (이미지 URL을 DB URL로 교체) - event가 있는 경우에만
             String dbUrl = "/api/images/event/" + image.getId();
+            String httpsDbUrl = baseUrl + dbUrl;
             if (event != null) {
-                updateContentWithImageUrl(event, imageUrl, dbUrl);
+                updateContentWithImageUrl(event, imageUrl, httpsDbUrl);
             }
 
             return ResponseEntity.ok("이미지 URL이 성공적으로 저장되었습니다.");
@@ -615,12 +621,13 @@ public class ImageControllerEvent {
 
             eventImageRepository.save(image);
 
-            // 3. DB URL 반환 (에디터에서 사용)
+            // 3. DB URL 반환 (에디터에서 사용) - HTTPS URL로 변환
             String dbUrl = "/api/images/event/" + image.getId();
+            String httpsDbUrl = baseUrl + dbUrl;
 
             return ResponseEntity.ok(Map.of(
                 "fileUrl", fileUrl,
-                "dbUrl", dbUrl,
+                "dbUrl", httpsDbUrl,
                 "imageId", image.getId().toString(),
                 "message", "임시 이미지 업로드 완료"
             ));
