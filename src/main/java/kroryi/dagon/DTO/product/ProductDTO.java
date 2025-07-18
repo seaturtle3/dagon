@@ -14,6 +14,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.Base64;
+import kroryi.dagon.DTO.product.ProductImageDTO;
 
 import static java.util.Arrays.stream;
 
@@ -55,6 +56,9 @@ public class ProductDTO {
     private String imageData; // Base64 인코딩된 이미지 데이터
     private String thumbnailUrl; // 썸네일 URL
     private String imageUrl; // 이미지 URL
+    
+    // images 배열 추가 (조황센터/조행기와 동일한 구조)
+    private List<ProductImageDTO> images;
 
     public static ProductDTO fromEntity(Product product) {
         ProductDTO dto = new ProductDTO();
@@ -192,6 +196,11 @@ public class ProductDTO {
                 dto.setImageData(Base64.getEncoder().encodeToString(firstImage.getImageData()));
                 dto.setThumbnailData(Base64.getEncoder().encodeToString(firstImage.getImageData())); // 썸네일은 원본과 동일
             }
+            
+            // images 배열 설정 (조황센터/조행기와 동일한 구조)
+            dto.setImages(product.getImages().stream()
+                    .map(ProductImageDTO::new)
+                    .collect(Collectors.toList()));
             
             // 기존 필드도 설정
             dto.setProdImageNames(
