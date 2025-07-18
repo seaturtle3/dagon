@@ -112,21 +112,6 @@ public class ApiFishingReportDTO {
             dto.images = fishingReport.getImages().stream()
                     .map(ApiFishingReportImageDTO::new) // Base64 데이터 포함
                     .collect(Collectors.toList());
-
-            // 대표 썸네일 추출 - 우선순위: imageData > thumbnailData > imageUrl
-            dto.thumbnailUrl = fishingReport.getImages().stream()
-                    .filter(FishingReportImage::isThumbnail)
-                    .findFirst()
-                    .map(image -> {
-                        if (image.getImageData() != null) {
-                            return "data:image/jpeg;base64," + java.util.Base64.getEncoder().encodeToString(image.getImageData());
-                        } else if (image.getThumbnailData() != null) {
-                            return "data:image/jpeg;base64," + java.util.Base64.getEncoder().encodeToString(image.getThumbnailData());
-                        } else {
-                            return image.getImageUrl();
-                        }
-                    })
-                    .orElse(null);
         }
 
         return dto;
